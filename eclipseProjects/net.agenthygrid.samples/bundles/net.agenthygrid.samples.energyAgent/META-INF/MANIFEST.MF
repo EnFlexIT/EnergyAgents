@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EnergyAgent Example
+Bundle-SymbolicName: net.agenthygrid.samples.energyAgent
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: net.agenthygrid.samples.energyAgent
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

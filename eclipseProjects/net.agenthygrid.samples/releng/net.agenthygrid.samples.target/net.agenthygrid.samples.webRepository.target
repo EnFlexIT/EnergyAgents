@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target includeMode="feature" name="net.agenthygrid.target" sequenceNumber="104">
+	<locations>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="de.enflexit.common.feature.feature.group" version="2.0.1.201808301203"/>
+			<unit id="de.enflexit.common.feature.source.feature.group" version="2.0.1.201808301203"/>
+			<unit id="net.agenthygrid.feature.feature.group" version="2.0.1.201808310848"/>
+			<unit id="net.agenthygrid.feature.source.feature.group" version="2.0.1.201808310848"/>
+			<unit id="org.agentgui.feature.feature.group" version="2.1.3.201808301203"/>
+			<unit id="org.agentgui.feature.source.feature.group" version="2.1.3.201808301203"/>
+			<unit id="org.agentgui.samples.feature.feature.group" version="2.0.0.201804112015"/>
+			<unit id="org.agentgui.samples.feature.source.feature.group" version="2.0.0.201804112015"/>
+			<repository location="https://p2.enflex.it/awb/2.1"/>
+		</location>
+	</locations>
+</target>
