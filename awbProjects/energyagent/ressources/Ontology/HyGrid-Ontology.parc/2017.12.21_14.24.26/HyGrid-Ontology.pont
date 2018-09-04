@@ -1,0 +1,769 @@
+; Thu Dec 21 14:24:26 CET 2017
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(single-slot TilltingAngle
+;+		(comment "Tilting angle of PV from ground")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot RatedPower
+;+		(comment "Rated Power of PV in Watt")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot electricalNodeState
+		(type INSTANCE)
+;+		(allowed-classes TriPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot certificateBase64
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot utilizationTrafficLight
+		(type SYMBOL)
+;+		(allowed-parents TrafficLight)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageTrafficLight
+		(type SYMBOL)
+;+		(allowed-parents TrafficLight)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gridStateAssessment
+		(type INSTANCE)
+;+		(allowed-classes GridStateAssessment)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Orientation
+;+		(comment "Orientation of PV from south \nSouth = 0°, East=-90°; West= 90°")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot NodeStateRefPV
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot volumeFlow
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltage
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot curr
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot registrationSuccessful
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageAvg
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasNodeState
+		(type INSTANCE)
+;+		(allowed-classes GasNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot counterpartAID
+;+		(comment "The AID of the registered agent's counterpart (i.e. the proxy agent for a remote agent and vice versa)")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l2
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l3
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot sensorID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressure
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageMin
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageRange
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearReactance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot fluidVelocity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot length
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot closed
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedWeatherCondition
+;+		(comment "Sunny or cloudy weather condition")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot PredictedWeatherData
+		(type INSTANCE)
+;+		(allowed-classes WeatherData)
+		(create-accessor read-write))
+	(single-slot PredictedHour
+;+		(comment "Hour to predict")
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l1
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot maxCurrent
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot ElectricalNodeStateAbs
+;+		(comment "Electrical Node State")
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+		(create-accessor read-write))
+	(single-slot current+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot InitializationSuccess
+;+		(comment "Information about Initializiation of DistrictAgents. True =success; false= No Success")
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot StartCyclicGridStateBehaviour
+;+		(comment "Start Cyclic GridState Behaviour of DistrictAgents \nTrue= Start, false =stop")
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedDate
+;+		(comment "Date of Prediction")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedWindSpeed
+;+		(comment "Predicted Wind Speed in m/s")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedTemperature
+;+		(comment "Predicted Temperature in °C")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GridStateAbs
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GridStateImag
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot GridState
+		(type INSTANCE)
+;+		(allowed-classes ElectricalGridState)
+		(create-accessor read-write))
+	(single-slot HyGrid-Ontology_Slot_4
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot NodeNumber
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot NodeNum
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GridStateReal
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot networkModelBase64
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot unit
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot remoteAgentAID
+;+		(comment "The remote agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot timeStamp
+		(type INSTANCE)
+;+		(allowed-classes LongValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageBand
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pipeDiameter
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearResistance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot breakerID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot stringLongValue
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measureLocation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageMax
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot networkComponentBase64
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot HyGrid-Ontology_Slot_3
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi
+		(type FLOAT)
+		(default 1.0)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot proxyAgentAID
+;+		(comment "The proxy agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot relativePower
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot ElectricalNodeStateReal
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+		(create-accessor read-write))
+	(multislot ElectricalNodeStateImag
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+		(create-accessor read-write))
+	(single-slot Node
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Physical
+	(is-a AgentAction)
+	(role abstract)
+	(single-slot timeStamp
+		(type INSTANCE)
+;+		(allowed-classes LongValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass SlackNodeSetVoltageLevelNotification
+	(is-a Physical)
+	(role concrete)
+	(single-slot voltage
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass VoltageBandInformation
+	(is-a Physical)
+	(role concrete)
+	(single-slot voltageBand
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Measurement
+	(is-a Physical)
+	(role abstract))
+
+(defclass ElectricalMeasurement
+	(is-a Measurement)
+	(role concrete)
+	(single-slot electricalNodeState
+		(type INSTANCE)
+;+		(allowed-classes TriPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass GasMeasurement
+	(is-a Measurement)
+	(role concrete)
+	(single-slot gasNodeState
+		(type INSTANCE)
+;+		(allowed-classes GasNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass GridStateAssessmentInformation
+	(is-a Physical)
+	(role concrete)
+	(single-slot gridStateAssessment
+		(type INSTANCE)
+;+		(allowed-classes GridStateAssessment)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageRange
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass TestbedAgentManagement
+	(is-a AgentAction)
+	(role abstract))
+
+(defclass CEARegistrationResponse "The response that is send to registered agents by the CEA"
+	(is-a TestbedAgentManagement)
+	(role concrete)
+	(single-slot counterpartAID
+;+		(comment "The AID of the registered agent's counterpart (i.e. the proxy agent for a remote agent and vice versa)")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass ProxyAgentRegistrationRequest "The registration request that is sent by a proxy agent"
+	(is-a TestbedAgentManagement)
+	(role concrete))
+
+(defclass RemoteAgentRegistrationRequest "The registration request that is sent by a remote agent"
+	(is-a TestbedAgentManagement)
+	(role concrete)
+	(single-slot certificateBase64
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass GridStateAgentManagement
+	(is-a AgentAction)
+	(role abstract))
+
+(defclass ElectricalGridStateUpdate "Electrical Node State"
+	(is-a GridStateAgentManagement)
+	(role concrete)
+	(multislot GridState
+		(type INSTANCE)
+;+		(allowed-classes ElectricalGridState)
+		(create-accessor read-write)))
+
+(defclass ReferencePVMeasurementUpdate "Measurement Update of reference PV Measurement"
+	(is-a GridStateAgentManagement)
+	(role concrete)
+	(single-slot relativePower
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass WeatherDataUpdate "Several Information about weather"
+	(is-a GridStateAgentManagement)
+	(role concrete)
+	(multislot PredictedWeatherData
+		(type INSTANCE)
+;+		(allowed-classes WeatherData)
+		(create-accessor read-write)))
+
+(defclass Power
+	(is-a Concept)
+	(role concrete))
+
+(defclass ElectricalPower
+	(is-a Power)
+	(role concrete)
+	(single-slot current
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltage
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass ReactivePower
+	(is-a ElectricalPower)
+	(role concrete))
+
+(defclass ActivePower
+	(is-a ElectricalPower)
+	(role concrete))
+
+(defclass NodeState
+	(is-a Concept)
+	(role concrete))
+
+(defclass ElectricalNodeState
+	(is-a NodeState)
+	(role concrete))
+
+(defclass TriPhaseElectricalNodeState
+	(is-a ElectricalNodeState)
+	(role concrete)
+	(single-slot l2
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l3
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l1
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass UniPhaseElectricalNodeState
+	(is-a ElectricalNodeState)
+	(role concrete)
+	(single-slot current
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi
+		(type FLOAT)
+		(default 1.0)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltage
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass GasNodeState
+	(is-a NodeState)
+	(role concrete)
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressure
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot volumeFlow
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass HeatNetworkNodeState
+	(is-a NodeState)
+	(role concrete)
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressure
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot fluidVelocity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pipeDiameter
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass ElectricalGridState
+	(is-a NodeState)
+	(role concrete)
+	(single-slot GridStateAbs
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GridStateImag
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot NodeNum
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GridStateReal
+		(type INSTANCE)
+;+		(allowed-classes ElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass EdgeState
+	(is-a Concept)
+	(role concrete))
+
+(defclass Cable
+	(is-a EdgeState)
+	(role concrete)
+	(single-slot linearResistance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot maxCurrent
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearReactance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot length
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Sensor
+	(is-a Cable)
+	(role concrete)
+	(single-slot sensorID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measureLocation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Breaker
+	(is-a Cable)
+	(role concrete)
+	(single-slot breakerID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot closed
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass UnitValue
+	(is-a Concept)
+	(role concrete)
+	(single-slot unit
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass LongValue
+	(is-a Concept)
+	(role concrete)
+	(single-slot stringLongValue
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass VoltageBand
+	(is-a Concept)
+	(role concrete)
+	(single-slot voltageAvg
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageMax
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageMin
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass RemoteAgentInformation "Stores information about a testbed agent and its proxy agent"
+	(is-a Concept)
+	(role concrete)
+	(single-slot remoteAgentAID
+;+		(comment "The remote agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot proxyAgentAID
+;+		(comment "The proxy agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass WeatherData
+	(is-a Concept)
+	(role concrete)
+	(single-slot PredictedWeatherCondition
+;+		(comment "Sunny or cloudy weather condition")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedHour
+;+		(comment "Hour to predict")
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedDate
+;+		(comment "Date of Prediction")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedWindSpeed
+;+		(comment "Predicted Wind Speed in m/s")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedTemperature
+;+		(comment "Predicted Temperature in °C")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass TrafficLight
+	(is-a Concept)
+	(role concrete))
+
+(defclass AmberTrafficLight
+	(is-a TrafficLight)
+	(role concrete))
+
+(defclass GreenTrafficLight
+	(is-a TrafficLight)
+	(role concrete))
+
+(defclass RedTrafficLight
+	(is-a TrafficLight)
+	(role concrete))
+
+(defclass GridStateAssessment
+	(is-a Concept)
+	(role concrete)
+	(single-slot utilizationTrafficLight
+		(type SYMBOL)
+;+		(allowed-parents TrafficLight)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageTrafficLight
+		(type SYMBOL)
+;+		(allowed-parents TrafficLight)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+    <projectName>Energy Agent - Example Project</projectName>
+    <projectDescription>Hi there,
+
+here you can place some detailed description about the current Agent.Workbench project in a textual manner.
+(beside that we could also imagine to replace this text with a browser in order to display a web site with help content)
+
+To view the configuration part of a project, switch the 'View' to the 'Developer view' (in the menu above).
+
+Have fun trying Agent.Workbench and the HyGrid project.
+
+Best wishes,
+Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wassermann</projectDescription>
+    <projectStartTab>2|3</projectStartTab>
+    <projectView>Developer</projectView>
+    <version>1.0.0.20180904-2300</version>
+    <versionTag>Complete Project</versionTag>
+    <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
+    <updateAutoConfiguration>0</updateAutoConfiguration>
+    <updateDateLastChecked>1536093693827</updateDateLastChecked>
+    <environmentModel>gridEnvironment</environmentModel>
+    <projectFeatures>
+        <projectFeature>
+            <id>net.agenthygrid.feature.feature.group</id>
+            <name>Agent.HyGrid</name>
+            <repositoryURI>https://p2.enflex.it/awb/2.1/</repositoryURI>
+            <version>2.0.1.201808310848</version>
+        </projectFeature>
+    </projectFeatures>
+    <projectResources/>
+    <reCreateProjectManifest>true</reCreateProjectManifest>
+    <plugins>
+        <className>hygrid.plugin.HyGridPlugIn</className>
+        <className>hygrid.agent.gridStateAggregator.plugin.GridStateAggregatorPlugIn</className>
+        <className>hygrid.deployment.plugin.DeploymentPlugIn</className>
+        <className>hygrid.ops.plugin.OpsPlugin</className>
+    </plugins>
+    <subOntologies>
+        <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
+        <subOntology>hygrid.globalDataModel.ontology.HyGridOntology</subOntology>
+    </subOntologies>
+    <agentStartConfiguration>
+        <agentVector>
+            <agent agentReference="hygrid.agent.manager.SimulationManager">
+                <startArgumentVector>
+                    <startArgument position="1" displayTitle="Headless Operation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="hygrid.agent.gridState.GridStateEstimationAgent">
+                <startArgumentVector>
+                    <startArgument position="1" displayTitle="Headless Operation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="hygrid.agent.gridState.GridStateAgent">
+                <startArgumentVector>
+                    <startArgument position="1" displayTitle="isHeadlessOperation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    <startArgument position="2" displayTitle="isDynamicAggregation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="hygrid.agent.gridStateAggregator.districtAgent.DistrictAgent">
+                <startArgumentVector>
+                    <startArgument position="1" displayTitle="ClusterComponents" ontologyReference="agentgui.ontology.Simple_String"/>
+                </startArgumentVector>
+            </agent>
+            <agent agentReference="hygrid.agent.gridStateAggregator.GridStateAggregatorAgent">
+                <startArgumentVector>
+                    <startArgument position="1" ontologyReference="agentgui.ontology.Simple_String"/>
+                </startArgumentVector>
+            </agent>
+        </agentVector>
+    </agentStartConfiguration>
+    <jadeConfiguration>
+        <skipUserRequestForJadeStart>true</skipUserRequestForJadeStart>
+        <useLocalPort>1099</useLocalPort>
+        <useLocalMtpPort>7778</useLocalMtpPort>
+        <mtpCreation>ConfiguredByIPandPort</mtpCreation>
+        <mtpIpAddress>132.252.237.76</mtpIpAddress>
+        <mtpProtocol>HTTP</mtpProtocol>
+        <serviceList>
+            <service>agentgui.logging.DebugService</service>
+            <service>energy.agentgui.distribution.LicenseService</service>
+            <service>agentgui.simulationService.LoadService</service>
+            <service>jade.core.event.NotificationService</service>
+            <service>agentgui.simulationService.SimulationService</service>
+            <service>jade.core.mobility.AgentMobilityService</service>
+        </serviceList>
+    </jadeConfiguration>
+    <distributionSetup>
+        <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+        <doStaticLoadBalancing>false</doStaticLoadBalancing>
+        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <evenDistribution>false</evenDistribution>
+        <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
+        <loadRecordingInterval>500</loadRecordingInterval>
+        <numberOfAgents>50</numberOfAgents>
+        <numberOfContainer>2</numberOfContainer>
+        <remoteOnly>false</remoteOnly>
+        <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
+        <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
+        <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+        <useUserThresholds>false</useUserThresholds>
+        <userThresholds>
+            <thCpuH>80</thCpuH>
+            <thCpuL>5</thCpuL>
+            <thMemoH>80</thMemoH>
+            <thMemoL>5</thMemoL>
+            <thNoThreadsH>500</thNoThreadsH>
+            <thNoThreadsL>5</thNoThreadsL>
+        </userThresholds>
+    </distributionSetup>
+    <agentClassLoadMetricsTable>
+        <agentClassMetricDescriptionVector>
+            <agentClass>
+                <className>hygrid.agent.prosumer.ProsumerAgent</className>
+                <realMetric>0.1</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.electrolyser.ElectrolyserAgent</className>
+                <realMetric>0.1</realMetric>
+                <realMetricAverage>5.390519313623548</realMetricAverage>
+                <realMetricMax>5.390519313623548</realMetricMax>
+                <realMetricMin>5.390519313623548</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agent.class.UNKNOWN-AGENT-CLASS</className>
+                <realMetric>0.1</realMetric>
+                <realMetricAverage>2.000470015218601</realMetricAverage>
+                <realMetricMax>2.000470015218592</realMetricMax>
+                <realMetricMin>2.000470015218592</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.sensor.SensorAgent</className>
+                <realMetric>0.1</realMetric>
+                <realMetricAverage>5.028308217415894</realMetricAverage>
+                <realMetricMax>5.028308217415894</realMetricMax>
+                <realMetricMin>5.028308217415894</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.manager.SimulationManager</className>
+                <realMetric>0.1</realMetric>
+                <realMetricAverage>167.68253871623241</realMetricAverage>
+                <realMetricMax>167.68253871623241</realMetricMax>
+                <realMetricMin>167.68253871623241</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.gridState.GridStateEstimationAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>26.806978798735763</realMetricAverage>
+                <realMetricMax>26.806978798735763</realMetricMax>
+                <realMetricMin>26.806978798735763</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.transformer.TransformerAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.gasSensor.GasSensorAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.10776413726157569</realMetricAverage>
+                <realMetricMax>0.10776413726157569</realMetricMax>
+                <realMetricMin>0.10776413726157569</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>system.class.-Regular-Thread-</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>11.390698969671082</realMetricAverage>
+                <realMetricMax>11.390698969671067</realMetricMax>
+                <realMetricMin>11.390698969671067</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.simulationService.agents.ServerClientAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.11119768471969065</realMetricAverage>
+                <realMetricMax>0.11119768471969065</realMetricMax>
+                <realMetricMin>0.11119768471969065</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.simulationService.agents.LoadMeasureAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.domain.df</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.tools.rma.rma</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.domain.ams</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.misc.FileManagerAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>jade.core.ContainerMonitorAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+        </agentClassMetricDescriptionVector>
+        <useRealLoadMetric>false</useRealLoadMetric>
+    </agentClassLoadMetricsTable>
+    <remoteContainerConfiguration>
+        <jvmMemAllocInitial>512m</jvmMemAllocInitial>
+        <jvmMemAllocMaximum>4g</jvmMemAllocMaximum>
+        <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
+        <showJADErmaGUI>false</showJADErmaGUI>
+    </remoteContainerConfiguration>
+    <simulationSetupCurrent>E-World Scenario 1</simulationSetupCurrent>
+    <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
+    <simulationSetups>
+        <entry>
+            <key>E-World Scenario 3</key>
+            <value>e_world_scenario_3.xml</value>
+        </entry>
+        <entry>
+            <key>E-World Scenario 2</key>
+            <value>e_world_scenario_2.xml</value>
+        </entry>
+        <entry>
+            <key>E-World Scenario 1</key>
+            <value>e_world_scenario_1.xml</value>
+        </entry>
+    </simulationSetups>
+    <unsaved>false</unsaved>
+</project>

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:TechnicalSystem xmlns:ns2="http://www.dawis.wiwi.uni-due.de/EnergyOptionModel">
+    <ns2:SystemID>BatteryStorage_Li-Ion</ns2:SystemID>
+    <ns2:InterfaceConfigurations>
+        <ns2:ConfigID>1</ns2:ConfigID>
+        <ns2:ConfigDescription>Default</ns2:ConfigDescription>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>P_L1</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L1</Phase>
+                <PowerType>ActivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>P_L2</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L2</Phase>
+                <PowerType>ActivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>P_L3</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L3</Phase>
+                <PowerType>ActivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>Q_L1</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L1</Phase>
+                <PowerType>ReactivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>Q_L2</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L2</Phase>
+                <PowerType>ReactivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:TechnicalInterfaces xsi:type="ns2:EnergyInterface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:InterfaceID>Q_L3</ns2:InterfaceID>
+            <ns2:Description></ns2:Description>
+            <ns2:Domain>Electricity</ns2:Domain>
+            <ns2:DomainModel xsi:type="DefaultDomainModelElectricity">
+                <CurrentType>AC</CurrentType>
+                <RatedVoltage>230.0</RatedVoltage>
+                <Frequency>50</Frequency>
+                <Phase>L3</Phase>
+                <PowerType>ReactivePower</PowerType>
+            </ns2:DomainModel>
+            <ns2:Connectivity>Undirected</ns2:Connectivity>
+            <ns2:CostRelevant>false</ns2:CostRelevant>
+            <ns2:EnergyCarrier>Electricity</ns2:EnergyCarrier>
+        </ns2:TechnicalInterfaces>
+        <ns2:SystemStates x="240.0" y="180.0">
+            <ns2:StateID>Idle</ns2:StateID>
+            <ns2:StateDescription>Battery is idling</ns2:StateDescription>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWatt" unit="W">
+                    <ns2:value>0.0</ns2:value>
+                    <ns2:SIPrefix>none, , 0</ns2:SIPrefix>
+                </ns2:EnergyFlow>
+            </ns2:Flows>
+            <ns2:Duration>
+                <ns2:value>10000</ns2:value>
+                <ns2:unit>millisecond, ms</ns2:unit>
+            </ns2:Duration>
+            <ns2:FormatTimeUnit>second, s</ns2:FormatTimeUnit>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Charge</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Discharge</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateEvaluationRanges xsi:type="ns2:FixedInteger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>rate</ns2:VariableID>
+                <ns2:Value>0</ns2:Value>
+            </ns2:StateEvaluationRanges>
+        </ns2:SystemStates>
+        <ns2:SystemStates x="410.0" y="30.0">
+            <ns2:StateID>Charge</ns2:StateID>
+            <ns2:StateDescription>Battery is charging</ns2:StateDescription>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Duration>
+                <ns2:value>10000</ns2:value>
+                <ns2:unit>millisecond, ms</ns2:unit>
+            </ns2:Duration>
+            <ns2:FormatTimeUnit>second, s</ns2:FormatTimeUnit>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Idle</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Discharge</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateEvaluationRanges xsi:type="ns2:RangeInteger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>rate</ns2:VariableID>
+                <ns2:ValueMin>1</ns2:ValueMin>
+                <ns2:ValueMax>10</ns2:ValueMax>
+            </ns2:StateEvaluationRanges>
+        </ns2:SystemStates>
+        <ns2:SystemStates x="70.0" y="30.0">
+            <ns2:StateID>Discharge</ns2:StateID>
+            <ns2:StateDescription>Battery is discharging</ns2:StateDescription>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>P_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L1</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L2</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Flows xsi:type="ns2:EnergyFlowGeneral" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:InterfaceID>Q_L3</ns2:InterfaceID>
+                <ns2:EnergyFlow xsi:type="ns2:EnergyFlowInWattCalculated" unit="W"/>
+            </ns2:Flows>
+            <ns2:Duration>
+                <ns2:value>10000</ns2:value>
+                <ns2:unit>millisecond, ms</ns2:unit>
+            </ns2:Duration>
+            <ns2:FormatTimeUnit>second, s</ns2:FormatTimeUnit>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Idle</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateTransitions>
+                <ns2:NextStateID>Charge</ns2:NextStateID>
+                <ns2:MinDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MinDuration>
+                <ns2:MaxDuration xsi:type="ns2:Duration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <ns2:value>0</ns2:value>
+                    <ns2:unit>second, s</ns2:unit>
+                </ns2:MaxDuration>
+            </ns2:StateTransitions>
+            <ns2:StateEvaluationRanges xsi:type="ns2:RangeInteger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>rate</ns2:VariableID>
+                <ns2:ValueMin>-10</ns2:ValueMin>
+                <ns2:ValueMax>-1</ns2:ValueMax>
+            </ns2:StateEvaluationRanges>
+        </ns2:SystemStates>
+        <ns2:InitialStateID>Idle</ns2:InitialStateID>
+    </ns2:InterfaceConfigurations>
+    <ns2:SystemVariables xsi:type="ns2:SystemVariableDefinitionInteger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ns2:VariableID>rate</ns2:VariableID>
+        <ns2:VariableDescription>the charge (+) or discharge (-) rate</ns2:VariableDescription>
+        <ns2:SetPoint>true</ns2:SetPoint>
+        <ns2:SetPointForUser>false</ns2:SetPointForUser>
+        <ns2:StateIdentifier>true</ns2:StateIdentifier>
+        <ns2:ValueMin>-10</ns2:ValueMin>
+        <ns2:ValueMax>10</ns2:ValueMax>
+        <ns2:EvaluationStepSize>1</ns2:EvaluationStepSize>
+        <ns2:Unit>1/h</ns2:Unit>
+        <ns2:GradientTime>
+            <ns2:value>1</ns2:value>
+            <ns2:unit>second, s</ns2:unit>
+        </ns2:GradientTime>
+        <ns2:GradientValue>20</ns2:GradientValue>
+        <ns2:StateIdentifierPrecision>0</ns2:StateIdentifierPrecision>
+    </ns2:SystemVariables>
+    <ns2:SystemVariables xsi:type="ns2:SystemVariableDefinitionDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ns2:VariableID>soc</ns2:VariableID>
+        <ns2:VariableDescription>State of charge</ns2:VariableDescription>
+        <ns2:SetPoint>false</ns2:SetPoint>
+        <ns2:SetPointForUser>false</ns2:SetPointForUser>
+        <ns2:StateIdentifier>true</ns2:StateIdentifier>
+        <ns2:ValueMin>0.0</ns2:ValueMin>
+        <ns2:ValueMax>100.0</ns2:ValueMax>
+        <ns2:EvaluationStepSize>0.1</ns2:EvaluationStepSize>
+        <ns2:Unit>%</ns2:Unit>
+        <ns2:GradientValue>0.0</ns2:GradientValue>
+        <ns2:StateIdentifierPrecision>0.0</ns2:StateIdentifierPrecision>
+        <ns2:ControlRange>
+            <ns2:VariableID>soc</ns2:VariableID>
+            <ns2:ValueMin>0.0</ns2:ValueMin>
+            <ns2:ValueMax>100.0</ns2:ValueMax>
+        </ns2:ControlRange>
+    </ns2:SystemVariables>
+    <ns2:SystemVariables xsi:type="ns2:SystemVariableDefinitionStaticModel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ns2:VariableID>staticModel</ns2:VariableID>
+        <ns2:VariableDescription>Static Battery Parameters</ns2:VariableDescription>
+        <ns2:SetPoint>false</ns2:SetPoint>
+        <ns2:SetPointForUser>false</ns2:SetPointForUser>
+        <ns2:StateIdentifier>false</ns2:StateIdentifier>
+        <ns2:StaticModelClass>hygrid.agent.batteryStorage.StaticModel</ns2:StaticModelClass>
+        <ns2:StaticModelValue>rO0ABXNyACxoeWdyaWQuYWdlbnQuYmF0dGVyeVN0b3JhZ2UuU3RhdGljUGFyYW1ldGVyc5Lo+zf/1+2XAgAGTAAIY2FwYWNpdHl0ABJMamF2YS9sYW5nL0RvdWJsZTtMAAR0YmQxcQB+AAFMAAR0YmQycQB+AAFMAAR0YmQzcQB+AAFMAAR0YmQ0cQB+AAFMAAR0YmQ1cQB+AAF4cHNyABBqYXZhLmxhbmcuRG91YmxlgLPCSilr+wQCAAFEAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cEB/QAAAAAAAc3EAfgADAAAAAAAAAABzcQB+AAMAAAAAAAAAAHNxAH4AAwAAAAAAAAAAc3EAfgADAAAAAAAAAABzcQB+AAMAAAAAAAAAAA==</ns2:StaticModelValue>
+    </ns2:SystemVariables>
+    <ns2:CalculationClass>hygrid.agent.batteryStorage.EnergyFlowCalculation</ns2:CalculationClass>
+    <ns2:EvaluationSettings>
+        <ns2:DataRepetition>None</ns2:DataRepetition>
+        <ns2:TimeFormat>dd.MM.yy HH:mm:ss</ns2:TimeFormat>
+        <ns2:EvaluationStateList xsi:type="ns2:TechnicalSystemState" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:GlobalTime>1497607200000</ns2:GlobalTime>
+            <ns2:Description>End</ns2:Description>
+            <ns2:ConfigID>1</ns2:ConfigID>
+            <ns2:StateID>Charge</ns2:StateID>
+            <ns2:StateTime>0</ns2:StateTime>
+            <ns2:IOlist xsi:type="ns2:FixedDouble">
+                <ns2:VariableID>soc</ns2:VariableID>
+                <ns2:Value>0.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:IOlist xsi:type="ns2:FixedInteger">
+                <ns2:VariableID>rate</ns2:VariableID>
+                <ns2:Value>1</ns2:Value>
+            </ns2:IOlist>
+        </ns2:EvaluationStateList>
+        <ns2:EvaluationStateList xsi:type="ns2:TechnicalSystemState" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:GlobalTime>1497607200000</ns2:GlobalTime>
+            <ns2:Description>End</ns2:Description>
+            <ns2:StateTime>0</ns2:StateTime>
+        </ns2:EvaluationStateList>
+        <ns2:InputMeasurements xsi:type="ns2:InputMeasurementCalculatedByState" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ns2:VariableID>soc</ns2:VariableID>
+            <ns2:CalculationClass>hygrid.agent.batteryStorage.StateOfChargeCalculation</ns2:CalculationClass>
+        </ns2:InputMeasurements>
+        <ns2:CostModel>
+            <ns2:CostUnit>€</ns2:CostUnit>
+            <ns2:SIPrefix>kilo, k, 3</ns2:SIPrefix>
+            <ns2:TimeUnit>hour, h</ns2:TimeUnit>
+        </ns2:CostModel>
+    </ns2:EvaluationSettings>
+</ns2:TechnicalSystem>

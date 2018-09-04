@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="48"
+   height="48"
+   viewBox="0 0 48 48"
+   sodipodi:docname="Battery.svg"
+   inkscape:export-filename="C:\Users\mludwig\Documents\EclipseWorkspace\HyGrid\lib\AgentGui\projects\hygrid\images\Battery\Battery.png"
+   inkscape:export-xdpi="191.45943"
+   inkscape:export-ydpi="191.45943">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="27.097559"
+     inkscape:cy="26.070956"
+     inkscape:window-x="1592"
+     inkscape:window-y="82"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <rect
+     style="opacity:0.98999999;fill:#18de11;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.606;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stroke-linejoin:round"
+     id="rect4138"
+     width="18.410242"
+     height="23.875338"
+     x="1.5093457"
+     y="6.6514831" />
+  <rect
+     style="opacity:0.98999999;fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.68287301;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4140"
+     width="3.9793129"
+     height="1.0310369"
+     x="8.7248106"
+     y="4.4668489" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 12.184895,11.672786 -3.1936603,5.888575 4.0493433,-0.194665 -2.42447,5.154902"
+     id="path4144"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
+  <path
+     sodipodi:type="star"
+     style="opacity:0.98999999;fill:#18de11;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.60599995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path4146"
+     sodipodi:sides="3"
+     sodipodi:cx="10.714467"
+     sodipodi:cy="23.658749"
+     sodipodi:r1="1.4741379"
+     sodipodi:r2="0.73706895"
+     sodipodi:arg1="1.5707963"
+     sodipodi:arg2="2.6179939"
+     inkscape:flatsided="true"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="m 10.714467,25.132887 -1.2766408,-2.211207 2.5532818,0 z"
+     inkscape:transform-center-y="0.36853447" />
+</svg>

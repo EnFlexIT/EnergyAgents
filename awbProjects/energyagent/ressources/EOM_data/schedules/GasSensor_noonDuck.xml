@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:ScheduleList xmlns:ns2="http://www.dawis.wiwi.uni-due.de/EnergyOptionModel">
+    <ns2:NetworkID>Gas</ns2:NetworkID>
+    <ns2:SystemID>GasSensor</ns2:SystemID>
+    <ns2:Schedules>
+        <ns2:StrategyClass>CSV-Imported Schedule</ns2:StrategyClass>
+        <ns2:SourceThread>CSV-Imported Schedule</ns2:SourceThread>
+        <ns2:Priority>0</ns2:Priority>
+        <ns2:CalculationTime>0</ns2:CalculationTime>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414879200000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414875600000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414872000000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414868400000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414864800000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414861200000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414857600000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414854000000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414850400000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414846800000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414843200000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>200.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414839600000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414836000000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414832400000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414828800000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414825200000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414821600000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414818000000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414814400000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414810800000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414807200000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414803600000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414800000000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>3600000</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+        <ns2:TechnicalSystemStateList>
+            <ns2:GlobalTime>1414796400000</ns2:GlobalTime>
+            <ns2:ConfigID>01</ns2:ConfigID>
+            <ns2:StateID>measuring</ns2:StateID>
+            <ns2:StateTime>0</ns2:StateTime>
+            <ns2:StateTimeFormat>millisecond, ms</ns2:StateTimeFormat>
+            <ns2:IOlist xsi:type="ns2:FixedDouble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <ns2:VariableID>EnergyFlow</ns2:VariableID>
+                <ns2:Value>500.0</ns2:Value>
+            </ns2:IOlist>
+            <ns2:StateCosts>0.0</ns2:StateCosts>
+            <ns2:ResultingCosts>0.0</ns2:ResultingCosts>
+        </ns2:TechnicalSystemStateList>
+    </ns2:Schedules>
+</ns2:ScheduleList>
