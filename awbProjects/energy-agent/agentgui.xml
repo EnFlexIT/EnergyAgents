@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Energy Agent - Example Project</projectName>
-    <projectDescription>Hi,
+    <projectDescription>Hello,
 
-here you can place some detailed description about the current Agent.Workbench project in a textual manner.
-(beside that we could also imagine to replace this text with a browser in order to display a web site with help content)
+this is the Agent.Workbench / Agent.HyGrid example project that demonstrates 
+the potentials and abilities of Energy Agents. 
 
-To view the configuration part of a project, switch the 'View' to the 'Developer view' (in the menu above).
+Further explanations can be found in the Wiki of the Github project under 
+https://github.com/EnFlexIT/EnergyAgentExample/wiki
 
-Have fun trying Agent.Workbench and the HyGrid project.
+Have fun discovering the possibilities  and details. 
 
-Best wishes,
-Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wassermann</projectDescription>
+Kind regards / Best wishes,
+
+Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
+&amp; Christian Derksen
+</projectDescription>
     <projectStartTab>2|3</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.0.0.20180904-2300</version>
+    <version>1.0.0.20180906-1800</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>

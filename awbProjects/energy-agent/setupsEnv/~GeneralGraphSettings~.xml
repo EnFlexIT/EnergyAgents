@@ -8,7 +8,7 @@
                 <agentClass>hygrid.agent.battery.BatteryAgent</agentClass>
                 <color>-16777216</color>
                 <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Battery/Battery.png</edgeImage>
+                <edgeImage>/energy-agent/images/Battery.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
@@ -33,7 +33,7 @@
                 <agentClass>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Coordination</domain>
-                <edgeImage>/energy-agent/images/CEA/Marvin15DPI.png</edgeImage>
+                <edgeImage>/energy-agent/images/Marvin15DPI.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
