@@ -4,7 +4,7 @@ This repository contains samples for the usage of Energy Agents. Without much th
 For such, and for the development over the next years, the notion of Energy Agents and the tools presented here, might be used in scientific research or in real-world applications helping to support the digitization of our energy systems and markets, as we hope.
 
 The folowing introductions and tutorials can be found in the Wiki of this project:
-* **Getting in touch - Running the example scenario on your machine:** [Download][GIT.Agent.Workbench.Download.Release] the [Agent.Workbench][GIT.Agent.Workbench] core application and navigate to *Projects* => *Repository Import* => select the *awbProjectRepositor* in the combo box above, select *Energy Agent - Example Project+ and press the *Install* button. A detailed description can be found in the Wiki,
+* **Getting in touch - Running the example scenario on your machine:** [Download](https://github.com/EnFlexIT/AgentWorkbench/releases) the [Agent.Workbench](https://github.com/EnFlexIT/AgentWorkbench) core application and navigate to *Projects* => *Repository Import* => select the *awbProjectRepositor* in the combo box above, select *Energy Agent - Example Project+ and press the *Install* button. [A more detailed description can be found in the Wiki](https://github.com/EnFlexIT/EnergyAgentExample/wiki/1.-Run-the-example-scenario),
 
 * **Understanding the example project:** This Wiki articel describes the intention and the background for the 
 
