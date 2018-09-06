@@ -238,119 +238,107 @@
         <agent>
             <postionNo>39</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.windturbine.WindturbineAgent</agentClassReference>
-            <startAsName>n49</startAsName>
+            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <startAsName>n48</startAsName>
         </agent>
         <agent>
             <postionNo>40</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
-            <startAsName>n48</startAsName>
-        </agent>
-        <agent>
-            <postionNo>41</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n1</startAsName>
         </agent>
         <agent>
-            <postionNo>42</postionNo>
+            <postionNo>41</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.transformer.TransformerAgent</agentClassReference>
             <startAsName>n2</startAsName>
         </agent>
         <agent>
-            <postionNo>43</postionNo>
+            <postionNo>42</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n3</startAsName>
         </agent>
         <agent>
-            <postionNo>44</postionNo>
+            <postionNo>43</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n4</startAsName>
         </agent>
         <agent>
-            <postionNo>45</postionNo>
+            <postionNo>44</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n5</startAsName>
         </agent>
         <agent>
-            <postionNo>46</postionNo>
+            <postionNo>45</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n6</startAsName>
         </agent>
         <agent>
-            <postionNo>47</postionNo>
+            <postionNo>46</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n7</startAsName>
         </agent>
         <agent>
-            <postionNo>48</postionNo>
+            <postionNo>47</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n8</startAsName>
         </agent>
         <agent>
-            <postionNo>49</postionNo>
+            <postionNo>48</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n9</startAsName>
         </agent>
         <agent>
-            <postionNo>50</postionNo>
-            <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.battery.BatteryAgent</agentClassReference>
-            <startAsName>n510</startAsName>
-        </agent>
-        <agent>
-            <postionNo>51</postionNo>
+            <postionNo>49</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n54</startAsName>
         </agent>
         <agent>
-            <postionNo>52</postionNo>
+            <postionNo>50</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n59</startAsName>
         </agent>
         <agent>
-            <postionNo>53</postionNo>
+            <postionNo>51</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n64</startAsName>
         </agent>
         <agent>
-            <postionNo>54</postionNo>
+            <postionNo>52</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n66</startAsName>
         </agent>
         <agent>
-            <postionNo>55</postionNo>
+            <postionNo>53</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n81</startAsName>
         </agent>
         <agent>
-            <postionNo>56</postionNo>
+            <postionNo>54</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n87</startAsName>
         </agent>
         <agent>
-            <postionNo>57</postionNo>
+            <postionNo>55</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
             <startAsName>n86</startAsName>
         </agent>
         <agent>
-            <postionNo>58</postionNo>
+            <postionNo>56</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
             <agentClassReference>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</agentClassReference>
             <startAsName>CeExAg</startAsName>
@@ -367,11 +355,11 @@
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1414836000000</value>
+            <value>1414839600000</value>
         </entry>
         <entry>
             <key>TimeStart</key>
-            <value>1414832400000</value>
+            <value>1414836000000</value>
         </entry>
     </timeModelSettings>
     <environmentFileName>Energy Agent Scenario 1.graphml</environmentFileName>

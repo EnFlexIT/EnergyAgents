@@ -64,147 +64,6 @@
             </value>
         </entry>
         <entry>
-            <key>ChargingStation</key>
-            <value>
-                <adapterClass>hygrid.agent.chargingStation.ChargingStationEomAdapter</adapterClass>
-                <agentClass>hygrid.agent.chargingStation.ChargingStationAgent</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Emobil/E-MobilKleiner.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Consumer</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
-                <color>-16776961</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Household_Grey_Contour.png</edgeImage>
-                <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>DEA</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
-                <color>-16738048</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Photovoltaic/Photovoltaic_Green.png</edgeImage>
-                <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>DistrictAgent</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.gridStateAggregator.districtAgent.DistrictAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Coordination</domain>
-                <edgeImage>/energy-agent/images/DistrictAgent/DistrictAgent.png</edgeImage>
-                <edgeWidth>8.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Electrolyser</key>
-            <value>
-                <adapterClass>hygrid.agent.SwitchableEomAdapter</adapterClass>
-                <agentClass>hygrid.agent.electrolyser.ElectrolyserAgent</agentClass>
-                <color>-16724737</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Electrolyzer.png</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>GasSensor</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.gasSensor.GasSensorAgent</agentClass>
-                <color>-65281</color>
-                <domain>Coordination</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>GridStateAggregator</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.gridStateAggregator.GridStateAggregatorAgent</agentClass>
-                <color>-16777216</color>
-                <domain>Coordination</domain>
-                <edgeImage>/energy-agent/images/GSA/GSA.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>GridStateSupervisor</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <color>-3355444</color>
-                <domain>Coordination</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>ModbusGateway</key>
-            <value>
-                <adapterClass>hygrid.modbusTCP.gui.ModubusAdapter</adapterClass>
-                <color>-16777216</color>
-                <domain>Coordination</domain>
-                <edgeImage>/energy-agent/images/ModbusGateway.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Photovoltaic</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.photovoltaic.PhotovoltaicAgent</agentClass>
-                <color>-256</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>MissingIcon</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>PhotovoltaicModBus</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.photovoltaic.modbus.PhotovoltaicAgent</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Photovoltaic/Photovoltaic_Green.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Prosumer</key>
             <value>
                 <adapterClass>energy.agentgui.EomAdapter</adapterClass>
@@ -215,19 +74,6 @@
                 <edgeWidth>15.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>REF-PV</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.photovoltaic.referencePV.RefPVAgent</agentClass>
-                <color>-256</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/REF-PV/Photovoltaic_Yellow.png</edgeImage>
-                <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>false</showLabel>
             </value>
         </entry>
         <entry>
@@ -255,42 +101,6 @@
             </value>
         </entry>
         <entry>
-            <key>SimulatedPV</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Photovoltaic/Photovoltaic_Green.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>SlagNode</key>
-            <value>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/SlackNode.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>Sleeve</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeWidth>10.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
             <key>Transformer</key>
             <value>
                 <adapterClass>energy.agentgui.EomAdapter</adapterClass>
@@ -312,32 +122,6 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Windturbine.png</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>WindturbineHSU</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.windturbineHSU.WindturbineAgentHSU</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Photovoltaic/Photovoltaic_Blue.png</edgeImage>
-                <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
-                <showLabel>true</showLabel>
-            </value>
-        </entry>
-        <entry>
-            <key>WindturbineModBus</key>
-            <value>
-                <adapterClass>energy.agentgui.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.windturbine.modbusTCP.WindTurbineAgent</agentClass>
-                <color>-16777216</color>
-                <domain>ElectricityThriPhase</domain>
-                <edgeImage>/energy-agent/images/Windturbine.png</edgeImage>
-                <edgeWidth>2.0</edgeWidth>
                 <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>

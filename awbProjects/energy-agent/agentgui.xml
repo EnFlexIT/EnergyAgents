@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Energy Agent - Example Project</projectName>
-    <projectDescription>Hi there,
+    <projectDescription>Hi,
 
 here you can place some detailed description about the current Agent.Workbench project in a textual manner.
 (beside that we could also imagine to replace this text with a browser in order to display a web site with help content)
@@ -18,7 +18,7 @@ Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wasserma
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1536093693827</updateDateLastChecked>
+    <updateDateLastChecked>1536244638580</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -32,7 +32,6 @@ Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wasserma
     <reCreateProjectManifest>true</reCreateProjectManifest>
     <plugins>
         <className>hygrid.plugin.HyGridPlugIn</className>
-        <className>hygrid.agent.gridStateAggregator.plugin.GridStateAggregatorPlugIn</className>
         <className>hygrid.deployment.plugin.DeploymentPlugIn</className>
         <className>hygrid.ops.plugin.OpsPlugin</className>
     </plugins>
@@ -75,7 +74,7 @@ Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wasserma
         <useLocalPort>1099</useLocalPort>
         <useLocalMtpPort>7778</useLocalMtpPort>
         <mtpCreation>ConfiguredByIPandPort</mtpCreation>
-        <mtpIpAddress>132.252.237.76</mtpIpAddress>
+        <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
             <service>agentgui.logging.DebugService</service>
@@ -253,9 +252,17 @@ Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wasserma
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <simulationSetups>
         <entry>
+            <key>Energy Agent Scenario 3</key>
+            <value>energy_agent_scenario_3.xml</value>
+        </entry>
+        <entry>
+            <key>Energy Agent Scenario 2</key>
+            <value>energy_agent_scenario_2.xml</value>
+        </entry>
+        <entry>
             <key>Energy Agent Scenario 1</key>
             <value>energy_agent_scenario_1.xml</value>
         </entry>
     </simulationSetups>
-    <unsaved>false</unsaved>
+    <unsaved>true</unsaved>
 </project>
