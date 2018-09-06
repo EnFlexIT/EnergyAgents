@@ -8,14 +8,12 @@ The folowing introductions and tutorials can be found in the Wiki of this projec
 
 * **Understanding the example project:** [This Wiki article](https://github.com/EnFlexIT/EnergyAgentExample/wiki/2.-Understand-the-Example) describes the intention and the background of the provided agent-based execution environment for simulaton and on-site usage. Further, it explains the core structure of an Energy Agent and the types of simulation sequences that can be used with the example.  
 
-* The List of already build-in capabilitis or features
+* **Feature List:** The list contains loosely coupled (but not unstructured) aspects about Energy Agents, the Energy Option Model and Agent.Workbench. It is also used as link destination for other articles. Nevertheless, a [look at the collection](https://github.com/EnFlexIT/EnergyAgentExample/wiki/3.-Feature-List) is worthwhile.
+
+* **Expandability:** 
 
 
-
-
-
-
-# Start developing your own Energy Agents
+# Develop your own Energy Agents
 
 
 
