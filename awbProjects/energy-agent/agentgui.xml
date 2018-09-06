@@ -249,20 +249,12 @@ Christian Derksen, Nils Loose, Marcel Ludwig, Sebastian Törsleff, Erik Wasserma
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>E-World Scenario 1</simulationSetupCurrent>
+    <simulationSetupCurrent>Energy Agent Scenario 1</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <simulationSetups>
         <entry>
-            <key>E-World Scenario 3</key>
-            <value>e_world_scenario_3.xml</value>
-        </entry>
-        <entry>
-            <key>E-World Scenario 2</key>
-            <value>e_world_scenario_2.xml</value>
-        </entry>
-        <entry>
-            <key>E-World Scenario 1</key>
-            <value>e_world_scenario_1.xml</value>
+            <key>Energy Agent Scenario 1</key>
+            <value>energy_agent_scenario_1.xml</value>
         </entry>
     </simulationSetups>
     <unsaved>false</unsaved>
