@@ -17,6 +17,6 @@ The folowing introductions and tutorials can be found in the Wiki of this projec
 
 
 # Develop your own Energy Agents
-* **Setting up your development environment:** To develop your own Energy Agents and extend the AWB example project, requires to install the above described example project and the *Eclipse IDE for Java EE Developers*. [A more detailed description can be found here.](https://enflexit.gitbook.io/agent-workbench/getting-started)   
+* **Setting up your development environment:** To develop your own Energy Agents and extend the AWB example project, requires to locally install the above described example project and the *Eclipse IDE for Java EE Developers*. [A more detailed description can be found here.](https://enflexit.gitbook.io/agent-workbench/getting-started)   
 
 
