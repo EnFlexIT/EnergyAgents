@@ -1,5 +1,5 @@
-+Please understand that this priject page is not yet completed. We have just begun documentation of the [Agent.HyGrid](http://www.agent-hygrid.net) project and the Energy Agent approach.
-If you have questions or if you''re missing a more detailed description, please go to the issue area of this GitHub project and leave your questions or recommendations.+
+*Please understand that this project page is not yet completed. We have just begun documentation of the [Agent.HyGrid](http://www.agent-hygrid.net) project and our Energy Agent approach.
+If you have questions or if you''re missing a more detailed description, please go to the issue area of this GitHub project and leave your questions or recommendations.*
 
 # Energy Agents
 This repository contains samples for the usage of Energy Agents. Without much theoretical or scientific entitlement, we would like to claim here that those Energy Agents can either be seen as micro energy management system that can be used in distributed energy scenarios (e.g. in Peer-to-Peer markets & Blockchain) or that they can be used in central cloud applications to control energy systems from elesewher (e.g. Virtual Power Plants or Demand Site Manangement). 
