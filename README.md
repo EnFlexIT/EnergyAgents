@@ -1,3 +1,6 @@
++Please understand that this priject page is not yet completed. We have just begun documentation of the [Agent.HyGrid](http://www.agent-hygrid.net) project and the Energy Agent approach.
+If you have questions or if you''re missing a more detailed description, please go to the issue area of this GitHub project and leave your questions or recommendations.+
+
 # Energy Agents
 This repository contains samples for the usage of Energy Agents. Without much theoretical or scientific entitlement, we would like to claim here that those Energy Agents can either be seen as micro energy management system that can be used in distributed energy scenarios (e.g. in Peer-to-Peer markets & Blockchain) or that they can be used in central cloud applications to control energy systems from elesewher (e.g. Virtual Power Plants or Demand Site Manangement). 
 
@@ -8,12 +11,12 @@ The folowing introductions and tutorials can be found in the Wiki of this projec
 
 * **Understanding the example project:** [This Wiki article](https://github.com/EnFlexIT/EnergyAgentExample/wiki/2.-Understand-the-Example) describes the intention and the background of the provided agent-based execution environment for simulaton and on-site usage. Further, it explains the core structure of an Energy Agent and the types of simulation sequences that can be used with the example.  
 
-* **Feature List:** The list contains loosely coupled (but not unstructured) aspects about Energy Agents, the Energy Option Model and Agent.Workbench. It is also used as link destination for other articles. Nevertheless, a [look at the collection](https://github.com/EnFlexIT/EnergyAgentExample/wiki/3.-Feature-List) is worthwhile.
+* **Feature List:** The list contains loosely coupled (but not unstructured) aspects about *Energy Agents*, the *Energy Option Model* and *Agent.Workbench*. It is also used as link destination for other articles. Nevertheless, a [look at the collection](https://github.com/EnFlexIT/EnergyAgentExample/wiki/3.-Feature-List) is worthwhile.
 
-* **Expandability:** 
+* **Agent.Workbench Expandability:** Agent.Workbench, the HyGrid feature and Energy Agents represent  a base tool or toolchain that enables you to build whatever application you like. For this, you might be interessted in how you can add further OSGI-features to the AWB framework, add new tabs to the project window, add new menus or toolbar items or how you can individually control the start of your agents.
 
 
 # Develop your own Energy Agents
-
+* **Setting up your development environment:** To develop your own Energy Agents and extend the AWB example project, requires to install the above described example project and the *Eclipse IDE for Java EE Developers*. [A more detailed description can be found here.](https://enflexit.gitbook.io/agent-workbench/getting-started)   
 
 
