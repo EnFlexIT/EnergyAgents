@@ -1,4 +1,4 @@
-*Please understand that this project page is not yet completed. We have just begun documentation of the [Agent.HyGrid](http://www.agent-hygrid.net) project and our Energy Agent approach.
+*Please understand that this project page is not yet completed. We have just begun documentation of the [Agent.HyGrid](https://www.agent-hygrid.net/en/welcome/) project and our Energy Agent approach.
 If you have questions or if you''re missing a more detailed description, please go to the issue area of this GitHub project and leave your questions or recommendations.*
 
 # Energy Agents
