@@ -368,5 +368,6 @@
             <value>1414832400000</value>
         </entry>
     </timeModelSettings>
+    <userObjectClassName>hygrid.deployment.dataModel.SetupExtension</userObjectClassName>
     <environmentFileName>Energy Agent Scenario 2.graphml</environmentFileName>
 </simulationSetup>

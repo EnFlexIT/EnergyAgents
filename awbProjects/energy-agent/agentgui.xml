@@ -18,11 +18,11 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|3</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.0.0.20180906-1800</version>
+    <version>1.0.0.20180920-1500</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1536244638580</updateDateLastChecked>
+    <updateDateLastChecked>1537442485301</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -100,7 +100,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         <numberOfAgents>50</numberOfAgents>
         <numberOfContainer>2</numberOfContainer>
         <remoteOnly>false</remoteOnly>
-        <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
+        <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
         <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>false</useUserThresholds>
@@ -252,7 +252,8 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Energy Agent Scenario 1</simulationSetupCurrent>
+    <userObjectClassName>hygrid.env.HyGridAbstractEnvironmentModel</userObjectClassName>
+    <simulationSetupCurrent>Energy Agent Scenario 2</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <simulationSetups>
         <entry>
@@ -268,5 +269,4 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <value>energy_agent_scenario_1.xml</value>
         </entry>
     </simulationSetups>
-    <unsaved>true</unsaved>
 </project>
