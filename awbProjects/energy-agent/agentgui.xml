@@ -16,13 +16,13 @@ Kind regards / Best wishes,
 Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 &amp; Christian Derksen
 </projectDescription>
-    <projectStartTab>2|3</projectStartTab>
+    <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
     <version>1.0.0.20180920-1500</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1537442485301</updateDateLastChecked>
+    <updateDateLastChecked>1538745909498</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -142,17 +142,17 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <agentClass>
                 <className>hygrid.agent.sensor.SensorAgent</className>
                 <realMetric>0.1</realMetric>
-                <realMetricAverage>5.028308217415894</realMetricAverage>
-                <realMetricMax>5.028308217415894</realMetricMax>
-                <realMetricMin>5.028308217415894</realMetricMin>
+                <realMetricAverage>0.8283733182246112</realMetricAverage>
+                <realMetricMax>0.8283733182246111</realMetricMax>
+                <realMetricMin>0.8283733182246111</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
             <agentClass>
                 <className>hygrid.agent.manager.SimulationManager</className>
                 <realMetric>0.1</realMetric>
-                <realMetricAverage>167.68253871623241</realMetricAverage>
-                <realMetricMax>167.68253871623241</realMetricMax>
-                <realMetricMin>167.68253871623241</realMetricMin>
+                <realMetricAverage>1.0470502823479262</realMetricAverage>
+                <realMetricMax>1.0470502823479262</realMetricMax>
+                <realMetricMin>1.0470502823479262</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
             <agentClass>
@@ -166,9 +166,9 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <agentClass>
                 <className>hygrid.agent.transformer.TransformerAgent</className>
                 <realMetric>1.0</realMetric>
-                <realMetricAverage>0.0</realMetricAverage>
-                <realMetricMax>0.0</realMetricMax>
-                <realMetricMin>0.0</realMetricMin>
+                <realMetricAverage>1.044409660666894</realMetricAverage>
+                <realMetricMax>1.044409660666894</realMetricMax>
+                <realMetricMin>1.044409660666894</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
             <agentClass>
@@ -182,17 +182,17 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <agentClass>
                 <className>system.class.-Regular-Thread-</className>
                 <realMetric>1.0</realMetric>
-                <realMetricAverage>11.390698969671082</realMetricAverage>
-                <realMetricMax>11.390698969671067</realMetricMax>
-                <realMetricMin>11.390698969671067</realMetricMin>
+                <realMetricAverage>8.889332509516018</realMetricAverage>
+                <realMetricMax>8.889332509516008</realMetricMax>
+                <realMetricMin>8.889332509516008</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
             <agentClass>
                 <className>agentgui.simulationService.agents.ServerClientAgent</className>
                 <realMetric>1.0</realMetric>
-                <realMetricAverage>0.11119768471969065</realMetricAverage>
-                <realMetricMax>0.11119768471969065</realMetricMax>
-                <realMetricMin>0.11119768471969065</realMetricMin>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
             <agentClass>
@@ -243,6 +243,46 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
                 <realMetricMin>0.0</realMetricMin>
                 <userPredictedMetric>1.0</userPredictedMetric>
             </agentClass>
+            <agentClass>
+                <className>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.agent.battery.BatteryAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>3.6890613210884977</realMetricAverage>
+                <realMetricMax>3.6890613210884977</realMetricMax>
+                <realMetricMin>3.6890613210884977</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>agentgui.envModel.graph.visualisation.DisplayAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.globalDataModel.blackboard.BlackboardAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
+            <agentClass>
+                <className>hygrid.ops.agent.CeaConnectorAgent</className>
+                <realMetric>1.0</realMetric>
+                <realMetricAverage>0.0</realMetricAverage>
+                <realMetricMax>0.0</realMetricMax>
+                <realMetricMin>0.0</realMetricMin>
+                <userPredictedMetric>1.0</userPredictedMetric>
+            </agentClass>
         </agentClassMetricDescriptionVector>
         <useRealLoadMetric>false</useRealLoadMetric>
     </agentClassLoadMetricsTable>
@@ -257,16 +297,16 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <simulationSetups>
         <entry>
-            <key>Energy Agent Scenario 3</key>
-            <value>energy_agent_scenario_3.xml</value>
+            <key>Energy Agent Scenario 1</key>
+            <value>energy_agent_scenario_1.xml</value>
         </entry>
         <entry>
             <key>Energy Agent Scenario 2</key>
             <value>energy_agent_scenario_2.xml</value>
         </entry>
         <entry>
-            <key>Energy Agent Scenario 1</key>
-            <value>energy_agent_scenario_1.xml</value>
+            <key>Energy Agent Scenario 3</key>
+            <value>energy_agent_scenario_3.xml</value>
         </entry>
     </simulationSetups>
 </project>
