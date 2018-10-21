@@ -4,6 +4,7 @@
     <simulationIntervalUnitIndex>1</simulationIntervalUnitIndex>
     <networkCalculationIntervalLength>1000</networkCalculationIntervalLength>
     <networkCalculationIntervalUnitIndex>1</networkCalculationIntervalUnitIndex>
+    <executionDataBase>NodePowerFlows</executionDataBase>
     <energyTransmissionConfiguration>
         <deltaAbsoluteWatt>100</deltaAbsoluteWatt>
         <deltaMechanism>Percentage</deltaMechanism>
