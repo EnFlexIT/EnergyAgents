@@ -6,7 +6,7 @@
             <value>
                 <adapterClass>hygrid.agent.battery.BatteryEomAdapter</adapterClass>
                 <agentClass>hygrid.agent.battery.BatteryAgent</agentClass>
-                <color>-16777216</color>
+                <color>-6710785</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Battery.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
