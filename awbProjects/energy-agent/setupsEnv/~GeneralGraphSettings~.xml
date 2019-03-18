@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <generalGraphSettings4MAS>
+    <componentSorting>Alphanumeric</componentSorting>
     <currentCTS>
         <entry>
             <key>BatteryBUW</key>
@@ -42,7 +43,7 @@
         <entry>
             <key>Cable</key>
             <value>
-                <adapterClass>hygrid.env.adapter.CableAdapter</adapterClass>
+                <adapterClass>hygrid.env.adapter.LowVoltageCableAdapter</adapterClass>
                 <color>-16777216</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>MissingIcon</edgeImage>

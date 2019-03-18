@@ -18,11 +18,11 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.0.1.20181020-2000</version>
+    <version>1.0.1.20190318-1500</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1545051001065</updateDateLastChecked>
+    <updateDateLastChecked>1552917827007</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -32,8 +32,6 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <version>2.0.1.201808310848</version>
         </projectFeature>
     </projectFeatures>
-    <projectResources/>
-    <reCreateProjectManifest>true</reCreateProjectManifest>
     <plugins>
         <className>hygrid.plugin.HyGridPlugIn</className>
         <className>hygrid.deployment.plugin.DeploymentPlugIn</className>
