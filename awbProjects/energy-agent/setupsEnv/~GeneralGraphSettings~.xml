@@ -182,7 +182,17 @@
             </value>
         </entry>
     </domainSettings>
-    <edgeShape>Line</edgeShape>
-    <snap2Grid>true</snap2Grid>
-    <snapRaster>20.0</snapRaster>
+    <layoutSettings>
+        <entry>
+            <key>833149a3-b760-42ed-b17d-112c9b8d4c14</key>
+            <value>
+                <coordinateSystemXDirection>East</coordinateSystemXDirection>
+                <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
+                <edgeShape>Line</edgeShape>
+                <layoutName>Default Layout</layoutName>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>5.0</snapRaster>
+            </value>
+        </entry>
+    </layoutSettings>
 </generalGraphSettings4MAS>
