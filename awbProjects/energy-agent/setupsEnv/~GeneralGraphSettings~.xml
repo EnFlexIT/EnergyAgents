@@ -11,7 +11,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Battery.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -23,7 +23,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Breaker.png</edgeImage>
                 <edgeWidth>5.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -36,7 +36,7 @@
                 <domain>Coordination</domain>
                 <edgeImage>/energy-agent/images/Marvin15DPI.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -48,7 +48,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -60,7 +60,7 @@
                 <color>-5000269</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -73,7 +73,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Prosumer_Grey_Contour.png</edgeImage>
                 <edgeWidth>15.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -86,7 +86,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Measurement.png</edgeImage>
                 <edgeWidth>5.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -97,7 +97,7 @@
                 <domain>Coordination</domain>
                 <edgeImage>MissingIcon</edgeImage>
                 <edgeWidth>1.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.SimpleGraphElement</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
                 <showLabel>false</showLabel>
             </value>
         </entry>
@@ -110,7 +110,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Trafo.png</edgeImage>
                 <edgeWidth>2.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
@@ -123,7 +123,7 @@
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Windturbine.png</edgeImage>
                 <edgeWidth>20.0</edgeWidth>
-                <graphPrototype>agentgui.envModel.graph.prototypes.DistributionNode</graphPrototype>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
                 <showLabel>true</showLabel>
             </value>
         </entry>
