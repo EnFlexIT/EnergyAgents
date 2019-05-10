@@ -18,18 +18,19 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.1.0.20190412-1600</version>
+    <version>1.1.0.20190508-1700</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1555077877031</updateDateLastChecked>
+    <updateDateLastChecked>1557327605527</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
             <id>net.agenthygrid.feature.feature.group</id>
             <name>Agent.HyGrid</name>
+            <repositoryName>Enflex.IT Update Site</repositoryName>
             <repositoryURI>https://p2.enflex.it/awb/2.1/</repositoryURI>
-            <version>2.0.1.201808310848</version>
+            <version>2.2.0.201904121345</version>
         </projectFeature>
     </projectFeatures>
     <plugins>
