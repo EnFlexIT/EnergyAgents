@@ -189,6 +189,7 @@
                 <coordinateSystemXDirection>East</coordinateSystemXDirection>
                 <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
                 <edgeShape>Line</edgeShape>
+                <geographicalLayout>false</geographicalLayout>
                 <layoutName>Default Layout</layoutName>
                 <snap2Grid>true</snap2Grid>
                 <snapRaster>5.0</snapRaster>
