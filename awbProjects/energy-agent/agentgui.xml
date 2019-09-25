@@ -18,11 +18,11 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.1.0.20190508-1700</version>
+    <version>1.1.0.20190818-2200</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1560779869891</updateDateLastChecked>
+    <updateDateLastChecked>1567411767572</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>

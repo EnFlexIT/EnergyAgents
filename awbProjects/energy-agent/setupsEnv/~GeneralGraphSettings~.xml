@@ -81,7 +81,7 @@
             <key>Sensor</key>
             <value>
                 <adapterClass>hygrid.env.adapter.SensorAdapter</adapterClass>
-                <agentClass>hygrid.agent.sensor.SensorAgent</agentClass>
+                <agentClass>hygrid.agent.lvSensor.LVSensorAgent</agentClass>
                 <color>-13395457</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Measurement.png</edgeImage>
