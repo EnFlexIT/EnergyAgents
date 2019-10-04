@@ -310,43 +310,43 @@
         <agent>
             <postionNo>51</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n54</startAsName>
         </agent>
         <agent>
             <postionNo>52</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n59</startAsName>
         </agent>
         <agent>
             <postionNo>53</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n64</startAsName>
         </agent>
         <agent>
             <postionNo>54</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n66</startAsName>
         </agent>
         <agent>
             <postionNo>55</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n81</startAsName>
         </agent>
         <agent>
             <postionNo>56</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n87</startAsName>
         </agent>
         <agent>
             <postionNo>57</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.sensor.SensorAgent</agentClassReference>
+            <agentClassReference>hygrid.agent.lvSensor.LVSensorAgent</agentClassReference>
             <startAsName>n86</startAsName>
         </agent>
         <agent>

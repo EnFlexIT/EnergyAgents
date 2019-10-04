@@ -43,7 +43,7 @@
         <entry>
             <key>Cable</key>
             <value>
-                <adapterClass>hygrid.env.adapter.LowVoltageCableAdapter</adapterClass>
+                <adapterClass>hygrid.env.adapter.CableAdapter</adapterClass>
                 <color>-16777216</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>MissingIcon</edgeImage>
