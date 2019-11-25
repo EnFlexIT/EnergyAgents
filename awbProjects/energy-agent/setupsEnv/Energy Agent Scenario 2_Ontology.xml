@@ -8,20 +8,118 @@
 	<nominalPower>
 		<UnitValue value="0.0F" unit="W"/>
 	</nominalPower>
+	<ratedVoltage>
+		<UnitValue value="400.0F" unit="V"/>
+	</ratedVoltage>
 </TransformerNodeProperties>
 ]]>
 </Instance>
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
 <![CDATA[<TriPhaseElectricalNodeState>
+	<l1>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l1>
+	<l2>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l2>
+	<l3>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l3>
 </TriPhaseElectricalNodeState>
 ]]>
 </Instance>
 <Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
 <![CDATA[<TimeSeriesChart realTime="false">
 	<timeSeriesVisualisationSettings>
-		<TimeSeriesChartSettings>
+		<TimeSeriesChartSettings yAxisLabel="" rendererType="" xAxisLabel="" chartTitle="" timeFormat="">
+			<yAxisColors>
+				<primitive type="STRING" value=""/>
+			</yAxisColors>
+			<yAxisLineWidth>
+				<primitive type="FLOAT" value="0.0F"/>
+			</yAxisLineWidth>
 		</TimeSeriesChartSettings>
 	</timeSeriesVisualisationSettings>
+	<timeSeriesChartData>
+		<TimeSeries label="" unit="">
+			<timeSeriesValuePairs>
+				<TimeSeriesValuePair>
+					<timestamp>
+						<Simple_Long StringLongValue=""/>
+					</timestamp>
+					<value>
+						<Simple_Float FloatValue="0.0F"/>
+					</value>
+				</TimeSeriesValuePair>
+			</timeSeriesValuePairs>
+		</TimeSeries>
+	</timeSeriesChartData>
 </TimeSeriesChart>
 ]]>
 </Instance>
@@ -208,6 +306,42 @@
 </Instances>
 </DataModel>
 <DataModel>
+	<NetworkElement>NetworkComponent,n54</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="14597803" measureLocation="n2">
+	<linearReactance>
+		<UnitValue value="0.082F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.271F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="5.154F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="232.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
 	<NetworkElement>NetworkComponent,n55</NetworkElement>
 <Instances>
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
@@ -338,6 +472,42 @@
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
 <![CDATA[<TriPhaseCableState>
 </TriPhaseCableState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
+	<NetworkElement>NetworkComponent,n59</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="21690901" measureLocation="n2">
+	<linearReactance>
+		<UnitValue value="0.082F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.271F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="50.187F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="232.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
 ]]>
 </Instance>
 <Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
@@ -496,6 +666,42 @@
 </Instances>
 </DataModel>
 <DataModel>
+	<NetworkElement>NetworkComponent,n64</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="21359602" measureLocation="n3">
+	<linearReactance>
+		<UnitValue value="0.082F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.271F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="5.181F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="232.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
 	<NetworkElement>NetworkComponent,n65</NetworkElement>
 <Instances>
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
@@ -518,6 +724,42 @@
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
 <![CDATA[<TriPhaseCableState>
 </TriPhaseCableState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
+	<NetworkElement>NetworkComponent,n66</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="21359601" measureLocation="n3">
+	<linearReactance>
+		<UnitValue value="0.08F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.157F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="40.214F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="318.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
 ]]>
 </Instance>
 <Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
@@ -1048,6 +1290,42 @@
 </Instances>
 </DataModel>
 <DataModel>
+	<NetworkElement>NetworkComponent,n81</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="14597802" measureLocation="n2">
+	<linearReactance>
+		<UnitValue value="0.082F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.197F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="340.073F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="280.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
 	<NetworkElement>NetworkComponent,n82</NetworkElement>
 <Instances>
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
@@ -1178,6 +1456,78 @@
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
 <![CDATA[<TriPhaseCableState>
 </TriPhaseCableState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
+	<NetworkElement>NetworkComponent,n86</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="21434101" measureLocation="n1">
+	<linearReactance>
+		<UnitValue value="0.082F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.271F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="4.217F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="232.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
+]]>
+</Instance>
+<Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
+<![CDATA[<TimeSeriesChart realTime="false">
+	<timeSeriesVisualisationSettings>
+		<TimeSeriesChartSettings>
+		</TimeSeriesChartSettings>
+	</timeSeriesVisualisationSettings>
+</TimeSeriesChart>
+]]>
+</Instance>
+</Instances>
+</DataModel>
+<DataModel>
+	<NetworkElement>NetworkComponent,n87</NetworkElement>
+<Instances>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<SensorProperties sensorID="21447901" measureLocation="n4">
+	<linearReactance>
+		<UnitValue value="0.08F" unit="Ω\km"/>
+	</linearReactance>
+	<linearResistance>
+		<UnitValue value="0.208F" unit="Ω\km"/>
+	</linearResistance>
+	<length>
+		<UnitValue value="131.843F" unit="m"/>
+	</length>
+	<maxCurrent>
+		<UnitValue value="270.0F" unit="A"/>
+	</maxCurrent>
+</SensorProperties>
+]]>
+</Instance>
+<Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
+<![CDATA[<TriPhaseSensorState>
+</TriPhaseSensorState>
 ]]>
 </Instance>
 <Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">

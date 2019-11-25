@@ -8,20 +8,118 @@
 	<nominalPower>
 		<UnitValue value="0.0F" unit="W"/>
 	</nominalPower>
+	<ratedVoltage>
+		<UnitValue value="400.0F" unit="V"/>
+	</ratedVoltage>
 </TransformerNodeProperties>
 ]]>
 </Instance>
 <Instance Ontology="hygrid.globalDataModel.ontology.HyGridOntology">
 <![CDATA[<TriPhaseElectricalNodeState>
+	<l1>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l1>
+	<l2>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l2>
+	<l3>
+		<UniPhaseElectricalNodeState cosPhi="0.0F">
+			<S>
+				<UnitValue value="0.0F" unit=""/>
+			</S>
+			<Q>
+				<UnitValue value="0.0F" unit=""/>
+			</Q>
+			<current>
+				<UnitValue value="0.0F" unit=""/>
+			</current>
+			<voltageReal>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageReal>
+			<voltageAbs>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageAbs>
+			<voltageImag>
+				<UnitValue value="0.0F" unit=""/>
+			</voltageImag>
+			<P>
+				<UnitValue value="0.0F" unit=""/>
+			</P>
+		</UniPhaseElectricalNodeState>
+	</l3>
 </TriPhaseElectricalNodeState>
 ]]>
 </Instance>
 <Instance Ontology="agentgui.ontology.AgentGUI_BaseOntology">
 <![CDATA[<TimeSeriesChart realTime="false">
 	<timeSeriesVisualisationSettings>
-		<TimeSeriesChartSettings>
+		<TimeSeriesChartSettings yAxisLabel="" rendererType="" xAxisLabel="" chartTitle="" timeFormat="">
+			<yAxisColors>
+				<primitive type="STRING" value=""/>
+			</yAxisColors>
+			<yAxisLineWidth>
+				<primitive type="FLOAT" value="0.0F"/>
+			</yAxisLineWidth>
 		</TimeSeriesChartSettings>
 	</timeSeriesVisualisationSettings>
+	<timeSeriesChartData>
+		<TimeSeries label="" unit="">
+			<timeSeriesValuePairs>
+				<TimeSeriesValuePair>
+					<timestamp>
+						<Simple_Long StringLongValue=""/>
+					</timestamp>
+					<value>
+						<Simple_Float FloatValue="0.0F"/>
+					</value>
+				</TimeSeriesValuePair>
+			</timeSeriesValuePairs>
+		</TimeSeries>
+	</timeSeriesChartData>
 </TimeSeriesChart>
 ]]>
 </Instance>

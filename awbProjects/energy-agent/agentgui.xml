@@ -18,11 +18,11 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.1.1.20191004-1500</version>
+    <version>1.2.0.20191122-1200</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1570193635870</updateDateLastChecked>
+    <updateDateLastChecked>1574433678978</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -30,7 +30,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <name>Agent.HyGrid</name>
             <repositoryName>Enflex.IT Update Site</repositoryName>
             <repositoryURI>https://p2.enflex.it/awb/2.1/</repositoryURI>
-            <version>2.2.0.201904121345</version>
+            <version>2.2.2.201911221138</version>
         </projectFeature>
     </projectFeatures>
     <plugins>
@@ -81,11 +81,11 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
             <service>agentgui.logging.DebugService</service>
-            <service>energy.agentgui.distribution.LicenseService</service>
             <service>agentgui.simulationService.LoadService</service>
             <service>jade.core.event.NotificationService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
+            <service>de.enflexit.eom.awb.licenceDistribution.LicenseService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
