@@ -355,7 +355,7 @@
         </entry>
         <entry>
             <key>TimeStop</key>
-            <value>1414839600000</value>
+            <value>1414882800000</value>
         </entry>
         <entry>
             <key>TimeStart</key>
@@ -363,5 +363,4 @@
         </entry>
     </timeModelSettings>
     <userObjectClassName>hygrid.deployment.dataModel.SetupExtension</userObjectClassName>
-    <environmentFileName>Energy Agent Scenario 1.graphml</environmentFileName>
 </simulationSetup>

@@ -2,7 +2,7 @@
 <hyGridAbstractEnvironmentModel xmlns:ns2="http://www.dawis.wiwi.uni-due.de/EnergyOptionModel" xmlns:ns3="http://www.dawis.wiwi.uni-due.de/HyGridAgentConfiguration">
     <simulationIntervalLength>0</simulationIntervalLength>
     <simulationIntervalUnitIndex>1</simulationIntervalUnitIndex>
-    <networkCalculationIntervalLength>1000</networkCalculationIntervalLength>
+    <networkCalculationIntervalLength>10000</networkCalculationIntervalLength>
     <networkCalculationIntervalUnitIndex>1</networkCalculationIntervalUnitIndex>
     <executionDataBase>NodePowerFlows</executionDataBase>
     <energyTransmissionConfiguration>
@@ -14,52 +14,102 @@
     <displayUpdateConfiguration>
         <updateMechanism>EnableUpdates</updateMechanism>
     </displayUpdateConfiguration>
-    <colorSettings4GraphNodes>
-        <colorSettings>
-            <colorSetting>
-                <valueUntil>400.0</valueUntil>
-                <valueColorString>-42663</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>245.0</valueUntil>
-                <valueColorString>-71</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>235.0</valueUntil>
-                <valueColorString>-12076531</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>225.0</valueUntil>
-                <valueColorString>-71</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>213.9</valueUntil>
-                <valueColorString>-42663</valueColorString>
-            </colorSetting>
-        </colorSettings>
-        <useColorSettings>true</useColorSettings>
-    </colorSettings4GraphNodes>
-    <colorSettings4GraphEdges>
-        <colorSettings>
-            <colorSetting>
-                <valueUntil>80.0</valueUntil>
-                <valueColorString>-22874</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>60.0</valueUntil>
-                <valueColorString>-118</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>30.0</valueUntil>
-                <valueColorString>-6422677</valueColorString>
-            </colorSetting>
-            <colorSetting>
-                <valueUntil>10.0</valueUntil>
-                <valueColorString>-723713</valueColorString>
-            </colorSetting>
-        </colorSettings>
-        <useColorSettings>true</useColorSettings>
-    </colorSettings4GraphEdges>
+    <graphElementLayoutSettingsPersisted domain="Electricity 10kV">
+        <settingsTreeMap>
+            <entry>
+                <key>edges.isEnabled</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>edges.settings0</key>
+                <value>0.0;0.1;-3355444</value>
+            </entry>
+            <entry>
+                <key>edges.settings1</key>
+                <value>0.1;70.0;-6422677</value>
+            </entry>
+            <entry>
+                <key>edges.settings2</key>
+                <value>70.0;100.0;-118</value>
+            </entry>
+            <entry>
+                <key>edges.settings3</key>
+                <value>100.0;1.7976931348623157E308;-22874</value>
+            </entry>
+            <entry>
+                <key>nodes.isEnabled</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>nodes.settings0</key>
+                <value>0.0;5369.0;-42663</value>
+            </entry>
+            <entry>
+                <key>nodes.settings1</key>
+                <value>5369.0;5542.0;-154</value>
+            </entry>
+            <entry>
+                <key>nodes.settings2</key>
+                <value>5542.0;6004.0;-12076531</value>
+            </entry>
+            <entry>
+                <key>nodes.settings3</key>
+                <value>6004.0;6177.0;-154</value>
+            </entry>
+            <entry>
+                <key>nodes.settings4</key>
+                <value>6177.0;1.7976931348623157E308;-42663</value>
+            </entry>
+        </settingsTreeMap>
+    </graphElementLayoutSettingsPersisted>
+    <graphElementLayoutSettingsPersisted domain="ElectricityThriPhase">
+        <settingsTreeMap>
+            <entry>
+                <key>edges.isEnabled</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>edges.settings0</key>
+                <value>0.0;0.1;-3355444</value>
+            </entry>
+            <entry>
+                <key>edges.settings1</key>
+                <value>0.1;70.0;-6422677</value>
+            </entry>
+            <entry>
+                <key>edges.settings2</key>
+                <value>70.0;100.0;-118</value>
+            </entry>
+            <entry>
+                <key>edges.settings3</key>
+                <value>100.0;1.7976931348623157E308;-22874</value>
+            </entry>
+            <entry>
+                <key>nodes.isEnabled</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>nodes.settings0</key>
+                <value>0.0;215.0;-42663</value>
+            </entry>
+            <entry>
+                <key>nodes.settings1</key>
+                <value>215.0;225.0;-154</value>
+            </entry>
+            <entry>
+                <key>nodes.settings2</key>
+                <value>225.0;235.0;-12076531</value>
+            </entry>
+            <entry>
+                <key>nodes.settings3</key>
+                <value>235.0;245.0;-154</value>
+            </entry>
+            <entry>
+                <key>nodes.settings4</key>
+                <value>245.0;1.7976931348623157E308;-42663</value>
+            </entry>
+        </settingsTreeMap>
+    </graphElementLayoutSettingsPersisted>
     <scheduleLengthRestriction>
         <ns2:idScheduleLengthRestriction>0</ns2:idScheduleLengthRestriction>
         <ns2:Duration>
@@ -67,7 +117,7 @@
             <ns2:value>30</ns2:value>
             <ns2:unit>minute, m</ns2:unit>
         </ns2:Duration>
-        <ns2:MaxNumberOfSystemStates>60</ns2:MaxNumberOfSystemStates>
+        <ns2:MaxNumberOfSystemStates>120</ns2:MaxNumberOfSystemStates>
     </scheduleLengthRestriction>
     <deploymentSettings>
         <ns3:centralAgentSpecifier>

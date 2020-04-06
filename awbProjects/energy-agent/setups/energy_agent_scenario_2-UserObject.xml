@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:setupExtension xmlns:ns2="http://www.dawis.wiwi.uni-due.de/HyGridAgentConfiguration">
-    <saveScheduleListsToDatabase>false</saveScheduleListsToDatabase>
-    <ns2:deploymentGroups/>
-</ns2:setupExtension>

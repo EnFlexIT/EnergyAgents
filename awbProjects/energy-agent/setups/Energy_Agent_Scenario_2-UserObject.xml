@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:setupExtension xmlns:ns2="http://www.dawis.wiwi.uni-due.de/HyGridAgentConfiguration">
+    <ns2:deploymentGroups/>
+    <ns2:scheduleTimeRange>
+        <numberOfSystemStates>100</numberOfSystemStates>
+        <rangeType>TimeRange</rangeType>
+        <timeFrom>1414796400000</timeFrom>
+        <timeTo>1414803600000</timeTo>
+    </ns2:scheduleTimeRange>
+</ns2:setupExtension>

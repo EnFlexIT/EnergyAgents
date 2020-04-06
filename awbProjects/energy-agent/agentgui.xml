@@ -18,11 +18,13 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
 </projectDescription>
     <projectStartTab>2|4</projectStartTab>
     <projectView>Developer</projectView>
-    <version>1.2.0.20191122-1200</version>
+    <projectTreeVisible>true</projectTreeVisible>
+    <projectTabHeaderVisible>false</projectTabHeaderVisible>
+    <version>1.4.0.20200404-1300</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1574433678978</updateDateLastChecked>
+    <updateDateLastChecked>1586084606865</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
@@ -85,7 +87,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
             <service>jade.core.event.NotificationService</service>
             <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
-            <service>de.enflexit.eom.awb.licenceDistribution.LicenseService</service>
+            <service>de.enflexit.eom.awb.jadeService.EomService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
@@ -301,7 +303,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         </entry>
         <entry>
             <key>Energy Agent Scenario 2</key>
-            <value>energy_agent_scenario_2.xml</value>
+            <value>Energy_Agent_Scenario_2.xml</value>
         </entry>
         <entry>
             <key>Energy Agent Scenario 3</key>
