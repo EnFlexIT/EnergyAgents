@@ -9,11 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
- OSGI-INF/eomClassLoadService.xml,
- OSGI-INF/TriPhaseElectricalSubNetworkConfigurationService.xml,
- OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml,
- OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
- OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml
+ OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.energyAgent.core.aggregation,
  de.enflexit.energyAgent.core.aggregation.classLoadService,
  de.enflexit.energyAgent.core.aggregation.trafficLight,

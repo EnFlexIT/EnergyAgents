@@ -26,5 +26,5 @@ Service-Component:
  OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/LowVoltageGridScheduleImportService.xml,
- OSGI-INF/MediumVoltageGridScheduleImportService.xml.xml
+ OSGI-INF/MediumVoltageGridScheduleImportService.xml
 Bundle-ActivationPolicy: lazy
