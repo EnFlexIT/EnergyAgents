@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.enflexit.energyAgent.feature"
+      label="Energ Agent Feature"
+      version="2.0.0.qualifier"
+      provider-name="EnFlex.IT"
+      plugin="de.enflexit.energyAgent.core"
+      os="linux,macosx,win32"
+      arch="x86_64">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="de.enflexit.eom.feature"
+         version="0.0.0"
+         name="Energy Option Model"/>
+
+   <requires>
+      <import plugin="de.enflexit.api"/>
+      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.db.hibernate"/>
+      <import plugin="de.enflexit.oidc"/>
+      <import plugin="de.enflexit.eom.awbAdapter"/>
+      <import plugin="de.enflexit.eom.core" version="2.2.0" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.eom.database"/>
+      <import plugin="org.agentgui.core"/>
+      <import plugin="org.agentgui.lib.jade"/>
+      <import plugin="org.agentgui.lib.jung"/>
+      <import plugin="org.awb.env.networkModel"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.equinox.preferences"/>
+   </requires>
+
+   <plugin
+         id="net.agenthygrid.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.core.aggregation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.core.centralExecutiveAgent"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.core.globalDataModel"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.core.simulation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.lib.powerFlowCalculation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.deployment"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.lib.powerFlowEstimation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.insekt.lib.matrixCalculations"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.agenthygrid.core.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

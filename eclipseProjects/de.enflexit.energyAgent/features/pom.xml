@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.enflexit.energyAgent</groupId>
+	<artifactId>de.enflexit.energyAgent.features</artifactId>
+	<version>2.1.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>de.enflexit.energyAgent</groupId>
+		<artifactId>de.enflexit.energyAgent.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>de.enflexit.energyAgent.feature</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<excludes>
+						<plugin id="net.agenthygrid.battery" />
+						<plugin id="net.agenthygrid.chargingStation" />
+						<plugin id="net.agenthygrid.electricalSensor" />
+						<plugin id="net.agenthygrid.electrolyser" />
+						<plugin id="net.agenthygrid.gasSensor" />
+						<plugin id="net.agenthygrid.gridStateIdentification" />
+						<plugin id="net.agenthygrid.gridStateSupervision" />
+						<plugin id="net.agenthygrid.inesGatewayAdmin" />
+						<plugin id="net.agenthygrid.lib.externalWeatherData" />
+						<plugin id="net.agenthygrid.lib.jpigpio" />
+						<plugin id="net.agenthygrid.lib.modbus" />
+						<plugin id="net.agenthygrid.lib.rxtx" />
+						<plugin id="net.agenthygrid.photovoltaic" />
+						<plugin id="net.agenthygrid.prosumer" />
+						<plugin id="net.agenthygrid.pv.modbus" />
+						<plugin id="net.agenthygrid.pv.orientationBased" />
+						<plugin id="net.agenthygrid.transformer" />
+						<plugin id="net.agenthygrid.windturbine" />
+						<plugin id="net.agenthygrid.windturbine.modbus" />
+						<plugin id="net.agenthygrid.windturbineHSU" />
+						<plugin id="net.insekt.lib.matrixCalculations" />
+						<feature id="de.enflexit.eom.feature" />
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

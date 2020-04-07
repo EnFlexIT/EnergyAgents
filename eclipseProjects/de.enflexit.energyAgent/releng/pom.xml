@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.enflexit.energyAgent</groupId>
+    <artifactId>de.enflexit.energyAgent.releng</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>de.enflexit.energyAgent</groupId>
+        <artifactId>de.enflexit.energyAgent.root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+         <module>de.enflexit.energyAgent.configuration</module>
+         <module>de.enflexit.energyAgent.update</module>
+		 <module>de.enflexit.energyAgent.target</module>
+    </modules>
+</project>

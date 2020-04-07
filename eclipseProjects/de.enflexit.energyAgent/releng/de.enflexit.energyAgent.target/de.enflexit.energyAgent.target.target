@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target includeMode="feature" name="net.agenthygrid.target" sequenceNumber="104">
+<locations>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="org.eclipse.equinox.p2.sdk.feature.group" version="0.0.0"/>
+		<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
+		<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
+		<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+		<unit id="org.eclipse.equinox.server.jetty.feature.group" version="0.0.0"/>
+		<repository location="https://download.eclipse.org/releases/2020-03/"/>
+	</location>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="ch.qos.logback.classic" version="0.0.0"/>
+		<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
+		<unit id="ch.qos.logback.core" version="0.0.0"/>
+		<unit id="ch.qos.logback.core.source" version="0.0.0"/>
+		<unit id="ch.qos.logback.slf4j" version="0.0.0"/>
+		<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
+		<unit id="org.slf4j.api" version="0.0.0"/>
+		<unit id="org.slf4j.api.source" version="0.0.0"/>
+		<unit id="org.slf4j.apis.jcl" version="0.0.0"/>
+		<unit id="org.slf4j.apis.jcl.source" version="0.0.0"/>
+		<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20200224183213/repository"/>
+	</location>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="de.enflexit.common.feature.feature.group" version="0.0.0"/>
+		<unit id="de.enflexit.common.feature.source.feature.group" version="0.0.0"/>
+		<unit id="org.agentgui.feature.feature.group" version="0.0.0"/>
+		<unit id="org.agentgui.feature.source.feature.group" version="0.0.0"/>
+		<repository location="https://p2.enflex.it/workbench/snapshots/"/>
+	</location>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="de.enflexit.eom.feature.feature.group" version="0.0.0"/>
+		<repository location="https://p2.enflex.it/eom/snapshots/"/>
+	</location>
+</locations>
+</target>
