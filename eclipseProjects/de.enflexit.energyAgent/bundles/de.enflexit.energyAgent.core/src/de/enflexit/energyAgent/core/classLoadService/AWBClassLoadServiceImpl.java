@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package hygrid.classLoadService;
+package de.enflexit.energyAgent.core.classLoadService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

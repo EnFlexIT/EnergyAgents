@@ -1,4 +1,4 @@
-package hygrid.classLoadService;
+package de.enflexit.energyAgent.core.classLoadService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

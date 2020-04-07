@@ -23,10 +23,10 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService
 Bundle-ClassPath: .
 Export-Package: de.enflexit.energyAgent.core,
  de.enflexit.energyAgent.core.behaviour,
+ de.enflexit.energyAgent.core.classLoadService,
  de.enflexit.energyAgent.core.databaseRequest,
  de.enflexit.energyAgent.core.eomStateStream,
  de.enflexit.energyAgent.core.monitoring,
  de.enflexit.energyAgent.core.testbed,
- de.enflexit.energyAgent.core.testbed.proxy,
- hygrid.classLoadService
+ de.enflexit.energyAgent.core.testbed.proxy
 Automatic-Module-Name: net.agenthygrid.core
