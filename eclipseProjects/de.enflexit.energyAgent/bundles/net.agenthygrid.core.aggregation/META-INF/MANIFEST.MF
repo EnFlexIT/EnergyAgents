@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HyGrid EOM-Aggregator
+Bundle-SymbolicName: de.enflexit.energyAgent.core.aggregation
+Bundle-Version: 1.1.2.qualifier
+Bundle-Vendor: DAWIS
+Automatic-Module-Name: net.agenthygrid.core.aggregation
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Service-Component: 
+ OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml,
+ OSGI-INF/TriPhaseElectricalSubNetworkConfigurationService.xml,
+ OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml,
+ OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
+ OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml
+Export-Package: de.enflexit.energyAgent.core.aggregation,
+ de.enflexit.energyAgent.core.aggregation.classLoadService,
+ de.enflexit.energyAgent.core.aggregation.trafficLight,
+ de.enflexit.energyAgent.core.aggregation.trafficLight.img
+Require-Bundle: de.enflexit.common,
+ de.enflexit.eom.core,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel,
+ org.eclipse.osgi,
+ net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.lib.powerFlowCalculation,
+ de.enflexit.energyAgent.lib.powerFlowEstimation

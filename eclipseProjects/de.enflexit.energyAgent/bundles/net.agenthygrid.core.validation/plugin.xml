@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="net.agenthygrid.core.validation.ui.ValidatorMainWindowExtension"
+         point="org.awb.swing.mainWindowExtension">
+      <mainWindowExtensionClient
+            class="de.enflexit.energyAgent.core.validation.ui.HyGridValidator">
+      </mainWindowExtensionClient>
+   </extension>
+
+</plugin>

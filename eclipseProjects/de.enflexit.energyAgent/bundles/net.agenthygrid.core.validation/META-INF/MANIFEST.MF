@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Agent.HyGrid Project- and Setup-Validation
+Bundle-SymbolicName: de.enflexit.energyAgent.core.validation;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: net.agenthygrid.core.validation
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/hygridValidationService.xml
+Require-Bundle: de.enflexit.api,
+ org.agentgui.core,
+ org.awb.env.networkModel,
+ de.enflexit.eom.core,
+ net.agenthygrid.core.globalDataModel,
+ org.eclipse.osgi,
+ org.eclipse.equinox.preferences,
+ org.eclipse.osgi.services
+Export-Package: de.enflexit.energyAgent.core.validation,
+ de.enflexit.energyAgent.core.validation.ui,
+ de.enflexit.energyAgent.validation

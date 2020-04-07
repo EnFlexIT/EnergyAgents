@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HyGrid PowerFlowCalculation
+Bundle-SymbolicName: de.enflexit.energyAgent.lib.powerFlowCalculation
+Bundle-Version: 1.0.1.qualifier
+Bundle-Vendor: Marcel Ludwig
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.energyAgent.lib.powerFlowCalculation,
+ de.enflexit.energyAgent.lib.powerFlowCalculation.classLoadService,
+ de.enflexit.energyAgent.lib.powerFlowCalculation.parameter
+Bundle-ClassPath: .
+Automatic-Module-Name: net.agenthygrid.lib.powerFlowCalculation
+Service-Component: OSGI-INF/baseClassLoadService.xml
+Require-Bundle: de.enflexit.common,
+ org.agentgui.lib.jade,
+ de.enflexit.energyAgent.matrixCalculations
+Bundle-ActivationPolicy: lazy

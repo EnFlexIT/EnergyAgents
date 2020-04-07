@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Energy Agent Deployment
+Bundle-SymbolicName: de.enflexit.energyAgent.deployment
+Bundle-Version: 1.1.1.qualifier
+Automatic-Module-Name: net.agenthygrid.deployment
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.energyAgent.deployment,
+ de.enflexit.energyAgent.deployment.gui
+Require-Bundle: de.enflexit.api,
+ de.enflexit.common,
+ de.enflexit.eom.awbAdapter,
+ de.enflexit.eom.core,
+ de.enflexit.db.hibernate,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel,
+ de.enflexit.energyAgent.core,
+ net.agenthygrid.core.globalDataModel,
+ org.eclipse.osgi,
+ org.eclipse.equinox.preferences
+Import-Package: org.eclipse.core.runtime
+Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: EnFlex.IT

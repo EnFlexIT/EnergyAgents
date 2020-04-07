@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HyGrid CentralExecutiveAgent
+Bundle-SymbolicName: de.enflexit.energyAgent.core.centralExecutiveAgent
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: net.agenthygrid.core.centralExecutiveAgent
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.energyAgent.core.centralExecutiveAgent,
+ de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour,
+ de.enflexit.energyAgent.core.centralExecutiveAgent.classLoadService,
+ de.enflexit.energyAgent.core.centralExecutiveAgent.dataModel,
+ de.enflexit.energyAgent.core.fieldDataProxyAgent
+Bundle-Vendor: DAWIS
+Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
+Require-Bundle: de.enflexit.common,
+ de.enflexit.eom.core,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ net.agenthygrid.core.globalDataModel,
+ de.enflexit.eom.awbAdapter,
+ org.awb.env.networkModel

@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HyGrid Simulation Manager Bundle
+Bundle-SymbolicName: de.enflexit.energyAgent.core.simulation
+Bundle-Version: 1.1.1.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: DAWIS - ICB - University Duisburg-Essen
+Automatic-Module-Name: net.agenthygrid.core.simulation
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.energyAgent.core.simulation.classLoadService,
+ de.enflexit.energyAgent.core.simulation.manager,
+ de.enflexit.energyAgent.core.simulation.validation
+Require-Bundle: de.enflexit.common,
+ de.enflexit.eom.core,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel,
+ de.enflexit.energyAgent.core,
+ net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.core.aggregation,
+ de.enflexit.energyAgent.core.validation,
+ de.enflexit.energyAgent.electricity
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml,
+ OSGI-INF/simulationManagerValidationService.xml
