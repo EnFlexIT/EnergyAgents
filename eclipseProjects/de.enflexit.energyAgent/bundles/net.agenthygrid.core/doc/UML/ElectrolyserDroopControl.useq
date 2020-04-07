@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.9" icons="true" automaticImage="PNG">  
+  <object id="1" language="java" name="de.enflexit.energyAgent.core.electrolyser.IOSimulated" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/electrolyser/IOSimulated.java" binary="false" label="ioSimulated" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="786" y="0"/>    
+    <execution id="2">      
+      <position height="340" width="120" x="719" y="121"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="277" width="7" x="274" y="163"/>    
+    </execution>    
+    <execution id="7">      
+      <position height="21" width="7" x="274" y="335"/>    
+    </execution>  
+  </object>  
+  <object id="8" language="java" name="de.enflexit.energyAgent.core.electrolyser.ElectrolyserInternalDataModel" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/electrolyser/ElectrolyserInternalDataModel.java" binary="false" 
+    label="internalDataModel" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="916" y="0"/>    
+    <execution id="6">      
+      <position height="221" width="148" x="366" y="198"/>    
+    </execution>  
+  </object>  
+  <object id="11" language="java" name="de.enflexit.energyAgent.core.electrolyser.ElectrolyserAgent" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/electrolyser/ElectrolyserAgent.java" binary="false" label="electrolyserAgent" 
+    type="class" autoSize="true">    
+    <position height="-1" width="-1" x="296" y="0"/>    
+    <execution id="10">      
+      <position height="157" width="145" x="217" y="241"/>    
+    </execution>  
+  </object>  
+  <object id="14" language="java" name="de.enflexit.energyAgent.core.electrolyser.ElectrolyserDroopControlBehaviour" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/electrolyser/ElectrolyserDroopControlBehaviour.java" binary="false" 
+    label="electrolyserDroopControl" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="408" y="0"/>    
+    <execution id="13">      
+      <position height="88" width="197" x="366" y="289"/>    
+    </execution>  
+  </object>  
+  <message id="3" operation="onEnvironmentStimulus():void" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="5" operation="setMeasurementsFromSystem(energy.FixedVariableList):void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </message>  
+  <message id="9" operation="update(java.util.Observable,java.lang.Object):void" asynchronous="false">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="12" operation="action():void" asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="13"/>  
+  </message>  
+  <message id="15" operation="setSetPointsToSystem(energy.FixedVariableList):void" asynchronous="false">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="7"/>  
+  </message>
+</sequence-diagram>

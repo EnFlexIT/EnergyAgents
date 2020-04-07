@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.9" icons="true" automaticImage="PNG">  
+  <object id="1" language="java" name="de.enflexit.energyAgent.core.manager.SimulationManager" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/manager/SimulationManager.java" binary="false" label="simulationManager" type="class" 
+    autoSize="false">    
+    <position height="99" width="160" x="189" y="0"/>    
+    <execution id="2">      
+      <position height="84" width="156" x="5" y="101"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="21" width="156" x="5" y="143"/>    
+    </execution>  
+  </object>  
+  <object id="5" language="java" name="de.enflexit.energyAgent.core.manager.SimulationManager.NetworkCalculationExecuter" 
+    project="HyGrid" file="/HyGrid/src/hygrid/agent/manager/SimulationManager.java" binary="false" 
+    label="networkCalculationExecuter" type="class" autoSize="false">    
+    <position height="99" width="212" x="0" y="0"/>    
+    <execution id="6">      
+      <position height="63" width="208" x="165" y="179"/>    
+    </execution>  
+  </object>  
+  <object id="9" language="java" name="de.enflexit.energyAgent.core.manager.blackboard.BlackboardAgent" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/manager/blackboard/BlackboardAgent.java" binary="false" label="blackboardAgent" 
+    type="class" autoSize="true">    
+    <position height="-1" width="-1" x="377" y="0"/>  
+  </object>  
+  <object id="10" language="java" name="de.enflexit.energyAgent.core.manager.blackboard.BlackboardAgent.SimServiceBehaviour" 
+    project="HyGrid" file="/HyGrid/src/hygrid/agent/manager/blackboard/BlackboardAgent.java" binary="false" 
+    label="simServiceBehaviour1" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="556" y="0"/>    
+    <execution id="8">      
+      <position height="21" width="146" x="527" y="200"/>    
+    </execution>  
+  </object>  
+  <object id="11" language="java" name="de.enflexit.energyAgent.core.prosumer.ProsumerAgent" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/prosumer/ProsumerAgent.java" binary="false" label="prosumerAgent" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="608" y="0"/>  
+  </object>  
+  <object id="12" language="java" name="de.enflexit.energyAgent.core.prosumer.IOSimulated" project="HyGrid" 
+    file="/HyGrid/src/hygrid/agent/prosumer/IOSimulated.java" binary="false" label="ioSimulated" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="835" y="0"/>  
+  </object>  
+  <message id="3" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="7" operation="notify():void" asynchronous="false">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>
+</sequence-diagram>
