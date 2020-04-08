@@ -34,7 +34,7 @@ import de.enflexit.energyAgent.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.energyAgent.core.aggregation.AggregationListener;
 import de.enflexit.energyAgent.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.energyAgent.electricity.aggregation.PowerFlowCalculationThread;
-import de.enflexit.energyAgent.electricity.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
+import de.enflexit.energyAgent.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;

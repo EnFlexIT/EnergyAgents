@@ -1,4 +1,4 @@
-package de.enflexit.energyAgent.electricity.triPhase;
+package de.enflexit.energyAgent.electricity.aggregation.triPhase;
 
 import java.util.ArrayList;
 import java.util.HashMap;

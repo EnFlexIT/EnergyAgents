@@ -6,8 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.elictricity
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.energyAgent.electricity.aggregation,
- de.enflexit.energyAgent.electricity.triPhase,
- de.enflexit.energyAgent.electricity.uniPhase
+ de.enflexit.energyAgent.electricity.aggregation.triPhase,
+ de.enflexit.energyAgent.electricity.aggregation.uniPhase,
+ de.enflexit.energyAgent.electricity.classLoadService,
+ de.enflexit.energyAgent.electricity.scheduleImport,
+ de.enflexit.energyAgent.electricity.topologyImport
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.energyAgent.core.aggregation,
@@ -25,6 +28,8 @@ Service-Component:
  OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml,
  OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml,
- OSGI-INF/LowVoltageGridScheduleImportService.xml,
- OSGI-INF/MediumVoltageGridScheduleImportService.xml
+ OSGI-INF/TriPhaseElectricalNetworkTopologyImportService.xml.xml,
+ OSGI-INF/UniPhaseElectricalNetworkTopologyImportService.xml.xml,
+ OSGI-INF/TriPhaseElectricalNetworkModelImportService.xml,
+ OSGI-INF/UniPhaseElectricalNetworkModelImportService.xml
 Bundle-ActivationPolicy: lazy

@@ -15,8 +15,8 @@ import org.awb.env.networkModel.NetworkModel;
 import de.enflexit.energyAgent.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.SetupType;
+import hygrid.csvFileImport.NetworkModelToCsvMapper;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
 
 public class GridStateEstimationInit {
 	NetworkModel networkModel = new NetworkModel();

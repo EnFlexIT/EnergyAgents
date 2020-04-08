@@ -1,4 +1,4 @@
-package de.enflexit.energyAgent.electricity.triPhase;
+package de.enflexit.energyAgent.electricity.aggregation.uniPhase;
 
 import java.awt.Color;
 import java.util.TreeMap;
@@ -19,21 +19,29 @@ import hygrid.globalDataModel.GlobalHyGridConstants;
 import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import hygrid.globalDataModel.graphLayout.GraphElementLayoutService;
-import hygrid.globalDataModel.ontology.TriPhaseCableState;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalNodeState;
+import hygrid.globalDataModel.ontology.UniPhaseCableState;
+import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
 
 /**
- * {@link GraphElementLayoutService} implementation for tri-phase low voltage distribution grids.
- * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
+ * The Class TriPhaseElectricalNetworkLayoutService.
  */
-public class TriPhaseElectricalNetworkGraphElementLayoutService implements GraphElementLayoutService {
-	
+public class UniPhaseElectricalNetworkGraphElementLayoutService implements GraphElementLayoutService {
+
 	/* (non-Javadoc)
 	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#getDomain()
 	 */
 	@Override
 	public String getDomain() {
-		return GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
+		return GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#getGraphElementLayoutSettingPanel(agentgui.core.project.Project, java.lang.String)
+	 */
+	@Override
+	public AbstractGraphElementLayoutSettingsPanel getGraphElementLayoutSettingPanel(Project project, String domain) {
+		return new HyGridGraphElementLayoutSettingsPanel(project, domain);
 	}
 
 	/* (non-Javadoc)
@@ -83,34 +91,13 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 			
 			// --- Create the GraphElementLayout ------------------------------
 			if (dataModelArray!=null) {
-				TriPhaseElectricalNodeState triPhaseNodeState = (TriPhaseElectricalNodeState) dataModelArray[1];
+				UniPhaseElectricalNodeState triPhaseNodeState = (UniPhaseElectricalNodeState) dataModelArray[1];
 				
 				// --- Determine the new color based on the state ----------------- 
-				float voltageL1 = triPhaseNodeState.getL1().getVoltageAbs().getValue();
-				float voltageL2 = triPhaseNodeState.getL2().getVoltageAbs().getValue();
-				float voltageL3 = triPhaseNodeState.getL3().getVoltageAbs().getValue();
-				float minVoltage = Math.min(voltageL1, Math.max(voltageL2, voltageL3));
-				float maxVoltage = Math.max(voltageL1, Math.max(voltageL2, voltageL3));
-				
-				Color minColor = colorSettings.getColorForValue(minVoltage);
-				Color maxColor = colorSettings.getColorForValue(maxVoltage);
-				
-				// --- Decide which color to use ----------------------------
-				Color newColor = null;
-				if (minColor==null && maxColor!=null) {
-					newColor = maxColor;
-				} else if (minColor!=null && maxColor==null) {
-					newColor = minColor;
-				} else if (minColor.equals(maxColor)==true) {
-					newColor = minColor;
-				} else {
-					int avgR = (minColor.getRed() + maxColor.getRed())/2;
-					int avgG = (minColor.getGreen() + maxColor.getGreen())/2;
-					int avgB = (minColor.getBlue() + maxColor.getBlue())/2;
-					newColor = new Color(avgR, avgG, avgB);
-				}
+				float voltage = triPhaseNodeState.getVoltageAbs().getValue();
+				Color newColor = colorSettings.getColorForValue(voltage);
 				if (newColor!=null && newColor.equals(layout.getColor())==false) {
-					// --- Define the new layout of the GraphEdge ---------------
+					// --- Define the new layout of the GraphNode ---------------
 					layout.setColor(newColor);
 				}
 			}
@@ -148,11 +135,11 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 		GraphElementLayout layout = null;
 		if (dataModelArray!=null) {
 			
-			TriPhaseCableState cableState = (TriPhaseCableState) dataModelArray[1];
+			UniPhaseCableState cableState = (UniPhaseCableState) dataModelArray[1];
 			
 			// --- Define the new color of the GraphEdge ------------
-			float maxUtility = Math.max(cableState.getUtil_L1(), Math.max(cableState.getUtil_L2(), cableState.getUtil_L3()));
-			Color newColor = colorSettingsForEdges.getColorForValue(maxUtility);
+			float utilization = cableState.getUtilization();
+			Color newColor = colorSettingsForEdges.getColorForValue(utilization);
 			
 			// --- Define the new layout of the GraphEdge -----------
 			if (newColor!=null) {
@@ -166,15 +153,7 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 		}
 		return layout;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#getGraphElementLayoutSettingPanel(agentgui.core.project.Project, java.lang.String)
-	 */
-	@Override
-	public AbstractGraphElementLayoutSettingsPanel getGraphElementLayoutSettingPanel(Project project, String domain) {
-		return new HyGridGraphElementLayoutSettingsPanel(project, domain);
-	}
+
 
 	/* (non-Javadoc)
 	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#convertInstanceToTreeMap(hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings)

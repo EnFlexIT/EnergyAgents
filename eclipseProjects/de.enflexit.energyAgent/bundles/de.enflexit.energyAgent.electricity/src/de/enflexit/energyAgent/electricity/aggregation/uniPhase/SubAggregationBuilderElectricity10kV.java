@@ -1,4 +1,4 @@
-package de.enflexit.energyAgent.electricity.uniPhase;
+package de.enflexit.energyAgent.electricity.aggregation.uniPhase;
 
 import java.util.ArrayList;
 import java.util.List;

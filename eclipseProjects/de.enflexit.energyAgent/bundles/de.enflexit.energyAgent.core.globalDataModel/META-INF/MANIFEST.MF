@@ -8,12 +8,9 @@ Bundle-Vendor: DAWIS - ICB - University Duisburg-Essen
 Automatic-Module-Name: net.agenthygrid.core.dataCommunication
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/awbClassLoadService.xml,
- OSGI-INF/eomClassLoadService.xml,
- OSGI-INF/TriPhaseElectricalNetworkModelImportService.xml,
- OSGI-INF/UniPhaseElectricalNetworkModelImportService.xml
+ OSGI-INF/eomClassLoadService.xml
 Export-Package: hygrid,
  hygrid.csvFileImport,
- hygrid.csvFileImport.electricalNetwork,
  hygrid.deployment.dataModel,
  hygrid.env,
  hygrid.env.adapter,

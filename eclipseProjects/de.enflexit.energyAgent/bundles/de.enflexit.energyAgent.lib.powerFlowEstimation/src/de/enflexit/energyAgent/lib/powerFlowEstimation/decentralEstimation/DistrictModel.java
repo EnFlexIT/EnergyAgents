@@ -14,8 +14,8 @@ import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.BranchParams;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.Complex;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.NodeAssignment;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.NodeAssociationParams;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.SetupType;
+import hygrid.csvFileImport.NetworkModelToCsvMapper;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
 import hygrid.globalDataModel.ontology.SensorProperties;
 import jampack.JampackException;
 

@@ -1,4 +1,4 @@
-package de.enflexit.energyAgent.electricity.uniPhase;
+package de.enflexit.energyAgent.electricity.aggregation.triPhase;
 
 import java.util.HashMap;
 
@@ -10,7 +10,6 @@ import de.enflexit.energyAgent.core.aggregation.AbstractNetworkModelDisplayUpdat
 import de.enflexit.energyAgent.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.energyAgent.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.energyAgent.electricity.aggregation.PowerFlowCalculationThread;
-import de.enflexit.energyAgent.electricity.triPhase.TriPhaseElectricalNetworkPreprocessor;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.energyAgent.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
@@ -18,18 +17,20 @@ import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.EnergyCarrier;
 
 /**
- * The Class SubNetworkConfigurationElectricity10kV.
+ * The Class SubNetworkConfigurationElectricalDistributionGrids.
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
-public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkConfiguration {
+public class SubNetworkConfigurationElectricalDistributionGrids extends AbstractSubNetworkConfiguration {
 
-	public static final String SUBNET_DESCRIPTION_ELECTRICITY_10KV = "Electricity 10kV";
+	public static final String SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS = "Electrical Distribution Grid - Three Phase, 230 V";
 	
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getSubnetworkID()
 	 */
 	@Override
 	public String getSubNetworkDescription() {
-		return SUBNET_DESCRIPTION_ELECTRICITY_10KV;
+		return SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
 	}
 	
 	/* (non-Javadoc)
@@ -37,9 +38,9 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 	 */
 	@Override
 	public boolean isPartOfSubnetwork(NetworkComponent netComp) {
-//			if (netComp.getType().equals("Sensor")) {
-//				return true;
-//			}
+		if (netComp.getType().equals("Sensor")) {
+			return true;
+		}
 		return super.isPartOfSubnetwork(netComp);
 	}
 	/* (non-Javadoc)
@@ -50,7 +51,7 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 		if (domain.equals(EnergyCarrier.ELECTRICITY.value())==true) {
 			if (domainModel instanceof DefaultDomainModelElectricity) {
 				DefaultDomainModelElectricity dmElec = (DefaultDomainModelElectricity) domainModel;
-				if (dmElec.getRatedVoltage()==10000.0) return true;
+				if (dmElec.getRatedVoltage()==230.0) return true;
 			}
 		}
 		return false;
@@ -61,14 +62,13 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 	 */
 	@Override
 	public Class<? extends AbstractSubAggregationBuilder> getSubAggregationBuilderClass() {
-		return SubAggregationBuilderElectricity10kV.class;
+		return SubAggregationBuilderElectricalDistributionGrid.class;
 	}
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getNetworkCalculationPreProcessorClass()
 	 */
 	@Override
 	public Class<? extends AbstractNetworkCalculationPreprocessor> getNetworkCalculationPreprocessorClass() {
-		//TODO change to 10kV specific implementation if necessary
 		return TriPhaseElectricalNetworkPreprocessor.class;
 	}
 	/* (non-Javadoc)
@@ -76,14 +76,14 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 	 */
 	@Override
 	public Class<? extends AbstractNetworkCalculationStrategy> getNetworkCalculationStrategyClass() {
-		return UniPhaseElectricalNetworkCalculationStrategy.class;
+		return TriPhaseElectricalNetworkCalculationStrategy.class;
 	}
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getNetworkDisplayUpdaterClass()
 	 */
 	@Override
 	public Class<? extends AbstractNetworkModelDisplayUpdater> getNetworkDisplayUpdaterClass() {
-		return UniPhaseElectricalNetworkDisplayUpdater.class;
+		return TriPhaseElectricalNetworkDisplayUpdater.class;
 	}
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getUserClasses()

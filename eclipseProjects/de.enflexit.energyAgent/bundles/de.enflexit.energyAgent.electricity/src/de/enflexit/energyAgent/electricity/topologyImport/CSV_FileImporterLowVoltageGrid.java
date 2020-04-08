@@ -1,4 +1,4 @@
-package hygrid.csvFileImport.electricalNetwork;
+package de.enflexit.energyAgent.electricity.topologyImport;
 
 import java.awt.geom.Point2D;
 import java.io.File;

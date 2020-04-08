@@ -1,4 +1,4 @@
-package de.enflexit.energyAgent.electricity.triPhase;
+package de.enflexit.energyAgent.electricity.aggregation.triPhase;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +24,9 @@ import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.BranchDescription;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.SlackNodeDescription;
+import hygrid.csvFileImport.NetworkModelToCsvMapper;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.BranchDescription;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
 import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import hygrid.globalDataModel.blackboard.TransformerPowerAnswer;
 import hygrid.globalDataModel.ontology.SensorProperties;

@@ -1,4 +1,4 @@
-package hygrid.csvFileImport.electricalNetwork;
+package hygrid.csvFileImport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +28,8 @@ import hygrid.globalDataModel.ontology.SensorProperties;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
 public class NetworkModelToCsvMapper {
+	
+	//TODO move to the electricity bundle after solving dependency problems (PowerFlowEstimation, SimulationDataCsvExporter) 
 
 	public enum SetupType {
 		NodeSetup,

@@ -25,9 +25,9 @@ import energygroup.calculation.AbstractFlowMeasuredAtInterface;
 import energygroup.calculation.FlowMeasuredAtInterfaceEnergy;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.SetupType;
-import hygrid.csvFileImport.electricalNetwork.NetworkModelToCsvMapper.SlackNodeDescription;
+import hygrid.csvFileImport.NetworkModelToCsvMapper;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
+import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
 
 /**
  * The Class PowerFlowCalculationThread is used within the aggregation handler
