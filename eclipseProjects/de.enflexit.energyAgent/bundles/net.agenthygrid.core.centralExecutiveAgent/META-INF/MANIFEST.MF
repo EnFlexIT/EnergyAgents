@@ -17,6 +17,6 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  org.agentgui.core,
  org.agentgui.lib.jade,
- net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.core.globalDataModel,
  de.enflexit.eom.awbAdapter,
  org.awb.env.networkModel

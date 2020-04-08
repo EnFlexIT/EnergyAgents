@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: HyGrid Data And Communication Models
-Bundle-SymbolicName: net.agenthygrid.core.globalDataModel
+Bundle-SymbolicName: de.enflexit.energyAgent.core.globalDataModel
 Bundle-Version: 1.1.2.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: DAWIS - ICB - University Duisburg-Essen

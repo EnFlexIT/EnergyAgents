@@ -13,5 +13,5 @@ Automatic-Module-Name: net.agenthygrid.lib.powerFlowCalculation
 Service-Component: OSGI-INF/baseClassLoadService.xml
 Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
- de.enflexit.energyAgent.matrixCalculations
+ de.enflexit.energyAgent.lib.matrixCalculations
 Bundle-ActivationPolicy: lazy

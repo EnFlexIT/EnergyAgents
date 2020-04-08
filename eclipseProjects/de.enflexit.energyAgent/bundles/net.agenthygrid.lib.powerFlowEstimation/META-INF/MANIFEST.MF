@@ -9,12 +9,12 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.energyAgent.core,
  de.enflexit.energyAgent.lib.powerFlowCalculation,
- net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.core.globalDataModel,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
- de.enflexit.energyAgent.matrixCalculations
+ de.enflexit.energyAgent.lib.matrixCalculations
 Export-Package: de.enflexit.energyAgent.lib.powerFlowEstimation.centralEstimation,
  de.enflexit.energyAgent.lib.powerFlowEstimation.decentralEstimation
 Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml

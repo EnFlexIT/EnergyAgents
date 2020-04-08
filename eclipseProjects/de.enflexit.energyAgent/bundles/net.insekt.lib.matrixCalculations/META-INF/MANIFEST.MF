@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MatrixCalculations
-Bundle-SymbolicName: de.enflexit.energyAgent.matrixCalculations
+Bundle-SymbolicName: de.enflexit.energyAgent.lib.matrixCalculations
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.insekt.lib.matrixCalculations
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

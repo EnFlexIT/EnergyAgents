@@ -16,7 +16,7 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.energyAgent.core,
- net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.core.globalDataModel,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences
 Import-Package: org.eclipse.core.runtime

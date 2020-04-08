@@ -20,6 +20,6 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
  org.eclipse.osgi,
- net.agenthygrid.core.globalDataModel,
+ de.enflexit.energyAgent.core.globalDataModel,
  de.enflexit.energyAgent.lib.powerFlowCalculation,
  de.enflexit.energyAgent.lib.powerFlowEstimation
