@@ -11,8 +11,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.application.Language;
-import hygrid.deployment.dataModel.AgentOperatingMode;
-import hygrid.deployment.dataModel.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
 
 /**
  * A {@link JComboBox}-based {@link TableCellEditor} for selecting an {@link AgentOperatingMode}

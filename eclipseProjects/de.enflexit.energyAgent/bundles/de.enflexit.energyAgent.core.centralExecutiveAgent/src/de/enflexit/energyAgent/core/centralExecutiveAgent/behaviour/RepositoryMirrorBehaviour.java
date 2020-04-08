@@ -11,8 +11,8 @@ import agentgui.core.update.MirrorTool;
 import agentgui.core.update.MirrorTool.MirrorToolsJob;
 import agentgui.core.update.MirrorTool.P2DownloadType;
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
+import de.enflexit.energyAgent.core.globalDataModel.cea.CeaConfigModel;
 import agentgui.core.update.MirrorToolListener;
-import hygrid.globalDataModel.cea.CeaConfigModel;
 import jade.core.behaviours.WakerBehaviour;
 
 /**

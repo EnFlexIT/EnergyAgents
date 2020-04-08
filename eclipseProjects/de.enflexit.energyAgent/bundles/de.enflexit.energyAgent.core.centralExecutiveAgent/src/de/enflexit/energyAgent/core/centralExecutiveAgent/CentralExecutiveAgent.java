@@ -11,9 +11,9 @@ import de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour.PhoneBookQue
 import de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour.RepositoryMirrorBehaviour;
 import de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour.StartMtpBehaviour;
-import hygrid.globalDataModel.PlatformUpdater;
-import hygrid.globalDataModel.cea.CeaConfigModel;
-import hygrid.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.PlatformUpdater;
+import de.enflexit.energyAgent.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
 import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.sl.SLCodec;
 import jade.core.Agent;

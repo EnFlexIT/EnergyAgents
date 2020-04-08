@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import agentgui.core.application.Application;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import de.enflexit.energyAgent.core.monitoring.MonitoringStrategyRT;
 import de.enflexit.energyAgent.ops.OpsController;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;
@@ -12,7 +13,6 @@ import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.persistence.ScheduleList_StorageHandler;
-import hygrid.globalDataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataReply;
 import jade.content.Concept;
 import jade.content.ContentElement;

@@ -24,10 +24,10 @@ import agentgui.core.project.Project;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentGroup;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
 import de.enflexit.energyAgent.deployment.gui.AgentDeploymentDialog;
-import hygrid.deployment.dataModel.DeploymentGroup;
-import hygrid.deployment.dataModel.DeploymentSettings;
-import hygrid.deployment.dataModel.DeploymentSettings.DeploymentMode;
 
 /**
  * This class is responsible for managing the deployment of energy agents, i.e. collecting 

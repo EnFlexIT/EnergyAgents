@@ -24,13 +24,13 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
 import de.enflexit.common.csv.CsvDataController;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UnitValue;
 import hygrid.csvFileImport.CSV_FileImporter;
 import hygrid.csvFileImport.GeoCoordinatesMapper;
-import hygrid.globalDataModel.ontology.CableProperties;
-import hygrid.globalDataModel.ontology.ElectricalNodeProperties;
-import hygrid.globalDataModel.ontology.UniPhaseCableState;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.UnitValue;
 
 /**
  * The Class CsvFileImporterMediumVoltageGrid provides an import adapter for the 

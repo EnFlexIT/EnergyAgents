@@ -4,9 +4,9 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import hygrid.globalDataModel.GlobalHyGridConstants;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
 
 /**
  * The Class NetworkComponentHelper provides some static help methods for {@link NetworkComponent}s.

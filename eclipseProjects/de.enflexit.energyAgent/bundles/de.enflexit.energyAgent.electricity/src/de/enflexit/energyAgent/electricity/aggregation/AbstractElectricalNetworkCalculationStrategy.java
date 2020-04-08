@@ -12,6 +12,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.energyAgent.core.aggregation.AbstractNetworkCalculationStrategy;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeState;
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
@@ -30,8 +32,6 @@ import energygroup.sequentialNetworks.AbstractSequentialNetworkCalculation;
 import hygrid.csvFileImport.NetworkModelToCsvMapper;
 import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
 import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import hygrid.globalDataModel.ontology.CableState;
-import hygrid.globalDataModel.ontology.ElectricalNodeState;
 
 /**
  * Common super class for eletrical network calculation strategies

@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 import de.enflexit.energyAgent.core.AbstractEnergyAgent;
 import de.enflexit.energyAgent.core.AbstractInternalDataModel.LoggingMode;
+import de.enflexit.energyAgent.core.globalDataModel.DirectoryHelper.DirectoryType;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.evaluation.TechnicalSystemStateHelper;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.DirectoryHelper.DirectoryType;
 
 /**
  * {@link MonitoringListener} implementation for logging purposes

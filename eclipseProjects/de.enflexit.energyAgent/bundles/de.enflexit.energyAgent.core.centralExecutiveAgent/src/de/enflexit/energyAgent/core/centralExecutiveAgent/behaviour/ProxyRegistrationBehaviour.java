@@ -1,9 +1,9 @@
 package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.ontology.ProxyAgentRegistrationRequest;
-import hygrid.globalDataModel.ontology.RemoteAgentRegistrationRequest;
-import hygrid.globalDataModel.ontology.TestbedAgentManagement;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ProxyAgentRegistrationRequest;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.RemoteAgentRegistrationRequest;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TestbedAgentManagement;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;

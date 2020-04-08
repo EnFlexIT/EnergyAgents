@@ -7,16 +7,16 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 
 import agentgui.logging.components.SysOutBoard;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalMeasurement;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UnitValue;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.energyAgent.lib.powerFlowEstimation.decentralEstimation.AbstractGridStateEstimation;
 import de.enflexit.energyAgent.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.ontology.ElectricalMeasurement;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.UnitValue;
 
 public class DecentralEstimationManager extends AbstractGridStateEstimation {
 	

@@ -20,8 +20,8 @@ import javax.swing.tree.TreeCellRenderer;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import hygrid.deployment.dataModel.AgentDeploymentInformation;
-import hygrid.deployment.dataModel.DeploymentGroup;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentGroup;
 
 /**
  * {@link TreeCellRenderer} implementation for visualizing the activation state of {@link DeploymentGroup}s

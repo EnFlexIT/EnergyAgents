@@ -3,7 +3,7 @@ package de.enflexit.energyAgent.core.behaviour;
 import java.util.Date;
 
 import de.enflexit.energyAgent.core.AbstractEnergyAgent;
-import hygrid.globalDataModel.PlatformUpdater;
+import de.enflexit.energyAgent.core.globalDataModel.PlatformUpdater;
 import jade.core.behaviours.WakerBehaviour;
 
 /**

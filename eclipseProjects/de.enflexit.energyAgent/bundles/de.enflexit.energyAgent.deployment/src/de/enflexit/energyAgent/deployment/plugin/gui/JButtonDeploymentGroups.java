@@ -11,9 +11,9 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.energyAgent.deployment.gui.DeploymentGroupsInternalFrame;
 import de.enflexit.energyAgent.deployment.plugin.DeploymentPlugIn;
-import hygrid.deployment.dataModel.SetupExtension;
 import hygrid.plugin.HyGridPlugIn;
 
 /**

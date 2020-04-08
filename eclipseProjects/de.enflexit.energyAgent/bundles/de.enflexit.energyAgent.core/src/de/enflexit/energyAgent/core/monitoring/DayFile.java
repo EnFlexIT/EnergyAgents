@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
-import hygrid.globalDataModel.DirectoryHelper;
+import de.enflexit.energyAgent.core.globalDataModel.DirectoryHelper;
 
 /**
  * The Class DayFile extends the regular {@link File} and contains

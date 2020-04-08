@@ -7,10 +7,10 @@ import org.awb.env.networkModel.adapter.dataModel.DataModelStorageHandlerOntolog
 
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
-import hygrid.globalDataModel.ontology.Cable;
-import hygrid.globalDataModel.ontology.CableProperties;
-import hygrid.globalDataModel.ontology.HyGridOntology;
-import hygrid.globalDataModel.ontology.TriPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.Cable;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseCableState;
 
 /**
  * The Class TriPhaseCableDataModelStoragerHandler.

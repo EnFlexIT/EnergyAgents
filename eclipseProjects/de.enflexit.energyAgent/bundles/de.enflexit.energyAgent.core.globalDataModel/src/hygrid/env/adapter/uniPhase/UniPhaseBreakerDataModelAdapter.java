@@ -7,9 +7,9 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
-import hygrid.globalDataModel.ontology.CableWithBreakerProperties;
-import hygrid.globalDataModel.ontology.HyGridOntology;
-import hygrid.globalDataModel.ontology.UniPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableWithBreakerProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseCableState;
 import jade.content.onto.Ontology;
 
 public class UniPhaseBreakerDataModelAdapter extends NetworkComponentAdapter4Ontology {

@@ -6,7 +6,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import hygrid.deployment.dataModel.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
 
 /**
  * {@link ListCellRenderer} for items of the type {@link AgentOperatingMode}

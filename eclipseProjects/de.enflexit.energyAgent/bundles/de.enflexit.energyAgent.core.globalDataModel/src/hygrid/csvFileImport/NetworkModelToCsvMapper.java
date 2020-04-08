@@ -14,12 +14,12 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
-import hygrid.globalDataModel.GlobalHyGridConstants;
-import hygrid.globalDataModel.ontology.CableProperties;
-import hygrid.globalDataModel.ontology.ElectricalNodeProperties;
-import hygrid.globalDataModel.ontology.SensorProperties;
 /**
  * The Class NetworkModelMapper maps the Agent.GUI internal {@link NetworkModel}
  * to a CSV file corresponding structure. It can be used for the preparation of

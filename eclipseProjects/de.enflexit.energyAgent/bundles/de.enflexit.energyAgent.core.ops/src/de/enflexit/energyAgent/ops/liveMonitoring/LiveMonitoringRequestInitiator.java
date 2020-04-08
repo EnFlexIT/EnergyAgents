@@ -1,6 +1,6 @@
 package de.enflexit.energyAgent.ops.liveMonitoring;
 
-import hygrid.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;

@@ -1,6 +1,6 @@
 package de.enflexit.energyAgent.core.fieldDataProxyAgent;
 
-import hygrid.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataReply;
 import jade.content.Concept;
 import jade.content.ContentElement;

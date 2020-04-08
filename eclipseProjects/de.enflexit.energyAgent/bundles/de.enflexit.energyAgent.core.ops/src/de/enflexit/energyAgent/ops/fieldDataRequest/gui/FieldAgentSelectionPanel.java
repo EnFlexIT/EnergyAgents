@@ -1,8 +1,7 @@
 package de.enflexit.energyAgent.ops.fieldDataRequest.gui;
 
 import javax.swing.JPanel;
-import hygrid.deployment.dataModel.AgentDeploymentInformation;
-import hygrid.deployment.dataModel.SetupExtension;
+
 import hygrid.plugin.HyGridPlugIn;
 import java.awt.GridBagLayout;
 
@@ -23,6 +22,9 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
 
 /**
  * 

@@ -23,13 +23,13 @@ import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
 import de.enflexit.common.csv.CsvFileWriter;
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
 import energy.GlobalInfo;
 import energy.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyUnitFactorPrefixSI;
 import hygrid.csvFileImport.NetworkModelToCsvMapper;
 import hygrid.csvFileImport.NetworkModelToCsvMapper.BranchDescription;
-import hygrid.globalDataModel.GlobalHyGridConstants;
 import hygrid.plugin.gui.SimulationDataExportConfigurationDialog;
 import jade.util.leap.Iterator;
 

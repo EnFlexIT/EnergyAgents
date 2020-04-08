@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.cea.ConversationID;
-import hygrid.globalDataModel.phonebook.PhoneBook;
-import hygrid.globalDataModel.phonebook.PhoneBookEntry;
-import hygrid.globalDataModel.phonebook.PhoneBookQuery;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBook;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookQuery;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;

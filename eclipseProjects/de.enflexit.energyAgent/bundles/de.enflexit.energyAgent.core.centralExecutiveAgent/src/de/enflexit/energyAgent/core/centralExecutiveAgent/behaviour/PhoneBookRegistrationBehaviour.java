@@ -3,8 +3,8 @@ package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 import java.io.IOException;
 
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.PlatformUpdater;
-import hygrid.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.energyAgent.core.globalDataModel.PlatformUpdater;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookEntry;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;

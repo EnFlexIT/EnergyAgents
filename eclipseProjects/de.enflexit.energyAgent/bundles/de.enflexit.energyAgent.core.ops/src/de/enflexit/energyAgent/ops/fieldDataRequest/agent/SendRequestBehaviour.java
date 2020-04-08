@@ -1,7 +1,7 @@
 package de.enflexit.energyAgent.ops.fieldDataRequest.agent;
 
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import de.enflexit.energyAgent.ops.OpsController;
-import hygrid.globalDataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataRequest;
 import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.Codec.CodecException;

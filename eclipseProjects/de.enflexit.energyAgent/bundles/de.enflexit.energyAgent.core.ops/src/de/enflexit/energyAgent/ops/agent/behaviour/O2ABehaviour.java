@@ -1,7 +1,7 @@
 package de.enflexit.energyAgent.ops.agent.behaviour;
 
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import de.enflexit.energyAgent.ops.agent.CeaConnectorAgent;
-import hygrid.globalDataModel.cea.ConversationID;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**

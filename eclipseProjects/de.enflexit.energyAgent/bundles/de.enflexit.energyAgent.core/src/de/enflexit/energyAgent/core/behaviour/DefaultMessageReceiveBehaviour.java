@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import de.enflexit.energyAgent.core.AbstractEnergyAgent;
-import hygrid.globalDataModel.cea.ConversationID;
-import hygrid.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookEntry;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;

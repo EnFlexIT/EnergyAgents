@@ -20,14 +20,14 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.GraphElementLayoutService;
 import energy.GlobalInfo;
 import energy.UnitConverter;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
-import hygrid.deployment.dataModel.DeploymentSettings;
-import hygrid.deployment.dataModel.SetupExtension;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
-import hygrid.globalDataModel.graphLayout.GraphElementLayoutService;
 
 /**
  * The Class AbstractEnvironmentModel represents an additional data model that can be 

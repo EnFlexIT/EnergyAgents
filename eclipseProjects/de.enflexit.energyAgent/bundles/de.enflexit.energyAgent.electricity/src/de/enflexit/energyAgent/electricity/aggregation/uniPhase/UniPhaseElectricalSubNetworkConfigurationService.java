@@ -2,7 +2,7 @@ package de.enflexit.energyAgent.electricity.aggregation.uniPhase;
 
 import de.enflexit.energyAgent.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.energyAgent.core.aggregation.SubNetworkConfigurationService;
-import hygrid.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
 
 /**
  * This SubNetworkConfigurationService implementation provides a SubNetworkConfiguration for uni-phase electrical networks.

@@ -2,9 +2,9 @@ package de.enflexit.energyAgent.core.aggregation;
 
 import java.util.TreeMap;
 
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.ColorSettingsIntervalBased;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
 
 /**
  * General GraphElmentLayoutSettings implementation for all networks in the HyGrid-context

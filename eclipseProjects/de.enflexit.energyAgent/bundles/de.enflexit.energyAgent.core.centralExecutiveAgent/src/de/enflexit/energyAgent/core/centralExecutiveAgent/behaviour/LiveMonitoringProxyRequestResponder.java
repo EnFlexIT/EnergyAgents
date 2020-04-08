@@ -5,11 +5,11 @@ import java.util.List;
 
 import agentgui.core.project.setup.SimulationSetup;
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.energyAgent.core.liveMonitoringProxyAgent.LiveMonitoringProxyAgent;
-import hygrid.deployment.dataModel.AgentDeploymentInformation;
-import hygrid.deployment.dataModel.AgentOperatingMode;
-import hygrid.deployment.dataModel.SetupExtension;
-import hygrid.globalDataModel.cea.ConversationID;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;

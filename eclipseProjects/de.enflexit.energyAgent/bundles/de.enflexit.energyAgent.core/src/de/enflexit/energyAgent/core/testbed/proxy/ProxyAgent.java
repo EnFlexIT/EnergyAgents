@@ -1,10 +1,10 @@
 package de.enflexit.energyAgent.core.testbed.proxy;
 
 import agentgui.core.application.Application;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentSpecifier;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
 import de.enflexit.energyAgent.core.testbed.CEARegistrationBehaviour;
-import hygrid.deployment.dataModel.AgentSpecifier;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.globalDataModel.ontology.HyGridOntology;
 import jade.content.lang.sl.SLCodec;
 import jade.core.AID;
 import jade.core.Agent;

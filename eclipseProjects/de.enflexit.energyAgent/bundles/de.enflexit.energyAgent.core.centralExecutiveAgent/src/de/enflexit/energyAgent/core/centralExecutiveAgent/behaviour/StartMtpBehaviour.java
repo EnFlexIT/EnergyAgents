@@ -2,7 +2,7 @@ package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 
 import agentgui.core.application.Application;
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.energyAgent.core.globalDataModel.cea.CeaConfigModel;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.mtp.MTPException;
 import jade.wrapper.StaleProxyException;

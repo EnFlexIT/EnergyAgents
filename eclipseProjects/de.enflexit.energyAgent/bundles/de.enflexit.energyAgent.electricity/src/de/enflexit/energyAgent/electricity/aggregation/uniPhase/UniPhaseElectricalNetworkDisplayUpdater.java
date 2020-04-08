@@ -14,6 +14,8 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.energyAgent.core.aggregation.AbstractNetworkModelDisplayUpdater;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.energyAgent.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
 import energy.DisplayHelper;
 import energy.DomainSettings;
@@ -27,8 +29,6 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.optionModel.UsageOfInterfaceEnergy;
 import energy.schedule.ScheduleController;
 import hygrid.env.ColorSettingsCollection;
-import hygrid.globalDataModel.ontology.UniPhaseCableState;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
 
 /**
  * {@link AbstractNetworkModelDisplayUpdater} implementation for uni-phase 10kV electrical grids.

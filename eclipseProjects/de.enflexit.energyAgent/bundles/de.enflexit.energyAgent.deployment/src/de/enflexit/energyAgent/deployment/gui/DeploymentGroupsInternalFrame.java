@@ -41,13 +41,13 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentGroup;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtensionListener;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension.Changed;
 import de.enflexit.energyAgent.deployment.AgentDeployment;
 import de.enflexit.energyAgent.deployment.plugin.DeploymentPlugIn;
-import hygrid.deployment.dataModel.DeploymentGroup;
-import hygrid.deployment.dataModel.DeploymentSettings;
-import hygrid.deployment.dataModel.SetupExtension;
-import hygrid.deployment.dataModel.SetupExtension.Changed;
-import hygrid.deployment.dataModel.SetupExtensionListener;
 
 /**
  * This JInternlFrame displays a list of deployed agents and allows to edit it

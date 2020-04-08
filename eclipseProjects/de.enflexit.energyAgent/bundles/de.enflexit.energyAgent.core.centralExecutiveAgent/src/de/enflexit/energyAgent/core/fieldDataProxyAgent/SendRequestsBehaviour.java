@@ -3,7 +3,7 @@ package de.enflexit.energyAgent.core.fieldDataProxyAgent;
 import java.util.ArrayList;
 import java.util.List;
 
-import hygrid.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataRequest;
 import hygrid.ops.ontology.OpsOntology;
 import hygrid.ops.ontology.ScheduleRangeDefinition;

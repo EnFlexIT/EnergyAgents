@@ -14,12 +14,12 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import de.enflexit.energyAgent.ops.OpsController;
 import de.enflexit.energyAgent.ops.OpsControllerEvent;
 import de.enflexit.energyAgent.ops.OpsControllerListener;
 import de.enflexit.energyAgent.ops.fieldDataRequest.gui.FieldDataRequestDialog;
 import de.enflexit.eom.database.DatabaseBundleInfo;
-import hygrid.globalDataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataRequest;
 import hygrid.ops.ontology.LongValue;
 import hygrid.ops.ontology.ScheduleRangeDefinition;

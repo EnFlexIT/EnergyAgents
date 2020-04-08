@@ -3,11 +3,11 @@ package de.enflexit.energyAgent.core.behaviour;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
 import de.enflexit.energyAgent.core.monitoring.MonitoringEvent;
 import de.enflexit.energyAgent.core.monitoring.MonitoringListener;
 import energy.evaluation.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.GlobalHyGridConstants;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;

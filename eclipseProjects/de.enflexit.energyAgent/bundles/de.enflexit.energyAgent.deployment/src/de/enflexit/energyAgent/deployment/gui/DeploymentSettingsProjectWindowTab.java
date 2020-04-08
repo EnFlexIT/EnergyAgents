@@ -18,7 +18,7 @@ import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
-import hygrid.deployment.dataModel.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 
 /**

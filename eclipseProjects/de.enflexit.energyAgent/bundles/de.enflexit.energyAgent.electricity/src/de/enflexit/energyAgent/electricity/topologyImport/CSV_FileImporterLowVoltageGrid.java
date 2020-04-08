@@ -20,19 +20,19 @@ import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
 import de.enflexit.common.csv.CsvDataController;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableWithBreakerProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CircuitBreaker;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TransformerNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalTransformerState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseSensorState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UnitValue;
 import hygrid.csvFileImport.CSV_FileImporter;
-import hygrid.globalDataModel.ontology.CircuitBreaker;
-import hygrid.globalDataModel.ontology.ElectricalNodeProperties;
-import hygrid.globalDataModel.ontology.SensorProperties;
-import hygrid.globalDataModel.ontology.TransformerNodeProperties;
-import hygrid.globalDataModel.ontology.CableProperties;
-import hygrid.globalDataModel.ontology.CableState;
-import hygrid.globalDataModel.ontology.CableWithBreakerProperties;
-import hygrid.globalDataModel.ontology.TriPhaseCableState;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalTransformerState;
-import hygrid.globalDataModel.ontology.TriPhaseSensorState;
-import hygrid.globalDataModel.ontology.UnitValue;
 
 /**
  * The Class CsvFileImporterLowVoltageGrid provides an import adapter for the 

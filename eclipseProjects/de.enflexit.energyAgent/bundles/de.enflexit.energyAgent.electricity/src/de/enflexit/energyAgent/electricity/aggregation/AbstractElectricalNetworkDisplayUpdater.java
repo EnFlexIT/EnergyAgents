@@ -19,6 +19,9 @@ import de.enflexit.energyAgent.core.aggregation.AbstractNetworkModelDisplayUpdat
 import de.enflexit.energyAgent.core.aggregation.trafficLight.TrafficLightStateMessage;
 import de.enflexit.energyAgent.core.aggregation.trafficLight.TrafficLightStatePanel;
 import de.enflexit.energyAgent.core.aggregation.trafficLight.TrafficLight.TrafficLightColor;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.GraphElementLayoutService;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.StaticComponentProperties;
 import energy.DisplayHelper;
 import energy.optionModel.AbstractUsageOfInterface;
 import energy.optionModel.EnergyFlowInWatt;
@@ -26,9 +29,6 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.optionModel.UsageOfInterfaceEnergy;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.DisplayUpdateConfiguration.UpdateMechanism;
-import hygrid.globalDataModel.graphLayout.GraphElementLayoutService;
-import hygrid.globalDataModel.ontology.ElectricalNodeProperties;
-import hygrid.globalDataModel.ontology.StaticComponentProperties;
 
 /**
  * Common superclass for {@link AbstractNetworkModelDisplayUpdater} implementations for electricity grids,

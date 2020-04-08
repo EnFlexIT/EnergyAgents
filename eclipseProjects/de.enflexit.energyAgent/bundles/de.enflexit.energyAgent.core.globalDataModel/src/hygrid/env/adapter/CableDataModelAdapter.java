@@ -8,8 +8,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
-import hygrid.globalDataModel.ontology.Cable;
-import hygrid.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.Cable;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
 import jade.content.onto.Ontology;
 
 /**

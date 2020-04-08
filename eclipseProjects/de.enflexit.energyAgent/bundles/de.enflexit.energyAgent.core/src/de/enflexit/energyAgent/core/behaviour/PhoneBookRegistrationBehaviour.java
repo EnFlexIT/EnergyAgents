@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import de.enflexit.energyAgent.core.AbstractEnergyAgent;
-import hygrid.deployment.dataModel.AgentOperatingMode;
-import hygrid.globalDataModel.PlatformUpdater;
-import hygrid.globalDataModel.cea.CeaConfigModel;
-import hygrid.globalDataModel.cea.ConversationID;
-import hygrid.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.energyAgent.core.globalDataModel.PlatformUpdater;
+import de.enflexit.energyAgent.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookEntry;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;

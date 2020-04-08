@@ -3,9 +3,9 @@ package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 import java.util.List;
 
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.cea.ConversationID;
-import hygrid.globalDataModel.phonebook.PhoneBook;
-import hygrid.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBook;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBookEntry;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 

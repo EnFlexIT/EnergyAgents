@@ -7,8 +7,8 @@ import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.GlobalHyGridConstants;
 import hygrid.ops.ontology.LiveMonitoringUpdate;
 import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.Codec.CodecException;

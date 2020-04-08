@@ -1,8 +1,8 @@
 package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.energyAgent.core.centralExecutiveAgent.CentralExecutiveAgent;
-import hygrid.globalDataModel.phonebook.PhoneBook;
-import hygrid.globalDataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
+import de.enflexit.energyAgent.core.globalDataModel.phonebook.PhoneBook;
+import de.enflexit.energyAgent.core.globalDataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;

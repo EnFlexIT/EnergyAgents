@@ -13,14 +13,14 @@ import org.awb.env.networkModel.NetworkModel;
 import agentgui.core.project.Project;
 import de.enflexit.energyAgent.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.energyAgent.core.aggregation.HyGridGraphElementLayoutSettingsPanel;
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.GraphElementLayoutService;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.GraphElementLayoutSettingsPersistenceTreeMap;
-import hygrid.globalDataModel.GlobalHyGridConstants;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
-import hygrid.globalDataModel.graphLayout.GraphElementLayoutService;
-import hygrid.globalDataModel.ontology.TriPhaseCableState;
-import hygrid.globalDataModel.ontology.TriPhaseElectricalNodeState;
 
 /**
  * {@link GraphElementLayoutService} implementation for tri-phase low voltage distribution grids.

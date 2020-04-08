@@ -10,8 +10,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.energyAgent.core.globalDataModel.DirectoryHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.DirectoryHelper;
 
 /**
  * The Class MonitoringFileHandler can be used to continuously write objects into the specified file.

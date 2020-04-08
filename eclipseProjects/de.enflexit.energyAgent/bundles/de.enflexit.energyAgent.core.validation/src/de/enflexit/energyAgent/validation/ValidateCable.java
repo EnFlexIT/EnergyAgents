@@ -2,10 +2,10 @@ package de.enflexit.energyAgent.validation;
 
 import org.awb.env.networkModel.NetworkComponent;
 
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
 import de.enflexit.energyAgent.core.validation.HyGridValidationAdapter;
 import de.enflexit.energyAgent.core.validation.HyGridValidationMessage;
 import de.enflexit.energyAgent.core.validation.HyGridValidationMessage.MessageType;
-import hygrid.globalDataModel.ontology.CableProperties;
 
 /**
  * The Class ValidateCable.

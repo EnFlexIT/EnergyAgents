@@ -7,6 +7,8 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalMeasurement;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.PowerFlowCalculationPV;
@@ -15,8 +17,6 @@ import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.Complex;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.PowerPerNode;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.ontology.ElectricalMeasurement;
-import hygrid.globalDataModel.ontology.SensorProperties;
 
 public class GridStateEstimation extends AbstractGridStateEstimation {
 

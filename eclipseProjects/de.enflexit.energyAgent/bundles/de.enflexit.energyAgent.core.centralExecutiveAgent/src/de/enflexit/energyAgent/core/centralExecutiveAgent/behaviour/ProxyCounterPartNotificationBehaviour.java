@@ -1,9 +1,9 @@
 package de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour;
 
-import hygrid.globalDataModel.cea.ConversationID;
-import hygrid.globalDataModel.ontology.CEARegistrationResponse;
-import hygrid.globalDataModel.ontology.HyGridOntology;
-import hygrid.globalDataModel.ontology.RemoteAgentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.CEARegistrationResponse;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.RemoteAgentInformation;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;

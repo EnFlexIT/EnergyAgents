@@ -49,12 +49,12 @@ import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
-import hygrid.deployment.dataModel.AgentDeploymentInformation;
-import hygrid.deployment.dataModel.AgentOperatingMode;
-import hygrid.deployment.dataModel.DeploymentGroup;
-import hygrid.deployment.dataModel.DeploymentSettings;
-import hygrid.deployment.dataModel.DeploymentSettings.DeploymentMode;
-import hygrid.deployment.dataModel.SetupExtension;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentGroup;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import hygrid.plugin.HyGridPlugIn;
 

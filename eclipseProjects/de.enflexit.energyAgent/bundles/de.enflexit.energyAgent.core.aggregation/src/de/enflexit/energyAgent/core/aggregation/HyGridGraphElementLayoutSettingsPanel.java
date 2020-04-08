@@ -8,10 +8,10 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 
 import agentgui.core.project.Project;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import hygrid.plugin.gui.ColorSettingPanel;
 
 /**

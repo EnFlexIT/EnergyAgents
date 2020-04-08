@@ -28,8 +28,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.config.GlobalInfo;
-import hygrid.deployment.dataModel.AgentDeploymentInformation;
-import hygrid.deployment.dataModel.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
 
 /**
  * A table to display and edit deployed agents. 

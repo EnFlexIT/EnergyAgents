@@ -2,8 +2,8 @@ package de.enflexit.energyAgent.core.liveMonitoringProxyAgent;
 
 import java.util.List;
 
+import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.globalDataModel.GlobalHyGridConstants;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;

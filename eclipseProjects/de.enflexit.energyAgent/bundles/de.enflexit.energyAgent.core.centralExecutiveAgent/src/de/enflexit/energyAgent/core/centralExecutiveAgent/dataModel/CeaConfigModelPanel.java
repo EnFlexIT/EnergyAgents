@@ -20,7 +20,7 @@ import javax.swing.event.DocumentListener;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import hygrid.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.energyAgent.core.globalDataModel.cea.CeaConfigModel;
 
 /**
  * The Class CeaConfigModelPanel.

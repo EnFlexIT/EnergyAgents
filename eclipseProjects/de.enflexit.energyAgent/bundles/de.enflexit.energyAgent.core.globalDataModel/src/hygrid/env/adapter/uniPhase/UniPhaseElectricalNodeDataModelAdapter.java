@@ -8,11 +8,11 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.TransformerNodeProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
 import hygrid.env.adapter.NetworkComponentHelper;
-import hygrid.globalDataModel.ontology.ElectricalNodeProperties;
-import hygrid.globalDataModel.ontology.HyGridOntology;
-import hygrid.globalDataModel.ontology.TransformerNodeProperties;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
 import jade.content.onto.Ontology;
 
 /**

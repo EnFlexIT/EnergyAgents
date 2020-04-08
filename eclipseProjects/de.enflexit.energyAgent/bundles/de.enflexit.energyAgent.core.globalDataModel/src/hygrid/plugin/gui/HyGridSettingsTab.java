@@ -36,6 +36,8 @@ import agentgui.simulationService.time.TimeUnitVector;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
+import de.enflexit.energyAgent.core.globalDataModel.graphLayout.GraphElementLayoutService;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration.DeltaMechanism;
@@ -45,8 +47,6 @@ import hygrid.env.DisplayUpdateConfiguration;
 import hygrid.env.DisplayUpdateConfiguration.UpdateMechanism;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
-import hygrid.globalDataModel.graphLayout.GraphElementLayoutService;
 import hygrid.plugin.HyGridPlugIn;
 
 /**

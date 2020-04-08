@@ -28,8 +28,9 @@ import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import hygrid.deployment.dataModel.AgentOperatingMode;
-import hygrid.deployment.dataModel.DeploymentSettings;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.energyAgent.core.globalDataModel.deployment.DeploymentSettings;
+
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 

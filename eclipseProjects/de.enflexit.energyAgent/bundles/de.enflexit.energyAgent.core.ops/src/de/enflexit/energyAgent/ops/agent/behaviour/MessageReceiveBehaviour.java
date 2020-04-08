@@ -2,9 +2,9 @@ package de.enflexit.energyAgent.ops.agent.behaviour;
 
 import java.util.Vector;
 
+import de.enflexit.energyAgent.core.globalDataModel.cea.ConversationID;
 import de.enflexit.energyAgent.ops.OpsController;
 import de.enflexit.energyAgent.ops.agent.CeaConnectorAgent;
-import hygrid.globalDataModel.cea.ConversationID;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;

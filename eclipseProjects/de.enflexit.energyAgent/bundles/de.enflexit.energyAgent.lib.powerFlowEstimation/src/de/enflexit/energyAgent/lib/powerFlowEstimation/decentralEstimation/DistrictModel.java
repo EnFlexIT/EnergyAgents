@@ -7,6 +7,7 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
+import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.PowerFlowParameter;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.BranchMeasurement;
@@ -16,7 +17,6 @@ import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.NodeAssignment
 import de.enflexit.energyAgent.lib.powerFlowCalculation.parameter.NodeAssociationParams;
 import hygrid.csvFileImport.NetworkModelToCsvMapper;
 import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
-import hygrid.globalDataModel.ontology.SensorProperties;
 import jampack.JampackException;
 
 public class DistrictModel {

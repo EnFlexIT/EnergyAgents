@@ -12,6 +12,13 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 
+import de.enflexit.energyAgent.core.globalDataModel.blackboard.TransformerPowerAnswer;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseCableState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseCableWithBreaker;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UniPhaseSensorState;
+import de.enflexit.energyAgent.core.globalDataModel.ontology.UnitValue;
 import de.enflexit.energyAgent.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.energyAgent.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 import energy.OptionModelController;
@@ -30,13 +37,6 @@ import hygrid.csvFileImport.NetworkModelToCsvMapper;
 import hygrid.csvFileImport.NetworkModelToCsvMapper.BranchDescription;
 import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
 import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import hygrid.globalDataModel.blackboard.TransformerPowerAnswer;
-import hygrid.globalDataModel.ontology.SensorProperties;
-import hygrid.globalDataModel.ontology.UniPhaseCableWithBreaker;
-import hygrid.globalDataModel.ontology.UniPhaseCableState;
-import hygrid.globalDataModel.ontology.UniPhaseElectricalNodeState;
-import hygrid.globalDataModel.ontology.UniPhaseSensorState;
-import hygrid.globalDataModel.ontology.UnitValue;
 
 /**
  * Network calculation strategy for uni-phase (or symmetrical) electricity grids.
