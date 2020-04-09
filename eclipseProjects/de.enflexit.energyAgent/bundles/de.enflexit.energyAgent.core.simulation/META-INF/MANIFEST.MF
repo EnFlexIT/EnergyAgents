@@ -7,9 +7,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: DAWIS - ICB - University Duisburg-Essen
 Automatic-Module-Name: net.agenthygrid.core.simulation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.energyAgent.core.simulation.classLoadService,
- de.enflexit.energyAgent.core.simulation.manager,
- de.enflexit.energyAgent.core.simulation.validation
+Export-Package: de.enflexit.ea.core.simulation.classLoadService,
+ de.enflexit.ea.core.simulation.manager,
+ de.enflexit.ea.core.simulation.validation
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  org.agentgui.core,

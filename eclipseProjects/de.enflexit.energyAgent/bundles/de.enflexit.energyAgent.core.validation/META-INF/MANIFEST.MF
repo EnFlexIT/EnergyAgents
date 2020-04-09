@@ -15,6 +15,6 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences,
  org.eclipse.osgi.services
-Export-Package: de.enflexit.energyAgent.core.validation,
- de.enflexit.energyAgent.core.validation.ui,
- de.enflexit.energyAgent.validation
+Export-Package: de.enflexit.ea.core.validation,
+ de.enflexit.ea.core.validation.ui,
+ de.enflexit.ea.validation

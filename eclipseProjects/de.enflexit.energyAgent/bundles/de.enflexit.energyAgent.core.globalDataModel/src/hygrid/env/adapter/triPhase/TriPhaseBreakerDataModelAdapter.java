@@ -8,9 +8,9 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.CableWithBreakerProperties;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.HyGridOntology;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseCableState;
+import de.enflexit.ea.core.globalDataModel.ontology.CableWithBreakerProperties;
+import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.globalDataModel.ontology.TriPhaseCableState;
 import jade.content.onto.Ontology;
 
 public class TriPhaseBreakerDataModelAdapter extends NetworkComponentAdapter4Ontology {

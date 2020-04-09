@@ -5,7 +5,7 @@
          id="net.agenthygrid.core.validation.ui.ValidatorMainWindowExtension"
          point="org.awb.swing.mainWindowExtension">
       <mainWindowExtensionClient
-            class="de.enflexit.energyAgent.core.validation.ui.HyGridValidator">
+            class="de.enflexit.ea.core.validation.ui.HyGridValidator">
       </mainWindowExtensionClient>
    </extension>
 

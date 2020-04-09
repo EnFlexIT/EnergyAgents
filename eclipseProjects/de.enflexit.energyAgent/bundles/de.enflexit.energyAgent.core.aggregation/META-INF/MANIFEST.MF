@@ -10,10 +10,10 @@ Bundle-ActivationPolicy: lazy
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
-Export-Package: de.enflexit.energyAgent.core.aggregation,
- de.enflexit.energyAgent.core.aggregation.classLoadService,
- de.enflexit.energyAgent.core.aggregation.trafficLight,
- de.enflexit.energyAgent.core.aggregation.trafficLight.img
+Export-Package: de.enflexit.ea.core.aggregation,
+ de.enflexit.ea.core.aggregation.classLoadService,
+ de.enflexit.ea.core.aggregation.trafficLight,
+ de.enflexit.ea.core.aggregation.trafficLight.img
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  org.agentgui.core,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.energyAgent.electricity.scheduleImport.MediumVoltageGridScheduleImporter">
-   <implementation class="de.enflexit.energyAgent.electricity.scheduleImport.MediumVoltageGridScheduleImporter"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.ea.electricity.scheduleImport.MediumVoltageGridScheduleImporter">
+   <implementation class="de.enflexit.ea.electricity.scheduleImport.MediumVoltageGridScheduleImporter"/>
    <service>
       <provide interface="org.awb.env.networkModel.persistence.NetworkModelOperationalDataImportService"/>
    </service>

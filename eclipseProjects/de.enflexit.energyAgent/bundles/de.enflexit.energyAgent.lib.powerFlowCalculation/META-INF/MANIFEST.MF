@@ -5,9 +5,9 @@ Bundle-SymbolicName: de.enflexit.energyAgent.lib.powerFlowCalculation
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Marcel Ludwig
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.energyAgent.lib.powerFlowCalculation,
- de.enflexit.energyAgent.lib.powerFlowCalculation.classLoadService,
- de.enflexit.energyAgent.lib.powerFlowCalculation.parameter
+Export-Package: de.enflexit.ea.lib.powerFlowCalculation,
+ de.enflexit.ea.lib.powerFlowCalculation.classLoadService,
+ de.enflexit.ea.lib.powerFlowCalculation.parameter
 Bundle-ClassPath: .
 Automatic-Module-Name: net.agenthygrid.lib.powerFlowCalculation
 Service-Component: OSGI-INF/baseClassLoadService.xml

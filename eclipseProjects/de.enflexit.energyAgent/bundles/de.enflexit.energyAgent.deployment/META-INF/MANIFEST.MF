@@ -5,8 +5,8 @@ Bundle-SymbolicName: de.enflexit.energyAgent.deployment
 Bundle-Version: 1.1.1.qualifier
 Automatic-Module-Name: net.agenthygrid.deployment
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.energyAgent.deployment,
- de.enflexit.energyAgent.deployment.gui
+Export-Package: de.enflexit.ea.deployment,
+ de.enflexit.ea.deployment.gui
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.eom.awbAdapter,

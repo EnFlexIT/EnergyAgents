@@ -6,11 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: net.agenthygrid.core.centralExecutiveAgent
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.energyAgent.core.centralExecutiveAgent,
- de.enflexit.energyAgent.core.centralExecutiveAgent.behaviour,
- de.enflexit.energyAgent.core.centralExecutiveAgent.classLoadService,
- de.enflexit.energyAgent.core.centralExecutiveAgent.dataModel,
- de.enflexit.energyAgent.core.fieldDataProxyAgent
+Export-Package: de.enflexit.ea.core.centralExecutiveAgent,
+ de.enflexit.ea.core.centralExecutiveAgent.behaviour,
+ de.enflexit.ea.core.centralExecutiveAgent.classLoadService,
+ de.enflexit.ea.core.centralExecutiveAgent.dataModel,
+ de.enflexit.ea.core.fieldDataProxyAgent
 Bundle-Vendor: DAWIS
 Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
 Require-Bundle: de.enflexit.common,

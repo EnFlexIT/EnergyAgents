@@ -8,10 +8,10 @@ import org.awb.env.networkModel.adapter.dataModel.DataModelStorageHandlerOntolog
 import agentgui.core.application.Application;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.TransformerNodeProperties;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.UnitValue;
+import de.enflexit.ea.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.ea.core.globalDataModel.ontology.TransformerNodeProperties;
+import de.enflexit.ea.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.core.globalDataModel.ontology.UnitValue;
 
 /**
  * StorageHandler for tri-phase electrical nodes, implementing data model conversion for regular nodes and transformer nodes.

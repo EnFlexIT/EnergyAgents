@@ -23,7 +23,7 @@ import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
 import de.enflexit.common.csv.CsvFileWriter;
-import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
 import energy.GlobalInfo;
 import energy.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;

@@ -14,10 +14,10 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
-import de.enflexit.energyAgent.core.globalDataModel.GlobalHyGridConstants;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.CableProperties;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.ElectricalNodeProperties;
-import de.enflexit.energyAgent.core.globalDataModel.ontology.SensorProperties;
+import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.ea.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.ea.core.globalDataModel.ontology.SensorProperties;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 /**

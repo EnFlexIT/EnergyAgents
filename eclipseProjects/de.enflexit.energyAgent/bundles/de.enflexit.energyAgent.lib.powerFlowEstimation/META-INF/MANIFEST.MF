@@ -15,6 +15,6 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
  de.enflexit.energyAgent.lib.matrixCalculations
-Export-Package: de.enflexit.energyAgent.lib.powerFlowEstimation.centralEstimation,
- de.enflexit.energyAgent.lib.powerFlowEstimation.decentralEstimation
+Export-Package: de.enflexit.ea.lib.powerFlowEstimation.centralEstimation,
+ de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation
 Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml

@@ -1,0 +1,635 @@
+package de.enflexit.ea.core.aggregation;
+
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
+
+import agentgui.core.application.Application;
+import agentgui.simulationService.time.TimeModelContinuous;
+import agentgui.simulationService.time.TimeModelDateBased;
+import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.common.SerialClone;
+import energy.OptionModelController;
+import energy.optionModel.Duration;
+import energy.optionModel.EnergyFlowGeneral;
+import energy.optionModel.EnergyFlowInWattCalculated;
+import energy.optionModel.EvaluationClass;
+import energy.optionModel.EvaluationSettings;
+import energy.optionModel.GroupMember;
+import energy.optionModel.InterfaceSetting;
+import energy.optionModel.ScheduleList;
+import energy.optionModel.State;
+import energy.optionModel.StateTransition;
+import energy.optionModel.TechnicalInterface;
+import energy.optionModel.TechnicalInterfaceConfiguration;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemGroup;
+import energy.optionModel.TechnicalSystemState;
+import energy.optionModel.TechnicalSystemStateTime;
+import energy.optionModel.TimeUnit;
+import energy.schedule.ScheduleController;
+import energygroup.GroupController;
+import energygroup.GroupNotification;
+import energygroup.GroupTreeNodeObject;
+import energygroup.calculation.GroupCalculation;
+import energygroup.gui.GroupMainPanel;
+import energygroup.gui.GroupTree.GroupNodeCaptionStyle;
+import hygrid.env.HyGridAbstractEnvironmentModel;
+
+/**
+ * The Class AbstractSubAggregationBuilder defines the base for an individual separation
+ * of a specified NetworkModel. Thus, a topology or NetworkModel should can be 
+ * separated into different domains (e.g. electricity, heat, gas and other).
+ * 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ */
+public abstract class AbstractSubAggregationBuilder {
+
+	private AbstractAggregationHandler aggregationHandler;
+	private AbstractSubNetworkConfiguration subAggregationConfiguration;
+	
+	private NetworkModel networkModel;
+	
+	private JInternalFrame jInternalFrameAggregation;
+	private GroupMainPanel groupMainPanel;
+	private GroupController groupController;
+	
+	private boolean containsSubSystems;
+	
+	/**
+	 * Sets the aggregation handler.
+	 * @param aggregationHandler the current parent aggregation handler
+	 * 
+	 * @see AbstractAggregationHandler
+	 */
+	public void setAggregationHandler(AbstractAggregationHandler aggregationHandler) {
+		this.aggregationHandler = aggregationHandler;
+	}
+	/**
+	 * Returns the current parent aggregation handler.
+	 * @return the aggregation handler
+	 */
+	public AbstractAggregationHandler getAggregationHandler() {
+		return aggregationHandler;
+	}
+	
+	/**
+	 * Sets the current sub aggregation configuration.
+	 * @param subAggregationConfiguration the new sub aggregation configuration
+	 */
+	public void setSubAggregationConfiguration(AbstractSubNetworkConfiguration subAggregationConfiguration) {
+		this.subAggregationConfiguration = subAggregationConfiguration;
+	}
+	/**
+	 * Returns the current sub aggregation configuration.
+	 * @return the sub aggregation configuration
+	 */
+	public AbstractSubNetworkConfiguration getSubAggregationConfiguration() {
+		return subAggregationConfiguration;
+	}
+
+
+	/**
+	 * Gets the time model.
+	 * @return the time model
+	 */
+	protected TimeModelDateBased getTimeModel() {
+		return this.getAggregationHandler().getTimeModel();
+	}
+	/**
+	 * Gets the HyGridAbstractEnvironmentModel from the EnvironmentModel.
+	 * @return the HyGridAbstractEnvironmentModel
+	 */
+	protected HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
+		return this.getAggregationHandler().getHyGridAbstractEnvironmentModel();
+	}
+	
+	/**
+	 * Checks if is headless operation.
+	 * @return true, if is headless operation
+	 */
+	protected boolean isHeadlessOperation() {
+		return this.getAggregationHandler().isHeadlessOperation();
+	}
+	
+	/**
+	 * Returns the HashMap of the NetworkComponents {@link ScheduleController}.
+	 * @return the agents schedule controller
+	 */
+	protected HashMap<String, ScheduleController> getNetworkComponentsScheduleController() {
+		return this.getAggregationHandler().getNetworkComponentsScheduleController();
+	}
+	
+	/**
+	 * Checks if is contains sub systems.
+	 * @return true, if is contains sub systems
+	 */
+	public boolean hasSubSystems() {
+		return containsSubSystems;
+	}
+	/**
+	 * Sets the contains sub systems.
+	 * @param containsSubSystems the new contains sub systems
+	 */
+	private void setContainsSubSystems(boolean containsSubSystems) {
+		this.containsSubSystems = containsSubSystems;
+	}
+	
+	/**
+	 * Creates the EOM aggregation in a dedicated thread.
+	 */
+	protected void createEomAggregationInThread() {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// --- Create aggregation ---------------------------
+				AbstractSubAggregationBuilder.this.createEomAggregation();
+			}
+		}, "EOM-Aggregation-Build_" + this.getSubAggregationConfiguration().getID()).start();
+	}
+	/**
+	 * Will be invoked to create the aggregation.
+	 */
+	protected void createEomAggregation() {
+	
+		// --- Create / fill the aggregation model ----------------------------
+		this.createAggregationAsTechnicalSystemGroup();
+		this.addSubsystemsToAggregation();
+
+		// --- Show visualization of the aggregation ? ------------------------
+		if (this.hasSubSystems()==true && this.isHeadlessOperation()==false) {
+		
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					
+					// --- Is there a parent container defined? ---------------
+					Container parentContainer = AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getAggregationVisualizationParentContainer();
+					if (parentContainer!=null) {
+						if (parentContainer instanceof JTabbedPane) {
+							JTabbedPane parentTabbedPane = (JTabbedPane) parentContainer;
+							parentTabbedPane.addTab(AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getSubNetworkDescriptionID(), AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
+						} else {
+							// --- Use parent container from configuration ----
+							parentContainer.add(AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
+						}
+						
+					} else {
+						
+						// --- Use the project desktop ------------------------
+						JDesktopPane desktop = Application.getProjectFocused().getProjectDesktop();
+						
+						// --- Build the visualization ------------------------
+						JInternalFrame intFrame = AbstractSubAggregationBuilder.this.getJInternalFrameAggregation();
+						intFrame.getContentPane().add(AbstractSubAggregationBuilder.this.getGroupMainPanel());
+						intFrame.setSize((int) (desktop.getWidth() * 0.95), (int) (desktop.getHeight() * 0.9));
+						
+						// --- Add JInternalFrame to the project desktop ------
+						try {
+							desktop.add(intFrame);
+							// --- Define a movement? -------------------------
+							int noOfIntFrames = desktop.getAllFrames().length;
+							if (noOfIntFrames>1) {
+								int movement = (noOfIntFrames-1) * 20;
+								intFrame.setLocation(movement, movement);
+							}
+							intFrame.setSelected(true);
+							intFrame.moveToFront();
+							
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+					
+					// --- Configure visualization to network- and system-ID --
+					AbstractSubAggregationBuilder.this.setGroupVisualization();
+				}
+			});
+		}
+		
+		// --- Unregister at the executed builds Vector -----------------------
+		this.getAggregationHandler().getExecutedBuilds().remove(this);
+	}
+	
+	/**
+	 * Terminates the current aggregation and its visualization.
+	 */
+	public void terminateEomAggregation() {
+
+		// --- Stop the calculation -----------------------------
+		this.getNetworkCalculationStrategy().terminateRelatedStrategyInstances();
+		
+		// --- Dispose the GUI ----------------------------------
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				AbstractSubAggregationBuilder.this.getGroupMainPanel().setDoModelChangeCheckBeforeClosing(false);
+				AbstractSubAggregationBuilder.this.getGroupMainPanel().closeEomUserInterface();
+				
+			}
+		});
+	}
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, methods for the definition of the aggregation can be found --------
+	// --- that is an EOM TechnicalSystemGroup ------------------------------------------
+	// ----------------------------------------------------------------------------------
+	protected JInternalFrame getJInternalFrameAggregation() {
+		if (jInternalFrameAggregation==null) {
+			jInternalFrameAggregation = new JInternalFrame();
+			jInternalFrameAggregation.setTitle(this.getSubAggregationConfiguration().getSubNetworkDescriptionID() + " - " + this.getAggregationHandler().getOwnerName());
+			jInternalFrameAggregation.setClosable(false);
+			jInternalFrameAggregation.setMaximizable(true);
+			jInternalFrameAggregation.setResizable(true);
+			jInternalFrameAggregation.setVisible(true);
+		}
+		return jInternalFrameAggregation;
+	}
+	
+	/**
+	 * Gets the group main panel.
+	 * @return the group main panel
+	 */
+	protected GroupMainPanel getGroupMainPanel() {
+		return this.getGroupMainPanel(null);
+	}
+	
+	/**
+	 * Gets the group main panel.
+	 * @param parentContainer the parent container
+	 * @return the group main panel
+	 */
+	protected GroupMainPanel getGroupMainPanel(Container parentContainer) {
+		if (groupMainPanel==null) {
+			if (parentContainer==null) {
+				parentContainer = this.getJInternalFrameAggregation();
+			}
+			groupMainPanel = new GroupMainPanel(this.getGroupController(), parentContainer);
+			groupMainPanel.setHostIntegrated();
+		}
+		return groupMainPanel;
+	}
+	
+	/**
+	 * Gets the group controller.
+	 * @return the group controller
+	 */
+	public GroupController getGroupController() {
+		if (groupController==null) {
+			groupController = new GroupController();
+		}
+		return groupController;
+	}
+	/**
+	 * Returns the initial network model.
+	 * @return the initial network model
+	 */
+	protected NetworkModel getNetworkModel() {
+		if (networkModel==null) {
+			networkModel = this.getAggregationHandler().getNetworkModel();
+			// TODO Extract the sub network model 
+		}
+		return networkModel;
+	}
+	
+	
+	/**
+	 * Creates the {@link TechnicalSystemGroup} for the aggregation.
+	 */
+	protected void createAggregationAsTechnicalSystemGroup() {
+		
+		// --- Create new TechnicalSystemGroup --------------------------------
+		TechnicalSystemGroup tsg = new TechnicalSystemGroup();
+		
+		// --- Get the top level TechnicalSystem ------------------------------
+		TechnicalSystem ts = new TechnicalSystem();
+		ts.setSystemID(this.getAggregationHandler().getOwnerName());
+		ts.setSystemDescription("Aggregation of the " + this.getAggregationHandler().getOwnerName());
+		ts.setCalculationClass(GroupCalculation.class.getName());
+		tsg.setTechnicalSystem(ts);
+		
+		// --- Set Interface configuration to main TechnicalSystem ------------
+		TechnicalInterfaceConfiguration tic = new TechnicalInterfaceConfiguration();
+		tic.setConfigID("Default");
+		tic.setConfigDescription("Default Interface Configuration");
+		ts.getInterfaceConfigurations().add(tic);
+		
+		// --- Define the default state of the aggregation --------------------
+		State state = new State();
+		state.setStateID("Operation");
+		state.setStateDescription("Operation of the Simulation");
+		state.setDuration(this.getStateDuration());
+		state.setFormatTimeUnit(this.getStateDurationTimeFormat());
+		tic.setInitialStateID(state.getStateID());
+		tic.getSystemStates().add(state);
+		
+		// --- Create StateTransition for the above State ---------------------
+		StateTransition stateTransition = new StateTransition();
+		stateTransition.setNextStateID(state.getStateID());
+		// --- Min Duration ---------------------
+		Duration minDur = new Duration();
+		minDur.setValue(0);
+		minDur.setUnit(TimeUnit.SECOND_S);
+		stateTransition.setMinDuration(minDur);
+		// --- Max Duration ---------------------
+		Duration maxDur = new Duration();
+		maxDur.setValue(0);
+		maxDur.setUnit(TimeUnit.SECOND_S);
+		stateTransition.setMaxDuration(maxDur);
+		state.getStateTransitions().add(stateTransition);
+
+		// --- Define the TechnicalInterfaces and add EnergyFlow to state -----
+		List<TechnicalInterface> interfaces = this.getAggregationTechnicalInterfaces();
+		for (int i=0; i<interfaces.size(); i++) {
+			tic.getTechnicalInterfaces().add(interfaces.get(i));
+			state.getFlows().add(this.getNewEnergyFlowCalculated(interfaces.get(i)));
+		}
+		
+		// --- Finally, set TechnicalSystemGroup to GroupController -----------
+		this.getGroupController().setTechnicalSystemGroup(tsg);
+		
+		// --- Set the evaluation settings for the aggregation ----------------
+		this.setEvaluationSettingsToAggregation(tic, state);
+		
+	}
+	
+	/**
+	 * Gets the technical interfaces for the aggregation.
+	 * @return the aggregation technical interfaces
+	 */
+	protected abstract List<TechnicalInterface> getAggregationTechnicalInterfaces();
+	
+	/**
+	 * Sets the evaluation settings to the aggregation.
+	 *
+	 * @param tic the {@link TechnicalInterfaceConfiguration} to use 
+	 * @param state the {@link State} to use
+	 */
+	protected void setEvaluationSettingsToAggregation(TechnicalInterfaceConfiguration tic, State state) {
+		
+		// --- Get some settings from the time model --------------------------
+		long startTime = this.getTimeModel().getTimeStart();
+		long endTime = this.getTimeModel().getTimeStop();
+		String timeFormat = this.getTimeModel().getTimeFormat();
+		
+		// --- State at start time --------------------------------------------
+		TechnicalSystemState tssStart = new TechnicalSystemState();
+		tssStart.setDescription("Initial State of the Aggregation");
+		tssStart.setGlobalTime(startTime);
+		tssStart.setStateTime(0);
+		tssStart.setConfigID(tic.getConfigID());
+		tssStart.setStateID(state.getStateID());
+		
+		// --- End time of the Simulation -------------------------------------
+		TechnicalSystemStateTime tssEnd = new TechnicalSystemStateTime();
+		tssEnd.setDescription("End time for the evaluation");
+		tssEnd.setGlobalTime(endTime);
+		
+		// --- Get the instance of the EvaluationSettings --------------------- 
+		EvaluationSettings evalSettings = this.getGroupController().getGroupOptionModelController().getEvaluationSettings();
+		evalSettings.setTimeFormat(timeFormat);
+		
+		// --- Set the default evaluation strategy ----------------------------
+		EvaluationClass evalClass = new EvaluationClass();
+		evalClass.setStrategyID(this.getNetworkCalculationStrategyClass().getSimpleName());
+		evalClass.setClassName(this.getNetworkCalculationStrategyClass().getName());
+		evalClass.setDescription("GroupStrategy for the Network Calculation");
+		
+		evalSettings.getEvaluationClasses().add(evalClass);
+		evalSettings.setEvaluationClass(this.getNetworkCalculationStrategyClass().getName()); // - as default -
+		evalSettings.getEvaluationStateList().add(tssStart);
+		evalSettings.getEvaluationStateList().add(tssEnd);
+	}
+	
+	/**
+	 * Adds the subsystems to the build aggregation.
+	 */
+	protected void addSubsystemsToAggregation() {
+		
+		// --- Get the list of NetworkComponents to work on -------------------
+		Vector<NetworkComponent> netComps = null;
+		if (this.getSubAggregationConfiguration().getDomainCluster()!=null) {
+			netComps = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
+		} else {
+			netComps = this.getNetworkModel().getNetworkComponentVectorSorted();
+		}
+		for (int i = 0; i < netComps.size(); i++) {
+
+			// --- Check single NetworkComponent ------------------------------
+			NetworkComponent netComp = netComps.get(i);
+			boolean isPartOfSubnetwork = this.getSubAggregationConfiguration().isPartOfSubnetwork(netComp);
+			if (isPartOfSubnetwork==true) {
+				
+				ScheduleController scheduleController = this.getNetworkComponentsScheduleController().get(netComp.getId());
+				if (scheduleController==null) {
+					// --- Create a new ScheduleList --------------------------
+					ScheduleList sl = new ScheduleList();
+					sl.setNetworkID(netComp.getId());
+					sl.setSystemID(netComp.getType());
+					sl.getInterfaceSettings().addAll(this.getInterfaceSettings(netComp.getDataModel()));
+					
+					// --- Add as a new GroupMember ---------------------------
+					GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
+					
+					// --- Remind the ScheduleController ----------------------
+					GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
+					this.getNetworkComponentsScheduleController().put(netComp.getId(), gtno.getGroupMemberScheduleController());
+					this.setContainsSubSystems(true);
+					
+				} else {
+					
+					// --- Use existing ScheduleList & ScheduleController -----
+					ScheduleList sl = scheduleController.getScheduleList();
+					GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
+					GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
+					gtno.setGroupMemberScheduleController(scheduleController);
+					
+					// --- Remind the ScheduleController ----------------------
+					this.getNetworkComponentsScheduleController().put(netComp.getId(), gtno.getGroupMemberScheduleController());
+					this.setContainsSubSystems(true);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * This method will be invoked after the aggregation (a {@link TechnicalSystemGroup}) and its subsystems are
+	 * created / defined to update the group visualization. It will ensure that for each system the network ID and
+	 * the system Id will be shown.
+	 */
+	protected void setGroupVisualization() {
+		// --- Set tree view to Network & System-ID --------------------------- 
+		this.getGroupController().setChangedAndNotifyObservers(new GroupNotification(GroupNotification.Reason.GroupTreeViewChanged, GroupNodeCaptionStyle.Both));
+		this.getGroupController().setTechnicalSystemGroupReminder();
+	}
+	
+	
+	/**
+	 * Gets the state duration.
+	 * @return the state duration
+	 */
+	protected Duration getStateDuration() {
+		
+		Duration duration = new Duration();
+		duration.setValue(5000);					// --- Default case -----
+		duration.setUnit(TimeUnit.MILLISECOND_MS);	// --- Always! ----------
+		
+		if (this.getTimeModel() instanceof TimeModelDiscrete) {
+			TimeModelDiscrete timeModel = (TimeModelDiscrete) this.getTimeModel();
+			duration.setValue(timeModel.getStep());
+		} else if (this.getTimeModel() instanceof TimeModelContinuous) {
+			duration.setValue(this.getHyGridAbstractEnvironmentModel().getNetworkCalculationIntervalLength());
+		}
+		return duration;
+	}
+	/**
+	 * Gets the state duration time format.
+	 * @return the state duration time format
+	 */
+	protected TimeUnit getStateDurationTimeFormat() {
+		// --- Default case -------------------------------
+		TimeUnit eomTuSelected = TimeUnit.SECOND_S;	
+		if (this.getTimeModel() instanceof TimeModelDiscrete) {
+			TimeModelDiscrete timeModel = (TimeModelDiscrete) this.getTimeModel();
+			eomTuSelected = this.getTimeUnitOfTimeUnitVectorIndex(timeModel.getStepDisplayUnitAsIndexOfTimeUnitVector());
+		} else if (this.getTimeModel() instanceof TimeModelContinuous) {
+			eomTuSelected = this.getTimeUnitOfTimeUnitVectorIndex(this.getHyGridAbstractEnvironmentModel().getNetworkCalculationIntervalUnitIndex());
+		}
+		return eomTuSelected;
+	}
+	/**
+	 * Gets the time unit of time unit vector index.
+	 *
+	 * @param vectorIndex the vector index
+	 * @return the time unit of time unit vector index
+	 */
+	private TimeUnit getTimeUnitOfTimeUnitVectorIndex(int vectorIndex) {
+		
+		TimeUnit eomTuSelected = TimeUnit.SECOND_S;	
+		switch (vectorIndex) {
+		case 0:
+			eomTuSelected = TimeUnit.MILLISECOND_MS;
+			break;
+		case 1:
+			eomTuSelected = TimeUnit.SECOND_S;
+			break;
+		case 2:
+			eomTuSelected = TimeUnit.MINUTE_M;
+			break;
+		case 3:
+			eomTuSelected = TimeUnit.HOUR_H;
+			break;
+		default:
+			eomTuSelected = TimeUnit.SECOND_S;
+			break;
+		}
+		return eomTuSelected;
+	}
+	
+	/**
+	 * Returns the time step configured.
+	 * @return the time step configured
+	 */
+	public long getTimeStepConfigured() {
+		long timeStepConfigured = 0;
+		if (this.getTimeModel() instanceof TimeModelDiscrete) {
+			timeStepConfigured = ((TimeModelDiscrete)this.getTimeModel()).getStep();
+		} else if (this.getTimeModel() instanceof TimeModelContinuous) {
+			timeStepConfigured = this.getHyGridAbstractEnvironmentModel().getNetworkCalculationIntervalLength();
+		}
+		return timeStepConfigured;
+	}
+	
+	/**
+	 * Returns the interface settings out of the specified {@link NetworkComponent}'s data model, where
+	 * the data model should be of type {@link TechnicalSystem}, {@link TechnicalSystemGroup} orr {@link ScheduleList}.
+	 *
+	 * @param netCompDataModel the actual data model of the network component
+	 * @return the interface settings
+	 */
+	protected List<InterfaceSetting> getInterfaceSettings(Object netCompDataModel) {
+		
+		List<InterfaceSetting> intSettings = new ArrayList<>();
+		if (netCompDataModel instanceof ScheduleList) {
+			// --- ScheduleList -------------------------------------
+			ScheduleList sl = (ScheduleList) netCompDataModel;
+			intSettings = sl.getInterfaceSettings();
+			
+		} else if (netCompDataModel instanceof TechnicalSystem || netCompDataModel instanceof TechnicalSystemGroup) {
+			// --- TechnicalSystem or TechnicalSystemGroup ----------
+			TechnicalSystem ts = null;
+			if (netCompDataModel instanceof TechnicalSystem) {
+				ts = (TechnicalSystem) netCompDataModel;
+			} else {
+				TechnicalSystemGroup  tsg = (TechnicalSystemGroup) netCompDataModel;
+				ts = tsg.getTechnicalSystem();
+			}
+			
+			// --- Temporally create an OptionModelController -------
+			OptionModelController omc = new OptionModelController();
+			omc.setTechnicalSystem(ts);
+			
+			// --- Get the interface settings -----------------------
+			String configID = null;
+			if (omc.getEvaluationSettings().getEvaluationStateList().size()>0) {
+				EvaluationSettings evaluationSettings = ts.getEvaluationSettings();
+				TechnicalSystemState tss = (TechnicalSystemState) evaluationSettings.getEvaluationStateList().get(0);
+				configID = tss.getConfigID();
+			} else {
+				configID = ts.getInterfaceConfigurations().get(0).getConfigID();
+			}
+			TechnicalInterfaceConfiguration tic = omc.getTechnicalInterfaceConfiguration(configID);
+			
+			// --- Create settings from technical interfaces --------
+			for (int i = 0; i < tic.getTechnicalInterfaces().size(); i++) {
+				TechnicalInterface ti = tic.getTechnicalInterfaces().get(i);
+				InterfaceSetting intSetting = new InterfaceSetting();
+				intSetting.setInterfaceID(ti.getInterfaceID());
+				intSetting.setDomain(ti.getDomain());
+				intSetting.setDomainModel(SerialClone.clone(ti.getDomainModel()));
+				intSettings.add(intSetting);
+			}
+		}
+		return intSettings;
+	}
+	
+	/**
+	 * Returns a new energy flow that is specified as {@link EnergyFlowInWattCalculated}
+	 *
+	 * @param ti the {@link TechnicalInterface}
+	 * @return the energy flow calculated
+	 */
+	protected EnergyFlowGeneral getNewEnergyFlowCalculated(TechnicalInterface ti) {
+		EnergyFlowGeneral eFlow = new EnergyFlowGeneral();
+		eFlow.setInterfaceID(ti.getInterfaceID());
+		eFlow.setEnergyFlow(new EnergyFlowInWattCalculated());
+		return eFlow;
+	}
+
+	/**
+	 * Returns the network calculation strategy class.
+	 * @return the network calculation strategy class
+	 */
+	protected Class<? extends AbstractNetworkCalculationStrategy> getNetworkCalculationStrategyClass() {
+		return this.getSubAggregationConfiguration().getNetworkCalculationStrategyClass();
+	}
+	/**
+	 * Returns the network calculation strategy.
+	 * @return the network calculation strategy
+	 */
+	protected AbstractNetworkCalculationStrategy getNetworkCalculationStrategy() {
+		return this.getSubAggregationConfiguration().getNetworkCalculationStrategy();
+	}
+	
+}
