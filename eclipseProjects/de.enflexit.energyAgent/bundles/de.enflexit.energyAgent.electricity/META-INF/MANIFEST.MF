@@ -24,12 +24,12 @@ Require-Bundle: de.enflexit.common,
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
- OSGI-INF/TriPhaseElectricalSubNetworkConfigurationService.xml,
- OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml,
  OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
+ OSGI-INF/TriPhaseElectricalNetworkScheduleImportService.xml,
+ OSGI-INF/TriPhaseElectricalNetworkTopologyImportService.xml,
+ OSGI-INF/TriPhaseElectricalSubNetworkConfigurationService.xml,
  OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml,
- OSGI-INF/TriPhaseElectricalNetworkTopologyImportService.xml.xml,
- OSGI-INF/UniPhaseElectricalNetworkTopologyImportService.xml.xml,
- OSGI-INF/TriPhaseElectricalNetworkModelImportService.xml,
- OSGI-INF/UniPhaseElectricalNetworkModelImportService.xml
+ OSGI-INF/UniPhaseElectricalNetworkScheduleImportService.xml,
+ OSGI-INF/UniPhaseElectricalNetworkTopologyImportService.xml,
+ OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml
 Bundle-ActivationPolicy: lazy

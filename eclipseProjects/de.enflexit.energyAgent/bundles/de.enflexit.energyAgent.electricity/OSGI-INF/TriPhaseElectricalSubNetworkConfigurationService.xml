@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricalSubNetworkConfigurationService">
    <implementation class="de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricalSubNetworkConfigurationService"/>
    <service>
-      <provide interface="hygrid.aggregation.SubNetworkConfigurationService"/>
+      <provide interface="de.enflexit.ea.core.aggregation.SubNetworkConfigurationService"/>
    </service>
 </scr:component>
