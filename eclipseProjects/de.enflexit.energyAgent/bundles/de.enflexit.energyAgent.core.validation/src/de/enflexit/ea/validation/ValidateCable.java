@@ -28,7 +28,7 @@ public class ValidateCable extends HyGridValidationAdapter {
 			if(dataModel == null) {
 				// dataModel does not exist. Please generate one by loading the properties
 				String message = "Error found for " + netComp.getType() + " " + netComp.getId() + ": No Data Model found for this Component!";
-				String description = "Try to rebould the component. It can be enough to edit the properties of " + netComp.getType() + " " + netComp.getId() + ".";
+				String description = "Try to edit the cable properties of " + netComp.getType() + " " + netComp.getId() + " - this is possibly already enough.";
 				return new HyGridValidationMessage(message, MessageType.Error,description);
 			} else {
 				CableProperties cableDataModel = (CableProperties) dataModel[0];

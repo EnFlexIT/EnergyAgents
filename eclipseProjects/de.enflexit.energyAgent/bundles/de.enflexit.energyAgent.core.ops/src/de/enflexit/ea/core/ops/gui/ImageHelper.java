@@ -7,7 +7,7 @@ import java.net.URL;
  */
 public class ImageHelper {
 
-	private final static String localPathImageIntern = "/hygrid/ops/gui/img/";
+	private final static String localPathImageIntern = "/icons/";
 	
 	/**
 	 * Returns the path to the internal image-package of Agent.GUI (de.enflexit.common.swing.img)

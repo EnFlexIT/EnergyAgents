@@ -4,12 +4,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
+
+import de.enflexit.ea.core.globalDataModel.ImageHelper;
 
 /**
  * The Class JButtonExportSimulationData4Time that will be 
@@ -33,7 +34,7 @@ public class JButtonExportSimulationData4Time extends AbstractCustomToolbarCompo
 	@Override
 	public JComponent getCustomComponent() {
 		JButton jButtonExportLoadProfile = new JButton();
-		jButtonExportLoadProfile.setIcon(new ImageIcon(getClass().getResource("/hygrid/plugin/gui/img/graph_export.png")));
+		jButtonExportLoadProfile.setIcon(ImageHelper.getImageIcon("graph_export.png"));
 		jButtonExportLoadProfile.setToolTipText("Export simulation data for a single time step");
 		jButtonExportLoadProfile.setPreferredSize(new Dimension(26, 26));
 		jButtonExportLoadProfile.addActionListener(this);

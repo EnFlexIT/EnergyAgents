@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
+
+import de.enflexit.ea.core.globalDataModel.ImageHelper;
 
 /**
  * The Class JButtonConstructionSite that will be displayed in the toolbar of the GraphEnvironement if configured
@@ -58,7 +59,7 @@ public class JButtonConstructionSite extends AbstractCustomToolbarComponent {
 	private static JButton getJButtonConstructionSite() {
 		if (jButtonConstructionSite==null) {
 			jButtonConstructionSite = new JButton();
-			jButtonConstructionSite.setIcon(new ImageIcon(JButtonConstructionSite.class.getResource("/hygrid/plugin/gui/img/ConstructionSite.png")));
+			jButtonConstructionSite.setIcon(ImageHelper.getImageIcon("ConstructionSite.png"));
 			jButtonConstructionSite.setToolTipText("Construction Site ... ");
 			jButtonConstructionSite.setPreferredSize(new Dimension(26, 26));
 		}

@@ -1,51 +1,52 @@
 package de.enflexit.ea.core.validation.ui;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 
 import org.agentgui.gui.swing.MainWindowExtension;
-import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
 import de.enflexit.ea.core.validation.BundleHelper;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
+import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 import de.enflexit.ea.core.validation.HyGridValidationProcess;
 import de.enflexit.ea.core.validation.HyGridValidationProcessListener;
-import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 
 /**
- * The Class HyGridValidator.
+ * The Class HyGridValidator represents an AWB {@link MainWindowExtension} and integrates
+ * the {@link HyGridValidationProcess} and corresponding user interactions to an Energy Agent project.
+ * 
+ * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public class HyGridValidator extends MainWindowExtension implements ApplicationListener, Observer {
+public class HyGridValidator extends MainWindowExtension implements ApplicationListener {
 
 	private JButton jButtonHyGridValidator;
 	
-	private HyGridValidationProcess hyGridValidationProcess;
+	private HyGridValidationProcessListener hyGridValidationProcessListener;
 	private HyGridValidatorDialog hyGridValidatorDialog;
 	
 	private MessageType lastMessageType;
 	
 	/**
-	 * Instantiates the validator.
+	 * Instantiates the HyGridValidator.
 	 */
-	public HyGridValidator() {	}
+	public HyGridValidator() { }
 
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
 	 */
 	@Override
 	public void initialize() {
+		// --- Add this as listener to validation process -----------
+		this.getHyGridValidationProcess().addHyGridValidationProcessListener(this.getHyGridValidationProcessListener());
+		// --- Add class as application listener --------------------
 		Application.addApplicationListener(this);
+		// --- Define the elements of this MainWindowExtension ------
 		this.addToolbarComponent(this.getJButtonHyGridValidator(), null, SeparatorPosition.SeparatorAfter);
 	}
 
@@ -56,7 +57,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	private JButton getJButtonHyGridValidator() {
 		if (jButtonHyGridValidator == null) {
 			jButtonHyGridValidator = new JButton();
-			jButtonHyGridValidator.setToolTipText("Validate Agent.HyGrid-Setup ...");
+			jButtonHyGridValidator.setToolTipText("Validate Energy Agent - Setup ...");
 			jButtonHyGridValidator.setSize(new Dimension(26, 26));
 			jButtonHyGridValidator.setPreferredSize(new Dimension(26, 26));
 			jButtonHyGridValidator.setIcon(BundleHelper.getImageIcon("ValidationGreen.png"));
@@ -72,13 +73,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	}
 	/**
 	 * Checks the current HyGrid setup.
-	 */
-	public void checkHyGridSetup() {
-		this.checkHyGridSetup(false);
-	}
-	/**
-	 * Checks the current HyGrid setup.
-	 * @param set true, if the GUI has to be displayed
+	 * @param set true, if the visualization has to be displayed
 	 */
 	public void checkHyGridSetup(boolean isSetVisible) {
 		this.getHyGridValidatorDialog().setVisible(isSetVisible);
@@ -91,19 +86,24 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	 */
 	private HyGridValidatorDialog getHyGridValidatorDialog() {
 		if (hyGridValidatorDialog==null ) {
-			Frame owner = Application.getMainWindow();
-			hyGridValidatorDialog = new HyGridValidatorDialog(owner, this.getHyGridValidationProcess());
+			hyGridValidatorDialog = new HyGridValidatorDialog(Application.getMainWindow(), this.getHyGridValidationProcess());
 		}
 		return hyGridValidatorDialog;
 	}
 	/**
-	 * Return the HyGridValidationProcess.
+	 * Return the singleton instance of the HyGridValidationProcess.
 	 * @return the HyGrid validation process
 	 */
 	private HyGridValidationProcess getHyGridValidationProcess() {
-		if (hyGridValidationProcess==null) {
-			hyGridValidationProcess = new HyGridValidationProcess();
-			hyGridValidationProcess.addHyGridValidationProcessListener(new HyGridValidationProcessListener() {
+		return HyGridValidationProcess.getInstance();
+	}
+	/**
+	 * Gets the local HyGridValidationProcessListener.
+	 * @return the HyGridValidationProcessListener
+	 */
+	private HyGridValidationProcessListener getHyGridValidationProcessListener() {
+		if (hyGridValidationProcessListener==null) {
+			hyGridValidationProcessListener = new HyGridValidationProcessListener() {
 				@Override
 				public void processExecuted() {
 					HyGridValidator.this.setJButtonHyGridValidatorColor(MessageType.Information, true);
@@ -114,10 +114,11 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 				}
 				@Override
 				public void processFinalized() {
+					System.out.println("Validation process finalized ! - Last message type: " + lastMessageType.name());
 				}
-			});
+			};
 		}
-		return hyGridValidationProcess;
+		return hyGridValidationProcessListener;
 	}
 	
 	/**
@@ -171,98 +172,25 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	
 
 	// ------------------------------------------------------------------------
-	// --- From here the application and project listener is implemented ------ 
+	// --- From here the application listener is implemented ------------------ 
 	// ------------------------------------------------------------------------
-	
 	/* (non-Javadoc)
 	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
 	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		
-		Project project = null;
 		switch (event.getApplicationEvent()) {
-		case ApplicationEvent.PROJECT_LOADED:
-			if (event.getEventObject()!=null) {
-				project = (Project) event.getEventObject();
-				if (this.isHyGridProject(project)==true) {
-					project.addObserver(this);
-				}
-			}
+		case ApplicationEvent.PROJECT_FOCUSED:
+			// --- Happens earlier ------------------------
+			this.getJButtonHyGridValidator().setEnabled(HyGridValidationProcess.isHyGridProject(event.getEventObject()));
 			break;
-
 		case ApplicationEvent.PROJECT_CLOSED:
 			if (event.getEventObject()!=null) {
-				project = (Project) event.getEventObject();
-				project.deleteObserver(this);
-				this.getJButtonHyGridValidator().setEnabled(false);
-			}
-			break;
-			
-		case ApplicationEvent.PROJECT_FOCUSED:
-			if (event.getEventObject()!=null) {
-				project = (Project) event.getEventObject();
-				boolean isHyGridProject = this.isHyGridProject(project);
-				this.getJButtonHyGridValidator().setEnabled(isHyGridProject);
-				if (isHyGridProject==true) {
-					this.checkHyGridSetup();
-				}
-				
-			} else {
 				this.getJButtonHyGridValidator().setEnabled(false);
 			}
 			break;
 		} 
-		
-	}
-	/**
-	 * Checks if is the specified project is a HyGrid project.
-	 *
-	 * @param project the project
-	 * @return true, if is HyGrid project
-	 */
-	private boolean isHyGridProject(Project project) {
-		if (project==null || project.getEnvironmentController()==null || !(project.getEnvironmentController() instanceof GraphEnvironmentController)) {
-			return false;
-		}
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable observable, Object updateObject) {
-		
-		// --------------------------------------------------------------------
-		// --- Will be get updates from an observed project -------------------
-		// --------------------------------------------------------------------
-		
-		if (updateObject instanceof String) {
-			// --- Changes in the project -----------------			
-			String projectNotification = (String) updateObject;
-			switch (projectNotification) {
-			case Project.PREPARE_FOR_SAVING:
-				this.checkHyGridSetup();
-				break;
-
-			default:
-				break;
-			}
-			
-		} else if (updateObject instanceof SimulationSetupNotification) {
-			// --- Changes in the setup -------------------
-			SimulationSetupNotification setupNotification = (SimulationSetupNotification) updateObject;
-			switch (setupNotification.getUpdateReason()) {
-			case SIMULATION_SETUP_LOAD:
-				this.checkHyGridSetup();
-				break;
-
-			default:
-				break;
-			}
-		}
-		
 	}
 	
 }

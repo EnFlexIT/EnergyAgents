@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -17,14 +16,14 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
 import de.enflexit.ea.deployment.AgentDeployment;
+import de.enflexit.ea.deployment.ImageHelper;
 import de.enflexit.ea.deployment.gui.AgentDeploymentDialog;
-import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
 
 /**
  * The Class JButtonDeployAgent represents the JButton that is used to open the 
  * AgentDeploymentDialog {@link AgentDeploymentDialog}.
  * 
- * @author Mohamed Amine JEDIDI <mohamedamine_jedidi@outlook.com>
+ * @author Mohamed Amine JEDIDI, mohamedamine_jedidi@outlook.com
  * @version 1.0
  * @since 06-06-2016
  */
@@ -44,7 +43,7 @@ public class JButtonAgentDeployment extends AbstractCustomToolbarComponent imple
 	@Override
 	public JComponent getCustomComponent() {
 		JButton jButtonImportLoadProfile = new JButton();
-		jButtonImportLoadProfile.setIcon(new ImageIcon(getClass().getResource(DeploymentPlugIn.ICONS_PATH + "box.png")));
+		jButtonImportLoadProfile.setIcon(ImageHelper.getImageIcon("box.png"));
 		jButtonImportLoadProfile.setToolTipText("Deploy selected Agent");
 		jButtonImportLoadProfile.setPreferredSize(new Dimension(26, 26));
 		jButtonImportLoadProfile.addActionListener(this);

@@ -2,11 +2,14 @@ package de.enflexit.ea.core.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -15,21 +18,32 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentFactory;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener;
+import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup;
+import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.ops.plugin.OpsPlugin;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
+import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
 import energy.GlobalInfo;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import hygrid.env.HyGridAbstractEnvironmentModel;
+import hygrid.ops.ontology.OpsOntology;
+import hygrid.plugin.HyGridPlugIn;
 
 /**
- * The Class HyGridValidationProcess does the actual check of the HyGrid setup.
+ * The singleton instance of the HyGridValidationProcess does the actual checks on a Energy Agent / HyGrid setup.
+ * 
  * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public class HyGridValidationProcess {
+public class HyGridValidationProcess implements ApplicationListener, Observer {
 
 	private enum ListenerInformation {
 		Executed,
@@ -49,6 +63,24 @@ public class HyGridValidationProcess {
 	private List<HyGridValidationProcessListener> validationListener;
 	private List<HyGridValidationMessage> hygridValidationMessages;
 
+	// ----------------------------------------------------
+	// --- Singleton construct ----------------------------
+	// ----------------------------------------------------
+	private static HyGridValidationProcess thisInstance;
+	/** Private constructor for the HyGridValidationProcess. */
+	private HyGridValidationProcess() { }
+	/**
+	 * Returns the single instance of the HyGridValidationProcess.
+	 * @return single instance of HyGridValidationProcess
+	 */
+	public static HyGridValidationProcess getInstance() {
+		if (thisInstance==null) {
+			thisInstance = new HyGridValidationProcess();
+			Application.addApplicationListener(thisInstance);
+		}
+		return thisInstance;
+	}
+	// ----------------------------------------------------
 	
 	/**
 	 * Validates the current setup in an individual thread.
@@ -231,7 +263,7 @@ public class HyGridValidationProcess {
 			String validatorClassName = validator.getClass().getName();
 			try {
 				// --- Call the validation method -------------------
-				HyGridValidationMessage message = validator.validateProject(this.getProject());
+				HyGridValidationMessage message = null;
 				switch (configEntity) {
 				case Project:
 					message = validator.validateProject(this.getProject());
@@ -262,7 +294,7 @@ public class HyGridValidationProcess {
 	 * Returns the list of validation checks that were provided by the services.
 	 *
 	 * @param serviceList the service list
-	 * @return the validator list
+	 * @return the list of HyGridValidationAdapter
 	 */
 	private List<HyGridValidationAdapter> getValidationList(List<HyGridValidationService> serviceList) {
 		
@@ -531,4 +563,237 @@ public class HyGridValidationProcess {
 		this.addMessage("Test Warning 3", MessageType.Warning);
 		this.addMessage("Test Error 3", MessageType.Error);
 	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, the application listener is implemented -----------------  
+	// ------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		
+		Project project = null;
+		switch (event.getApplicationEvent()) {
+		case ApplicationEvent.PROJECT_LOADING_PROJECT_XML_FILE_LOADED:
+			// --- Check project after XML file was loaded --------------------
+			if (event.getEventObject()!=null && event.getEventObject() instanceof Project) {
+				project = (Project) event.getEventObject();
+				this.adjustProjectUserObjectClassName(project);
+				this.adjustProjectPlugInReferences(project);
+				this.adjustProjectOntologyReferences(project);
+			}
+			break;
+			
+		case ApplicationEvent.PROJECT_LOADING_PROJECT_FILES_LOADED:
+			// --- Forward Project check to registered services ---------------
+			if (event.getEventObject()!=null && event.getEventObject() instanceof Project) {
+				// TODO inform services
+				project = (Project) event.getEventObject();
+				System.out.println("ToDo: Check Project with services");
+			}
+			break;
+			
+		case ApplicationEvent.PROJECT_LOADING_SETUP_XML_FILE_LOADED:
+			// --- Check SimulationSetup after XML file was loaded ------------
+			if (event.getEventObject()!=null && event.getEventObject() instanceof SimulationSetup) {
+				SimulationSetup setup = (SimulationSetup) event.getEventObject();
+				this.adjustSetupUserObjectClassName(setup);
+			}
+			break;
+			
+		case ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED:
+			// --- Forward SimulationSetup check to registered services -------
+			if (event.getEventObject()!=null && event.getEventObject() instanceof SimulationSetup) {
+				// TODO inform services
+				SimulationSetup setup = (SimulationSetup) event.getEventObject();
+				System.out.println("ToDo: check SimulationSetup with services");
+			}
+			break;
+			
+		case ApplicationEvent.PROJECT_LOADED:
+			// --- Final event when loading a project -------------------------
+			if (event.getEventObject()!=null && event.getEventObject() instanceof Project) {
+				project = (Project) event.getEventObject();
+				if (isHyGridProject(project)==true) {
+					// --- Add project observer -------------------------------
+					project.addObserver(this);
+					// --- Add EnvController observer -------------------------
+					EnvironmentController envController = project.getEnvironmentController();
+					if (envController!=null) {
+						envController.addObserver(this);
+					}
+				}
+			}
+			break;
+
+		case ApplicationEvent.PROJECT_CLOSED:
+			if (event.getEventObject()!=null) {
+				project = (Project) event.getEventObject();
+				// --- Remove EnvController observer --------------------------
+				if (project.isEnvironmentControllerInitiated()==true) {
+					project.getEnvironmentController().deleteObserver(this);
+				}
+				// --- Remove project observer --------------------------------
+				project.deleteObserver(this);
+			}
+			break;
+			
+		} 
+	}
+	
+	// ----------------------------------------------------
+	// --- Feature rebuild conversions ---------- Start ---
+	// ----------------------------------------------------
+	/**
+	 * Adjusts the projects user object class name according to the structure of the energy Agent feature.
+	 * @param project the project to adjust
+	 */
+	private void adjustProjectUserObjectClassName(Project project) {
+		if (project != null && project.getUserRuntimeObjectClassName().equals("hygrid.env.HyGridAbstractEnvironmentModel") == true) {
+			project.setUserRuntimeObjectClassName(HyGridAbstractEnvironmentModel.class.getName());
+		}
+	}
+	/**
+	 * Adjusts the projects plug in references according to the structure of the energy Agent feature.
+	 * @param project the project to adjust
+	 */
+	private void adjustProjectPlugInReferences(Project project) {
+		if (project != null) {
+			Vector<String> pluginClassNames = project.getPluginClassNames();
+			for (int i = 0; i < pluginClassNames.size(); i++) {
+				String pluginClassName = pluginClassNames.get(i);
+				if (pluginClassName.equals("hygrid.plugin.HyGridPlugIn") == true) {
+					pluginClassNames.set(i, HyGridPlugIn.class.getName());
+				} else if (pluginClassName.equals("hygrid.deployment.plugin.DeploymentPlugIn") == true) {
+					pluginClassNames.set(i, DeploymentPlugIn.class.getName());
+				} else if (pluginClassName.equals("hygrid.ops.plugin.OpsPlugin") == true) {
+					pluginClassNames.set(i, OpsPlugin.class.getName());
+				}
+			}
+		}
+	}
+	/**
+	 * Adjusts the projects ontology references according to the structure of the energy Agent feature.
+	 * @param project the project to adjust
+	 */
+	private void adjustProjectOntologyReferences(Project project) {
+		if (project != null) {
+			Vector<String> ontoReferences = project.getSubOntologies();
+			for (int i = 0; i < ontoReferences.size(); i++) {
+				String ontoReference = ontoReferences.get(i);
+				if (ontoReference.equals("hygrid.globalDataModel.ontology.HyGridOntology") == true) {
+					ontoReferences.set(i, HyGridOntology.class.getName());
+				} else if (ontoReference.equals("hygrid.ops.ontology.OpsOntology") == true) {
+					ontoReferences.set(i, OpsOntology.class.getName());
+				}
+			}
+		}
+	}
+//		/**
+//		 * Adjusts the projects agent start configuration according to the structure of the energy Agent feature.
+//		 * @param project the project to adjust
+//		 */
+//		private void adjustProjectAgentStartConfiguration(Project project) {
+//			if (project!=null) {
+//				AgentStartConfiguration agentStartConfiguration = project.getAgentStartConfiguration();
+//				Vector<AgentStartArguments> startArgumentsVector = agentStartConfiguration.getAgentStartArguments();
+//				for (int i = 0; i < startArgumentsVector.size(); i++) {
+//					AgentStartArguments startArguments = startArgumentsVector.get(i);
+//					String agentClassName = startArguments.getAgentReference();
+//					if (agentClassName.equals("hygrid.agent.manager.SimulationManager")==true) {
+//						startArguments.setAgentReference(SimulationManagerAgent.class.getName());
+//					}
+//				}
+//			}
+//		}
+
+	/**
+	 * Adjusts the setups user object class name according to the structure of the energy Agent feature.
+	 * @param setup the SimulationSetup to adjust
+	 */
+	private void adjustSetupUserObjectClassName(SimulationSetup setup) {
+		if (setup != null && setup.getUserRuntimeObjectClassName().equals("hygrid.deployment.dataModel.SetupExtension") == true) {
+			setup.setUserRuntimeObjectClassName(SetupExtension.class.getName());
+		}
+	}
+	// ----------------------------------------------------
+	// --- Feature rebuild conversions ---------- End -----
+	// ----------------------------------------------------
+		
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, the project, setup and graphController - observer is implemented --  
+	// ----------------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+		
+		if (updateObject instanceof String) {
+			// --- Changes in the project -----------------			
+			String projectNotification = (String) updateObject;
+			switch (projectNotification) {
+			case Project.PREPARE_FOR_SAVING:
+				this.validateCurrentSetupInThread();
+				break;
+			}
+			
+		} else if (updateObject instanceof SimulationSetupNotification) {
+			// --- Changes in the setup -------------------
+			SimulationSetupNotification setupNotification = (SimulationSetupNotification) updateObject;
+			switch (setupNotification.getUpdateReason()) {
+			case SIMULATION_SETUP_LOAD:
+				// Exchange with the call below ----------- 
+				//this.validateCurrentSetupInThread();
+				break;
+			default:
+				break;
+			}
+			
+		} else if (updateObject instanceof NetworkModelNotification) {
+			// --- Changes in the graphController ---------
+			NetworkModelNotification netNote = (NetworkModelNotification) updateObject;
+			switch (netNote.getReason()) {
+			case NetworkModelNotification.NETWORK_MODEL_NetworkElementDataModelReLoaded:
+				this.validateCurrentSetupInThread();
+				break;
+			}
+			
+		}
+		
+	}
+
+	
+	// ------------------------------------------------------------------------
+	// --- From here, some static help methods --------------------------------  
+	// ------------------------------------------------------------------------
+	/**
+	 * Checks if the specified object is a HyGrid / Energy Agent project.
+	 *
+	 * @param eventObject the event object received by an {@link ApplicationEvent}
+	 * @return true, if is HyGrid project
+	 */
+	public static boolean isHyGridProject(Object eventObject) {
+		if (eventObject!=null && eventObject instanceof Project) {
+			return isHyGridProject((Project) eventObject);
+		}
+		return false;
+	}
+	/**
+	 * Checks if is the specified project is a HyGrid / Energy Agent project.
+	 *
+	 * @param project the project
+	 * @return true, if is HyGrid project
+	 */
+	public static  boolean isHyGridProject(Project project) {
+		if (project==null || project.getEnvironmentController()==null || !(project.getEnvironmentController() instanceof GraphEnvironmentController)) {
+			return false;
+		}
+		return true;
+	}
+	
 }

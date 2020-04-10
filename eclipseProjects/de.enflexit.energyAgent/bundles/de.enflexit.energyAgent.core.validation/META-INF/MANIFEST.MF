@@ -8,10 +8,13 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/hygridValidationService.xml
 Require-Bundle: de.enflexit.api,
- org.agentgui.core,
- org.awb.env.networkModel,
+ de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.energyAgent.core.globalDataModel,
+ de.enflexit.energyAgent.core.ops,
+ de.enflexit.energyAgent.deployment,
+ org.agentgui.core,
+ org.awb.env.networkModel,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences,
  org.eclipse.osgi.services

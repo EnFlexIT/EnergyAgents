@@ -21,8 +21,6 @@ public class DeploymentPlugIn extends PlugIn{
 	
 	private static final String PLUGIN_NAME = "Energy Agent Deployment PlugIn";
 	
-	public static final String ICONS_PATH = "/hygrid/deployment/plugin/gui/img/";
-	
 	private GraphEnvironmentController graphController;
 
 	/**

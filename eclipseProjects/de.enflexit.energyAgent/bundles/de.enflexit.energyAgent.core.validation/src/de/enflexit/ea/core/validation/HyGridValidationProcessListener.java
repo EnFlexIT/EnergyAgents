@@ -1,15 +1,10 @@
 package de.enflexit.ea.core.validation;
 
 /**
- * The listener interface for receiving hyGridValidationProcess events.
- * The class that is interested in processing a hyGridValidationProcess
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addHyGridValidationProcessListener<code> method. When
- * the hyGridValidationProcess event occurs, that object's appropriate
- * method is invoked.
+ * The listener interface for the {@link HyGridValidationProcess} that allows receiving information
+ * about the execution, the finalization and messages that were generated from process.
  *
- * @see HyGridValidationProcessEvent
+ * @see HyGridValidationMessage
  */
 public interface HyGridValidationProcessListener {
 

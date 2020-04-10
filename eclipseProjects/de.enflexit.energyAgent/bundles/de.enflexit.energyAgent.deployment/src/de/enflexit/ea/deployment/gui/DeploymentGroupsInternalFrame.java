@@ -9,7 +9,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -32,9 +31,9 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui;
+import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiRootJSplitPane;
-import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.setup.SimulationSetup;
@@ -44,10 +43,10 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtensionListener;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension.Changed;
+import de.enflexit.ea.core.globalDataModel.deployment.SetupExtensionListener;
 import de.enflexit.ea.deployment.AgentDeployment;
-import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
+import de.enflexit.ea.deployment.ImageHelper;
 
 /**
  * This JInternlFrame displays a list of deployed agents and allows to edit it
@@ -316,7 +315,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getJButtonAdd() {
 		if (jButtonAdd == null) {
 			jButtonAdd = new JButton();
-			jButtonAdd.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "ListPlus.png")));
+			jButtonAdd.setIcon(ImageHelper.getImageIcon("ListPlus.png"));
 			jButtonAdd.setToolTipText("Add agent");
 			jButtonAdd.addActionListener(this);
 			jButtonAdd.setEnabled(this.isEnvironmentEditor);
@@ -331,7 +330,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getJButtonRemove() {
 		if (jButtonRemove == null) {
 			jButtonRemove = new JButton();
-			jButtonRemove.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "ListMinus.png")));
+			jButtonRemove.setIcon(ImageHelper.getImageIcon("ListMinus.png"));
 			jButtonRemove.setToolTipText("Remove agent");
 			jButtonRemove.addActionListener(this);
 			jButtonRemove.setEnabled(false);
@@ -347,7 +346,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getJButtonUpdate() {
 		if (jButtonUpdate == null) {
 			jButtonUpdate = new JButton();
-			jButtonUpdate.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "update.png")));
+			jButtonUpdate.setIcon(ImageHelper.getImageIcon("update.png"));
 			jButtonUpdate.setToolTipText("Create a project update for the selected groups");
 			jButtonUpdate.addActionListener(this);
 			jButtonUpdate.setEnabled(this.isEnvironmentEditor);
@@ -362,7 +361,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getJButtonRedeploy() {
 		if (jButtonRedeploy == null) {
 			jButtonRedeploy = new JButton();
-			jButtonRedeploy.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "box.png")));
+			jButtonRedeploy.setIcon(ImageHelper.getImageIcon("box.png"));
 			jButtonRedeploy.setToolTipText("Create a full deployment for the selected groups");
 			jButtonRedeploy.addActionListener(this);
 			jButtonRedeploy.setEnabled(this.isEnvironmentEditor);
@@ -374,7 +373,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getjButtonApply() {
 		if (jButtonApply==null) {
 			jButtonApply = new JButton();
-			jButtonApply.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "apply.png")));
+			jButtonApply.setIcon(ImageHelper.getImageIcon("apply.png"));
 			jButtonApply.setToolTipText("Apply changes to the deployment settings");
 			jButtonApply.addActionListener(this);
 			jButtonApply.setEnabled(false);
@@ -384,7 +383,7 @@ public class DeploymentGroupsInternalFrame extends BasicGraphGuiJInternalFrame i
 	private JButton getjButtonReset() {
 		if (jButtonReset==null) {
 			jButtonReset = new JButton();
-			jButtonReset.setIcon(new ImageIcon(DeploymentGroupsInternalFrame.class.getResource(DeploymentPlugIn.ICONS_PATH + "reset.png")));
+			jButtonReset.setIcon(ImageHelper.getImageIcon("reset.png"));
 			jButtonReset.setToolTipText("Reset changes to the deployment settings");
 			jButtonReset.addActionListener(this);
 			jButtonReset.setEnabled(false);

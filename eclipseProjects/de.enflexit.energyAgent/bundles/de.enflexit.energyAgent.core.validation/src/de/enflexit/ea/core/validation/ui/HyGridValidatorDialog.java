@@ -79,7 +79,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 	 * Instantiates a new HyGridValidatorDialog.
 	 *
 	 * @param owner the owner Frame
-	 * @param graphController the {@link OptionModelController}
+	 * @param hyGridValidationProcess the HyGridValidationProcess
 	 */
 	public HyGridValidatorDialog(Frame owner, HyGridValidationProcess hyGridValidationProcess) {
 		super(owner);

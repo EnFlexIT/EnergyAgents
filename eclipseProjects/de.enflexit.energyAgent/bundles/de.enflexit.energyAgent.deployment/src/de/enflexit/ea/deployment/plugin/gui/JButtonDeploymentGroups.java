@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -12,8 +11,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.deployment.ImageHelper;
 import de.enflexit.ea.deployment.gui.DeploymentGroupsInternalFrame;
-import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
 import hygrid.plugin.HyGridPlugIn;
 
 /**
@@ -68,7 +67,7 @@ public class JButtonDeploymentGroups extends AbstractCustomToolbarComponent impl
 	@Override
 	public JComponent getCustomComponent() {
 		JButton jButtonTestbedAgents = new JButton();
-		jButtonTestbedAgents.setIcon(new ImageIcon(getClass().getResource(DeploymentPlugIn.ICONS_PATH + "repository.png")));
+		jButtonTestbedAgents.setIcon(ImageHelper.getImageIcon("repository.png"));
 		jButtonTestbedAgents.setToolTipText("Show deployed agents");
 		jButtonTestbedAgents.setPreferredSize(new Dimension(26, 26));
 		jButtonTestbedAgents.addActionListener(this);

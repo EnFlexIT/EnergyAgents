@@ -5,14 +5,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,10 +26,10 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+
+import de.enflexit.ea.core.globalDataModel.ImageHelper;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.ColorSettingsIntervalBased;
-import javax.swing.JLabel;
-import java.awt.Insets;
 
 /**
  * The Class ColorSettingPanel can be used in oder to configure the 
@@ -310,7 +311,7 @@ public class ColorSettingPanel extends JPanel implements ActionListener {
 		if (jButtonInfinity == null) {
 			jButtonInfinity = new JButton("");
 			jButtonInfinity.setToolTipText("No upper/lower bound for this interval");
-			jButtonInfinity.setIcon(new ImageIcon(this.getClass().getResource("/hygrid/plugin/gui/img/Infinity.png")));
+			jButtonInfinity.setIcon(ImageHelper.getImageIcon("Infinity.png"));
 			jButtonInfinity.setPreferredSize(new Dimension(28, 26));
 			jButtonInfinity.setEnabled(false);
 			jButtonInfinity.addActionListener(this);
@@ -325,7 +326,7 @@ public class ColorSettingPanel extends JPanel implements ActionListener {
 		if (jButtonAddColorSetting == null) {
 			jButtonAddColorSetting = new JButton();
 			jButtonAddColorSetting.setToolTipText("Add Color Setting");
-			jButtonAddColorSetting.setIcon(new ImageIcon(this.getClass().getResource("/hygrid/plugin/gui/img/ListPlus.png")));
+			jButtonAddColorSetting.setIcon(ImageHelper.getImageIcon("ListPlus.png"));
 			jButtonAddColorSetting.setPreferredSize(new Dimension(28, 26));
 			jButtonAddColorSetting.addActionListener(this);
 		}
@@ -339,7 +340,7 @@ public class ColorSettingPanel extends JPanel implements ActionListener {
 		if (jButtonRemoveColorSetting == null) {
 			jButtonRemoveColorSetting = new JButton();
 			jButtonRemoveColorSetting.setToolTipText("Remove Color Setting");
-			jButtonRemoveColorSetting.setIcon(new ImageIcon(getClass().getResource("/hygrid/plugin/gui/img/ListMinus.png")));
+			jButtonRemoveColorSetting.setIcon(ImageHelper.getImageIcon("ListMinus.png"));
 			jButtonRemoveColorSetting.setPreferredSize(new Dimension(28, 26));
 			jButtonRemoveColorSetting.addActionListener(this);
 		}
