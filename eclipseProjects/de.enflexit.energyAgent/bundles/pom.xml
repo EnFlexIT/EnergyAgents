@@ -13,6 +13,17 @@
 	</parent>
 
 	<modules>
-		<module>de.enflexit.eom.core</module>
+		<module>de.enflexit.energyAgent.core</module>
+		<module>de.enflexit.energyAgent.core.aggregation</module>
+		<module>de.enflexit.energyAgent.core.centralExecutiveAgent</module>
+		<module>de.enflexit.energyAgent.core.globalDataModel</module>
+		<module>de.enflexit.energyAgent.core.ops</module>
+		<module>de.enflexit.energyAgent.core.simulation</module>
+		<module>de.enflexit.energyAgent.core.validation</module>
+		<module>de.enflexit.energyAgent.deployment</module>
+		<module>de.enflexit.energyAgent.electricity</module>
+		<module>de.enflexit.energyAgent.lib.matrixCalculations</module>
+		<module>de.enflexit.energyAgent.lib.powerFlowCalculation</module>
+		<module>de.enflexit.energyAgent.lib.powerFlowEstimation</module>		
 	</modules>
 </project>

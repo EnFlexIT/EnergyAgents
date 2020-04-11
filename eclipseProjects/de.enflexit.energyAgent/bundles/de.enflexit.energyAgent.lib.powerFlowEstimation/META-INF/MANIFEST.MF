@@ -17,4 +17,6 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.energyAgent.lib.matrixCalculations
 Export-Package: de.enflexit.ea.lib.powerFlowEstimation.centralEstimation,
  de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation
-Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml
+Bundle-ActivationPolicy: lazy
