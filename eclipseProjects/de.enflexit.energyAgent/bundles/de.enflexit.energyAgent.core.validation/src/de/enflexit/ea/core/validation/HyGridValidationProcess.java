@@ -27,9 +27,7 @@ import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.ops.plugin.OpsPlugin;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
-import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
 import energy.GlobalInfo;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
@@ -660,7 +658,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				List<HyGridValidationService> serviceList = this.getValidationServiceList();
 				List<HyGridValidationAdapter> validationList = this.getValidationList(serviceList, false);
 				for (int i = 0; i < validationList.size(); i++) {
-					validationList.get(i).setSetup(setup);;
+					validationList.get(i).setSetup(setup);
 				}
 				this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Setup, setup);
 			}
@@ -720,10 +718,6 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				String pluginClassName = pluginClassNames.get(i);
 				if (pluginClassName.equals("hygrid.plugin.HyGridPlugIn") == true) {
 					pluginClassNames.set(i, HyGridPlugIn.class.getName());
-				} else if (pluginClassName.equals("hygrid.deployment.plugin.DeploymentPlugIn") == true) {
-					pluginClassNames.set(i, DeploymentPlugIn.class.getName());
-				} else if (pluginClassName.equals("hygrid.ops.plugin.OpsPlugin") == true) {
-					pluginClassNames.set(i, OpsPlugin.class.getName());
 				}
 			}
 		}
@@ -745,24 +739,6 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			}
 		}
 	}
-//		/**
-//		 * Adjusts the projects agent start configuration according to the structure of the energy Agent feature.
-//		 * @param project the project to adjust
-//		 */
-//		private void adjustProjectAgentStartConfiguration(Project project) {
-//			if (project!=null) {
-//				AgentStartConfiguration agentStartConfiguration = project.getAgentStartConfiguration();
-//				Vector<AgentStartArguments> startArgumentsVector = agentStartConfiguration.getAgentStartArguments();
-//				for (int i = 0; i < startArgumentsVector.size(); i++) {
-//					AgentStartArguments startArguments = startArgumentsVector.get(i);
-//					String agentClassName = startArguments.getAgentReference();
-//					if (agentClassName.equals("hygrid.agent.manager.SimulationManager")==true) {
-//						startArguments.setAgentReference(SimulationManagerAgent.class.getName());
-//					}
-//				}
-//			}
-//		}
-
 	/**
 	 * Adjusts the setups user object class name according to the structure of the energy Agent feature.
 	 * @param setup the SimulationSetup to adjust

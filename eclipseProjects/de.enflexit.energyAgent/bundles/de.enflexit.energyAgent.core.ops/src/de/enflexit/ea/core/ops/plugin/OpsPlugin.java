@@ -23,7 +23,7 @@ import de.enflexit.ea.core.ops.gui.JFrameOpsControl;
  */
 public class OpsPlugin extends PlugIn implements ActionListener {
 
-	public static final String BUNDLE_TITLE = "Agent.HyGrid - OPS";
+	public static final String BUNDLE_TITLE = "Energy Agent - OPS";
 	
 	private JButton jButtonOpsControl;
 	

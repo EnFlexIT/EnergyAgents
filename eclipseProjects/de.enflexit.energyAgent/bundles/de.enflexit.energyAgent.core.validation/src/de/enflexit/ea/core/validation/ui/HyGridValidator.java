@@ -114,7 +114,6 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 				}
 				@Override
 				public void processFinalized() {
-					System.out.println("Validation process finalized ! - Last message type: " + lastMessageType.name());
 				}
 			};
 		}

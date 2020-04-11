@@ -18,7 +18,7 @@ import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
  */
 public class SiMaClassNameChecks extends HyGridValidationAdapter {
 
-	public static final String SIMULATION_MANAGER_CLASS_NAME_OLD = "hygrid.agent.manager.SimulationManager";
+	private static final String SIMULATION_MANAGER_CLASS_NAME_OLD = "hygrid.agent.manager.SimulationManager";
 	
 	
 	/* (non-Javadoc)

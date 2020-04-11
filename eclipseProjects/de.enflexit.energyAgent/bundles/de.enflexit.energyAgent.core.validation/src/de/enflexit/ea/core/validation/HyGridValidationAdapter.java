@@ -196,9 +196,9 @@ public class HyGridValidationAdapter {
 	protected void printHyGridValidationMessageToConsole(HyGridValidationMessage vMessage) {
 		if (vMessage!=null && vMessage.getMessage()!=null && vMessage.getMessage().isEmpty()==false) {
 			if (vMessage.getMessageType()==MessageType.Information) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
+				System.out.println("[HyGridValidation][" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
 			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
+				System.err.println("[HyGridValidation][" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
 			}
 		}
 	}

@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.agenthygrid.ops
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml,
+ OSGI-INF/opsValidationService.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
  de.enflexit.common;bundle-version="1.0.0",
@@ -20,7 +22,8 @@ Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
  de.enflexit.db.hibernate,
  de.enflexit.energyAgent.core.aggregation,
  org.eclipse.osgi,
- org.awb.env.networkModel
+ org.awb.env.networkModel,
+ de.enflexit.energyAgent.core.validation
 Export-Package: de.enflexit.ea.core.ops,
  de.enflexit.ea.core.ops.agent,
  de.enflexit.ea.core.ops.agent.behaviour,
@@ -29,4 +32,5 @@ Export-Package: de.enflexit.ea.core.ops,
  de.enflexit.ea.core.ops.fieldDataRequest.gui,
  de.enflexit.ea.core.ops.gui,
  de.enflexit.ea.core.ops.liveMonitoring,
- de.enflexit.ea.core.ops.plugin
+ de.enflexit.ea.core.ops.plugin,
+ de.enflexit.ea.core.ops.validation
