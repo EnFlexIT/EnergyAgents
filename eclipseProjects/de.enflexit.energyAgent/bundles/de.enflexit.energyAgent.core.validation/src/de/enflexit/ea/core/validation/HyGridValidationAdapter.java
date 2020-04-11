@@ -6,6 +6,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
@@ -187,4 +188,19 @@ public class HyGridValidationAdapter {
 		this.hyGridAbsEnvModel = hyGridAbsEnvModel;
 	}
 
+	
+	/**
+	 * Prints the message of the specified HyGridValidationMessage to the console.
+	 * @param vMessage the HyGridValidationMessage
+	 */
+	protected void printHyGridValidationMessageToConsole(HyGridValidationMessage vMessage) {
+		if (vMessage!=null && vMessage.getMessage()!=null && vMessage.getMessage().isEmpty()==false) {
+			if (vMessage.getMessageType()==MessageType.Information) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] " + vMessage.getMessage());
+			}
+		}
+	}
+	
 }

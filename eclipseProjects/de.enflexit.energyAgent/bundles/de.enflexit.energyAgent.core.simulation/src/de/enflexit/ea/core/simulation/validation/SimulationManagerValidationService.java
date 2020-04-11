@@ -16,8 +16,10 @@ public class SimulationManagerValidationService extends HyGridValidationAdapter 
 	 */
 	@Override
 	public ArrayList<HyGridValidationAdapter> getHyGridValidationChecks(boolean isHeadlessOperation) {
+		
 		ArrayList<HyGridValidationAdapter> validationChecks = new ArrayList<>();
-		validationChecks.add(new SimulationManagerValidationAdapter());
+		validationChecks.add(new SiMaClassNameChecks());
+		validationChecks.add(new SiMaNotFoundCheck());
 		return validationChecks;
 	}
 
