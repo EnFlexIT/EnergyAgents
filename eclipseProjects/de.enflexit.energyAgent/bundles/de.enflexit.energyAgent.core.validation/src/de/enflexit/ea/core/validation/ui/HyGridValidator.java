@@ -30,7 +30,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	private HyGridValidationProcessListener hyGridValidationProcessListener;
 	private HyGridValidatorDialog hyGridValidatorDialog;
 	
-	private MessageType lastMessageType;
+	private MessageType lastMessageType = MessageType.Information;
 	
 	/**
 	 * Instantiates the HyGridValidator.
@@ -42,11 +42,11 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	 */
 	@Override
 	public void initialize() {
-		// --- Add this as listener to validation process -----------
+		// --- Add HyGridValidator as listener to validation process ----------
 		this.getHyGridValidationProcess().addHyGridValidationProcessListener(this.getHyGridValidationProcessListener());
-		// --- Add class as application listener --------------------
+		// --- Add HyGridValidator as application listener --------------------
 		Application.addApplicationListener(this);
-		// --- Define the elements of this MainWindowExtension ------
+		// --- Define the elements of this MainWindowExtension ----------------
 		this.addToolbarComponent(this.getJButtonHyGridValidator(), null, SeparatorPosition.SeparatorAfter);
 	}
 

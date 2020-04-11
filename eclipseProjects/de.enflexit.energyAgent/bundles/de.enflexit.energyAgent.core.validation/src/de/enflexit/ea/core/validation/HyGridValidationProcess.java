@@ -254,8 +254,19 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 *
 	 * @param validationList the validation list
 	 * @param configEntity the actual single configuration entity
+	 * @param instanceToCheck the instance to check
 	 */
 	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity) {
+		this.checkSingleConfigurationEntity(validationList, configEntity, null);
+	}
+	/**
+	 * Check single configuration entity.
+	 *
+	 * @param validationList the validation list
+	 * @param configEntity the actual single configuration entity
+	 * @param instanceToCheck the instance to check (e.g. a Project or a SimulationSetup - depends on the 'configEntity')
+	 */
+	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity, Object instanceToCheck) {
 		
 		for (int i = 0; i < validationList.size(); i++) {
 			
@@ -263,20 +274,37 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			String validatorClassName = validator.getClass().getName();
 			try {
 				// --- Call the validation method -------------------
+				Project project = null;
 				HyGridValidationMessage message = null;
 				switch (configEntity) {
 				case Project:
-					message = validator.validateProject(this.getProject());
+					project = this.getProject();
+					if (instanceToCheck!=null && instanceToCheck instanceof Project) {
+						project = (Project) instanceToCheck;
+					}
+					message = validator.validateProject(project);
 					break;
+					
 				case Setup:
-					message = validator.validateSetup(this.getProject().getSimulationSetups().getCurrSimSetup());
+					project = this.getProject();
+					SimulationSetup setup = null; 
+					if (project!=null) {
+						setup = project.getSimulationSetups().getCurrSimSetup();
+					}
+					if (instanceToCheck!=null && instanceToCheck instanceof SimulationSetup) {
+						setup = (SimulationSetup) instanceToCheck;
+					}
+					message = validator.validateSetup(setup);
 					break;
+					
 				case NetworkModel:
 					message = validator.validateNetworkModel(this.getGraphController().getNetworkModel());
 					break;
+					
 				case HyGridAbstractEnvironmentModel:
 					message = validator.validateHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());
 					break;
+					
 				}
 				this.addMessage(message, validator);
 				
@@ -297,6 +325,16 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 * @return the list of HyGridValidationAdapter
 	 */
 	private List<HyGridValidationAdapter> getValidationList(List<HyGridValidationService> serviceList) {
+		return this.getValidationList(serviceList, true);
+	}
+	/**
+	 * Returns the list of validation checks that were provided by the services.
+	 *
+	 * @param serviceList the service list
+	 * @param setRuntimeInstancesToValidationAdapter the indicator to set the current runtime instances to the validation adapter
+	 * @return the list of HyGridValidationAdapter
+	 */
+	private List<HyGridValidationAdapter> getValidationList(List<HyGridValidationService> serviceList, boolean setRuntimeInstancesToValidationAdapter) {
 		
 		List<HyGridValidationAdapter> validatorList = new ArrayList<>();
 		
@@ -308,14 +346,16 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			if (serviceValidatorList==null) continue;
 			
 			for (int j = 0; j < serviceValidatorList.size(); j++) {
-				// --- Add single validator to result list -------------------- 
+				// --- Add each single validation to list --------------------- 
 				HyGridValidationAdapter validationAdapter = serviceValidatorList.get(j);
-				// --- Set the required project instances to the adapter --
-				validationAdapter.setProject(this.getProject());
-				validationAdapter.setSetup(this.getProject().getSimulationSetups().getCurrSimSetup());
-				validationAdapter.setGraphController(this.getGraphController());
-				validationAdapter.setNetworkModel(this.getGraphController().getNetworkModel());
-				validationAdapter.setHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());	
+				if (setRuntimeInstancesToValidationAdapter==true) {
+					// --- Set the required project instances to the adapter --
+					validationAdapter.setProject(this.getProject());
+					validationAdapter.setSetup(this.getProject().getSimulationSetups().getCurrSimSetup());
+					validationAdapter.setGraphController(this.getGraphController());
+					validationAdapter.setNetworkModel(this.getGraphController().getNetworkModel());
+					validationAdapter.setHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());	
+				}
 				validatorList.add(validationAdapter);
 			}
 		}
@@ -587,11 +627,18 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			break;
 			
 		case ApplicationEvent.PROJECT_LOADING_PROJECT_FILES_LOADED:
+			// ----------------------------------------------------------------
 			// --- Forward Project check to registered services ---------------
+			// ----------------------------------------------------------------
 			if (event.getEventObject()!=null && event.getEventObject() instanceof Project) {
-				// TODO inform services
+				// --- Inform services/validations about Project --------------
 				project = (Project) event.getEventObject();
-				System.out.println("ToDo: Check Project with services");
+				List<HyGridValidationService> serviceList = this.getValidationServiceList();
+				List<HyGridValidationAdapter> validationList = this.getValidationList(serviceList, false);
+				for (int i = 0; i < validationList.size(); i++) {
+					validationList.get(i).setProject(project);
+				}
+				this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Project, project);
 			}
 			break;
 			
@@ -604,11 +651,18 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			break;
 			
 		case ApplicationEvent.PROJECT_LOADING_SETUP_USER_FILE_LOADED:
+			// ----------------------------------------------------------------
 			// --- Forward SimulationSetup check to registered services -------
+			// ----------------------------------------------------------------
 			if (event.getEventObject()!=null && event.getEventObject() instanceof SimulationSetup) {
-				// TODO inform services
+				// --- Inform services/validations about SimulationSetup ------
 				SimulationSetup setup = (SimulationSetup) event.getEventObject();
-				System.out.println("ToDo: check SimulationSetup with services");
+				List<HyGridValidationService> serviceList = this.getValidationServiceList();
+				List<HyGridValidationAdapter> validationList = this.getValidationList(serviceList, false);
+				for (int i = 0; i < validationList.size(); i++) {
+					validationList.get(i).setSetup(setup);;
+				}
+				this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Setup, setup);
 			}
 			break;
 			
