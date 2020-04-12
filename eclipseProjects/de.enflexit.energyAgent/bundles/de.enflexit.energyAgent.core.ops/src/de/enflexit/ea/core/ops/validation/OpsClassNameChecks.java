@@ -17,13 +17,9 @@ public class OpsClassNameChecks extends HyGridValidationAdapter {
 
 	private static final String OPS_PLUGIN_CLASS_NAME_OLD = "hygrid.ops.plugin.OpsPlugin";
 	
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateProject(agentgui.core.project.Project)
-	 */
 	@Override
-	public HyGridValidationMessage validateProject(Project project) {
-
+	public HyGridValidationMessage validateProjectAfterFileLoad(Project project) {
+	
 		HyGridValidationMessage vMessage = null;
 		
 		Vector<String> pluginClassNames = project.getPluginClassNames();

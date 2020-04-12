@@ -22,11 +22,11 @@ public class SiMaClassNameChecks extends HyGridValidationAdapter {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateProject(agentgui.core.project.Project)
+	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateProjectAfterFileLoad(agentgui.core.project.Project)
 	 */
 	@Override
-	public HyGridValidationMessage validateProject(Project project) {
-
+	public HyGridValidationMessage validateProjectAfterFileLoad(Project project) {
+	
 		HyGridValidationMessage vMessage = null;
 		
 		// --- Check the start arguments have old entries -----------
@@ -47,10 +47,10 @@ public class SiMaClassNameChecks extends HyGridValidationAdapter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see net.agenthygrid.core.validation.HyGridValidationAdapter#validateSetup(agentgui.core.project.setup.SimulationSetup)
+	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateSetupAfterFileLoad(agentgui.core.project.setup.SimulationSetup)
 	 */
 	@Override
-	public HyGridValidationMessage validateSetup(SimulationSetup setup) {
+	public HyGridValidationMessage validateSetupAfterFileLoad(SimulationSetup setup) {
 		
 		HyGridValidationMessage vMessage = null;
 		

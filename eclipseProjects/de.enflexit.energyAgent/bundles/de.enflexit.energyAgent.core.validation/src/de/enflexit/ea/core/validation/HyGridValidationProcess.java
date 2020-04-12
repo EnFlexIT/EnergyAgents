@@ -10,6 +10,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -50,6 +51,9 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	}
 	
 	private enum SingleConfigurationEntity {
+		AfterFileLoadProject,
+		AfterFileLoadSetup,
+		AfterFileLoadGeneralGraphSettings,
 		Project,
 		Setup,
 		NetworkModel,
@@ -61,6 +65,9 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	private List<HyGridValidationProcessListener> validationListener;
 	private List<HyGridValidationMessage> hygridValidationMessages;
 
+	private boolean isCheckForGeneralGraphSettingsDone;
+	
+	
 	// ----------------------------------------------------
 	// --- Singleton construct ----------------------------
 	// ----------------------------------------------------
@@ -257,14 +264,18 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity) {
 		this.checkSingleConfigurationEntity(validationList, configEntity, null);
 	}
+	
 	/**
 	 * Check single configuration entity.
 	 *
 	 * @param validationList the validation list
 	 * @param configEntity the actual single configuration entity
 	 * @param instanceToCheck the instance to check (e.g. a Project or a SimulationSetup - depends on the 'configEntity')
+	 * @return true, if the check created a HyGridValidationMessage
 	 */
-	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity, Object instanceToCheck) {
+	private boolean checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity, Object instanceToCheck) {
+		
+		boolean checkCreatedMessage = false;
 		
 		for (int i = 0; i < validationList.size(); i++) {
 			
@@ -275,22 +286,27 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				Project project = null;
 				HyGridValidationMessage message = null;
 				switch (configEntity) {
+				case AfterFileLoadProject:
+					message = validator.validateProjectAfterFileLoad((Project)instanceToCheck);
+					break;
+					
+				case AfterFileLoadSetup:
+					message = validator.validateSetupAfterFileLoad((SimulationSetup)instanceToCheck);
+					break;
+					
+				case AfterFileLoadGeneralGraphSettings:
+					message = validator.validateGeneralGraphSettingsAfterFileLoad((GeneralGraphSettings4MAS)instanceToCheck);
+					break;
+					
 				case Project:
-					project = this.getProject();
-					if (instanceToCheck!=null && instanceToCheck instanceof Project) {
-						project = (Project) instanceToCheck;
-					}
-					message = validator.validateProject(project);
+					message = validator.validateProject(this.getProject());
 					break;
 					
 				case Setup:
-					project = this.getProject();
 					SimulationSetup setup = null; 
+					project = this.getProject();
 					if (project!=null) {
 						setup = project.getSimulationSetups().getCurrSimSetup();
-					}
-					if (instanceToCheck!=null && instanceToCheck instanceof SimulationSetup) {
-						setup = (SimulationSetup) instanceToCheck;
 					}
 					message = validator.validateSetup(setup);
 					break;
@@ -304,7 +320,12 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					break;
 					
 				}
-				this.addMessage(message, validator);
+
+				// --- Configure return value of this method --------
+				boolean isAddedMessage = this.addMessage(message, validator);
+				if (checkCreatedMessage==false && isAddedMessage==true) {
+					checkCreatedMessage = true;
+				}
 				
 			} catch (Exception ex) {
 				// --- Create a message for the exception -----------
@@ -314,6 +335,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				ex.printStackTrace();				
 			}
 		}
+		return checkCreatedMessage;
 	}
 	
 	/**
@@ -328,13 +350,16 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	/**
 	 * Returns the list of validation checks that were provided by the services.
 	 *
-	 * @param serviceList the service list
+	 * @param serviceList the service list. If null, it will be tried to get the services.
 	 * @param setRuntimeInstancesToValidationAdapter the indicator to set the current runtime instances to the validation adapter
 	 * @return the list of HyGridValidationAdapter
 	 */
 	private List<HyGridValidationAdapter> getValidationList(List<HyGridValidationService> serviceList, boolean setRuntimeInstancesToValidationAdapter) {
 		
 		List<HyGridValidationAdapter> validatorList = new ArrayList<>();
+		
+		// --- If null, try to get the registered services -------------------- 
+		if (serviceList==null) serviceList = this.getValidationServiceList();
 		
 		// --- Walk through the list of specified services --------------------
 		for (int i = 0; i < serviceList.size(); i++) {
@@ -545,18 +570,23 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			this.informHyGridValidationProcessListener(ListenerInformation.MessageReceived, newValidationMessage);
 		}
 	}
+	
 	/**
 	 * Adds the specified {@link HyGridValidationMessage} to the local stack.
 	 *
 	 * @param newValidationMessage the new validation message
 	 * @param validator the validator instance that produced the message
+	 * @return true, if a message was added and listener were informed
 	 */
-	private void addMessage(HyGridValidationMessage newValidationMessage, HyGridValidationAdapter validator) {
+	private boolean addMessage(HyGridValidationMessage newValidationMessage, HyGridValidationAdapter validator) {
+		boolean isAddedMessage = false;
 		if (newValidationMessage!=null) {
 			newValidationMessage.setFoundByClass(validator.getClass().getName());
 			this.getHygridValidationMessages().add(newValidationMessage);
 			this.informHyGridValidationProcessListener(ListenerInformation.MessageReceived, newValidationMessage);
+			isAddedMessage = true;
 		}
+		return isAddedMessage;
 	}
 	
 	/**
@@ -630,13 +660,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			// ----------------------------------------------------------------
 			if (event.getEventObject()!=null && event.getEventObject() instanceof Project) {
 				// --- Inform services/validations about Project --------------
-				project = (Project) event.getEventObject();
-				List<HyGridValidationService> serviceList = this.getValidationServiceList();
-				List<HyGridValidationAdapter> validationList = this.getValidationList(serviceList, false);
-				for (int i = 0; i < validationList.size(); i++) {
-					validationList.get(i).setProject(project);
-				}
-				this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Project, project);
+				this.checkSingleConfigurationEntity(this.getValidationList(null, false), SingleConfigurationEntity.AfterFileLoadProject, (Project) event.getEventObject());
 			}
 			break;
 			
@@ -654,14 +678,13 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			// ----------------------------------------------------------------
 			if (event.getEventObject()!=null && event.getEventObject() instanceof SimulationSetup) {
 				// --- Inform services/validations about SimulationSetup ------
-				SimulationSetup setup = (SimulationSetup) event.getEventObject();
-				List<HyGridValidationService> serviceList = this.getValidationServiceList();
-				List<HyGridValidationAdapter> validationList = this.getValidationList(serviceList, false);
-				for (int i = 0; i < validationList.size(); i++) {
-					validationList.get(i).setSetup(setup);
-				}
-				this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Setup, setup);
+				this.checkSingleConfigurationEntity(this.getValidationList(null, false), SingleConfigurationEntity.AfterFileLoadSetup, (SimulationSetup) event.getEventObject());
 			}
+			break;
+		
+		case ApplicationEvent.PROJECT_LOADING_SETUP_FILES_LOADED:
+			// --- Invoke check for GneralGraphSettings4MAS ---------------
+			this.doCheckForGeneralGraphSettings(event);
 			break;
 			
 		case ApplicationEvent.PROJECT_LOADED:
@@ -690,6 +713,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				// --- Remove project observer --------------------------------
 				project.deleteObserver(this);
 			}
+			this.isCheckForGeneralGraphSettingsDone = false;
 			break;
 			
 		} 
@@ -748,6 +772,30 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			setup.setUserRuntimeObjectClassName(SetupExtension.class.getName());
 		}
 	}
+	
+	/**
+	 * Does the check for the {@link GeneralGraphSettings4MAS} only once, at the load time of a project.
+	 * @param event the event
+	 */
+	private void doCheckForGeneralGraphSettings(ApplicationEvent event ) {
+		
+		if (this.isCheckForGeneralGraphSettingsDone==false && event.getEventObject()!=null && event.getEventObject() instanceof SimulationSetup) {
+			// --- Invoke check for GneralGraphSettings4MAS ---------------
+			SimulationSetup setup = (SimulationSetup) event.getEventObject();
+			Project project = setup.getProject();
+			if (isHyGridProject(project)==true) {
+				// --- Load, check and save graph settings ----------------
+				GraphEnvironmentController graphController = (GraphEnvironmentController) project.getEnvironmentController();
+				GeneralGraphSettings4MAS graphSettings = graphController.loadGeneralGraphSettings();
+				boolean hasChangedGraphSettings = this.checkSingleConfigurationEntity(this.getValidationList(null, false), SingleConfigurationEntity.AfterFileLoadGeneralGraphSettings, graphSettings);
+				if (hasChangedGraphSettings==true) {
+					graphController.saveGeneralGraphSettings(graphSettings);
+				}
+			}
+			this.isCheckForGeneralGraphSettingsDone = true;
+		}
+	}
+	
 	// ----------------------------------------------------
 	// --- Feature rebuild conversions ---------- End -----
 	// ----------------------------------------------------

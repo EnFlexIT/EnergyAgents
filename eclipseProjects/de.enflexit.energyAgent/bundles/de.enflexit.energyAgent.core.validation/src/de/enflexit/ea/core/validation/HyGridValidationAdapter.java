@@ -3,6 +3,7 @@ package de.enflexit.ea.core.validation;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
@@ -15,7 +16,7 @@ import hygrid.env.HyGridAbstractEnvironmentModel;
 /**
  * The Class HyGridValidationAdapter implements the base methods that may be overwritten in extended classes.
  * In contrast to an interface, it also contains methods that enable to access instances 
- * of the current project and setup (e.g. the current {@link Project} or the current {@link Setup}). 
+ * of the current project and setup (e.g. the current {@link Project} or the current {@link SimulationSetup}). 
  */
 public class HyGridValidationAdapter {
 
@@ -25,6 +26,40 @@ public class HyGridValidationAdapter {
 	private GraphEnvironmentController graphController;
 	private NetworkModel networkModel;
 	private HyGridAbstractEnvironmentModel hyGridAbsEnvModel;
+	
+
+	
+	/**
+	 * Validate the project after the project files were loaded.
+	 *
+	 * @param project the project
+	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
+	 */
+	public HyGridValidationMessage validateProjectAfterFileLoad(Project project) {
+		return null;
+	}
+	
+	/**
+	 * Validate SimulationSetup after the setup files were loaded.
+	 *
+	 * @param setup the setup
+	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
+	 */
+	public HyGridValidationMessage validateSetupAfterFileLoad(SimulationSetup setup) {
+		return null;
+	}
+	
+	/**
+	 * Validate graph settings after file load.
+	 *
+	 * @param graphSettings the graph settings
+	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
+	 */
+	public HyGridValidationMessage validateGeneralGraphSettingsAfterFileLoad(GeneralGraphSettings4MAS graphSettings) {
+		return null;
+	}
+	
+	
 	
 	
 	/**
@@ -112,6 +147,9 @@ public class HyGridValidationAdapter {
 	public HyGridValidationMessage validateEomScheduleList(NetworkComponent netComp, ScheduleList sl) {
 		return null;
 	}
+	
+	
+	
 	
 	/**
 	 * Gets the project.

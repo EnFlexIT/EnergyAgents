@@ -16,13 +16,13 @@ import de.enflexit.ea.deployment.plugin.DeploymentPlugIn;
 public class DeploymentClassNameChecks extends HyGridValidationAdapter {
 
 	private static final String DEPLOYMENT_PLUGIN_CLASS_NAME_OLD = "hygrid.deployment.plugin.DeploymentPlugIn";
-	
+
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateProject(agentgui.core.project.Project)
+	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateProjectAfterFileLoad(agentgui.core.project.Project)
 	 */
 	@Override
-	public HyGridValidationMessage validateProject(Project project) {
+	public HyGridValidationMessage validateProjectAfterFileLoad(Project project) {
 
 		HyGridValidationMessage vMessage = null;
 		

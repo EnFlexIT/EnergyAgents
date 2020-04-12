@@ -10,7 +10,7 @@ import de.enflexit.ea.core.validation.HyGridValidationService;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DeploymentValidationService extends HyGridValidationAdapter implements HyGridValidationService {
+public class DeploymentValidationService implements HyGridValidationService {
 
 	/* (non-Javadoc)
 	 * @see net.agenthygrid.core.validation.HyGridValidationService#getHyGridValidationChecks(boolean)

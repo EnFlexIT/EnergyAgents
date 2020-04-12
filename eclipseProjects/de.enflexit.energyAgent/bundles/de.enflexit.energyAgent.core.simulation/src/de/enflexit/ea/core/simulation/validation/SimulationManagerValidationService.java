@@ -9,7 +9,7 @@ import de.enflexit.ea.core.validation.HyGridValidationService;
  * HyGridValidationService implementation for checking if the SimulationManager is configured correctly
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class SimulationManagerValidationService extends HyGridValidationAdapter implements HyGridValidationService {
+public class SimulationManagerValidationService implements HyGridValidationService {
 
 	/* (non-Javadoc)
 	 * @see net.agenthygrid.core.validation.HyGridValidationService#getHyGridValidationChecks(boolean)
