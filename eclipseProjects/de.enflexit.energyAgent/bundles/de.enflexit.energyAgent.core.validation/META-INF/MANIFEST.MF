@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.core.validation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/hygridValidationService.xml
+Service-Component: OSGI-INF/eaCoreValidationService.xml
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.eom.core,
