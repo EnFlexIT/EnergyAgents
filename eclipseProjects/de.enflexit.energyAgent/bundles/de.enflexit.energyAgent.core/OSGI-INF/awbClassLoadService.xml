@@ -3,6 +3,6 @@
    <implementation class="de.enflexit.ea.core.classLoadService.AWBClassLoadServiceImpl"/>
    <service>
       <provide interface="de.enflexit.common.classLoadService.BaseClassLoadService"/>
-      <provide interface="agentgui.core.classLoadService.ClassLoadService"/>ice"/>
+      <provide interface="agentgui.core.classLoadService.ClassLoadService"/>
    </service>
 </scr:component>

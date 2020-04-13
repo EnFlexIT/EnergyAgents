@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="de.enflexit.common.classLoadService" name="de.enflexit.ea.core.simulation.classLoadService.EomClassLoadServiceImpl">
    <implementation class="de.enflexit.ea.core.simulation.classLoadService.EomClassLoadServiceImpl"/>
    <service>
-      <provide interface="energy.classLoadService.EomClassLoadService"/>ice"/>
+      <provide interface="energy.classLoadService.EomClassLoadService"/>
       <provide interface="de.enflexit.common.classLoadService.BaseClassLoadService"/>
    </service>
 </scr:component>
