@@ -24,6 +24,7 @@
 		<module>de.enflexit.energyAgent.electricity</module>
 		<module>de.enflexit.energyAgent.lib.matrixCalculations</module>
 		<module>de.enflexit.energyAgent.lib.powerFlowCalculation</module>
-		<module>de.enflexit.energyAgent.lib.powerFlowEstimation</module>		
+		<module>de.enflexit.energyAgent.lib.powerFlowEstimation</module>
+		<module>de.enflexit.energyAgent.prosumer</module>
 	</modules>
 </project>
