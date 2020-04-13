@@ -87,7 +87,7 @@ public class HyGridPlugIn extends PlugIn {
 	 */
 	@Override
 	public String getName() {
-		return "Agent.HyGrid - Plugin";
+		return "Energy Agent - Core Plugin";
 	}
 
 	/*
