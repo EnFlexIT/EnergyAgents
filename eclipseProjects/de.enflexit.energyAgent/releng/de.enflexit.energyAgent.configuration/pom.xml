@@ -7,8 +7,16 @@
 
 	<packaging>pom</packaging>
 
+	<organization>
+		<name>EnFlex.IT</name>
+		<url>http://www.enflex.it/</url>
+	</organization>
+	<name>Energy Agent based on Agent.HyGrid</name>
+	<url>http://www.agent-hygrid.net/</url>
+	<inceptionYear>2015</inceptionYear>
+
 	<properties>
-		<tycho-version>1.4.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -58,8 +66,8 @@
 				<configuration>
 					<target>
 						<artifact>
-							<groupId>net.agenthygrid</groupId>
-							<artifactId>net.agenthygrid.target</artifactId>
+							<groupId>de.enflexit.energyAgent</groupId>
+							<artifactId>de.enflexit.energyAgent.target</artifactId>
 							<version>${target-platform-version}</version>
 						</artifact>
 					</target>
@@ -149,11 +157,4 @@
 
 	</build>
 
-	<organization>
-		<name>Agent.HyGrid project consortium</name>
-		<url>http://www.agent-hygrid.net/</url>
-	</organization>
-	<name>Agent.HyGrid</name>
-	<url>http://www.agent-hygrid.net/</url>
-	<inceptionYear>2015</inceptionYear>
 </project>
