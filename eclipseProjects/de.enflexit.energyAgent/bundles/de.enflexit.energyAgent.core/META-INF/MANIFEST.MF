@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Agent.Hygrid
+Bundle-Name: Energy Agent -Core Bundle
 Bundle-SymbolicName: de.enflexit.energyAgent.core
-Bundle-Version: 2.2.3.qualifier
+Bundle-Version: 1.0.0.qualifier
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.db.hibernate,

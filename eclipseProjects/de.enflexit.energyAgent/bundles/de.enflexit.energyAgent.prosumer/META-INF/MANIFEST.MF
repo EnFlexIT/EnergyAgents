@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Prosumer
+Bundle-Name: Energy Agent - Generic Prosumer Agent
 Bundle-SymbolicName: de.enflexit.energyAgent.prosumer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT

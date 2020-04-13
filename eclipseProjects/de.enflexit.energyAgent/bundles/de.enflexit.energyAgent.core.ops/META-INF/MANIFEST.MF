@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Agent.HyGrid - Operations Center
+Bundle-Name: Energy Agent - Operations Center
 Bundle-SymbolicName: de.enflexit.energyAgent.core.ops
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT

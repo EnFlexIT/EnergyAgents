@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HyGrid PowerFlowCalculation
+Bundle-Name: Energy Agent - Electricity - Power Flow Calculation
 Bundle-SymbolicName: de.enflexit.energyAgent.lib.powerFlowCalculation
-Bundle-Version: 1.0.1.qualifier
-Bundle-Vendor: Marcel Ludwig
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Marcel Ludwig, Jan Mehlich (BUW)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.ea.lib.powerFlowCalculation,
  de.enflexit.ea.lib.powerFlowCalculation.classLoadService,

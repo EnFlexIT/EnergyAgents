@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HyGrid EOM-Aggregator
+Bundle-Name: Energy Agent - Aggregation Handling
 Bundle-SymbolicName: de.enflexit.energyAgent.core.aggregation
-Bundle-Version: 1.1.2.qualifier
-Bundle-Vendor: DAWIS
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.aggregation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

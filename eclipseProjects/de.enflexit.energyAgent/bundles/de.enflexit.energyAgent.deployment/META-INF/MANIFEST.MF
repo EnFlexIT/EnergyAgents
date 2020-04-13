@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Energy Agent Deployment
+Bundle-Name: Energy Agent - Deployment
 Bundle-SymbolicName: de.enflexit.energyAgent.deployment
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.deployment
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.ea.deployment,

@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HyGrid Simulation Manager Bundle
+Bundle-Name: Energy Agent - Simulations Bundle
 Bundle-SymbolicName: de.enflexit.energyAgent.core.simulation
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: DAWIS - ICB - University Duisburg-Essen
+Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.simulation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.ea.core.simulation.classLoadService,

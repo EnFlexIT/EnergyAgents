@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HyGrid CentralExecutiveAgent
+Bundle-Name: Energy Agent - CentralExecutiveAgent
 Bundle-SymbolicName: de.enflexit.energyAgent.core.centralExecutiveAgent
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
@@ -13,7 +13,7 @@ Export-Package: de.enflexit.ea.core.centralExecutiveAgent,
  de.enflexit.ea.core.centralExecutiveAgent.validation,
  de.enflexit.ea.core.fieldDataProxyAgent,
  de.enflexit.ea.core.liveMonitoringProxyAgent
-Bundle-Vendor: DAWIS
+Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/ceaValidationService.xml

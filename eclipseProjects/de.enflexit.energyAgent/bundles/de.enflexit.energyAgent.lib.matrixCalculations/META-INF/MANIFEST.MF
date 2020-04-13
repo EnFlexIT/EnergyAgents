@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: MatrixCalculations
+Bundle-Name: Energy Agent - Library for Matrix Calculations
 Bundle-SymbolicName: de.enflexit.energyAgent.lib.matrixCalculations
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.insekt.lib.matrixCalculations
@@ -11,3 +11,4 @@ Bundle-ClassPath: .,
 Export-Package: Jama,
  Jama.util,
  jampack
+Bundle-Vendor: EnFlex.IT

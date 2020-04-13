@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Estimation
+Bundle-Name: Energy Agent - Electricity - Power Flow Estimation
 Bundle-SymbolicName: de.enflexit.energyAgent.lib.powerFlowEstimation
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.estimation
@@ -20,3 +20,4 @@ Export-Package: de.enflexit.ea.lib.powerFlowEstimation.centralEstimation,
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Marcel Ludwig, Jan Mehlich (BUW)
