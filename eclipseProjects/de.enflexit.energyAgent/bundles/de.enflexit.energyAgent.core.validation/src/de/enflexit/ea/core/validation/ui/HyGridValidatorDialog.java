@@ -105,7 +105,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 	 */
 	private void initialize() {
 		
-		this.setTitle("Agent.HyGrid - Setup Validator");
+		this.setTitle("Energy Agent / HyGrid - Setup Validator");
 		
 		this.loadAndApplyDialogSizeAndPosition();
 		this.registerEscapeKeyStroke();
@@ -243,7 +243,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
     
 	private JLabel getJLabelErrors() {
 		if (jLabelErrors == null) {
-			jLabelErrors = new JLabel("Found for the current setup:");
+			jLabelErrors = new JLabel("Found in the current setup:");
 			jLabelErrors.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelErrors;
