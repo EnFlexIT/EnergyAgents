@@ -1,30 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.enflexit.energyAgent</groupId>
-	<artifactId>de.enflexit.energyAgent.bundles</artifactId>
+	<groupId>de.enflexit.ea</groupId>
+	<artifactId>de.enflexit.ea.bundles</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>de.enflexit.energyAgent</groupId>
-		<artifactId>de.enflexit.energyAgent.root</artifactId>
+		<groupId>de.enflexit.ea</groupId>
+		<artifactId>de.enflexit.ea.root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<modules>
-		<module>de.enflexit.energyAgent.core</module>
-		<module>de.enflexit.energyAgent.core.aggregation</module>
-		<module>de.enflexit.energyAgent.core.centralExecutiveAgent</module>
-		<module>de.enflexit.energyAgent.core.globalDataModel</module>
-		<module>de.enflexit.energyAgent.core.ops</module>
-		<module>de.enflexit.energyAgent.core.simulation</module>
-		<module>de.enflexit.energyAgent.core.validation</module>
-		<module>de.enflexit.energyAgent.deployment</module>
-		<module>de.enflexit.energyAgent.electricity</module>
-		<module>de.enflexit.energyAgent.lib.matrixCalculations</module>
-		<module>de.enflexit.energyAgent.lib.powerFlowCalculation</module>
-		<module>de.enflexit.energyAgent.lib.powerFlowEstimation</module>
-		<module>de.enflexit.energyAgent.prosumer</module>
+		<module>de.enflexit.ea.core</module>
+		<module>de.enflexit.ea.core.aggregation</module>
+		<module>de.enflexit.ea.core.centralExecutiveAgent</module>
+		<module>de.enflexit.ea.core.globalDataModel</module>
+		<module>de.enflexit.ea.core.ops</module>
+		<module>de.enflexit.ea.core.simulation</module>
+		<module>de.enflexit.ea.core.validation</module>
+		<module>de.enflexit.ea.deployment</module>
+		<module>de.enflexit.ea.electricity</module>
+		<module>de.enflexit.ea.lib.matrixCalculations</module>
+		<module>de.enflexit.ea.lib.powerFlowCalculation</module>
+		<module>de.enflexit.ea.lib.powerFlowEstimation</module>
+		<module>de.enflexit.ea.prosumer</module>
 	</modules>
 </project>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.enflexit.energyAgent.feature"
+      id="de.enflexit.ea.feature"
       label="Energ Agent - Life Cycle Feature"
       version="1.0.0.qualifier"
       provider-name="EnFlex.IT"
-      plugin="de.enflexit.energyAgent.core"
+      plugin="de.enflexit.ea.core"
       os="linux,macosx,win32"
       arch="x86_64">
 
@@ -45,91 +45,91 @@
    </requires>
 
    <plugin
-         id="de.enflexit.energyAgent.core"
+         id="de.enflexit.ea.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.aggregation"
+         id="de.enflexit.ea.core.aggregation"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.centralExecutiveAgent"
+         id="de.enflexit.ea.core.centralExecutiveAgent"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.globalDataModel"
+         id="de.enflexit.ea.core.globalDataModel"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.ops"
+         id="de.enflexit.ea.core.simulation"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.simulation"
+         id="de.enflexit.ea.core.validation"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.core.validation"
+         id="de.enflexit.ea.deployment"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.deployment"
+         id="de.enflexit.ea.electricity"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.electricity"
+         id="de.enflexit.ea.electricity.powerFlowCalculation"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.lib.matrixCalculations"
+         id="de.enflexit.ea.electricity.powerFlowEstimation"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.lib.powerFlowCalculation"
+         id="de.enflexit.ea.lib.matrixCalculations"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.lib.powerFlowEstimation"
+         id="de.enflexit.ea.ops"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.energyAgent.prosumer"
+         id="de.enflexit.ea.prosumer"
          download-size="0"
          install-size="0"
          version="0.0.0"
