@@ -66,13 +66,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.enflexit.ea.core.globalDataModel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.enflexit.ea.core.simulation"
          download-size="0"
          install-size="0"
@@ -130,6 +123,20 @@
 
    <plugin
          id="de.enflexit.ea.prosumer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.ea.core.awbIntegration"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.ea.core.dataModel"
          download-size="0"
          install-size="0"
          version="0.0.0"

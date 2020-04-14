@@ -15,16 +15,17 @@
 	<modules>
 		<module>de.enflexit.ea.core</module>
 		<module>de.enflexit.ea.core.aggregation</module>
+		<module>de.enflexit.ea.core.awbIntegration</module>
 		<module>de.enflexit.ea.core.centralExecutiveAgent</module>
-		<module>de.enflexit.ea.core.globalDataModel</module>
-		<module>de.enflexit.ea.core.ops</module>
+		<module>de.enflexit.ea.core.dataModel</module>
 		<module>de.enflexit.ea.core.simulation</module>
 		<module>de.enflexit.ea.core.validation</module>
 		<module>de.enflexit.ea.deployment</module>
 		<module>de.enflexit.ea.electricity</module>
+		<module>de.enflexit.ea.electricity.powerFlowCalculation</module>
+		<module>de.enflexit.ea.electricity.powerFlowEstimation</module>
 		<module>de.enflexit.ea.lib.matrixCalculations</module>
-		<module>de.enflexit.ea.lib.powerFlowCalculation</module>
-		<module>de.enflexit.ea.lib.powerFlowEstimation</module>
+		<module>de.enflexit.ea.ops</module>
 		<module>de.enflexit.ea.prosumer</module>
 	</modules>
 </project>
