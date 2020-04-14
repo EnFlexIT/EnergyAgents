@@ -727,7 +727,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 * @param project the project to adjust
 	 */
 	private void adjustProjectUserObjectClassName(Project project) {
-		if (project != null && project.getUserRuntimeObjectClassName().equals("hygrid.env.HyGridAbstractEnvironmentModel") == true) {
+		if (project != null && project.getUserRuntimeObjectClassName()!=null && project.getUserRuntimeObjectClassName().equals("hygrid.env.HyGridAbstractEnvironmentModel") == true) {
 			project.setUserRuntimeObjectClassName(HyGridAbstractEnvironmentModel.class.getName());
 		}
 	}
@@ -768,7 +768,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 * @param setup the SimulationSetup to adjust
 	 */
 	private void adjustSetupUserObjectClassName(SimulationSetup setup) {
-		if (setup != null && setup.getUserRuntimeObjectClassName().equals("hygrid.deployment.dataModel.SetupExtension") == true) {
+		if (setup != null && setup.getUserRuntimeObjectClassName()!=null && setup.getUserRuntimeObjectClassName().equals("hygrid.deployment.dataModel.SetupExtension") == true) {
 			setup.setUserRuntimeObjectClassName(SetupExtension.class.getName());
 		}
 	}
