@@ -20,7 +20,7 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
  org.eclipse.osgi,
- de.enflexit.ea.core.globalDataModel,
+ de.enflexit.ea.core.dataModel,
  de.enflexit.ea.electricity.powerFlowCalculation,
  de.enflexit.ea.electricity.powerFlowEstimation,
  de.enflexit.ea.core.awbIntegration

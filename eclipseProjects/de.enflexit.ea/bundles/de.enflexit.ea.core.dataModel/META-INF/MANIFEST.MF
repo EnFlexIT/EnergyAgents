@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Enertgy Agent - Data And Communication Models
-Bundle-SymbolicName: de.enflexit.ea.core.globalDataModel
+Bundle-SymbolicName: de.enflexit.ea.core.dataModel
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT

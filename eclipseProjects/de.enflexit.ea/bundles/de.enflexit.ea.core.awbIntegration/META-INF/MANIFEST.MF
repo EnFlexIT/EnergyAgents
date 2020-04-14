@@ -9,7 +9,7 @@ Export-Package: de.enflexit.ea.core.awbIntegration.plugin,
  de.enflexit.ea.core.awbIntegration.plugin.gui
 Require-Bundle: de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
- de.enflexit.ea.core.globalDataModel,
+ de.enflexit.ea.core.dataModel,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
