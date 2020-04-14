@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AwbIntegration
+Bundle-Name: Energy Agent - AWB-Integration
 Bundle-SymbolicName: de.enflexit.ea.core.awbIntegration
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration

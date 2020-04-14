@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Energy Agent - Simulations Bundle
+Bundle-Name: Energy Agent - Simulations Core
 Bundle-SymbolicName: de.enflexit.ea.core.simulation
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
