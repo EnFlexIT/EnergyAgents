@@ -33,6 +33,7 @@ public class EnergyAgentCoreValidationService implements HyGridValidationService
 		ArrayList<HyGridValidationAdapter> checkList = new ArrayList<>();
 		checkList.add(new ValidateSwitchableEomAdapter());
 		checkList.add(new ValidateCable());
+		checkList.add(new ValidateCeaConfigModel());
 		return checkList;
 	}
 
