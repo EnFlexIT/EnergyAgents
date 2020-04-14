@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Energy Agent - Generic Prosumer Agent
+Bundle-SymbolicName: de.enflexit.ea.prosumer
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.enflexit.ea.prosumer,
+ de.enflexit.ea.prosumer.classLoadService,
+ de.enflexit.ea.prosumer.validation
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml,
+ OSGI-INF/prosumerValidationService.xml
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.enflexit.common,
+ de.enflexit.eom.core,
+ de.enflexit.ea.core,
+ de.enflexit.ea.core.validation,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel
+Automatic-Module-Name: net.agenthygrid.prosumer

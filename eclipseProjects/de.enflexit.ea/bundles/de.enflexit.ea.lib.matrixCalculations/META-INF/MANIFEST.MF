@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Energy Agent - Library for Matrix Calculations
+Bundle-SymbolicName: de.enflexit.ea.lib.matrixCalculations
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: net.insekt.lib.matrixCalculations
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath: .,
+ Jama-1.0.3.jar,
+ jampack.jar
+Export-Package: Jama,
+ Jama.util,
+ jampack
+Bundle-Vendor: EnFlex.IT
