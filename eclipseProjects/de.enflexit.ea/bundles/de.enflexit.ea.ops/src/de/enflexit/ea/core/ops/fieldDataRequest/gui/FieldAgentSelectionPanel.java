@@ -2,7 +2,6 @@ package de.enflexit.ea.core.ops.fieldDataRequest.gui;
 
 import javax.swing.JPanel;
 
-import hygrid.plugin.HyGridPlugIn;
 import java.awt.GridBagLayout;
 
 import javax.swing.DefaultListModel;
@@ -23,6 +22,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 
@@ -201,7 +201,7 @@ public class FieldAgentSelectionPanel extends JPanel {
 	private List<AgentDeploymentInformation> getDeployedAgents(){
 		List<AgentDeploymentInformation> deployedAgentsList = null;
 		
-		HyGridPlugIn plugin = HyGridPlugIn.getInstanceForCurrentProject();
+		AWBIntegrationPlugIn plugin = AWBIntegrationPlugIn.getInstanceForCurrentProject();
 		if (plugin!=null) {
 			SetupExtension setEx = plugin.getSetupExtension();
 			if (setEx!=null) {

@@ -10,10 +10,10 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.ea.deployment.ImageHelper;
 import de.enflexit.ea.deployment.gui.DeploymentGroupsInternalFrame;
-import hygrid.plugin.HyGridPlugIn;
 
 /**
  * Toolbar button for showing the list of deployed agents.
@@ -49,13 +49,13 @@ public class JButtonDeploymentGroups extends AbstractCustomToolbarComponent impl
 		if (iFrame==null) {
 			
 			// --- Get the setup extension from the HyGridPlugIn instance
-			HyGridPlugIn plugin = HyGridPlugIn.getInstanceForCurrentProject();
+			AWBIntegrationPlugIn plugin = AWBIntegrationPlugIn.getInstanceForCurrentProject();
 			if (plugin!=null) {
 				SetupExtension setupExtension = plugin.getSetupExtension();
 				// --- Create the iFrame and add it to the component's desktop pane ----------
 				iFrame = new DeploymentGroupsInternalFrame(setupExtension, this.graphController, this.graphController.getProject()!=null);
 			} else {
-				System.err.println("Could not find '" + HyGridPlugIn.class.getSimpleName() +"'");
+				System.err.println("Could not find '" + AWBIntegrationPlugIn.class.getSimpleName() +"'");
 			}
 		}
 		return iFrame;

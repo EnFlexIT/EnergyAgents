@@ -26,9 +26,7 @@ Export-Package: de.enflexit.ea.core.globalDataModel,
  hygrid.env.adapter.triPhase,
  hygrid.env.adapter.uniPhase,
  hygrid.globalDataModel.cea,
- hygrid.ops.ontology,
- hygrid.plugin,
- hygrid.plugin.gui
+ hygrid.ops.ontology
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.db.hibernate,

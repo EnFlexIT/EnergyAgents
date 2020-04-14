@@ -1,4 +1,4 @@
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.util.TreeMap;
 import java.util.Vector;
@@ -30,7 +30,7 @@ import energy.schedule.loading.ScheduleTimeRangeEvent;
  * 
  * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public class HyGridScheduleTimeRangeListener extends ScheduleTimeRangeAdapter {
+public class ScheduleTimeRangeListener extends ScheduleTimeRangeAdapter {
 
 	public static final String EVENT_SETUP_LOAD = "SetupLoaded";
 	public static final String EVENT_CONFIGURED_IN_AWB_MAIN_WINDOW = ScheduleTimeRangeEvent.AWB_SETUP_CONFIGURED_MANUALLY_IN_AWB_MAIN_WINDOW;
@@ -40,7 +40,7 @@ public class HyGridScheduleTimeRangeListener extends ScheduleTimeRangeAdapter {
 	
 	private GraphEnvironmentController graphController;
 	
-	public HyGridScheduleTimeRangeListener(GraphEnvironmentController graphController) {
+	public ScheduleTimeRangeListener(GraphEnvironmentController graphController) {
 		this.graphController = graphController;
 		this.addListener();
 	}

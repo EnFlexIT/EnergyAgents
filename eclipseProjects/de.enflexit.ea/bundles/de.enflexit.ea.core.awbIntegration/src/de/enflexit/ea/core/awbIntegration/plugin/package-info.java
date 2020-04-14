@@ -5,4 +5,4 @@
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  *
  */
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;

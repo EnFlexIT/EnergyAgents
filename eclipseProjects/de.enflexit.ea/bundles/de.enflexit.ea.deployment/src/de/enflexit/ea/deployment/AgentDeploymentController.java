@@ -51,6 +51,8 @@ import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
+import de.enflexit.ea.core.awbIntegration.plugin.EnergyAgentProjectExportController;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
@@ -58,14 +60,12 @@ import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.plugin.HyGridPlugIn;
-import hygrid.plugin.HyGridProjectExportController;
 
 /**
  * {@link DefaultProjectExportController} implementation for deploying single energy agents to be executed in embedded system mode.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AgentDeploymentController extends HyGridProjectExportController {
+public class AgentDeploymentController extends EnergyAgentProjectExportController {
 	
 	private static final String RESOURCES_SUBFOLDER = "ressources";
 	private static final String BUNDLES_SUBFOLDER = "plugins";
@@ -783,7 +783,7 @@ public class AgentDeploymentController extends HyGridProjectExportController {
 	 * @return the setup extension
 	 */
 	private SetupExtension getSetupExtension() {
-		HyGridPlugIn plugIn = HyGridPlugIn.getInstanceForCurrentProject();
+		AWBIntegrationPlugIn plugIn = AWBIntegrationPlugIn.getInstanceForCurrentProject();
 		return plugIn.getSetupExtension();
 	}
 	

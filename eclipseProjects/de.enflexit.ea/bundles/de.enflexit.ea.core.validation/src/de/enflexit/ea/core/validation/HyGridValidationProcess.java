@@ -26,6 +26,7 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
@@ -35,7 +36,6 @@ import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import hygrid.ops.ontology.OpsOntology;
-import hygrid.plugin.HyGridPlugIn;
 
 /**
  * The singleton instance of the HyGridValidationProcess does the actual checks on a Energy Agent / HyGrid setup.
@@ -741,7 +741,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			for (int i = 0; i < pluginClassNames.size(); i++) {
 				String pluginClassName = pluginClassNames.get(i);
 				if (pluginClassName.equals("hygrid.plugin.HyGridPlugIn") == true) {
-					pluginClassNames.set(i, HyGridPlugIn.class.getName());
+					pluginClassNames.set(i, AWBIntegrationPlugIn.class.getName());
 				}
 			}
 		}

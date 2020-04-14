@@ -49,6 +49,7 @@ import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
@@ -56,7 +57,6 @@ import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.plugin.HyGridPlugIn;
 
 /**
  * AgentDeploymentDialog represents a Dialog that is used to enter necessary informations for the 
@@ -705,7 +705,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	 */
 	private SetupExtension getSetupExtension() {
 		SetupExtension setupExtension = null;
-		HyGridPlugIn plugin = HyGridPlugIn.getInstanceForCurrentProject();
+		AWBIntegrationPlugIn plugin = AWBIntegrationPlugIn.getInstanceForCurrentProject();
 		if (plugin!=null) {
 			setupExtension = plugin.getSetupExtension();
 		}

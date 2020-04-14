@@ -22,4 +22,5 @@ Require-Bundle: de.enflexit.common,
  org.eclipse.osgi,
  de.enflexit.ea.core.globalDataModel,
  de.enflexit.ea.electricity.powerFlowCalculation,
- de.enflexit.ea.electricity.powerFlowEstimation
+ de.enflexit.ea.electricity.powerFlowEstimation,
+ de.enflexit.ea.core.awbIntegration

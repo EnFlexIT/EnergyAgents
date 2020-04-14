@@ -1,4 +1,4 @@
-package hygrid.plugin.gui;
+package de.enflexit.ea.core.awbIntegration.plugin.gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,6 +36,7 @@ import agentgui.simulationService.time.TimeUnitVector;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
+import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.globalDataModel.graphLayout.GraphElementLayoutService;
 import energy.optionModel.ScheduleLengthRestriction;
@@ -47,11 +48,10 @@ import hygrid.env.DisplayUpdateConfiguration;
 import hygrid.env.DisplayUpdateConfiguration.UpdateMechanism;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import hygrid.plugin.HyGridPlugIn;
 
 /**
  * The Class HyGridSettingsTab represents a tab that is a {@link JScrollPane} and that is 
- * added by the {@link HyGridPlugIn}.
+ * added by the {@link AWBIntegrationPlugIn}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */

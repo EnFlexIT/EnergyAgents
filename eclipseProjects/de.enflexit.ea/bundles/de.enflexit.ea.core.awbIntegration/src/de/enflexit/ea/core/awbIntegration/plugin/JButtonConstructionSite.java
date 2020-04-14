@@ -1,4 +1,4 @@
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -16,7 +16,7 @@ import de.enflexit.ea.core.globalDataModel.ImageHelper;
 
 /**
  * The Class JButtonConstructionSite that will be displayed in the toolbar of the GraphEnvironement if configured
- * in the {@link HyGridPlugIn}. The class provides a static access method to ad an individual {@link ActionListener}. 
+ * in the {@link AWBIntegrationPlugIn}. The class provides a static access method to ad an individual {@link ActionListener}. 
  * 
  * @see #addActionListener(ActionListener)
  * 

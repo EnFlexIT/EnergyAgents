@@ -9,7 +9,7 @@ import org.awb.env.networkModel.helper.DomainClustering;
 import org.osgi.framework.BundleContext;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
-import hygrid.plugin.JButtonConstructionSite;
+import de.enflexit.ea.core.awbIntegration.plugin.JButtonConstructionSite;
 
 /**
  * The Class ConstructionSiteBundleActivator.

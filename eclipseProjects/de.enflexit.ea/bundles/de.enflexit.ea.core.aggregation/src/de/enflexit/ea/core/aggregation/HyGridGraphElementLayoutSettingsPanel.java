@@ -8,11 +8,11 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 
 import agentgui.core.project.Project;
+import de.enflexit.ea.core.awbIntegration.plugin.gui.ColorSettingPanel;
 import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.plugin.gui.ColorSettingPanel;
 
 /**
  * GUI component for configuring {@link HyGridGraphElementLayoutSettings}

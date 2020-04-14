@@ -1,4 +1,4 @@
-package hygrid.plugin.gui;
+package de.enflexit.ea.core.awbIntegration.plugin.gui;
 
 import java.awt.Color;
 import java.awt.Component;

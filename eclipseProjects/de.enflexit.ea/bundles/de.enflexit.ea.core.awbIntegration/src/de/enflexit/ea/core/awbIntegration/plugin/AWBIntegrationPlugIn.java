@@ -1,4 +1,4 @@
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;
 
 import javax.swing.JOptionPane;
 
@@ -16,6 +16,7 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.ea.core.awbIntegration.plugin.gui.HyGridSettingsTab;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
@@ -25,7 +26,6 @@ import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.loading.ScheduleTimeRange;
 import energy.schedule.loading.ScheduleTimeRangeController;
 import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.plugin.gui.HyGridSettingsTab;
 import jade.core.ProfileImpl;
 
 /**
@@ -33,20 +33,20 @@ import jade.core.ProfileImpl;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class HyGridPlugIn extends PlugIn {
+public class AWBIntegrationPlugIn extends PlugIn {
 
 	private boolean isShowConstructionSiteButton = false;
 	
 	private GraphEnvironmentController graphController;
 	private SetupExtension setupExtension;
 
-	private HyGridScheduleTimeRangeListener scheduleTimeRangeListener;
+	private ScheduleTimeRangeListener scheduleTimeRangeListener;
 	
 	/**
 	 * Instantiates a new Agent.HyGrid plugin .
 	 * @param currProject the current project
 	 */
-	public HyGridPlugIn(Project currProject) {
+	public AWBIntegrationPlugIn(Project currProject) {
 		super(currProject); // required !!
 	}
 
@@ -65,14 +65,14 @@ public class HyGridPlugIn extends PlugIn {
 	 * Returns (and creates) the HyGridScheduleTimeRangeListener for the HyGridPlugin.
 	 * @return the schedule time range listener
 	 */
-	private HyGridScheduleTimeRangeListener getScheduleTimeRangeListener() {
+	private ScheduleTimeRangeListener getScheduleTimeRangeListener() {
 		if (scheduleTimeRangeListener==null) {
-			scheduleTimeRangeListener = new HyGridScheduleTimeRangeListener(this.getGraphController());
+			scheduleTimeRangeListener = new ScheduleTimeRangeListener(this.getGraphController());
 		}
 		return scheduleTimeRangeListener;
 	}
 	/**
-	 * Will destroy the current {@link HyGridScheduleTimeRangeListener}.
+	 * Will destroy the current {@link ScheduleTimeRangeListener}.
 	 */
 	private void destroyScheduleTimeRangeListener() {
 		if (scheduleTimeRangeListener!=null) {
@@ -87,7 +87,7 @@ public class HyGridPlugIn extends PlugIn {
 	 */
 	@Override
 	public String getName() {
-		return "Energy Agent - Core Plugin";
+		return "Energy Agent - AWB Integration Plugin";
 	}
 
 	/*
@@ -114,7 +114,7 @@ public class HyGridPlugIn extends PlugIn {
 		this.getScheduleTimeRangeListener();
 		
 		// --- Register the specialized ProjectExportController implementation ----------
-		ProjectExportControllerProvider.setProjectExportControllerClass(HyGridProjectExportController.class.getName());
+		ProjectExportControllerProvider.setProjectExportControllerClass(EnergyAgentProjectExportController.class.getName());
 		
 		// --- Load the setup extension for the current setup ---------------------------
 		SimulationSetup simSetup = this.project.getSimulationSetups().getCurrSimSetup();
@@ -290,25 +290,25 @@ public class HyGridPlugIn extends PlugIn {
 	// --------------------------------------------------------------
 
 	/**
-	 * Gets the {@link HyGridPlugIn} instance for the current project
+	 * Gets the {@link AWBIntegrationPlugIn} instance for the current project
 	 * @return The HyGridPlugIn instance
 	 */
-	public static HyGridPlugIn getInstanceForCurrentProject() {
+	public static AWBIntegrationPlugIn getInstanceForCurrentProject() {
 		return getInstanceForProject(Application.getProjectFocused());
 	}
 
 	/**
-	 * Gets the {@link HyGridPlugIn} instance for the specified project
+	 * Gets the {@link AWBIntegrationPlugIn} instance for the specified project
 	 * 
 	 * @param project The project
 	 * @return The HyGridPlugIn instance
 	 */
-	private static HyGridPlugIn getInstanceForProject(Project project) {
-		HyGridPlugIn plugIn = null;
+	private static AWBIntegrationPlugIn getInstanceForProject(Project project) {
+		AWBIntegrationPlugIn plugIn = null;
 		for (int i = 0; i < project.getPlugInsLoaded().size(); i++) {
 			PlugIn pi = project.getPlugInsLoaded().get(i);
-			if (pi instanceof HyGridPlugIn) {
-				plugIn = (HyGridPlugIn) pi;
+			if (pi instanceof AWBIntegrationPlugIn) {
+				plugIn = (AWBIntegrationPlugIn) pi;
 			}
 		}
 		return plugIn;
@@ -338,7 +338,7 @@ public class HyGridPlugIn extends PlugIn {
 		if (this.setupExtension!=null) {
 			str = this.setupExtension.getScheduleTimeRange();
 		}
-		ScheduleTimeRangeController.setScheduleTimeRange(str, HyGridScheduleTimeRangeListener.EVENT_SETUP_LOAD);
+		ScheduleTimeRangeController.setScheduleTimeRange(str, ScheduleTimeRangeListener.EVENT_SETUP_LOAD);
 	}
 	/**
 	 * Load setup extension.

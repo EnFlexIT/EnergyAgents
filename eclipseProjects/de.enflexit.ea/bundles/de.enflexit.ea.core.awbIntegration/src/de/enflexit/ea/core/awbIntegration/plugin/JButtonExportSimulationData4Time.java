@@ -1,4 +1,4 @@
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

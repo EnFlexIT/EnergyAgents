@@ -23,7 +23,8 @@ Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
  de.enflexit.ea.core.aggregation,
  org.eclipse.osgi,
  org.awb.env.networkModel,
- de.enflexit.ea.core.validation
+ de.enflexit.ea.core.validation,
+ de.enflexit.ea.core.awbIntegration
 Export-Package: de.enflexit.ea.core.ops,
  de.enflexit.ea.core.ops.agent,
  de.enflexit.ea.core.ops.agent.behaviour,

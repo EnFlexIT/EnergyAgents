@@ -1,4 +1,4 @@
-package hygrid.plugin;
+package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -12,7 +12,7 @@ import agentgui.core.project.transfer.ProjectExportController;
  * {@link ProjectExportController} implementation for the Agent.HyGrid project.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class HyGridProjectExportController extends DefaultProjectExportController {
+public class EnergyAgentProjectExportController extends DefaultProjectExportController {
 	
 	public static final String RESSOURCES_SUBFOLDER = "ressources";
 	public static final String SUBMODELS_SUBFOLDER = "subModels";

@@ -15,7 +15,8 @@ Require-Bundle: de.enflexit.api,
  org.awb.env.networkModel,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences,
- org.eclipse.osgi.services
+ org.eclipse.osgi.services,
+ de.enflexit.ea.core.awbIntegration
 Export-Package: de.enflexit.ea.core.validation,
  de.enflexit.ea.core.validation.ui,
  de.enflexit.ea.validation
