@@ -3,7 +3,7 @@ package de.enflexit.ea.core.behaviour;
 import java.io.IOException;
 import java.util.Vector;
 
-import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.monitoring.MonitoringEvent;
 import de.enflexit.ea.core.monitoring.MonitoringListener;
 import energy.evaluation.TechnicalSystemStateHelper;

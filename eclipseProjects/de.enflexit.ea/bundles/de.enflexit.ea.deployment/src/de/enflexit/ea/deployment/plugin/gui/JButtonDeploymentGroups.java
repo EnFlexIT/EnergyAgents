@@ -11,7 +11,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.deployment.ImageHelper;
 import de.enflexit.ea.deployment.gui.DeploymentGroupsInternalFrame;
 

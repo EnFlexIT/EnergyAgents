@@ -6,7 +6,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 
 /**
  * {@link ListCellRenderer} for items of the type {@link AgentOperatingMode}

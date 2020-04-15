@@ -15,7 +15,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.sensoring.ServiceSensorInterface;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.testbed.AgentNotificationContainer;
 import de.enflexit.ea.core.testbed.CEARegistrationBehaviour;
 import de.enflexit.ea.core.testbed.DeployedAgentMessageReceiveBehaviour;

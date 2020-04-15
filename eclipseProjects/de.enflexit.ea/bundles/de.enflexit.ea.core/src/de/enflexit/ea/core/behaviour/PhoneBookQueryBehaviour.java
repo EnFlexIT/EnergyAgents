@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.behaviour;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;

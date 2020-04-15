@@ -3,7 +3,7 @@ package de.enflexit.ea.core.ops.agent.behaviour;
 import java.io.IOException;
 import java.util.Vector;
 
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.ops.agent.CeaConnectorAgent;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;

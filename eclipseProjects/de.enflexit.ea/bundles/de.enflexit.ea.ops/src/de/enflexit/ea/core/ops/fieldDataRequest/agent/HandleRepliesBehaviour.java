@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import agentgui.core.application.Application;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.monitoring.MonitoringStrategyRT;
 import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;

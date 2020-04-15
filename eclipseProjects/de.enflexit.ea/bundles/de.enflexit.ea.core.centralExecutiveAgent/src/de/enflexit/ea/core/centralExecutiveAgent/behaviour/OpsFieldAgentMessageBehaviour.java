@@ -1,8 +1,8 @@
 package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBook;
-import de.enflexit.ea.core.globalDataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
+import de.enflexit.ea.core.dataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;

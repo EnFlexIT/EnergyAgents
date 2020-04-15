@@ -1,6 +1,6 @@
 package de.enflexit.ea.core.ops.fieldDataRequest.agent;
 
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.ops.OpsController;
 import hygrid.ops.ontology.FieldDataRequest;
 import hygrid.ops.ontology.OpsOntology;

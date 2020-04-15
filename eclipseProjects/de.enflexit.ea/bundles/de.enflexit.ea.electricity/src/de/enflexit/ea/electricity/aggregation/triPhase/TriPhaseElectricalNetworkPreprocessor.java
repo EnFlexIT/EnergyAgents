@@ -11,7 +11,7 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
-import de.enflexit.ea.core.globalDataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.AbstractGridStateEstimation;

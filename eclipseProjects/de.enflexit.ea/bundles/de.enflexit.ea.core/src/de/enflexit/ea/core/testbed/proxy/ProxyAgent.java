@@ -1,8 +1,8 @@
 package de.enflexit.ea.core.testbed.proxy;
 
 import agentgui.core.application.Application;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentSpecifier;
-import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.testbed.CEARegistrationBehaviour;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import jade.content.lang.sl.SLCodec;

@@ -14,8 +14,8 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseCableState;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
 import energy.DisplayHelper;
 import energy.DomainSettings;

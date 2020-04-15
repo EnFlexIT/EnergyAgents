@@ -23,8 +23,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 
 /**
  * 

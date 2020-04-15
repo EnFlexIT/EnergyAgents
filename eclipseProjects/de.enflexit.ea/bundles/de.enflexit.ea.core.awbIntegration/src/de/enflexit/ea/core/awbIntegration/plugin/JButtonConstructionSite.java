@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
-import de.enflexit.ea.core.globalDataModel.ImageHelper;
+import de.enflexit.ea.core.dataModel.ImageHelper;
 
 /**
  * The Class JButtonConstructionSite that will be displayed in the toolbar of the GraphEnvironement if configured

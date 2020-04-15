@@ -11,9 +11,9 @@ import de.enflexit.ea.core.centralExecutiveAgent.behaviour.PhoneBookQueryRespond
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.RepositoryMirrorBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.StartMtpBehaviour;
-import de.enflexit.ea.core.globalDataModel.PlatformUpdater;
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
-import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.PlatformUpdater;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.sl.SLCodec;
 import jade.core.Agent;

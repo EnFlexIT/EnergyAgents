@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 
 import org.apache.commons.codec.binary.Base64;
 
-import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import hygrid.ops.ontology.LiveMonitoringUpdate;
 import jade.content.Concept;

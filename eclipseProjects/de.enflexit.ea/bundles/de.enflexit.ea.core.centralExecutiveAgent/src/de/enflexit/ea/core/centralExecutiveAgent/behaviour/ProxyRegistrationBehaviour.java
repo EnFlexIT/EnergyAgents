@@ -1,9 +1,9 @@
 package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.ontology.ProxyAgentRegistrationRequest;
-import de.enflexit.ea.core.globalDataModel.ontology.RemoteAgentRegistrationRequest;
-import de.enflexit.ea.core.globalDataModel.ontology.TestbedAgentManagement;
+import de.enflexit.ea.core.dataModel.ontology.ProxyAgentRegistrationRequest;
+import de.enflexit.ea.core.dataModel.ontology.RemoteAgentRegistrationRequest;
+import de.enflexit.ea.core.dataModel.ontology.TestbedAgentManagement;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;

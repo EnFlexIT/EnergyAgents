@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.ea.core.globalDataModel.DirectoryHelper;
+import de.enflexit.ea.core.dataModel.DirectoryHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**

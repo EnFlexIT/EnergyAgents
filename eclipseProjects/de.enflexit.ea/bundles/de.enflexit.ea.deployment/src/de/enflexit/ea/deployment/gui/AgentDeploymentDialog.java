@@ -50,12 +50,12 @@ import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
+import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 
 /**

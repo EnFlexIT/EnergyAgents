@@ -28,8 +28,8 @@ import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;

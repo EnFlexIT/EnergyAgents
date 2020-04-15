@@ -24,7 +24,7 @@ import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
 import de.enflexit.common.csv.CsvFileWriter;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.SimulationDataExportConfigurationDialog;
-import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import energy.GlobalInfo;
 import energy.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;

@@ -9,7 +9,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJDesktopPane;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiProperties;
 
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 
 /**
  * The Class CeaNetworkDataModelAdapter.

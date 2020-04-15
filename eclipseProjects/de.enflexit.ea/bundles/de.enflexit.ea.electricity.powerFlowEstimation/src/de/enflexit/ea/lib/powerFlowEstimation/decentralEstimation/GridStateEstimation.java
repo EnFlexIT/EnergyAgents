@@ -7,8 +7,8 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import de.enflexit.ea.core.globalDataModel.ontology.ElectricalMeasurement;
-import de.enflexit.ea.core.globalDataModel.ontology.SensorProperties;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
+import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculationPV;

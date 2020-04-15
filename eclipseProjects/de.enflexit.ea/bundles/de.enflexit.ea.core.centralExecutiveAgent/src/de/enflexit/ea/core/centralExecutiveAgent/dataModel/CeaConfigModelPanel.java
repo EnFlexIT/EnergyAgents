@@ -20,7 +20,7 @@ import javax.swing.event.DocumentListener;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 
 /**
  * The Class CeaConfigModelPanel.

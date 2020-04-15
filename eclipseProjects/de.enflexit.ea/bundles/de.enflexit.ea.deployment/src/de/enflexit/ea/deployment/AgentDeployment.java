@@ -24,9 +24,9 @@ import agentgui.core.project.Project;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings.DeploymentMode;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
 import de.enflexit.ea.deployment.gui.AgentDeploymentDialog;
 
 /**

@@ -3,7 +3,7 @@ package de.enflexit.ea.core.behaviour;
 import java.util.Date;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import de.enflexit.ea.core.globalDataModel.PlatformUpdater;
+import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import jade.core.behaviours.WakerBehaviour;
 
 /**

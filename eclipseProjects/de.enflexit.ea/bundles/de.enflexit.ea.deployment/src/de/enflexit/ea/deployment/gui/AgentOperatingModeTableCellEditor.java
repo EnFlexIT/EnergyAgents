@@ -11,8 +11,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.application.Language;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 
 /**
  * A {@link JComboBox}-based {@link TableCellEditor} for selecting an {@link AgentOperatingMode}

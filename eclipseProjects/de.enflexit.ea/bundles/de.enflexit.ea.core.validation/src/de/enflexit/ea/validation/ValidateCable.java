@@ -2,7 +2,7 @@ package de.enflexit.ea.validation;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import de.enflexit.ea.core.globalDataModel.ontology.CableProperties;
+import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;

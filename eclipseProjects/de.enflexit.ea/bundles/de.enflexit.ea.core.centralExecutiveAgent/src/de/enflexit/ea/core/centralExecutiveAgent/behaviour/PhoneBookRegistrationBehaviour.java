@@ -3,8 +3,8 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 import java.io.IOException;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.PlatformUpdater;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.ea.core.dataModel.PlatformUpdater;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;

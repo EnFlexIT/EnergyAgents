@@ -20,8 +20,8 @@ import javax.swing.tree.TreeCellRenderer;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
+import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 
 /**
  * {@link TreeCellRenderer} implementation for visualizing the activation state of {@link DeploymentGroup}s

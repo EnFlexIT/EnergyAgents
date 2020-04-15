@@ -8,9 +8,9 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
-import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.globalDataModel.ontology.SensorProperties;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseSensorState;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseSensorState;
 import jade.content.onto.Ontology;
 
 /**

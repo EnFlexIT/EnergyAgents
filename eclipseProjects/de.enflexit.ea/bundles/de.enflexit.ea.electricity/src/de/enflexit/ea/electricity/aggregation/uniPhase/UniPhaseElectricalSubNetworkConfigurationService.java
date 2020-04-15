@@ -2,7 +2,7 @@ package de.enflexit.ea.electricity.aggregation.uniPhase;
 
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.SubNetworkConfigurationService;
-import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 
 /**
  * This SubNetworkConfigurationService implementation provides a SubNetworkConfiguration for uni-phase electrical networks.

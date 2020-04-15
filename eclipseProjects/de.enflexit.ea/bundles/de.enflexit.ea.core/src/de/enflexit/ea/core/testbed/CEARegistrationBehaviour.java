@@ -2,12 +2,12 @@ package de.enflexit.ea.core.testbed;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.SimulationConnectorRemote;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.ontology.CEARegistrationResponse;
-import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.globalDataModel.ontology.ProxyAgentRegistrationRequest;
-import de.enflexit.ea.core.globalDataModel.ontology.RemoteAgentRegistrationRequest;
-import de.enflexit.ea.core.globalDataModel.ontology.TestbedAgentManagement;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.ontology.CEARegistrationResponse;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.ontology.ProxyAgentRegistrationRequest;
+import de.enflexit.ea.core.dataModel.ontology.RemoteAgentRegistrationRequest;
+import de.enflexit.ea.core.dataModel.ontology.TestbedAgentManagement;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;

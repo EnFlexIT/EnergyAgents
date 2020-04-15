@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookEntry;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookQuery;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookQuery.QueryType;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookQuery;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookQuery.QueryType;
 import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;

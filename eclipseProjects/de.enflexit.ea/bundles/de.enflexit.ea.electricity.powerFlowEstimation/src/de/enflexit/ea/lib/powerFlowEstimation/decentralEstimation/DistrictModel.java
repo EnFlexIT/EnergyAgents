@@ -7,7 +7,7 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import de.enflexit.ea.core.globalDataModel.ontology.SensorProperties;
+import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowParameter;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.BranchMeasurement;

@@ -2,7 +2,7 @@ package de.enflexit.ea.core.aggregation;
 
 import java.util.TreeMap;
 
-import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
+import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.ColorSettingsIntervalBased;
 

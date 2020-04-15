@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBook;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookEntry;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookQuery;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookQuery;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;

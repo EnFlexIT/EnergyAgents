@@ -9,7 +9,7 @@ import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorInterface;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;
 import hygrid.env.HyGridAbstractEnvironmentModel;
 import jade.core.AID;

@@ -12,8 +12,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
-import de.enflexit.ea.core.globalDataModel.ontology.CableState;
-import de.enflexit.ea.core.globalDataModel.ontology.ElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.CableState;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;

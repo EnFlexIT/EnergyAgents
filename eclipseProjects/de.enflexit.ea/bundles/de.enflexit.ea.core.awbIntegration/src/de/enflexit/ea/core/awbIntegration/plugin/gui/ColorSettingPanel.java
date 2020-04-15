@@ -27,7 +27,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import de.enflexit.ea.core.globalDataModel.ImageHelper;
+import de.enflexit.ea.core.dataModel.ImageHelper;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.ColorSettingsIntervalBased;
 

@@ -3,7 +3,7 @@ package de.enflexit.ea.core.fieldDataProxyAgent;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import hygrid.ops.ontology.FieldDataRequest;
 import hygrid.ops.ontology.OpsOntology;
 import hygrid.ops.ontology.ScheduleRangeDefinition;

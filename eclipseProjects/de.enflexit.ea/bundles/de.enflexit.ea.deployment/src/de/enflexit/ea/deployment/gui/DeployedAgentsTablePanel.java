@@ -28,8 +28,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 
 /**
  * A table to display and edit deployed agents. 

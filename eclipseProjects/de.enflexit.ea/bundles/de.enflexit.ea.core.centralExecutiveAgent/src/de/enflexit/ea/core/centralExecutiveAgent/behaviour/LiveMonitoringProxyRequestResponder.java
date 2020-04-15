@@ -5,10 +5,10 @@ import java.util.List;
 
 import agentgui.core.project.setup.SimulationSetup;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentDeploymentInformation;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.liveMonitoringProxyAgent.LiveMonitoringProxyAgent;
 import jade.core.AID;
 import jade.core.Agent;

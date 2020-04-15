@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.ea.core.ops.OpsControllerEvent;
 import de.enflexit.ea.core.ops.OpsControllerListener;

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import de.enflexit.ea.core.globalDataModel.PlatformUpdater;
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.globalDataModel.phonebook.PhoneBookEntry;
+import de.enflexit.ea.core.dataModel.PlatformUpdater;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;

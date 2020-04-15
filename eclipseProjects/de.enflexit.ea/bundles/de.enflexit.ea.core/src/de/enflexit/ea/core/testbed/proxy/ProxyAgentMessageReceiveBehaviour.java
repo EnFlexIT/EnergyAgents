@@ -4,7 +4,7 @@ import java.io.IOException;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import de.enflexit.ea.core.globalDataModel.blackboard.BlackboardRequest;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.testbed.AgentNotificationContainer;
 import jade.core.AID;
 import jade.core.ServiceException;

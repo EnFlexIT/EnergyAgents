@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel.LoggingMode;
-import de.enflexit.ea.core.globalDataModel.DirectoryHelper.DirectoryType;
+import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.evaluation.TechnicalSystemStateHelper;

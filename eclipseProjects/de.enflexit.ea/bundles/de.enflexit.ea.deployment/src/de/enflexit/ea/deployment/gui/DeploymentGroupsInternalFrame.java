@@ -40,11 +40,11 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentGroup;
-import de.enflexit.ea.core.globalDataModel.deployment.DeploymentSettings;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtension.Changed;
-import de.enflexit.ea.core.globalDataModel.deployment.SetupExtensionListener;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
+import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtensionListener;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension.Changed;
 import de.enflexit.ea.deployment.AgentDeployment;
 import de.enflexit.ea.deployment.ImageHelper;
 

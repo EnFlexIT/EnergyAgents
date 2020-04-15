@@ -13,12 +13,12 @@ import org.awb.env.networkModel.NetworkModel;
 import agentgui.core.project.Project;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettingsPanel;
-import de.enflexit.ea.core.globalDataModel.GlobalHyGridConstants;
-import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings;
-import de.enflexit.ea.core.globalDataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
-import de.enflexit.ea.core.globalDataModel.graphLayout.GraphElementLayoutService;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseCableState;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
+import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
+import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import hygrid.env.ColorSettingsCollection;
 import hygrid.env.GraphElementLayoutSettingsPersistenceTreeMap;
 

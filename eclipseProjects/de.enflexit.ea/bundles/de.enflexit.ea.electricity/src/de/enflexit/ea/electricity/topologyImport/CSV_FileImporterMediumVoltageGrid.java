@@ -24,11 +24,11 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
 import de.enflexit.common.csv.CsvDataController;
-import de.enflexit.ea.core.globalDataModel.ontology.CableProperties;
-import de.enflexit.ea.core.globalDataModel.ontology.ElectricalNodeProperties;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseCableState;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.core.globalDataModel.ontology.UnitValue;
+import de.enflexit.ea.core.dataModel.ontology.CableProperties;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import hygrid.csvFileImport.CSV_FileImporter;
 import hygrid.csvFileImport.GeoCoordinatesMapper;
 

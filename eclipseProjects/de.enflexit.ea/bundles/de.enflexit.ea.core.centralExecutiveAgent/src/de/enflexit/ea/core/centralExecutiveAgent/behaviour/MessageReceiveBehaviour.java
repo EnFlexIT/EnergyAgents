@@ -2,7 +2,7 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import java.util.Vector;
 
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;

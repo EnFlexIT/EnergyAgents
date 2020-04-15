@@ -1,9 +1,9 @@
 package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
-import de.enflexit.ea.core.globalDataModel.cea.ConversationID;
-import de.enflexit.ea.core.globalDataModel.ontology.CEARegistrationResponse;
-import de.enflexit.ea.core.globalDataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.globalDataModel.ontology.RemoteAgentInformation;
+import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.ontology.CEARegistrationResponse;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.ontology.RemoteAgentInformation;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;

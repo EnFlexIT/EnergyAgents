@@ -2,7 +2,7 @@ package de.enflexit.ea.validation;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 

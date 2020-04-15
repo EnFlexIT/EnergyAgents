@@ -2,7 +2,7 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import agentgui.core.application.Application;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.globalDataModel.cea.CeaConfigModel;
+import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.mtp.MTPException;
 import jade.wrapper.StaleProxyException;

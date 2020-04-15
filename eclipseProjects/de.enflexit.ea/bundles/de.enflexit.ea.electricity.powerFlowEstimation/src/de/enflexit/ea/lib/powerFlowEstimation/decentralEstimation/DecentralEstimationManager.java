@@ -7,10 +7,10 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 
 import agentgui.logging.components.SysOutBoard;
-import de.enflexit.ea.core.globalDataModel.ontology.ElectricalMeasurement;
-import de.enflexit.ea.core.globalDataModel.ontology.TriPhaseElectricalNodeState;
-import de.enflexit.ea.core.globalDataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.core.globalDataModel.ontology.UnitValue;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
+import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.AbstractGridStateEstimation;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
