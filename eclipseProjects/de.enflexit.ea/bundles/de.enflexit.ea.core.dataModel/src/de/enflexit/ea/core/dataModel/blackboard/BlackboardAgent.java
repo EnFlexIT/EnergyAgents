@@ -13,7 +13,6 @@ import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestObjectiv
 import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestType;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
-import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.behaviours.ThreadedBehaviourFactory;
