@@ -15,6 +15,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.helper.NetworkComponentFactory;
+import org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 
 import agentgui.ontology.TimeSeriesChart;
@@ -32,7 +33,6 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalTransformerState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
-import hygrid.csvFileImport.CSV_FileImporter;
 
 /**
  * The Class CsvFileImporterLowVoltageGrid provides an import adapter for the 
@@ -40,7 +40,7 @@ import hygrid.csvFileImport.CSV_FileImporter;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class CSV_FileImporterLowVoltageGrid extends CSV_FileImporter implements NetworkModelImportService{
+public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImporter implements NetworkModelImportService{
 
 	private final String FILE_NodeAssociation = "NodeAssociation.csv";
 	private final String FILE_BranchParams = "BranchParams.csv";
