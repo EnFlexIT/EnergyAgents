@@ -5,7 +5,10 @@ Bundle-SymbolicName: de.enflexit.ea.core.awbIntegration
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.ea.core.awbIntegration.plugin,
+Export-Package: de.enflexit.ea.core.awbIntegration.adapter,
+ de.enflexit.ea.core.awbIntegration.adapter.triPhase,
+ de.enflexit.ea.core.awbIntegration.adapter.uniPhase,
+ de.enflexit.ea.core.awbIntegration.plugin,
  de.enflexit.ea.core.awbIntegration.plugin.gui
 Require-Bundle: de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
@@ -16,4 +19,5 @@ Require-Bundle: de.enflexit.eom.awbAdapter,
  org.awb.env.networkModel,
  de.enflexit.common
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/awbClassLoadService.xml
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/eomClassLoadService.xml
