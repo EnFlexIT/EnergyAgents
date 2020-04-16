@@ -11,12 +11,12 @@ Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.awbIntegration,
  org.agentgui.core,
  org.awb.env.networkModel,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences,
- org.eclipse.osgi.services,
- de.enflexit.ea.core.awbIntegration
+ org.eclipse.osgi.services
 Export-Package: de.enflexit.ea.core.validation,
  de.enflexit.ea.core.validation.ui,
  de.enflexit.ea.validation

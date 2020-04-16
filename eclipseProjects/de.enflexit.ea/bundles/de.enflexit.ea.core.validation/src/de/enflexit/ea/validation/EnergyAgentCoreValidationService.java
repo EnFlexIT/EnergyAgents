@@ -29,12 +29,12 @@ public class EnergyAgentCoreValidationService implements HyGridValidationService
 	@Override
 	public ArrayList<HyGridValidationAdapter> getHyGridValidationChecks(boolean isHeadlessOperation) {
 		
-		
 		// --- Provide the list of individual checks for this bundle components ---------
 		ArrayList<HyGridValidationAdapter> checkList = new ArrayList<>();
+		checkList.add(new ValidateNetworkComponentAdapter());
 		checkList.add(new ValidateSwitchableEomAdapter());
-		checkList.add(new ValidateCable());
 		checkList.add(new ValidateCeaConfigModel());
+		checkList.add(new ValidateCable());
 		return checkList;
 	}
 
