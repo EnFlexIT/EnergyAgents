@@ -6,10 +6,10 @@ import java.util.List;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
+import de.enflexit.ea.core.awbIntegration.adapter.SwitchableEomAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
-import hygrid.env.adapter.SwitchableEomAdapter;
 
 /**
  * The Class ValidateSwitchableEomAdapter checks the graph settings for .

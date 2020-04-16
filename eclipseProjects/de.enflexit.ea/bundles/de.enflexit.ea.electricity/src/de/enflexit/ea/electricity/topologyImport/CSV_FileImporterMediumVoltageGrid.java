@@ -18,6 +18,8 @@ import org.awb.env.networkModel.helper.GraphNodePairs;
 import org.awb.env.networkModel.helper.NetworkComponentFactory;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.maps.MapSettings.MapScale;
+import org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter;
+import org.awb.env.networkModel.persistence.GeoCoordinatesMapper;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
@@ -29,8 +31,6 @@ import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
-import hygrid.csvFileImport.CSV_FileImporter;
-import hygrid.csvFileImport.GeoCoordinatesMapper;
 
 /**
  * The Class CsvFileImporterMediumVoltageGrid provides an import adapter for the 
@@ -38,7 +38,7 @@ import hygrid.csvFileImport.GeoCoordinatesMapper;
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class CSV_FileImporterMediumVoltageGrid extends CSV_FileImporter implements NetworkModelImportService{
+public class CSV_FileImporterMediumVoltageGrid extends AbstractNetworkModelCsvImporter implements NetworkModelImportService{
 	
 	private static final float TOLERANCE_FOR_NODE_MATCHING = 0.5f;
 	
