@@ -3,8 +3,8 @@
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
   router="FAN">  
   <class id="1" language="java" name="de.enflexit.ea.core.aggregation.AbstractAggregationHandler" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractAggregationHandler.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractAggregationHandler.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="129" y="138"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -14,8 +14,8 @@
     </display>  
   </class>  
   <class id="2" language="java" name="de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractSubNetworkConfiguration.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractSubNetworkConfiguration.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1106" y="138"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -25,8 +25,8 @@
     </display>  
   </class>  
   <class id="3" language="java" name="de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractSubAggregationBuilder.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractSubAggregationBuilder.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="615" y="233"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -36,8 +36,8 @@
     </display>  
   </class>  
   <class id="4" language="java" name="de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkCalculationPreprocessor.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkCalculationPreprocessor.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="615" y="318"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -47,8 +47,8 @@
     </display>  
   </class>  
   <class id="5" language="java" name="de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkCalculationStrategy.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkCalculationStrategy.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="615" y="406"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -58,8 +58,8 @@
     </display>  
   </class>  
   <class id="6" language="java" name="de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkModelDisplayUpdater.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkModelDisplayUpdater.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="614" y="497"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -70,8 +70,8 @@
   </class>  
   <class id="7" language="java" 
     name="de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater.TimeSeriesSettings" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkModelDisplayUpdater.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/AbstractNetworkModelDisplayUpdater.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="614" y="584"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -81,8 +81,8 @@
     </display>  
   </class>  
   <class id="8" language="java" name="de.enflexit.ea.core.aggregation.DefaultSubNetworkConfigurations" 
-    project="de.enflexit.energyAgent.core.aggregation" 
-    file="/de.enflexit.energyAgent.core.aggregation/src/de/enflexit/ea/core/aggregation/DefaultSubNetworkConfigurations.java" 
+    project="de.enflexit.ea.core.aggregation" 
+    file="/de.enflexit.ea.core.aggregation/src/de/enflexit/ea/core/aggregation/DefaultSubNetworkConfigurations.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="129" y="45"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
