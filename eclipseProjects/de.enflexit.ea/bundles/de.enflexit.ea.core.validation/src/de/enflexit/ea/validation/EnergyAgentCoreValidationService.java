@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.enflexit.common.ontology.OntologyMapper;
 import de.enflexit.common.ontology.OntologyMapping;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationService;
 
@@ -43,7 +44,7 @@ public class EnergyAgentCoreValidationService implements HyGridValidationService
 	 */
 	private OntologyMapping getHygridOntologyMapping() {
 		if (hygridOntologyMapping==null) {
-			hygridOntologyMapping = new OntologyMapping("hygrid.globalDataModel.ontology", "de.enflexit.ea.core.globalDataModel.ontology");
+			hygridOntologyMapping = new OntologyMapping("hygrid.globalDataModel.ontology", HyGridOntology.class.getPackage().getName());
 		}
 		return hygridOntologyMapping;
 	}
