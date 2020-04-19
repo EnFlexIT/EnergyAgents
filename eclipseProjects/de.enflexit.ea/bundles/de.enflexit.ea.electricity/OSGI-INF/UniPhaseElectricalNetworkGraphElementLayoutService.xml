@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.ea.electricity.aggregation.uniPhase.UniPhaseElectricalNetworkGraphElementLayoutService">
    <implementation class="de.enflexit.ea.electricity.aggregation.uniPhase.UniPhaseElectricalNetworkGraphElementLayoutService"/>
    <service>
-      <provide interface="de.enflexit.ea.core.globalDataModel.graphLayout.GraphElementLayoutService"/>
+      <provide interface="de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService"/>
    </service>
 </scr:component>
