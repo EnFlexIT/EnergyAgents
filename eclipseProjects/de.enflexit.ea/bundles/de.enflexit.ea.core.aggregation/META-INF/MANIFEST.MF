@@ -12,8 +12,7 @@ Service-Component:
  OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.aggregation.classLoadService,
- de.enflexit.ea.core.aggregation.trafficLight,
- de.enflexit.ea.core.aggregation.trafficLight.img
+ de.enflexit.ea.core.aggregation.trafficLight
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  org.agentgui.core,

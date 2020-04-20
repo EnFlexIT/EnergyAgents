@@ -17,7 +17,7 @@ public class TrafficLight extends JLabel {
 	
 	private static final long serialVersionUID = -933908470694530740L;
 
-	private static final String pathImage = "/hygrid/aggregation/trafficLight/img/";
+	private static final String pathImage = "/icons/";
 	
 	private final Dimension imageDimension = new Dimension(25, 64);
 	
