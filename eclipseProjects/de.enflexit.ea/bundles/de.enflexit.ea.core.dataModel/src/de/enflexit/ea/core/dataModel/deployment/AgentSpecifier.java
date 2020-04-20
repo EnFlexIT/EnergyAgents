@@ -154,34 +154,53 @@ public class AgentSpecifier
     }
     
     /**
-     * Gets the corresponding {@link AID} for this {@link AgentSpecifier}.
-     * @return the aid
+     * Return the corresponding {@link AID} for this {@link AgentSpecifier}.
+     * @return the AID derived from the local settings (can be null also)
      */
     public AID getAID(){
 		
-    	String ceaName = this.getAgentName();
+    	String agentName = this.getAgentName();
 		String platformName = this.getPlatformName();
 		String mtpProtocol = this.getMtpType();
 		String mtpUrl = this.getUrlOrIp();
 		int mtpPort = this.getMtpPort();
 		
-		String ceaGUID = ceaName + "@" + platformName;
-		String ceaMTPAddress = mtpProtocol.toLowerCase() + "://" + mtpUrl + ":" + mtpPort + "/acc";
+		boolean isInvalidCeaName = agentName==null || agentName.isEmpty();
+		boolean isInvalidPlatformName = platformName==null || platformName.isEmpty();
+		boolean isInvalidMtpProtocol = mtpProtocol==null || mtpProtocol.isEmpty();
+		boolean isInvalidMtpUrl = mtpUrl==null || mtpUrl.isEmpty();
+		boolean isInvalidMtpPort = mtpPort==0;
+
 		
-		AID aid = new AID(ceaGUID, true);
-		aid.addAddresses(ceaMTPAddress);
+		// --- Create an AID for the the agent ------------
+		AID aid = null;
+		if (isInvalidCeaName==false) {
+			if (isInvalidPlatformName==true) {
+				aid = new AID(agentName, AID.ISLOCALNAME);
+			} else {
+				aid = new AID(agentName + "@" + platformName, AID.ISGUID);
+			}
+		}
+		
+		// --- Add a MTP address? -------------------------
+		if (aid!=null && isInvalidMtpProtocol==false && isInvalidMtpUrl==false && isInvalidMtpPort==false) {
+			String mtpAddress = mtpProtocol.toLowerCase() + "://" + mtpUrl + ":" + mtpPort + "/acc";
+			aid.addAddresses(mtpAddress);
+		}
+		
 		return aid;
 	}
+    
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (obj==null) {
-			return false;
-		}
-		if (!(obj instanceof AgentSpecifier)) {
-			return false;
-		}
+	public boolean equals(Object compObject) {
 		
-		AgentSpecifier otherInstance = (AgentSpecifier) obj;
+		if (compObject==null) return false;
+		if (!(compObject instanceof AgentSpecifier)) return false;
+		
+		AgentSpecifier otherInstance = (AgentSpecifier) compObject;
 		return (this.getAgentName().equals(otherInstance.getAgentName())
 				&& this.getPlatformName().equals(otherInstance.getPlatformName())
 				&& this.getUrlOrIp().equals(otherInstance.getUrlOrIp())
@@ -191,6 +210,10 @@ public class AgentSpecifier
 		);
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() {
 		AgentSpecifier clone = new AgentSpecifier();

@@ -404,8 +404,8 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	}
 	
 	/**
-	 * Gets the central agent AID.
-	 * @return the central agent AID
+	 * Return the AID of the central executive agent (CEA) if such agent is available in the current setup.
+	 * @return the CEA's AID (can also be null).
 	 */
 	public AID getCentralAgentAID() {
 		if (centralAgentAID==null) {

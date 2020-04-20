@@ -60,6 +60,7 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static ACLMessage getQueryMessageForComponentType(AID ceaAID, String componentType) throws IOException {
+		
 		ACLMessage queryMessage = null;
 		
 		PhoneBookQuery pbQuery = new PhoneBookQuery();
