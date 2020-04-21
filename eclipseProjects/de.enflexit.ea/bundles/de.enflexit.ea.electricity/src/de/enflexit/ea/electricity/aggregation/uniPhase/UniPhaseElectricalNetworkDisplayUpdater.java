@@ -14,6 +14,7 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
@@ -28,7 +29,6 @@ import energy.optionModel.InterfaceSetting;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.optionModel.UsageOfInterfaceEnergy;
 import energy.schedule.ScheduleController;
-import hygrid.env.ColorSettingsCollection;
 
 /**
  * {@link AbstractNetworkModelDisplayUpdater} implementation for uni-phase 10kV electrical grids.

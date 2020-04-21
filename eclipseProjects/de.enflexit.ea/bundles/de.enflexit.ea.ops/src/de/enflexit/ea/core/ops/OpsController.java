@@ -12,12 +12,12 @@ import agentgui.core.application.Application;
 import agentgui.core.jade.Platform;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
 import de.enflexit.ea.core.dataModel.visualizationMessaging.FieldVisualizationService;
 import de.enflexit.ea.core.ops.OpsControllerEvent.OpsControllerEvents;
 import de.enflexit.ea.core.ops.agent.CeaConnectorAgent;
 import de.enflexit.ea.core.ops.fieldDataRequest.agent.FieldDataRequestAgent;
 import de.enflexit.ea.core.ops.gui.JFrameOpsControl;
-import hygrid.ops.ontology.FieldDataRequest;
 import jade.core.AID;
 import jade.core.Runtime;
 

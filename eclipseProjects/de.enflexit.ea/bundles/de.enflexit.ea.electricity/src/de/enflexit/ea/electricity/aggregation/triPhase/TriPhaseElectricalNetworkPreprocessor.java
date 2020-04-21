@@ -11,6 +11,7 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
@@ -30,7 +31,6 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.optionModel.TechnicalSystemStateTime;
 import energy.optionModel.UsageOfInterfaceEnergy;
 import energy.schedule.ScheduleController;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 
 /**
  * The Class ElectricalDistributionGridPreprocessor will be used in case that a state estimation

@@ -6,8 +6,8 @@ import java.util.Observer;
 import javax.swing.JPanel;
 
 import agentgui.core.project.Project;
-import hygrid.env.GraphElementLayoutSettingsPersistenceTreeMap;
-import hygrid.env.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersistenceTreeMap;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 
 /**
  * The Class AbstractGraphElementLayoutSettingsPanel.

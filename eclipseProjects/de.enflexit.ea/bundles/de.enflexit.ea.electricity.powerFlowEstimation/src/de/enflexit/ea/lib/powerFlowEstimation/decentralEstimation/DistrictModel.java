@@ -7,6 +7,8 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowParameter;
@@ -15,8 +17,6 @@ import de.enflexit.ea.lib.powerFlowCalculation.parameter.BranchParams;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.Complex;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.NodeAssignment;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.NodeAssociationParams;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
 import jampack.JampackException;
 
 public class DistrictModel {

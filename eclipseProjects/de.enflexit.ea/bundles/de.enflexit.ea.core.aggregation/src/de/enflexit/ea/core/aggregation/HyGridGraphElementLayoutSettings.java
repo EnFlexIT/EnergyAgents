@@ -2,9 +2,9 @@ package de.enflexit.ea.core.aggregation;
 
 import java.util.TreeMap;
 
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsIntervalBased;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
-import hygrid.env.ColorSettingsCollection;
-import hygrid.env.ColorSettingsIntervalBased;
 
 /**
  * General GraphElmentLayoutSettings implementation for all networks in the HyGrid-context

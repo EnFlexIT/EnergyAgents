@@ -28,8 +28,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import de.enflexit.ea.core.dataModel.ImageHelper;
-import hygrid.env.ColorSettingsCollection;
-import hygrid.env.ColorSettingsIntervalBased;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsIntervalBased;
 
 /**
  * The Class ColorSettingPanel can be used in oder to configure the 

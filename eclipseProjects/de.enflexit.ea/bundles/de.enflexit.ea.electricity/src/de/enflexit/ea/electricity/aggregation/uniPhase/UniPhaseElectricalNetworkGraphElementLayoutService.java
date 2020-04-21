@@ -14,13 +14,13 @@ import agentgui.core.project.Project;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
+import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersistenceTreeMap;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
-import hygrid.env.ColorSettingsCollection;
-import hygrid.env.GraphElementLayoutSettingsPersistenceTreeMap;
 
 /**
  * The Class TriPhaseElectricalNetworkLayoutService.
@@ -167,7 +167,7 @@ public class UniPhaseElectricalNetworkGraphElementLayoutService implements Graph
 	}
 
 	/* (non-Javadoc)
-	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#convertTreeMapToInstance(hygrid.env.GraphElementLayoutSettingsTreeMap)
+	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#convertTreeMapToInstance(de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsTreeMap)
 	 */
 	@Override
 	public AbstractGraphElementLayoutSettings convertTreeMapToInstance(GraphElementLayoutSettingsPersistenceTreeMap treeMap) {

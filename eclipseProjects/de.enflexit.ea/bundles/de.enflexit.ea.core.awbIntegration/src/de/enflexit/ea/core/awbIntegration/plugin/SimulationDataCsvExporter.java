@@ -25,12 +25,12 @@ import agentgui.ontology.TimeSeriesValuePair;
 import de.enflexit.common.csv.CsvFileWriter;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.SimulationDataExportConfigurationDialog;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
 import energy.GlobalInfo;
 import energy.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyUnitFactorPrefixSI;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.BranchDescription;
 import jade.util.leap.Iterator;
 
 /**

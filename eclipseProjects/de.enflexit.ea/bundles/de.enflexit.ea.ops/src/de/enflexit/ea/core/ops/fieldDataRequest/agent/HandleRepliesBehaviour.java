@@ -6,6 +6,7 @@ import java.util.List;
 
 import agentgui.core.application.Application;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
 import de.enflexit.ea.core.monitoring.MonitoringStrategyRT;
 import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;
@@ -13,7 +14,6 @@ import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.persistence.ScheduleList_StorageHandler;
-import hygrid.ops.ontology.FieldDataReply;
 import jade.content.Concept;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;

@@ -15,6 +15,7 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
@@ -29,7 +30,6 @@ import energy.optionModel.InterfaceSetting;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.optionModel.UsageOfInterfaceEnergy;
 import energy.schedule.ScheduleController;
-import hygrid.env.ColorSettingsCollection;
 
 /**
  * The Class ElectricalDistributionGridDisplayUpdater prepares the display updates for the current 

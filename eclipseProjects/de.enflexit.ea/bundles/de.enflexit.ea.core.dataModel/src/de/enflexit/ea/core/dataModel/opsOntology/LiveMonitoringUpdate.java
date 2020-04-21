@@ -1,4 +1,4 @@
-package hygrid.ops.ontology;
+package de.enflexit.ea.core.dataModel.opsOntology;
 
 
 import jade.content.*;

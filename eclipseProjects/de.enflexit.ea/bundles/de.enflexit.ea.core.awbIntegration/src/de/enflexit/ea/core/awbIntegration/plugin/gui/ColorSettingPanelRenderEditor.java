@@ -20,7 +20,7 @@ import javax.swing.text.BadLocationException;
 
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.TableCellColorHelper;
-import hygrid.env.ColorSettingsIntervalBased;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsIntervalBased;
 
 
 /**

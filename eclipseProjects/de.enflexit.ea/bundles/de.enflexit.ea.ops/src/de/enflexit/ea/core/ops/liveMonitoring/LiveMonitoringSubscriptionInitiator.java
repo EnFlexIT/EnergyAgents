@@ -7,8 +7,8 @@ import java.io.ObjectInputStream;
 import org.apache.commons.codec.binary.Base64;
 
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.opsOntology.LiveMonitoringUpdate;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.ops.ontology.LiveMonitoringUpdate;
 import jade.content.Concept;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;

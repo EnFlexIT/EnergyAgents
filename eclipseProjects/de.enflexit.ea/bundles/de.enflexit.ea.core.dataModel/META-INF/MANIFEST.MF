@@ -10,19 +10,19 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.dataModel.absEnvModel,
  de.enflexit.ea.core.dataModel.blackboard,
  de.enflexit.ea.core.dataModel.cea,
  de.enflexit.ea.core.dataModel.classLoadService,
+ de.enflexit.ea.core.dataModel.csv,
  de.enflexit.ea.core.dataModel.deployment,
  de.enflexit.ea.core.dataModel.graphLayout,
  de.enflexit.ea.core.dataModel.measurements,
  de.enflexit.ea.core.dataModel.ontology,
+ de.enflexit.ea.core.dataModel.opsOntology,
  de.enflexit.ea.core.dataModel.phonebook,
  de.enflexit.ea.core.dataModel.visualizationMessaging,
- hygrid.csvFileImport,
- hygrid.env,
- hygrid.globalDataModel.cea,
- hygrid.ops.ontology
+ hygrid.globalDataModel.cea
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.db.hibernate,

@@ -9,9 +9,9 @@ import org.awb.env.networkModel.NetworkModel;
 import agentgui.core.application.Application;
 import agentgui.simulationService.environment.EnvironmentModel;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
-import hygrid.env.HyGridAbstractEnvironmentModel;
 import jade.core.AID;
 import jade.wrapper.AgentController;
 

@@ -19,6 +19,7 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import energy.OptionModelController;
 import energy.optionModel.Duration;
 import energy.optionModel.EnergyFlowGeneral;
@@ -44,7 +45,6 @@ import energygroup.GroupTreeNodeObject;
 import energygroup.calculation.GroupCalculation;
 import energygroup.gui.GroupMainPanel;
 import energygroup.gui.GroupTree.GroupNodeCaptionStyle;
-import hygrid.env.HyGridAbstractEnvironmentModel;
 
 /**
  * The Class AbstractSubAggregationBuilder defines the base for an individual separation

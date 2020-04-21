@@ -21,6 +21,8 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
 import energy.evaluation.TechnicalSystemStateHelper;
@@ -36,8 +38,6 @@ import energygroup.GroupTreeNodeObject;
 import energygroup.calculation.GroupCalculation;
 import energygroup.evaluation.MemberEvaluationStrategy;
 import energygroup.evaluation.MemberEvaluationStrategyScheduList;
-import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import jade.core.AID;
 import jade.core.Agent;
 

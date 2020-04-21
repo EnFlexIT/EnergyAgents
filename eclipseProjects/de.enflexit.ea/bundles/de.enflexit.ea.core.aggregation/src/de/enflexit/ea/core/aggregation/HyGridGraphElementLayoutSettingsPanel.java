@@ -9,10 +9,10 @@ import javax.swing.JLabel;
 
 import agentgui.core.project.Project;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.ColorSettingPanel;
+import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
-import hygrid.env.ColorSettingsCollection;
-import hygrid.env.HyGridAbstractEnvironmentModel;
 
 /**
  * GUI component for configuring {@link HyGridGraphElementLayoutSettings}

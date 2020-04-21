@@ -1,8 +1,8 @@
 package de.enflexit.ea.core.behaviour;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
 import de.enflexit.ea.core.databaseRequest.DatabaseRequestInterface;
-import hygrid.ops.ontology.FieldDataRequest;
 import jade.content.Concept;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;

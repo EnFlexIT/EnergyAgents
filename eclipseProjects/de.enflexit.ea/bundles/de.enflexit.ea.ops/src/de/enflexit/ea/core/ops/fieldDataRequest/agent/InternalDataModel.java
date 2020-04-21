@@ -3,7 +3,7 @@ package de.enflexit.ea.core.ops.fieldDataRequest.agent;
 import java.util.ArrayList;
 import java.util.List;
 
-import hygrid.ops.ontology.FieldDataRequest;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
 import jade.core.AID;
 
 /**

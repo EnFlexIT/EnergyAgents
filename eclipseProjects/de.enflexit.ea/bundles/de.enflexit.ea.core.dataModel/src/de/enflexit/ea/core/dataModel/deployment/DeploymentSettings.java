@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
-import hygrid.env.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 
 /**
  * The Class DeploymentSettings represents the data model for the deployment 

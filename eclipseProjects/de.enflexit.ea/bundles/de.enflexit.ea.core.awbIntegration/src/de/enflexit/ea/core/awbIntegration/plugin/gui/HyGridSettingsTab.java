@@ -37,6 +37,10 @@ import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
+import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration.UpdateMechanism;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import energy.optionModel.ScheduleLengthRestriction;
@@ -44,10 +48,6 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration.DeltaMechanism;
 import energy.schedule.gui.ScheduleLengthRestrictionListener;
 import energy.schedule.gui.ScheduleLengthRestrictionPanel;
-import hygrid.env.DisplayUpdateConfiguration;
-import hygrid.env.DisplayUpdateConfiguration.UpdateMechanism;
-import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 
 /**
  * The Class HyGridSettingsTab represents a tab that is a {@link JScrollPane} and that is 

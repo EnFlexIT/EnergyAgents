@@ -4,4 +4,4 @@
 /**
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-package hygrid.csvFileImport;
+package de.enflexit.ea.core.dataModel.csv;

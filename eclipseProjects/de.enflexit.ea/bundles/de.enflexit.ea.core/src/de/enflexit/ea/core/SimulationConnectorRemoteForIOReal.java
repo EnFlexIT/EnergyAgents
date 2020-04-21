@@ -5,10 +5,10 @@ import org.awb.env.networkModel.NetworkModel;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForSimulation;
-import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.env.SimulationStatus.STATE;
-import hygrid.env.SimulationStatus.STATE_CONFIRMATION;
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
 

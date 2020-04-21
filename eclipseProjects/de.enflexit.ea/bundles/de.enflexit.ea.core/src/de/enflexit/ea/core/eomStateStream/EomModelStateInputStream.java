@@ -10,6 +10,9 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractStateInputStream;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.eom.awb.stateStream.SystemStateDispatcher;
 import de.enflexit.eom.awb.stateStream.SystemStateDispatcherAgentConnector;
 import energy.EomController;
@@ -31,9 +34,6 @@ import energy.schedule.ScheduleTransformerKeyValue;
 import energygroup.GroupController;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
 import energygroup.evaluation.IOSelectTreeAction;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import hygrid.env.HyGridAbstractEnvironmentModel.TimeModelType;
-import hygrid.env.SimulationStatus.STATE_CONFIRMATION;
 
 /**
  * The Class EomModelStateInputStream handles the input stream that are to be produced by 

@@ -12,7 +12,11 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.blackboard.TransformerPowerAnswer;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
@@ -31,10 +35,6 @@ import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.BranchDescription;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 
 /**
  * Network calculation strategy implementation for low voltage distribution grids.

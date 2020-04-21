@@ -3,8 +3,8 @@ package de.enflexit.ea.core.databaseRequest;
 import java.util.HashMap;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import hygrid.ops.ontology.FieldDataReply;
-import hygrid.ops.ontology.FieldDataRequest;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
 import jade.core.Agent;
 
 /**

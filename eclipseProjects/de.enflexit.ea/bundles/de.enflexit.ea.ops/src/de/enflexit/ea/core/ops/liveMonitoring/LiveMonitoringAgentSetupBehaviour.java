@@ -6,9 +6,9 @@ import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import energy.optionModel.EvaluationSettings;
 import energy.optionModel.TechnicalSystemStateTime;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;

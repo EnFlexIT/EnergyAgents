@@ -12,11 +12,11 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
 
 public class GridStateEstimationInit {
 	NetworkModel networkModel = new NetworkModel();

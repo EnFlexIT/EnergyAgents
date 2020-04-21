@@ -1,4 +1,4 @@
-package hygrid.env;
+package de.enflexit.ea.core.dataModel.absEnvModel;
 
 import java.io.Serializable;
 

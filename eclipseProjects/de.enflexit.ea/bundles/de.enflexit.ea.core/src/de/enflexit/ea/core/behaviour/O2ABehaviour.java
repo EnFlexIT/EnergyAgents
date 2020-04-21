@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.behaviour;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import hygrid.ops.ontology.FieldDataReply;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;

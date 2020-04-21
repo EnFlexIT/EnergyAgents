@@ -1,9 +1,9 @@
 package de.enflexit.ea.core.ops.fieldDataRequest.agent;
 
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import de.enflexit.ea.core.ops.OpsController;
-import hygrid.ops.ontology.FieldDataRequest;
-import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;

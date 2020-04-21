@@ -8,9 +8,9 @@ import java.util.Vector;
 import org.apache.commons.codec.binary.Base64;
 
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.opsOntology.LiveMonitoringUpdate;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import energy.optionModel.TechnicalSystemStateEvaluation;
-import hygrid.ops.ontology.LiveMonitoringUpdate;
-import hygrid.ops.ontology.OpsOntology;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;

@@ -2,7 +2,7 @@ package de.enflexit.ea.core.liveMonitoringProxyAgent;
 
 import java.util.List;
 
-import hygrid.ops.ontology.OpsOntology;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import jade.content.lang.sl.SLCodec;
 import jade.core.AID;
 import jade.core.Agent;

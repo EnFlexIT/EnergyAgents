@@ -1,4 +1,4 @@
-package hygrid.csvFileImport;
+package de.enflexit.ea.core.dataModel.csv;
 
 import java.util.ArrayList;
 import java.util.HashMap;

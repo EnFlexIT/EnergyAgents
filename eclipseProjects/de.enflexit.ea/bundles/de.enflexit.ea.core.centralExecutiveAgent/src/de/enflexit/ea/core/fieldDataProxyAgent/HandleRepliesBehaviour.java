@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.fieldDataProxyAgent;
 
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
-import hygrid.ops.ontology.FieldDataReply;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
 import jade.content.Concept;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;

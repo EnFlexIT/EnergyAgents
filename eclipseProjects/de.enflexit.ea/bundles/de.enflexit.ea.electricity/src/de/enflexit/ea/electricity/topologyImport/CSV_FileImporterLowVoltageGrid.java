@@ -502,7 +502,7 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 	}
 
 	/* (non-Javadoc)
-	 * @see hygrid.csvFileImport.NetworkTopologyImporterService#setEnvironmentController(org.awb.env.networkModel.controller.GraphEnvironmentController)
+	 * @see de.enflexit.ea.core.dataModel.csv.NetworkTopologyImporterService#setEnvironmentController(org.awb.env.networkModel.controller.GraphEnvironmentController)
 	 */
 	@Override
 	public void setGraphController(GraphEnvironmentController graphController) {
@@ -510,7 +510,7 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 	}
 
 	/* (non-Javadoc)
-	 * @see hygrid.csvFileImport.NetworkTopologyImporterService#getFileFilters()
+	 * @see de.enflexit.ea.core.dataModel.csv.NetworkTopologyImporterService#getFileFilters()
 	 */
 	@Override
 	public List<FileFilter> getFileFilters() {

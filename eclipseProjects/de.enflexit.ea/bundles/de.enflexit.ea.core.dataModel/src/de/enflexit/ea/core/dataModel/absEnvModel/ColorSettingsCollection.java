@@ -1,4 +1,4 @@
-package hygrid.env;
+package de.enflexit.ea.core.dataModel.absEnvModel;
 
 import java.awt.Color;
 import java.util.Collections;

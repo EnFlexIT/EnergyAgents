@@ -18,8 +18,8 @@ import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
-import hygrid.env.HyGridAbstractEnvironmentModel;
 
 /**
  * This panel contains the GUI components for configuring the default deployment settings. 

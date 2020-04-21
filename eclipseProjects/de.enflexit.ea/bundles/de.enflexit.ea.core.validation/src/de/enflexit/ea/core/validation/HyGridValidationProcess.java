@@ -27,15 +27,15 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 import energy.GlobalInfo;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
-import hygrid.env.HyGridAbstractEnvironmentModel;
-import hygrid.ops.ontology.OpsOntology;
 
 /**
  * The singleton instance of the HyGridValidationProcess does the actual checks on a Energy Agent / HyGrid setup.

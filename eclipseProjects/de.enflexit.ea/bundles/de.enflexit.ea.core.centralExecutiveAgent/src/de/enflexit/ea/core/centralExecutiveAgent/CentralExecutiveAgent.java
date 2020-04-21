@@ -14,7 +14,7 @@ import de.enflexit.ea.core.centralExecutiveAgent.behaviour.StartMtpBehaviour;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
-import hygrid.ops.ontology.OpsOntology;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import jade.content.lang.sl.SLCodec;
 import jade.core.Agent;
 

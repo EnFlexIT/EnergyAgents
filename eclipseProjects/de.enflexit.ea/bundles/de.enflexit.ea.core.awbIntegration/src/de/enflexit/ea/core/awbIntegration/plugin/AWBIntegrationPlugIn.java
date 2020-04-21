@@ -17,6 +17,7 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.simulationService.time.TimeModelContinuous;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.HyGridSettingsTab;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
@@ -25,7 +26,6 @@ import energy.UnitConverter;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.loading.ScheduleTimeRange;
 import energy.schedule.loading.ScheduleTimeRangeController;
-import hygrid.env.HyGridAbstractEnvironmentModel;
 import jade.core.ProfileImpl;
 
 /**

@@ -6,6 +6,9 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowCalculation.ActiveReactivePowerPair;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
@@ -25,9 +28,6 @@ import energygroup.calculation.AbstractFlowMeasuredAtInterface;
 import energygroup.calculation.FlowMeasuredAtInterfaceEnergy;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SetupType;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
 
 /**
  * The Class PowerFlowCalculationThread is used within the aggregation handler

@@ -1,8 +1,8 @@
 package de.enflexit.ea.core.behaviour;
 
 import de.enflexit.ea.core.EnergyAgentIO;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import energy.optionModel.Schedule;
-import hygrid.env.HyGridAbstractEnvironmentModel.TimeModelType;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**

@@ -6,6 +6,10 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
+import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
+import de.enflexit.ea.core.dataModel.opsOntology.LongValue;
+import de.enflexit.ea.core.dataModel.opsOntology.ScheduleRangeDefinition;
 import de.enflexit.eom.database.DatabaseBundleInfo;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;
 import de.enflexit.eom.database.ScheduleListSelection;
@@ -15,10 +19,6 @@ import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.persistence.ScheduleList_StorageHandler;
 import energy.schedule.ScheduleListResetDatabaseIDAction;
-import hygrid.ops.ontology.FieldDataReply;
-import hygrid.ops.ontology.FieldDataRequest;
-import hygrid.ops.ontology.LongValue;
-import hygrid.ops.ontology.ScheduleRangeDefinition;
 
 /**
  * This thread handles database requests initiated by the energy agents.

@@ -12,6 +12,7 @@ import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
@@ -34,7 +35,6 @@ import energygroup.evaluation.AbstractGroupEvaluationStrategy;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
 import energygroup.evaluation.AbstractGroupTreeAction;
 import energygroup.evaluation.MemberEvaluationStrategy;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**

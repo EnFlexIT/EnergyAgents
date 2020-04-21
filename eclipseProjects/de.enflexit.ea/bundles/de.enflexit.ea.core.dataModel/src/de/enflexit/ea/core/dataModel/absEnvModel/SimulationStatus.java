@@ -1,4 +1,4 @@
-package hygrid.env;
+package de.enflexit.ea.core.dataModel.absEnvModel;
 
 import jade.util.leap.Serializable;
 

@@ -12,6 +12,9 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
+import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import energy.OptionModelController;
@@ -29,9 +32,6 @@ import energy.optionModel.UsageOfInterfaceEnergy;
 import energy.schedule.ScheduleController;
 import energygroup.GroupTreeNodeObject;
 import energygroup.sequentialNetworks.AbstractSequentialNetworkCalculation;
-import hygrid.csvFileImport.NetworkModelToCsvMapper;
-import hygrid.csvFileImport.NetworkModelToCsvMapper.SlackNodeDescription;
-import hygrid.env.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 
 /**
  * Common super class for eletrical network calculation strategies

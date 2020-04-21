@@ -3,8 +3,8 @@ package de.enflexit.ea.core.fieldDataProxyAgent;
 import java.util.ArrayList;
 import java.util.List;
 
-import hygrid.ops.ontology.OpsOntology;
-import hygrid.ops.ontology.ScheduleRangeDefinition;
+import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
+import de.enflexit.ea.core.dataModel.opsOntology.ScheduleRangeDefinition;
 import jade.content.lang.sl.SLCodec;
 import jade.core.AID;
 import jade.core.Agent;
