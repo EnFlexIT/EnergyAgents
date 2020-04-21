@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
@@ -108,6 +109,22 @@ public class CSV_FileImporterMediumVoltageGrid extends AbstractNetworkModelCsvIm
 	private GeoCoordinatesMapper coordinatesMapper;
 	
 	private List<FileFilter> fileFilters;
+	
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#requiresToStoreNetworkElements()
+	 */
+	@Override
+	public boolean requiresToStoreNetworkElements() {
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#getDataModelNetworkElementToSave()
+	 */
+	@Override
+	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave() {
+		return null;
+	}
 	
 	/* (non-Javadoc)
 	 * @see hygrid.electricalNetwork.csvImport.CsvFileImporter#importGraphFromFile(java.io.File)

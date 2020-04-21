@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
@@ -50,11 +51,24 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 	
 	private List<FileFilter> fileFilters;
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.awb.env.networkModel.controller.NetworkModelFileImporter#
-	 * importGraphFromFile(java.io.File)
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#requiresToStoreNetworkElements()
+	 */
+	@Override
+	public boolean requiresToStoreNetworkElements() {
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#getDataModelNetworkElementToSave()
+	 */
+	@Override
+	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter#importNetworkModelFromFile(java.io.File)
 	 */
 	@Override
 	public NetworkModel importNetworkModelFromFile(File graphFile) {
