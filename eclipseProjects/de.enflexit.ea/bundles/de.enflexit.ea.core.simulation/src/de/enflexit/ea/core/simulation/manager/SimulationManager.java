@@ -119,6 +119,13 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.hygridSettings = (HyGridAbstractEnvironmentModel) this.getAbstractEnvironment();
 		this.hygridSettings.setTimeModelType(this.getTimeModel());
 
+		// --- Create NosSystemScheduleLists ----------------------------------
+		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelDiscrete());	
+		} else if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
+			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelContinuous());
+		}
+		
 		// --- Prepare the aggregation handler --------------------------------
 		this.getAggregationHandler();
 		// --- Add the managers internal cyclic simulation behaviour ----------

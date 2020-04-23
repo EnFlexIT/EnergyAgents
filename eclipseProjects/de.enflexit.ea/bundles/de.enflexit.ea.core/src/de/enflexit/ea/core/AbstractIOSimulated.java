@@ -368,8 +368,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// ----------------------------------------------------------------
 			// --- Prepare this agent for the simulation ----------------------
 			// ----------------------------------------------------------------
-			// --- Already isDone within the constructor of this class. ---------
-			// --- Notify that this agent is ready for simulation. ------------ 
+			// --- Already done within the constructor of this class. ---------
+			// --- Notify that this agent is ready for simulation! ------------ 
 			// ----------------------------------------------------------------
 			this.setMyStimulusAnswer(STATE_CONFIRMATION.Done);
 			
