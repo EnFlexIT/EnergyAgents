@@ -3,9 +3,8 @@ package de.enflexit.ea.lib.powerFlowCalculation;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
+
 import Jama.Matrix;
-import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
-import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowParameter;
 
 /**
  ***************************************************************************
@@ -363,9 +362,9 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 	 */
 	public void calculateUtilization() {
 		int fromNode, toNode;
+		Vector<Double> branchUtilization = new Vector<Double>();
 		double abs = 0;
 		double[][] matgriddata = this.getPowerFlowParameter().getdMatGridData();
-		int branchNumberIndex = matgriddata[0].length-1;
 		for (int a = 0; a < this.getnNumBranches(); a++) {
 			fromNode = (int) matgriddata[a][0];
 			toNode = (int) matgriddata[a][1];
@@ -373,10 +372,10 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 			
 			double utilization = (abs / (this.getPowerFlowParameter().getMaxCurrent().get(fromNode - 1).get(toNode - 1))) * 100;
 			
-			// --- Store in HashMap ---------------------------------
-			int branchNumber = new Double(matgriddata[a][branchNumberIndex]).intValue();
-			this.getBranchUtilizationHashMap().put(branchNumber, utilization);
+			// --- Store in Vector ---------------------------------
+			branchUtilization.add(utilization);
 		}
+		this.setBranchUtilization(branchUtilization);
 	}
 
 
@@ -419,6 +418,7 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 	 */
 	private void calculateCosPhi() {
 		Vector<Double> nodalCosPhi = new Vector<Double>();
+		Vector<Double> branchCosPhi = new Vector<Double>();
 		for (int i = 0; i < this.getnNumNodes(); i++) {
 			// cosPhi= P/S
 			if (Math.abs(this.getNodalPowerReal().get(i)) == 0) {
@@ -434,22 +434,22 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 		double pN = 0;
 		double qN = 0;
 		
-		int fromNode, toNode, branchNumber;
+		int fromNode, toNode;
 		for (int i = 0; i < this.getnNumBranches(); i++) {
-			branchNumber = this.getBranchNumbersVector().get(i);
-			fromNode = this.getBranchFromNodesHashMap().get(branchNumber);
-			toNode = this.getBranchToNodesHashMap().get(branchNumber);
+			fromNode = this.getBranchFromNodes().get(i);
+			toNode = this.getBranchToNodes().get(i);
 			
 			pN = this.getBranchPowerReal().get(fromNode).get(toNode);
 			qN = this.getBranchPowerImag().get(fromNode).get(toNode);
 			
 			// cosPhi= P/S
 			if (Math.abs(pN) == 0) {
-				this.getBranchCosPhiHashMap().put(branchNumber, 1.0);
+				branchCosPhi.add(1.0);
 			} else {
-				this.getBranchCosPhiHashMap().put(branchNumber, Math.abs(pN) / Math.sqrt(pN * pN + qN * qN));
+				branchCosPhi.add(Math.abs(pN) / Math.sqrt(pN * pN + qN * qN));
 			}
 		}
+		this.setBranchCosPhi(branchCosPhi);
 	}
 
 	/**

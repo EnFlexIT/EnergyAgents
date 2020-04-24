@@ -25,6 +25,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
+
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.EnergyFlowMeasured;
@@ -37,6 +38,7 @@ import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
+
 
 /**
  * Network calculation strategy for uni-phase (or symmetrical) electricity grids.
@@ -267,15 +269,15 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	private void setCableStates(AbstractPowerFlowCalculation pfc, NetworkModelToCsvMapper netModel2CsvMapper) {
 		
 		Vector<Vector<Double>> iNabs = null;
-		HashMap<Integer, Double> utili = null;
-		HashMap<Integer, Double> branchCosPhi = null;
+		Vector<Double> utili = null;
+		Vector<Double> branchCosPhi = null;
 		Vector<Vector<Double>> p = null;
 		Vector<Vector<Double>> q = null;
 
 		if (pfc != null) {
 			iNabs = pfc.getBranchCurrentAbs();
-			utili = pfc.getBranchUtilizationHashMap();
-			branchCosPhi = pfc.getBranchCosPhiHashMap();
+			utili = pfc.getBranchUtilization();
+			branchCosPhi = pfc.getBranchCosPhi();
 			p = pfc.getBranchPowerReal();
 			q = pfc.getBranchPowerImag();
 		}
@@ -289,8 +291,6 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			
 			int nodeIndexFrom = bd.getNodeNumberFrom()-1;
 			int nodeIndexTo = bd.getNodeNumberTo()-1;
-			
-			int branchNumber = bd.getBranchNumber();
 
 			Object[] dataModel = null;
 			UniPhaseCableState cableState = null;//TODO Change to UniPhaseElectricalEdgeState as soon as the NetworkComponentStates are switched to the new ontology
@@ -314,8 +314,8 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			p.get(nodeIndexFrom).set(nodeIndexTo, p.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setUtilization(utili.get(branchNumber).floatValue());
-			cableState.setCosPhi(branchCosPhi.get(branchNumber).floatValue());
+			cableState.setUtilization(utili.get(i).floatValue());
+			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
 			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
 			cableState.setQ(new UnitValue(q.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "var"));
 			// --- Set voltage to sensors -------------------------------------

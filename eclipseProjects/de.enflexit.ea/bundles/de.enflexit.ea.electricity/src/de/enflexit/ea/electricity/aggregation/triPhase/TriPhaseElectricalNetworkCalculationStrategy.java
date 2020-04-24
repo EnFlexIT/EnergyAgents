@@ -25,6 +25,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
+
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.EnergyFlowMeasured;
@@ -481,13 +482,13 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		Vector<Vector<Double>> iNabs_L2 = null;
 		Vector<Vector<Double>> iNabs_L3 = null;
 
-		HashMap<Integer, Double> utili_L1 = null;
-		HashMap<Integer, Double> utili_L2 = null;
-		HashMap<Integer, Double> utili_L3 = null;
+		Vector<Double> utili_L1 = null;
+		Vector<Double> utili_L2 = null;
+		Vector<Double> utili_L3 = null;
 		
-		HashMap<Integer, Double> branchCosPhi_L1 = null;
-		HashMap<Integer, Double> branchCosPhi_L2 = null;
-		HashMap<Integer, Double> branchCosPhi_L3 = null;
+		Vector<Double> branchCosPhi_L1 = null;
+		Vector<Double> branchCosPhi_L2 = null;
+		Vector<Double> branchCosPhi_L3 = null;
 		
 		Vector<Vector<Double>> p_L1 = null;
 		Vector<Vector<Double>> p_L2 = null;
@@ -499,24 +500,24 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 
 		if (pfcL1 != null) {
 			iNabs_L1 = pfcL1.getBranchCurrentAbs();
-			utili_L1 = pfcL1.getBranchUtilizationHashMap();
-			branchCosPhi_L1 = pfcL1.getBranchCosPhiHashMap();
+			utili_L1 = pfcL1.getBranchUtilization();
+			branchCosPhi_L1 = pfcL1.getBranchCosPhi();
 			p_L1 = pfcL1.getBranchPowerReal();
 			q_L1 = pfcL1.getBranchPowerImag();
 		}
 		
 		if (pfcL2 != null) {
 			iNabs_L2 = pfcL2.getBranchCurrentAbs();
-			utili_L2 = pfcL2.getBranchUtilizationHashMap();
-			branchCosPhi_L2 = pfcL2.getBranchCosPhiHashMap();
+			utili_L2 = pfcL2.getBranchUtilization();
+			branchCosPhi_L2 = pfcL2.getBranchCosPhi();
 			p_L2 = pfcL2.getBranchPowerReal();
 			q_L2 = pfcL2.getBranchPowerImag();
 		}
 		
 		if (pfcL3 != null) {
 			iNabs_L3 = pfcL3.getBranchCurrentAbs();
-			utili_L3 = pfcL3.getBranchUtilizationHashMap();
-			branchCosPhi_L3 = pfcL3.getBranchCosPhiHashMap();
+			utili_L3 = pfcL3.getBranchUtilization();
+			branchCosPhi_L3 = pfcL3.getBranchCosPhi();
 			p_L3 = pfcL3.getBranchPowerReal();
 			q_L3 = pfcL3.getBranchPowerImag();
 		}
@@ -530,8 +531,6 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			
 			int nodeIndexFrom = bd.getNodeNumberFrom()-1;
 			int nodeIndexTo = bd.getNodeNumberTo()-1;
-			
-			int branchNumber = bd.getBranchNumber();
 
 			Object[] dataModel = null;
 			TriPhaseCableState cableState = null;
@@ -554,13 +553,13 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			cableState.setCurrent_L2(iNabs_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setCurrent_L3(iNabs_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			
-			cableState.setUtil_L1(utili_L1.get(branchNumber).floatValue());
-			cableState.setUtil_L2(utili_L2.get(branchNumber).floatValue());
-			cableState.setUtil_L3(utili_L3.get(branchNumber).floatValue());
+			cableState.setUtil_L1(utili_L1.get(i).floatValue());
+			cableState.setUtil_L2(utili_L2.get(i).floatValue());
+			cableState.setUtil_L3(utili_L3.get(i).floatValue());
 			
-			cableState.setCosPhi_L1(branchCosPhi_L1.get(branchNumber).floatValue());
-			cableState.setCosPhi_L2(branchCosPhi_L2.get(branchNumber).floatValue());
-			cableState.setCosPhi_L3(branchCosPhi_L3.get(branchNumber).floatValue());
+			cableState.setCosPhi_L1(branchCosPhi_L1.get(i).floatValue());
+			cableState.setCosPhi_L2(branchCosPhi_L2.get(i).floatValue());
+			cableState.setCosPhi_L3(branchCosPhi_L3.get(i).floatValue());
 			
 			cableState.setP_L1(p_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setP_L2(p_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());

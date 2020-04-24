@@ -91,7 +91,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 		vectorSizes += " " + this.debugGetVectorSizeDescription("branchCurrentReal", this.getBranchCurrentReal());
 		vectorSizes += " " + this.debugGetVectorSizeDescription("branchCurrentImag", this.getBranchCurrentImag());
 		vectorSizes += " " + this.debugGetVectorSizeDescription("branchCurrentAbs", this.getBranchCurrentAbs());
-		vectorSizes += " " + this.debugGetHashMapSizeDescription("branchUtilization", this.getBranchUtilizationHashMap());
+		vectorSizes += " " + this.debugGetVectorSizeDescription("branchUtilization", this.getBranchUtilization());
 
 		vectorSizes += " " + this.debugGetVectorSizeDescription("powerTransformerReal", this.getPowerOfTransformer());
 
@@ -126,34 +126,6 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 			}
 		}
 		return vectorSizeDescription;
-	}
-	
-	/**
-	 * Debug hash map size.
-	 *
-	 * @param checkHashMap the check vector
-	 * @return the string
-	 */
-	private String debugGetHashMapSizeDescription(String hashMapName, HashMap<?,?> checkHashMap) {
-		
-		String hashMapSizeDescription = hashMapName + ": ";
-		
-		// --- Get the size of the HashMap -----------------------
-		if (checkHashMap==null) {
-			hashMapSizeDescription += "Null"; 
-		} else {
-			hashMapSizeDescription +=  String.format("%03d", checkHashMap.size());
-			// --- Check the size of the sub hash map -----------------
-			if (checkHashMap.size()>0) {
-				if (checkHashMap.get(0)!=null) {
-					hashMapSizeDescription += " (Null)";
-				} else if (checkHashMap.get(0) instanceof HashMap<?,?>) {
-					HashMap<?,?> subHashMap = (HashMap<?,?>) checkHashMap.get(0);
-					hashMapSizeDescription += " (" + String.format("%03d", subHashMap.size()) + ")";
-				}
-			}
-		}
-		return hashMapSizeDescription;
 	}
 	
 	/**
@@ -351,25 +323,25 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 	 * power of branch
 	 */
 	private void calculateCosPhiBranches() {
-		
+		Vector<Double> branchCosPhi = new Vector<Double>();
 		double iNReal = 0;
 		double iNAbs = 0;
 		
-		int fromNode, toNode, branchNumber;
+		int fromNode, toNode;
 		for (int i = 0; i < this.getnNumBranches(); i++) {
-			branchNumber = this.getBranchNumbersVector().get(i);
-			fromNode = this.getBranchFromNodesHashMap().get(branchNumber);
-			toNode = this.getBranchToNodesHashMap().get(branchNumber);
+			fromNode = this.getBranchFromNodes().get(i);
+			toNode = this.getBranchToNodes().get(i);
 			
 			iNReal = this.getBranchCurrentReal().get(fromNode-1).get(toNode-1);
 			iNAbs =  this.getBranchCurrentAbs().get(fromNode-1).get(toNode-1);
 			// --- Checking, if apparent Power is zero
 			if (iNAbs != 0) {
-				getBranchCosPhiHashMap().put(branchNumber,Math.abs(iNReal) / Math.abs(iNAbs));
+				branchCosPhi.add(Math.abs(iNReal) / Math.abs(iNAbs));
 			} else {
-				getBranchCosPhiHashMap().put(branchNumber,  1.0);
+				branchCosPhi.add(1.0);
 			}
 		}
+		this.setBranchCosPhi(branchCosPhi);
 	}
 
 	/**
@@ -983,20 +955,20 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 	 * Calculate_utilization.
 	 */
 	private void calculate_utilization() {
-		int fromNode, toNode, branchNumber;
+		int fromNode, toNode;
+		Vector<Double> branchUtilization = new Vector<Double>();
 		double abs = 0;
-		for (int a = 0; a < this.getnNumBranches(); a++) {
-			branchNumber = this.getBranchNumbersVector().get(a);
-			fromNode = this.getBranchFromNodesHashMap().get(branchNumber);
-			toNode = this.getBranchToNodesHashMap().get(branchNumber);
+		for (int i = 0; i < this.getnNumBranches(); i++) {
+			fromNode = this.getBranchFromNodes().get(i);
+			toNode = this.getBranchToNodes().get(i);
 			abs = Math.sqrt(this.getBranchCurrentReal().get(fromNode - 1).get(toNode - 1) * this.getBranchCurrentReal().get(fromNode - 1).get(toNode - 1) + this.getBranchCurrentImag().get(fromNode - 1).get(toNode - 1) * this.getBranchCurrentImag().get(fromNode - 1).get(toNode - 1));
 			
 			double utilization = (abs / (this.getPowerFlowParameter().getMaxCurrent().get(fromNode - 1).get(toNode - 1))) * 100;
 			
-			// --- Store in HashMap ---------------------------------
-			this.getBranchUtilizationHashMap().put(branchNumber, utilization);
+			// --- Store in Vector ---------------------------------
+			branchUtilization.add(utilization);
 		}
-		
+		this.setBranchUtilization(branchUtilization);
 	}
 
 	/**

@@ -25,16 +25,16 @@ public abstract class AbstractPowerFlowCalculation {
 	private Vector<Double> nodalCosPhi= new Vector<Double>();
 	
 	private Vector<Integer> branchNumbersVector;
-	private HashMap<Integer, Integer> branchFromNodesHashMap;
-	private HashMap<Integer, Integer> branchToNodesHashMap;
+	private Vector<Integer> branchFromNodes;
+	private Vector<Integer> branchToNodes;
 	private Vector<Vector<Double>> branchPowerReal = new Vector<Vector<Double>>();
 	private Vector<Vector<Double>> branchPowerImag = new Vector<Vector<Double>>();
 	private Vector<Vector<Double>> branchPowerAbs = new Vector<Vector<Double>>();
 	private Vector<Vector<Double>> branchCurrentReal = new Vector<Vector<Double>>();
 	private Vector<Vector<Double>> branchCurrentImag = new Vector<Vector<Double>>();
 	private Vector<Vector<Double>> branchCurrentAbs = new Vector<Vector<Double>>();
-	private HashMap<Integer, Double> branchUtilizationHashMap = new HashMap<Integer, Double>();
-	private HashMap<Integer, Double> branchCosPhiHashMap = new HashMap<Integer, Double>();
+	private Vector<Double> branchUtilization = new Vector<Double>();
+	private Vector<Double> branchCosPhi = new Vector<Double>();
 	
 	private Vector<Double> powerOfTransformer = new Vector<>();// Power Upper Voltage -> Lower Voltage [P Q]
 	private int nIterationCounter=0; // Number of Cycles
@@ -212,31 +212,29 @@ public abstract class AbstractPowerFlowCalculation {
 		}
 		return branchNumbersVector;
 	}
-	public HashMap<Integer, Integer> getBranchFromNodesHashMap() {
-		if (branchFromNodesHashMap == null) {
+	public Vector<Integer> getBranchFromNodes() {
+		if (branchFromNodes == null) {
 			double[][] matgriddata = this.getPowerFlowParameter().getdMatGridData();
-			int branchNumberIndex = matgriddata[0].length-1;
 			
-			//New branchFromNodesHashMap
-			branchFromNodesHashMap = new HashMap<Integer, Integer>();
+			//New branchFromNodes Vector
+			branchFromNodes = new Vector<Integer>();
 			for (int a = 0; a < this.getnNumBranches(); a++) {
-				branchFromNodesHashMap.put((int) matgriddata[a][branchNumberIndex], (int) matgriddata[a][0]);
+				branchFromNodes.add((int) matgriddata[a][0]);
 			}
 		}
-		return branchFromNodesHashMap;
+		return branchFromNodes;
 	}
-	public HashMap<Integer, Integer> getBranchToNodesHashMap() {
-		if (branchToNodesHashMap == null) {
+	public Vector<Integer> getBranchToNodes() {
+		if (branchToNodes == null) {
 			double[][] matgriddata = this.getPowerFlowParameter().getdMatGridData();
-			int branchNumberIndex = matgriddata[0].length-1;
 			
 			//New branchToNodesHashMap
-			branchToNodesHashMap = new HashMap<Integer, Integer>();
+			branchToNodes = new Vector<Integer>();
 			for (int a = 0; a < this.getnNumBranches(); a++) {
-				branchToNodesHashMap.put((int) matgriddata[a][branchNumberIndex], (int) matgriddata[a][1]);
+				branchToNodes.add((int) matgriddata[a][1]);
 			}
 		}
-		return branchToNodesHashMap;
+		return branchToNodes;
 	}
 	public Vector<Vector<Double>> getBranchPowerReal() {
 		return branchPowerReal;
@@ -274,11 +272,17 @@ public abstract class AbstractPowerFlowCalculation {
 	public void setBranchCurrentAbs(Vector<Vector<Double>> branchCurrentAbs) {
 		this.branchCurrentAbs = branchCurrentAbs;
 	}
-	public HashMap<Integer, Double> getBranchUtilizationHashMap() {
-		return branchUtilizationHashMap;
+	public Vector<Double> getBranchUtilization() {
+		return branchUtilization;
 	}
-	public HashMap<Integer, Double> getBranchCosPhiHashMap() {
-		return branchCosPhiHashMap;
+	public void setBranchUtilization(Vector<Double> branchUtilization) {
+		this.branchUtilization = branchUtilization;
+	}
+	public Vector<Double> getBranchCosPhi() {
+		return branchCosPhi;
+	}
+	public void setBranchCosPhi(Vector<Double> branchCosPhi) {
+		this.branchCosPhi = branchCosPhi;
 	}
 	public Vector<PVNodeParameters> getvPVNodes() {
 		return this.getPowerFlowParameter().getvPVNodes();
