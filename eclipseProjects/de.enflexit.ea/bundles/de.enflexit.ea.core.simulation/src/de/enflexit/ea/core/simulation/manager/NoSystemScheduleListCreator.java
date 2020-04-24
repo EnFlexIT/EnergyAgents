@@ -49,8 +49,9 @@ public class NoSystemScheduleListCreator {
 	
 	private List<DataModelNetworkElement> networkElementsWithoutEomModel;
 	
+	
 	/**
-	 * Instantiates a new no system schedule list creator.
+	 * Instantiates a new 'no-system' => ScheduleList-Creator.
 	 *
 	 * @param networkModel the network model
 	 * @param dbTimeModel the date-based time model 
