@@ -41,11 +41,12 @@ public class StateQueueKeeperScheduleList extends AbstractStateQueueKeeper imple
 	 * @see de.enflexit.energyAgent.core.eomStateStream.AbstractStateQueueKeeper#checkRemainingStatesAndPossiblyStartStartLoading(int, boolean)
 	 */
 	@Override
-	public void checkRemainingStatesAndPossiblyStartStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended) {
+	public void checkRemainingStatesAndPossiblyStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended) {
 		
 		if (this.iswWaitingForRequestResult==false && isDataReloadRecommended==true) {
 			SystemStateLoadRequest loadRequest = this.createLoadRequest();
 			if (loadRequest!=null) {
+				this.setProvisioningStarted();
 				this.iswWaitingForRequestResult = true;
 				this.dispatchConnector.forwardSystemStateLoadRequest(loadRequest);
 			}
@@ -122,6 +123,7 @@ public class StateQueueKeeperScheduleList extends AbstractStateQueueKeeper imple
 				this.lastReceivedScheduleWasEmpty = true;
 			}
 		}
+		this.setProvisioningFinalized();
 		this.iswWaitingForRequestResult = false;
 	}
 	

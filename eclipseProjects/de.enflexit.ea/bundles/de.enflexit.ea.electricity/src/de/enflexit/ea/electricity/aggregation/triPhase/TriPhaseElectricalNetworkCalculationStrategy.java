@@ -56,29 +56,33 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	@Override
 	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup efmGroup) {
 		
-		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute '" + this.getClass().getSimpleName() + "'");
+		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
 
-		// --- Update slack node voltage level for sensor data based calculations -------
-		this.updateSlackNodeVoltage();
-		
-		// ------------------------------------------------------------------------------
-		// --- (Re) execute the phase dependent electrical network calculation ----------
-		// ------------------------------------------------------------------------------
-		this.getPowerFlowCalculationsFinalized().clear();
-		// --- Reset the slack node voltage level? --------------------------------------
-		if (this.isChangedSlackNodeVoltageLevel==true) {
-			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L1));
-			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L2));
-			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L3));
-			this.isChangedSlackNodeVoltageLevel = false;
-		}
-		// --- Reset the calculation parameter ------------------------------------------
-		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).resetCalculationBase(currentParentNode, efmGroup);
-		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).resetCalculationBase(currentParentNode, efmGroup);
-		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).resetCalculationBase(currentParentNode, efmGroup);
-		// --- Notify all calculation threads to (re-)restart the calculation ----------- 
-		synchronized (this.getCalculationTrigger()) {
-			this.getCalculationTrigger().notifyAll();
+		boolean isSkipNetworkCalculation = this.getAggregationHandler().debugIsSkipActualNetworkCalculation();
+		if (isSkipNetworkCalculation==false) {
+			
+			// --- Update slack node voltage level for sensor data based calculations ---
+			this.updateSlackNodeVoltage();
+			
+			// --------------------------------------------------------------------------
+			// --- (Re) execute the phase dependent electrical network calculation ------
+			// --------------------------------------------------------------------------
+			this.getPowerFlowCalculationsFinalized().clear();
+			// --- Reset the slack node voltage level? ----------------------------------
+			if (this.isChangedSlackNodeVoltageLevel==true) {
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L1));
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L2));
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L3));
+				this.isChangedSlackNodeVoltageLevel = false;
+			}
+			// --- Reset the calculation parameter --------------------------------------
+			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).resetCalculationBase(currentParentNode, efmGroup);
+			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).resetCalculationBase(currentParentNode, efmGroup);
+			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).resetCalculationBase(currentParentNode, efmGroup);
+			// --- Notify all calculation threads to (re-)restart the calculation ------- 
+			synchronized (this.getCalculationTrigger()) {
+				this.getCalculationTrigger().notifyAll();
+			}
 		}
 		
 		// ------------------------------------------------------------------------------

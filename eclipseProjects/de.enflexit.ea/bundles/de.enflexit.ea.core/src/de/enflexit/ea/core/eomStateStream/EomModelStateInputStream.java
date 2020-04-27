@@ -44,7 +44,7 @@ import energygroup.evaluation.IOSelectTreeAction;
 public class EomModelStateInputStream extends AbstractStateInputStream {
 
 	protected boolean debug = false;
-	protected String debugNetworkComponentID = "n4";
+	protected String debugNetworkComponentID = "LV1.101 Bus 11";
 	
 	private SystemStateDispatcherAgentConnector dispatchConnector;
 	private AbstractStateQueueKeeper stateQueueKeeper;
@@ -364,7 +364,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		
 		if (this.isDebug()==true) {
 			int sizeNew = this.getScheduleEnergyTransmission().getTechnicalSystemStateList().size();
-			System.out.println("[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] Number of states in transmision queue before/after: " + sizeOld + "/" + sizeNew);
+			System.out.println("[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] Number of states in transmision queue before/after: " + sizeOld + "/" + sizeNew + " => added " + transformedSchedule.getTechnicalSystemStateList().size() + " new states.");
 		}
 	}
 	/**
@@ -705,6 +705,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 			iStart = this.indexLastStateAccess;
 		}
 		if (iStart<0) return null;
+		if (iStart>=schedule.getTechnicalSystemStateList().size()) iStart = schedule.getTechnicalSystemStateList().size()-1;
 		
 		tsseWork = schedule.getTechnicalSystemStateList().get(iStart);
 		if (tsseWork.getGlobalTime()>simulationTime) {

@@ -8,8 +8,7 @@ import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 
 /**
- * {@link AbstractAggregationHandler} implementation to be used by 
- * the {@link SimulationManager}
+ * {@link AbstractAggregationHandler} implementation to be used by the {@link SimulationManager}
  * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
@@ -25,6 +24,7 @@ public class AggregationHandler extends AbstractAggregationHandler {
 	 */
 	public AggregationHandler(NetworkModel networkModel, boolean headlessOperation, String ownerName) {
 		super(networkModel, headlessOperation, ownerName);
+		//this.debugIsSkipActualNetworkCalculation(true);
 	}
 
 	/* (non-Javadoc)

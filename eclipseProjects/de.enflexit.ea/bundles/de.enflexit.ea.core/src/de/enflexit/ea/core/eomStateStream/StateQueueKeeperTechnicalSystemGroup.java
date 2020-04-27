@@ -30,7 +30,7 @@ public class StateQueueKeeperTechnicalSystemGroup extends AbstractStateQueueKeep
 	 * @see de.enflexit.energyAgent.core.eomStateStream.AbstractStateQueueKeeper#checkRemainingStatesAndPossiblyStartStartLoading(int, boolean)
 	 */
 	@Override
-	public void checkRemainingStatesAndPossiblyStartStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended) {
+	public void checkRemainingStatesAndPossiblyStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended) {
 		// TODO Auto-generated method stub
 		
 	}

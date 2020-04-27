@@ -67,7 +67,14 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 
 	private static final long serialVersionUID = 2816217651269067503L;
 	
-	private Blackboard blackboard;
+	private static final String dateFormat = "hh:mm:ss-SSS";
+	private SimpleDateFormat sdf;
+
+	private static final String SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP  = "SimMa: Discrete-Round-Trip-Complete";
+	private static final String SIMA_MEASUREMENT_NETWORK_CALCULATIONS = "SimMa: - Aggregation-Execution     ";
+	
+	private boolean isDoSimulationMeasurements;
+	private SimulationMeasurements simulationMeasurements;
 	
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
@@ -80,13 +87,13 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private long endTimeNextSimulationStep;
 	
 	private AbstractAggregationHandler aggregationHandler;
+	private Blackboard blackboard;
 	
 	private Hashtable<AID, Object> environmentNotificationReminder;
 	private NetworkCalculationExecuter networkCalculationExecuter;
 	private Object networkCalculationTrigger;
 	
-	private SimpleDateFormat sdf;
-	private static final String dateFormat = "hh:mm:ss-SSS";
+	
 	
 	
 	/* (non-Javadoc)
@@ -97,6 +104,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 
 		// --- Set debugging option -------------------------------------------
 		this.debug = false;
+		this.isDoSimulationMeasurements = true;
 		
 		// --- Start the BlackBoardAgent --------------------------------------
 		this.startBlackBoardAgent();
@@ -119,7 +127,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.hygridSettings = (HyGridAbstractEnvironmentModel) this.getAbstractEnvironment();
 		this.hygridSettings.setTimeModelType(this.getTimeModel());
 
-		// --- Create NosSystemScheduleLists ----------------------------------
+		// --- Create 'No-System' - ScheduleList's ----------------------------
 		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
 			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelDiscrete());	
 		} else if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
@@ -141,6 +149,38 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.stopNetworkCalculationExecuter();
 		super.takeDown();
 	}
+	
+	
+	/**
+	 * Returns the simulation measurements.
+	 * @return the simulation measurements
+	 */
+	public SimulationMeasurements getSimulationMeasurements() {
+		if (this.isDoSimulationMeasurements==true && simulationMeasurements==null) {
+			simulationMeasurements = new SimulationMeasurements();
+			int avgBase = 480;
+			simulationMeasurements.addSimulationMeasurement(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP, avgBase);
+			simulationMeasurements.addSimulationMeasurement(SIMA_MEASUREMENT_NETWORK_CALCULATIONS, avgBase);
+		}
+		return simulationMeasurements;
+	}
+	/**
+	 * Sets the specified measurement started.
+	 * @param taskDescriptor the task descriptor
+	 */
+	public void setMeasurementStarted(String taskDescriptor) {
+		if (this.getSimulationMeasurements()==null) return;
+		this.getSimulationMeasurements().setMeasurementStarted(taskDescriptor);
+	}
+	/**
+	 * Sets the specified measurement finalized.
+	 * @param taskDescriptor the new measurement finalized
+	 */
+	public void setMeasurementFinalized(String taskDescriptor) {
+		if (this.getSimulationMeasurements()==null) return;
+		this.getSimulationMeasurements().setMeasurementFinalized(taskDescriptor);
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#setPauseSimulation(boolean)
@@ -539,6 +579,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --------------------------------------------------------------------
 		if (agentAnswers!=null && agentAnswers.size()>0) {
 			
+			
+			
 			try {
 				// --- Get current time ---------------------------------------
 				long currTime = this.getTime();
@@ -549,7 +591,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				switch (this.hygridSettings.getTimeModelType()) {
 				case TimeModelDiscrete:
 					// --- (Re)Execute the network calculation ----------------
+					this.setMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);;
 					this.getAggregationHandler().runEvaluationUntil(currTime);
+					this.setMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
 					break;
 
 				case TimeModelContinuous:
@@ -567,7 +611,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous && this.hygridSettings.getSimulationStatus().getState()==STATE.B_ExecuteSimuation) {
 			this.resetNetworkCalculationExecuterWaitTime();
 		} else {
+			this.setMeasurementFinalized(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
 			this.doNextSimulationStep();
+			this.setMeasurementStarted(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
 		}
 	}
 	

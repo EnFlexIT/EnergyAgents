@@ -3,6 +3,7 @@ package de.enflexit.ea.core.eomStateStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.eom.awb.stateStream.SystemStateDispatcher;
 import de.enflexit.eom.awb.stateStream.SystemStateDispatcherAgentConnector;
 import energy.optionModel.Schedule;
 import energy.optionModel.TechnicalSystemStateEvaluation;
@@ -22,15 +23,19 @@ public abstract class AbstractStateQueueKeeper {
 	
 	// --- Variables for counting and decisions -------------------------------
 	/** Defines the minimum number of states that recommend to reload further system states */
-	protected int minNumberOfStates = 2;
-	/** The expected time consumption for loading data for the current instance. Default value is 5s */
-	protected long timeConsumptionLoadProcess = 5000; // 5s
+	protected int minNumberOfStates = 10;
 	
 	// --- Variables to measure the temporal consumption of system states -----
 	private long tickingTimeLast = 0;
 	private List<Long> tickingIntervalList;
-	private int maxNumberOfTicksForAverage = 10;
 	private long tickingIntervalAverage;
+	
+	// --- Variables to measure provisioning of new state data ----------------
+	private long provisionTimeStart = 0;
+	private List<Long> provisionIntervalList;
+	private long provisionIntervalAverage = 5000;	// 5s
+	
+	private int maxNumberForAverages = 32;
 	
 	
 	/**
@@ -86,7 +91,7 @@ public abstract class AbstractStateQueueKeeper {
 	 * Returns the number of system states that are remaining in the queue for an energy and state transmission.
 	 * @return the number of system states in queue
 	 */
-	protected Integer getNumberOfStatesInQueueRemaining() {
+	protected int getNumberOfStatesInQueueRemaining() {
 		
 		Integer remainingStates = this.eomInputStream.getIndexLastStateAccess();
 		if (remainingStates==null) {
@@ -118,17 +123,14 @@ public abstract class AbstractStateQueueKeeper {
 		this.getTickingIntervalList().add(duration);
 		this.tickingTimeLast = currentTime;
 		
-		// --- Reduce number of durations -----------------
-		while (this.getTickingIntervalList().size() > this.maxNumberOfTicksForAverage) {
-			this.getTickingIntervalList().remove(0);
-		}
 		// --- Finally, update the average ----------------
 		this.updateTickingIntervalAverage();
 
 		// --- Recommend to reload data? ------------------
-		boolean isMoreThanThreeTicks = this.getTickingIntervalList().size()>3;
-		long durationWhereNoStatesRemain = this.getTickingIntervalAverage() * this.getNumberOfStatesInQueueRemaining();
-		boolean isDataReloadRecommended = isMoreThanThreeTicks==true && (this.getNumberOfStatesInQueueRemaining()<=this.minNumberOfStates || durationWhereNoStatesRemain <= this.timeConsumptionLoadProcess);
+		int noOfStatesInQueueRemaining   = this.getNumberOfStatesInQueueRemaining();
+		long durationWhereNoStatesRemain = this.getTickingIntervalAverage() * noOfStatesInQueueRemaining;
+		boolean isMoreThanThreeTicks     = this.getTickingIntervalList().size()>3;
+		boolean isDataReloadRecommended  = isMoreThanThreeTicks==true && (noOfStatesInQueueRemaining<=this.minNumberOfStates || durationWhereNoStatesRemain <= (this.getProvisionIntervalAverage() * 1.5));
 
 		// --- Print some debugging output? ---------------
 		if (this.isDebug()==true && isDataReloadRecommended) {
@@ -136,13 +138,14 @@ public abstract class AbstractStateQueueKeeper {
 			debugText += "[" + this.eomInputStream.getNetworkComponent().getId() + "] ";
 			debugText += "Ticking Average: " + this.getTickingIntervalAverage() + " ms, ";
 			debugText += "Remaining States in queue: " + this.getNumberOfStatesInQueueRemaining() + ", "; 
-			debugText += "Recommend to reload: " + isDataReloadRecommended;
+			debugText += "Recommend to reload: " + isDataReloadRecommended + ", ";
+			debugText += "Provisioning Time for new states " + this.getProvisionIntervalAverage() + " ms";
 			System.out.println(debugText);
 		}
 		
 		// ------------------------------------------------
 		// --- Start a SystemStateLoadRequest? ------------
-		this.checkRemainingStatesAndPossiblyStartStartLoading(this.getNumberOfStatesInQueueRemaining(), isDataReloadRecommended);
+		this.checkRemainingStatesAndPossiblyStartLoading(this.getNumberOfStatesInQueueRemaining(), isDataReloadRecommended);
 	}
 	
 	/**
@@ -160,7 +163,7 @@ public abstract class AbstractStateQueueKeeper {
 	 * @param remainingStatesInQueue the remaining states in transmission queue
 	 * @param isDataReloadRecommended indicator if a data reload is recommended
 	 */
-	public abstract void checkRemainingStatesAndPossiblyStartStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended);
+	public abstract void checkRemainingStatesAndPossiblyStartLoading(int remainingStatesInQueue, boolean isDataReloadRecommended);
 
 	
 	
@@ -168,7 +171,7 @@ public abstract class AbstractStateQueueKeeper {
 	// --- Measurement of the state consumption -------------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Return the list of measured interval times betweeb ticks.
+	 * Return the list of measured interval times between ticks.
 	 * @return the ticking interval list
 	 */
 	private List<Long> getTickingIntervalList() {
@@ -182,12 +185,15 @@ public abstract class AbstractStateQueueKeeper {
 	 */
 	private void updateTickingIntervalAverage() {
 
+		// --- Reduce number of durations -------
+		while (this.getTickingIntervalList().size() > this.maxNumberForAverages) {
+			this.getTickingIntervalList().remove(0);
+		}
 		// --- For the first measurement --------
 		if (this.getTickingIntervalList().size()==1) {
 			this.tickingIntervalAverage = this.getTickingIntervalList().get(0); 
 			return;
 		}
-		
 		// --- Summarize ------------------------
 		long sum = 0;
 		for (int i = 0; i < this.getTickingIntervalList().size(); i++) {
@@ -205,4 +211,63 @@ public abstract class AbstractStateQueueKeeper {
 		return tickingIntervalAverage;
 	}
 
+	
+	// ------------------------------------------------------------------------
+	// --- Measurement of the state provisioning ------------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Sets the provisioning started.
+	 */
+	protected void setProvisioningStarted() {
+		this.provisionTimeStart = System.currentTimeMillis();
+	}
+	/**
+	 * Sets the provisioning finalized.
+	 */
+	protected void setProvisioningFinalized() {
+		long provisionDuration = System.currentTimeMillis() - this.provisionTimeStart;
+		this.getProvisionIntervalList().add(provisionDuration);
+		this.updateProvisionIntervalAverage();
+	}
+
+	/**
+	 * Return the list of provision interval list.
+	 * @return the provision interval list
+	 */
+	private List<Long> getProvisionIntervalList() {
+		if (provisionIntervalList==null) {
+			provisionIntervalList = new ArrayList<>();
+		}
+		return provisionIntervalList;
+	}
+	/**
+	 * Updates the provision interval average.
+	 */
+	private void updateProvisionIntervalAverage() {
+
+		// --- Reduce number of durations -------
+		while (this.getProvisionIntervalList().size()>this.maxNumberForAverages) {
+			this.getProvisionIntervalList().remove(0);
+		}
+		// --- For the first measurement --------
+		if (this.getProvisionIntervalList().size()==1) {
+			this.provisionIntervalAverage = this.getProvisionIntervalList().get(0); 
+			return;
+		}
+		// --- Summarize ------------------------
+		long sum = 0;
+		for (int i = 0; i < this.getProvisionIntervalList().size(); i++) {
+			sum += this.getProvisionIntervalList().get(i);
+		}
+		// --- Calculate new average ------------
+		this.provisionIntervalAverage = sum / this.getProvisionIntervalList().size();
+	}
+	/**
+	 * Returns the average provision interval for get system states from the {@link SystemStateDispatcher}.
+	 * @return the provision interval average in ms
+	 */
+	public long getProvisionIntervalAverage() {
+		return provisionIntervalAverage;
+	}
+	
 }

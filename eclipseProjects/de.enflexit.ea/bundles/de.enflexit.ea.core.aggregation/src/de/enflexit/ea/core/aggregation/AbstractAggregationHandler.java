@@ -75,6 +75,9 @@ public abstract class AbstractAggregationHandler {
 	
 	private Vector<AggregationListener> aggregationListenerListeners;
 	
+	// --- From here, some control variables for debugging purposes can be found -------- 
+	private boolean debugIsSkipActualNetworkCalculation;
+	
 	
 	/**
 	 * Instantiates a new aggregation handler.
@@ -89,6 +92,23 @@ public abstract class AbstractAggregationHandler {
 		this.ownerName = ownerName;
 		this.initialize();
 	}
+
+
+	/**
+	 * For debugging purposes: Can be used to disable the actual network calculation during the execution of the aggregation handler.
+	 * @param isSkipNetworkCalculation the boolean value to skip the actual network calculation
+	 */
+	public void debugIsSkipActualNetworkCalculation(boolean isSkipNetworkCalculation) {
+		this.debugIsSkipActualNetworkCalculation = isSkipNetworkCalculation;
+	}
+	/**
+	 * Checks if the actual network calculation should be skipped.
+	 * @return true, if the actual network calculation should be skipped
+	 */
+	public boolean debugIsSkipActualNetworkCalculation() {
+		return debugIsSkipActualNetworkCalculation;
+	}
+	
 	
 	/**
 	 * May return an individual configuration that describes how an overall {@link NetworkModel} is to

@@ -185,69 +185,11 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		return this.slackNodeVoltageLevel;
 	}
 	
+	/**
+	 * Has to return the default slack node voltage.
+	 * @return the default slack node voltage
+	 */
 	protected abstract double getDefaultSlackNodeVoltage();
-	
-//	/* (non-Javadoc)
-//	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#doNetworkCalculation(javax.swing.tree.DefaultMutableTreeNode, java.util.List, energygroup.calculation.FlowsMeasuredGroup)
-//	 */
-//	@Override
-//	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup efmGroup) {
-//		
-//		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute '" + this.getClass().getSimpleName() + "'");
-//
-//		// --- Update slack node voltage level for sensor data based calculations -------
-//		this.updateSlackNodeVoltage();
-//		
-//		// ------------------------------------------------------------------------------
-//		// --- (Re) execute the phase dependent electrical network calculation ----------
-//		// ------------------------------------------------------------------------------
-//		this.getPowerFlowCalculationsFinalized().clear();
-//		// --- Reset the slack node voltage level? --------------------------------------
-//		if (this.isChangedSlackNodeVoltageLevel==true) {
-//			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L1));
-//			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L2));
-//			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L3));
-//			this.isChangedSlackNodeVoltageLevel = false;
-//		}
-//		// --- Reset the calculation parameter ------------------------------------------
-//		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).resetCalculationBase(currentParentNode, efmGroup);
-//		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).resetCalculationBase(currentParentNode, efmGroup);
-//		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).resetCalculationBase(currentParentNode, efmGroup);
-//		// --- Notify all calculation threads to (re-)restart the calculation ----------- 
-//		synchronized (this.getCalculationTrigger()) {
-//			this.getCalculationTrigger().notifyAll();
-//		}
-//		
-//		// ------------------------------------------------------------------------------
-//		// --- Summarize interfaces that don't need a network calculation ---------------
-//		// ------------------------------------------------------------------------------
-//		FlowsMeasuredGroupMember efmSummarized = new FlowsMeasuredGroupMember();
-//		for (int i = 0; i < outerInterfaces.size(); i++) {
-//			
-//			TechnicalInterface ti = outerInterfaces.get(i);
-//			EnergyInterface ei = (EnergyInterface) ti;
-//			try {
-//				// --- Calculate the sum of energy flow for this interface --------------
-//				EnergyFlowMeasured efm = efmGroup.sumUpEnergyFlowMeasuredByEnergyCarrierAndDomainModel(currentParentNode, ei.getInterfaceID(), ei.getEnergyCarrier(), ei.getDomainModel());
-//				// --- In case that there is no EnergyFlowMeasured ----------------------
-//				if (efm.getMeasurments().size()==0) {
-//					efm = this.getEnergyFlowMeasuredZeroOverTime(ei.getInterfaceID(), efmGroup.getGlobalTimeFrom(), efmGroup.getGlobalTimeTo(), this.getDefaultSIPrefix());
-//				}
-//				efmSummarized.addEnergyFlowMeasured(efm, ei.getInterfaceID(), ei.getDomain(), ei.getDomainModel(), ei.getEnergyCarrier());
-//				
-//			} catch (Exception ex) {
-//				System.err.println("[" + this.getClass().getSimpleName() + "] Error summarizing the energy flow for '" + ei.getInterfaceID() + "' Energy Carrier: " + ei.getEnergyCarrier().value() + ", Domain-Model: " + ei.getDomainModel().toString());
-//				ex.printStackTrace();
-//			}
-//		}
-//		
-//		// --- Wait for the end of the power flow calculations --------------------------
-//		this.waitUntilCalculationFinalized(this.getPowerFlowCalculationThreads().size());
-//		// --- Create the display notifications from the calculation results ------------  
-//		this.summarizeResults(efmGroup.getGlobalTimeTo());
-//		// -- Done ----------------------------------------------------------------------
-//		return efmSummarized;
-//	}
 	
 	/**
 	 * Updates the slack node voltage level in case that the source of the data is based on sensor data.
@@ -330,44 +272,11 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		this.getPowerFlowCalculationsFinalized().addElement(phase);
 	}
 	
+	/**
+	 * has to summarize results from the actual power flow calculation.
+	 * @param globalTimeTo the global time to
+	 */
 	protected abstract void summarizeResults(long globalTimeTo);
-//	/**
-//	 * Creates the {@link DisplayAgentNotificationGraph} from the power flow calculation results.
-//	 * @param globalTimeTo the global time to which is to be calculated
-//	 */
-//	private void summarizeResults(long globalTimeTo) {
-//
-//		try {
-//			
-//			// --- Get the PowerFlowCalculations for each phase -------------------------
-//			NetworkModelToCsvMapper netModel2CsvMapper = this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).getNetworkModelToCsvMapper();
-//			
-//			AbstractPowerFlowCalculation pfcL1 = this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).getPowerFlowCalculation();
-//			AbstractPowerFlowCalculation pfcL2 = this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).getPowerFlowCalculation();
-//			AbstractPowerFlowCalculation pfcL3 = this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).getPowerFlowCalculation();
-//			
-//			if (pfcL1==null && pfcL2==null && pfcL3==null) return;
-//			
-//			// --- Check if all pfc were successful, then summarize results -------------
-//			if (pfcL1.isSucessfullPFC() && pfcL2.isSucessfullPFC() && pfcL3.isSucessfullPFC()) {
-//				// --- Define the GraphNode state: A TriPhaseElectricalNodeState ------------
-//				this.setNodeStates(pfcL1, pfcL2, pfcL3, netModel2CsvMapper);
-//				// --- Edit the 'Cable' data model of the NetworkComponents affected --------
-//				this.setCableStates(pfcL1, pfcL2, pfcL3, netModel2CsvMapper);
-//				// --- Set the transformer state to the Blackboard --------------------------
-//				this.setTransformerState(globalTimeTo, pfcL1, pfcL2, pfcL3, netModel2CsvMapper);
-//				// --- Extend the Sensor ScheduleList ---------------------------------------
-//				this.setSensorTechnicalSystemStates(globalTimeTo);
-//			}	
-//			
-//		} catch (Exception ex) {
-//			System.err.println("[" + this.getClass().getSimpleName() + "] Error summarizing results from PowerFlowCalculation:");
-//			ex.printStackTrace();
-//		}
-//		
-//	}
-
-	
 	
 	/**
 	 * Returns the last sensor states out of the corresponding ScheduleController.

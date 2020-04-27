@@ -61,26 +61,30 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	@Override
 	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup fmGroup) {
 		
-		this.debugPrintLine(fmGroup.getGlobalTimeTo(), "Execute '" + this.getClass().getSimpleName() + "'");
+		this.debugPrintLine(fmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
 
-		// --- Update slack node voltage level for sensor data based calculations -------
-		this.updateSlackNodeVoltage();
+		boolean isSkipNetworkCalculation = this.getAggregationHandler().debugIsSkipActualNetworkCalculation();
+		if (isSkipNetworkCalculation==false) {
 		
-		// ------------------------------------------------------------------------------
-		// --- (Re) execute the phase dependent electrical network calculation ----------
-		// ------------------------------------------------------------------------------
-		this.getPowerFlowCalculationsFinalized().clear();
-		// --- Reset the slack node voltage level? --------------------------------------
-		if (this.isChangedSlackNodeVoltageLevel==true) {
-			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.AllPhases));
-			this.isChangedSlackNodeVoltageLevel = false;
-		}
-		// --- Reset the calculation parameter ------------------------------------------
-		this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).resetCalculationBase(currentParentNode, fmGroup);
-		
-		// --- Notify all calculation threads to (re-)restart the calculation ----------- 
-		synchronized (this.getCalculationTrigger()) {
-			this.getCalculationTrigger().notifyAll();
+			// --- Update slack node voltage level for sensor data based calculations ---
+			this.updateSlackNodeVoltage();
+			
+			// --------------------------------------------------------------------------
+			// --- (Re) execute the phase dependent electrical network calculation ------
+			// --------------------------------------------------------------------------
+			this.getPowerFlowCalculationsFinalized().clear();
+			// --- Reset the slack node voltage level? ----------------------------------
+			if (this.isChangedSlackNodeVoltageLevel==true) {
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.AllPhases));
+				this.isChangedSlackNodeVoltageLevel = false;
+			}
+			// --- Reset the calculation parameter --------------------------------------
+			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).resetCalculationBase(currentParentNode, fmGroup);
+			
+			// --- Notify all calculation threads to (re-)restart the calculation ------- 
+			synchronized (this.getCalculationTrigger()) {
+				this.getCalculationTrigger().notifyAll();
+			}
 		}
 		
 		// ------------------------------------------------------------------------------

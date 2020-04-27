@@ -96,7 +96,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	
 	/**
-	 * Initialises this behaviour.
+	 * Initializes this behaviour.
 	 */
 	private void initialize() {
 		

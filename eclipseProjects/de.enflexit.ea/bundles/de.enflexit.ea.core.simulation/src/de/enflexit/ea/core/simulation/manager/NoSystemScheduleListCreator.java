@@ -199,27 +199,29 @@ public class NoSystemScheduleListCreator {
 		
 		// --- Get EOM neighbors --------------------------------------------------------
 		Vector<NetworkComponent> eomNeighbors = this.getEomNetworkComponentNeighbors(networkElement);
-		for (int i = 0; i < eomNeighbors.size(); i++) {
-			NetworkComponent neighbor = eomNeighbors.get(i);
-			// --- Get interface settings from the actual neighbor NetworkComponent -----
-			List<InterfaceSetting> intSettingsNeighbor = null;
-			if (neighbor.getDataModel() instanceof  ScheduleList) {
-				ScheduleList sl = (ScheduleList) neighbor.getDataModel();
-				intSettingsNeighbor = this.getInterfaceSettingFromScheduleList(sl);
-			} else if (neighbor.getDataModel() instanceof TechnicalSystem) {
-				TechnicalSystem ts = (TechnicalSystem) neighbor.getDataModel();
-				intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystem(ts);
-			} else if (neighbor.getDataModel() instanceof TechnicalSystemGroup) {
-				TechnicalSystemGroup tsg = (TechnicalSystemGroup) neighbor.getDataModel();
-				intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystemGroup(tsg);
-			}
-			
-			// --- Merge new InterfaceSetting into the result list ----------------------
-			if (intSettingsNeighbor!=null && intSettingsNeighbor.size()>0) {
-				for (int j = 0; j < intSettingsNeighbor.size(); j++) {
-					InterfaceSetting intSetting = intSettingsNeighbor.get(j);
-					if (this.isInterfaceSettingInList(intSetting, isList)==false) {
-						isList.add(intSetting);
+		if (eomNeighbors!=null) {
+			for (int i = 0; i < eomNeighbors.size(); i++) {
+				NetworkComponent neighbor = eomNeighbors.get(i);
+				// --- Get interface settings from the actual neighbor NetworkComponent -----
+				List<InterfaceSetting> intSettingsNeighbor = null;
+				if (neighbor.getDataModel() instanceof  ScheduleList) {
+					ScheduleList sl = (ScheduleList) neighbor.getDataModel();
+					intSettingsNeighbor = this.getInterfaceSettingFromScheduleList(sl);
+				} else if (neighbor.getDataModel() instanceof TechnicalSystem) {
+					TechnicalSystem ts = (TechnicalSystem) neighbor.getDataModel();
+					intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystem(ts);
+				} else if (neighbor.getDataModel() instanceof TechnicalSystemGroup) {
+					TechnicalSystemGroup tsg = (TechnicalSystemGroup) neighbor.getDataModel();
+					intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystemGroup(tsg);
+				}
+				
+				// --- Merge new InterfaceSetting into the result list ----------------------
+				if (intSettingsNeighbor!=null && intSettingsNeighbor.size()>0) {
+					for (int j = 0; j < intSettingsNeighbor.size(); j++) {
+						InterfaceSetting intSetting = intSettingsNeighbor.get(j);
+						if (this.isInterfaceSettingInList(intSetting, isList)==false) {
+							isList.add(intSetting);
+						}
 					}
 				}
 			}
@@ -356,7 +358,15 @@ public class NoSystemScheduleListCreator {
 			
 			// --- Get neighbors of current round --------- 
 			Vector<NetworkComponent> netCompVectorNeighbours = this.getNetworkModel().getNeighbourNetworkComponents(netCompVectorSearch);
-			if (netCompVectorNeighbours.size() == netCompVectorSearch.size()) {
+			// --- Merge original search and result list --
+			for (int i = 0; i < netCompVectorSearch.size(); i++) {
+				NetworkComponent netCompSearch = netCompVectorSearch.get(i);
+				if (netCompVectorNeighbours.contains(netCompSearch)==false) {
+					netCompVectorNeighbours.add(netCompSearch);
+				}
+			}
+			
+			if (netCompVectorNeighbours.size()==netCompVectorSearch.size()) {
 				break; // No new results => leave ---------
 			} else {
 				netCompVectorSearch = netCompVectorNeighbours;
