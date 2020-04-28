@@ -180,8 +180,6 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	public void runEvaluation() {
 		this.runEvaluation(false);
 	}
-		
-		
 	/**
 	 * Execute the evaluation.
 	 * @param rebuildDecisionGraph If true, the decision graph will be rebuilt
@@ -194,7 +192,10 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		
 		// --- Check / do the preprocessing (e.g. a state estimation --------------------
+		String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING + this.getSubAggregationConfiguration().getID();
+		this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
 		this.doPreprocessing();
+		this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
 		
 		// --- Search by walking through time -------------------------------------------
 		while (tsse.getGlobalTime() < this.getEvaluationStepEndTime()) {
@@ -210,7 +211,10 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 			// --------------------------------------------------------------------------
 			// --- Get the possible subsequent steps and states -------------------------
 			// --------------------------------------------------------------------------
+			String delatStepID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL + this.getSubAggregationConfiguration().getID();
+			this.aggregationHandler.setPerformanceMeasurementStarted(delatStepID);
 			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, duration, rebuildDecisionGraph);
+			this.aggregationHandler.setPerformanceMeasurementFinalized(delatStepID);
 			if (deltaSteps.size()==0) {
 				System.err.println("No further 'deltaStepsPossible' => interrupt search!");
 				break;

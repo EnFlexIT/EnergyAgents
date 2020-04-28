@@ -28,6 +28,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
@@ -70,11 +71,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private static final String dateFormat = "hh:mm:ss-SSS";
 	private SimpleDateFormat sdf;
 
-	private static final String SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP  = "SimMa: Discrete-Round-Trip-Complete";
-	private static final String SIMA_MEASUREMENT_NETWORK_CALCULATIONS = "SimMa: - Aggregation-Execution     ";
-	
 	private boolean isDoSimulationMeasurements;
-	private SimulationMeasurements simulationMeasurements;
+	private static final String SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP  = "1 SimMa: Discrete-Round-Trip-Complete";
+	private static final String SIMA_MEASUREMENT_NETWORK_CALCULATIONS = "2 SimMa: - Aggregation-Execution     ";
 	
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
@@ -136,6 +135,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		
 		// --- Prepare the aggregation handler --------------------------------
 		this.getAggregationHandler();
+		// --- If measurements are activated, configure aggregation handler ---
+		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
 		this.addSimulationBehaviour();
 	}
@@ -152,33 +153,57 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	
 	
 	/**
-	 * Returns the simulation measurements.
-	 * @return the simulation measurements
+	 * Registers the performance measurements of the simulation manager if the
+	 * local variable {@link #isDoSimulationMeasurements} is set to true.
 	 */
-	public SimulationMeasurements getSimulationMeasurements() {
-		if (this.isDoSimulationMeasurements==true && simulationMeasurements==null) {
-			simulationMeasurements = new SimulationMeasurements();
+	private void registerPerformanceMeasurements() {
+		if (this.isDoSimulationMeasurements==true) {
 			int avgBase = 480;
-			simulationMeasurements.addSimulationMeasurement(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP, avgBase);
-			simulationMeasurements.addSimulationMeasurement(SIMA_MEASUREMENT_NETWORK_CALCULATIONS, avgBase);
+			// --- Activate in aggregation handler --------
+			this.getAggregationHandler().debugIsDoPerformanceMeasurements(true);
+			this.getAggregationHandler().debugSetMaxNumberForPerformanceAverage(avgBase);
+			// --- Register local measurements ------------ 
+			PerformanceMeasurements pm = PerformanceMeasurements.getInstance();
+			pm.addPerformanceMeasurement(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP, avgBase);
+			pm.addPerformanceMeasurement(SIMA_MEASUREMENT_NETWORK_CALCULATIONS, avgBase);
+			// --- Define a PerformanceGroup --------------
+			String[] pGroup = new String[8];
+			pGroup[0] = SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP;
+			pGroup[1] = SIMA_MEASUREMENT_NETWORK_CALCULATIONS;
+			pGroup[2] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION;
+			pGroup[3] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING;
+			pGroup[4] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL;
+			pGroup[5] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION;
+			pGroup[6] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION;
+			pGroup[7] = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_DISPLAY_UPDATE_EXECUTION;
+			pm.addPerformanceGroup("Simulation Procedure", pGroup);
 		}
-		return simulationMeasurements;
+	}
+	/**
+	 * Returns the singleton instance of the PerformanceMeasurements.
+	 * @return the performance measurements
+	 */
+	public PerformanceMeasurements getPerformanceMeasurements() {
+		if (this.isDoSimulationMeasurements==true) {
+			return PerformanceMeasurements.getInstance();
+		}
+		return null;
 	}
 	/**
 	 * Sets the specified measurement started.
 	 * @param taskDescriptor the task descriptor
 	 */
 	public void setMeasurementStarted(String taskDescriptor) {
-		if (this.getSimulationMeasurements()==null) return;
-		this.getSimulationMeasurements().setMeasurementStarted(taskDescriptor);
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementStarted(taskDescriptor);
 	}
 	/**
 	 * Sets the specified measurement finalized.
 	 * @param taskDescriptor the new measurement finalized
 	 */
 	public void setMeasurementFinalized(String taskDescriptor) {
-		if (this.getSimulationMeasurements()==null) return;
-		this.getSimulationMeasurements().setMeasurementFinalized(taskDescriptor);
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementFinalized(taskDescriptor);
 	}
 	
 	
@@ -591,7 +616,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				switch (this.hygridSettings.getTimeModelType()) {
 				case TimeModelDiscrete:
 					// --- (Re)Execute the network calculation ----------------
-					this.setMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);;
+					this.setMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
 					this.getAggregationHandler().runEvaluationUntil(currTime);
 					this.setMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
 					break;

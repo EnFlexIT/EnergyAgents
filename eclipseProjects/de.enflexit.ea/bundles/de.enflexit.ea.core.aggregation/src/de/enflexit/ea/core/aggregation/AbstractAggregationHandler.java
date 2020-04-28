@@ -21,6 +21,8 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.performance.PerformanceMeasurement;
+import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import energy.OptionModelController;
@@ -72,10 +74,20 @@ public abstract class AbstractAggregationHandler {
 	private HashMap<AbstractSubNetworkConfiguration, NetworkAggregationTaskThread> networkAggregationTaskThreadHashMap;
 	private Object networkAggregationTaskTrigger;
 	private List<NetworkAggregationTaskThread> networkAggregationTaskDoneList;
+	private Object localThreadTrigger;
 	
 	private Vector<AggregationListener> aggregationListenerListeners;
 	
 	// --- From here, some control variables for debugging purposes can be found -------- 
+	public static final String AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION 			= "3 AgHan: - Strategy Execution       ";
+	public static final String AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING 		= "4 AgHan: - Preprocessor             ";
+	public static final String AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL	= "5 AgHan: - Delta Steps Call         ";
+	public static final String AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION = "6 AgHan: - Network Calculation      ";
+	public static final String AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION 	= "7 AgHan: - Flow Summarization       ";
+	public static final String AGGREGATION_MEASUREMENT_DISPLAY_UPDATE_EXECUTION 	= "8 AgHan: - Display Update           ";
+	
+	private boolean debugIsDoPerformanceMeasurements;
+	private Integer debugMaxNumberForPerformanceAverage;
 	private boolean debugIsSkipActualNetworkCalculation;
 	
 	
@@ -92,8 +104,74 @@ public abstract class AbstractAggregationHandler {
 		this.ownerName = ownerName;
 		this.initialize();
 	}
+	
+	
+	/**
+	 * For debugging purposes: Can be set to true to to do performance measurements during aggregation handling.
+	 * @param debugIsDoPerformanceMeasurements the boolean value to do performance measurements
+	 */
+	public void debugIsDoPerformanceMeasurements(boolean debugIsDoPerformanceMeasurements) {
+		this.debugIsDoPerformanceMeasurements = debugIsDoPerformanceMeasurements;
+		if (this.debugIsDoPerformanceMeasurements==true) {
+			this.getPerformanceMeasurements();
+		}
+	}
+	/**
+	 * Returns if the performance measurements are activated.
+	 * @return true, if successful
+	 */
+	public boolean debugIsDoPerformanceMeasurements() {
+		return debugIsDoPerformanceMeasurements;
+	}
 
-
+	/**
+	 * For debugging purposes: Can be used to set the number of measurements that are to be used for calculate an average value.
+	 * @param newNumberForPerformanceAverage the new max number for performance average (should be >=1)
+	 */
+	public void debugSetMaxNumberForPerformanceAverage(int newNumberForPerformanceAverage) {
+		if (newNumberForPerformanceAverage>0) {
+			this.debugMaxNumberForPerformanceAverage = newNumberForPerformanceAverage;
+		}
+	}
+	/**
+	 * Return the number of measurements that should be used to calculate an average value.
+	 * @return the number of measurements to be used to calculate an average
+	 */
+	public int debugGetMaxNumberForPerformanceAverage() {
+		if (debugMaxNumberForPerformanceAverage==null || debugMaxNumberForPerformanceAverage==0) {
+			return PerformanceMeasurement.DEFAULT_MAX_NUMBER_FOR_AVERAGES;
+		}
+		return debugMaxNumberForPerformanceAverage;
+	}
+	
+	/**
+	 * Returns the singleton instance of the PerformanceMeasurements.
+	 * @return the performance measurements
+	 */
+	public PerformanceMeasurements getPerformanceMeasurements() {
+		if (this.debugIsDoPerformanceMeasurements==true) {
+			return PerformanceMeasurements.getInstance();
+		}
+		return null;
+	}
+	/**
+	 * Sets the specified measurement started.
+	 * @param taskDescriptor the task descriptor
+	 */
+	public void setPerformanceMeasurementStarted(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementStarted(taskDescriptor);
+	}
+	/**
+	 * Sets the specified measurement finalized.
+	 * @param taskDescriptor the new measurement finalized
+	 */
+	public void setPerformanceMeasurementFinalized(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementFinalized(taskDescriptor);
+	}
+	
+	
 	/**
 	 * For debugging purposes: Can be used to disable the actual network calculation during the execution of the aggregation handler.
 	 * @param isSkipNetworkCalculation the boolean value to skip the actual network calculation
@@ -108,6 +186,7 @@ public abstract class AbstractAggregationHandler {
 	public boolean debugIsSkipActualNetworkCalculation() {
 		return debugIsSkipActualNetworkCalculation;
 	}
+	
 	
 	
 	/**
@@ -915,11 +994,8 @@ public abstract class AbstractAggregationHandler {
 			}
 		}
 
-		// --- Check if done list is filled (first time!) -----------
-		this.waitForNetworkAggregationTasksDone();
 		// --- Start and wait for task threads ---------------------- 
 		this.startAndWaitForNetworkAggregationTaskThreads();;
-		
 		
 		// --- Notify listeners that calculation is done ------------
 		this.notifyListenerAboutNetworkCalculationDone();
@@ -954,7 +1030,6 @@ public abstract class AbstractAggregationHandler {
 		}
 		return netAggTaskThread;
 	}
-	
 	/**
 	 * Returns the network aggregation task trigger.
 	 * @return the calculation trigger
@@ -965,16 +1040,7 @@ public abstract class AbstractAggregationHandler {
 		}
 		return networkAggregationTaskTrigger;
 	}
-	/**
-	 * Returns the list of NetworkAggregationTaskThread's that have done their job so far.
-	 * @return the network aggregation task done list
-	 */
-	protected synchronized List<NetworkAggregationTaskThread> getNetworkAggregationTaskDoneList() {
-		if (networkAggregationTaskDoneList==null) {
-			networkAggregationTaskDoneList = new ArrayList<>();
-		}
-		return networkAggregationTaskDoneList;
-	}
+
 	/**
 	 * Starts and waits for network aggregation task threads.
 	 */
@@ -983,7 +1049,6 @@ public abstract class AbstractAggregationHandler {
 		this.startNetworkAggregationTaskThreads();
 		// --- Again wait for the end of the jobs -------------------
 		this.waitForNetworkAggregationTasksDone();
-
 	}
 	/**
 	 * (Re-)Start network aggregation task threads.
@@ -996,15 +1061,58 @@ public abstract class AbstractAggregationHandler {
 			this.getNetworkAggregationTaskTrigger().notifyAll();
 		}
 	}
+	
+	/**
+	 * Returns the list of NetworkAggregationTaskThread's that have done their job so far.
+	 * @return the network aggregation task done list
+	 */
+	protected List<NetworkAggregationTaskThread> getNetworkAggregationTaskDoneList() {
+		if (networkAggregationTaskDoneList==null) {
+			networkAggregationTaskDoneList = new ArrayList<>();
+		}
+		return networkAggregationTaskDoneList;
+	}
+	/**
+	 * Sets the specified NetworkAggregationTaskThread done. If complete, the local thread will be reactivated.
+	 * @param taskFinalized the NetworkAggregationTaskThread that was finalized
+	 */
+	protected synchronized void setNetworkAggregationTaskThreadDone(NetworkAggregationTaskThread taskFinalized) {
+		this.getNetworkAggregationTaskDoneList().add(taskFinalized);
+		if (this.isDoneNetworkAggregationTasks()==true) {
+			synchronized (this.getLocalThreadTrigger()) {
+				this.getLocalThreadTrigger().notify();
+			}
+		}
+	}
+	/**
+	 * Checks if is the NetworkAggregationTasksthreads are done.
+	 * @return true, if is done network aggregation tasks
+	 */
+	protected boolean isDoneNetworkAggregationTasks() {
+		return this.getNetworkAggregationTaskDoneList().size()==this.getNetworkAggregationTaskThreadHashMap().size();
+	}
+	
+	/**
+	 * Return the local thread trigger.
+	 * @return the local thread trigger
+	 */
+	private Object getLocalThreadTrigger() {
+		if (localThreadTrigger==null) {
+			localThreadTrigger = new Object();
+		}
+		return localThreadTrigger;
+	}
 	/**
 	 * Waits until the network aggregation tasks are done.
 	 */
 	private void waitForNetworkAggregationTasksDone() {
-		while (this.getNetworkAggregationTaskDoneList().size()<this.getNetworkAggregationTaskThreadHashMap().size()) {
-			try {
-				Thread.sleep(3);
-			} catch (InterruptedException iEx) {
-				//iEx.printStackTrace();
+		synchronized (this.getLocalThreadTrigger()) {
+			if (this.isDoneNetworkAggregationTasks()==false) {
+				try {
+					this.getLocalThreadTrigger().wait();
+				} catch (InterruptedException iEx) {
+					//iEx.printStackTrace();
+				}
 			}
 		}
 	}
@@ -1047,7 +1155,7 @@ public abstract class AbstractAggregationHandler {
 				}
 			}
 			// --- Start and wait for task threads ----------------------------
-			this.startAndWaitForNetworkAggregationTaskThreads();;
+			this.startAndWaitForNetworkAggregationTaskThreads();
 		}
 		
 	}

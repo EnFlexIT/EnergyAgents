@@ -2,6 +2,7 @@ package de.enflexit.ea.core.aggregation;
 
 import java.util.HashMap;
 
+import de.enflexit.common.performance.PerformanceMeasurements;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**
@@ -44,7 +45,28 @@ public class NetworkAggregationTaskThread extends Thread {
 		this.aggregationHandler = aggregationHandler;
 		this.subNetConfig = subNetConfig;
 		this.setName(executerThreadName + "-SubAggregationTaskThread-" + this.subNetConfig.getID());
+		this.registerPerformanceMeasurements();
 		this.start();
+	}
+	/**
+	 * Register the performance measurements if configured so in the aggregation handler .
+	 */
+	private void registerPerformanceMeasurements() {
+		PerformanceMeasurements pm = this.aggregationHandler.getPerformanceMeasurements();
+		if (pm!=null) {
+			String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(stratExMeasureID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+			String preprocessorID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(preprocessorID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+			String deltaStepsID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(deltaStepsID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+			String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(netCalcID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+			String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(flowSumID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+			String disUpMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_DISPLAY_UPDATE_EXECUTION + this.subNetConfig.getID();
+			pm.addPerformanceMeasurement(disUpMeasureID, this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+		}
 	}
 	
 	/**
@@ -89,7 +111,7 @@ public class NetworkAggregationTaskThread extends Thread {
 			// --- Wait for notification on the below HashMap -------
 			synchronized(this.aggregationHandler.getNetworkAggregationTaskTrigger()) {
 				try {
-					this.aggregationHandler.getNetworkAggregationTaskDoneList().add(this);
+					this.aggregationHandler.setNetworkAggregationTaskThreadDone(this);
 					this.aggregationHandler.getNetworkAggregationTaskTrigger().wait();
 					
 				} catch (InterruptedException iEx) {
@@ -105,14 +127,20 @@ public class NetworkAggregationTaskThread extends Thread {
 				// --- Execute the evaluation -----------------------
 				AbstractNetworkCalculationStrategy netClacStrategy = this.subNetConfig.getNetworkCalculationStrategy();
 				if (netClacStrategy!=null) {
+					String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION + this.subNetConfig.getID();
+					this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
 					netClacStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
+					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
 				}
 				break;
 
 			case CreateDisplayUpdates:
 				AbstractNetworkModelDisplayUpdater displayUpdater = this.subNetConfig.getNetworkDisplayUpdater();
 				if (displayUpdater!=null) {
+					String disUpMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_DISPLAY_UPDATE_EXECUTION + this.subNetConfig.getID();
+					this.aggregationHandler.setPerformanceMeasurementStarted(disUpMeasureID);
 					displayUpdater.updateNetworkModelDisplay(this.lastStateUpdates, this.displayTime);
+					this.aggregationHandler.setPerformanceMeasurementFinalized(disUpMeasureID);
 				}
 				break;
 				

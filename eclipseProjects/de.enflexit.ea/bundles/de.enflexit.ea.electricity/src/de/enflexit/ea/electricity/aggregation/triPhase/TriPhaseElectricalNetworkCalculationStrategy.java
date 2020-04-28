@@ -12,6 +12,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 
+import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.blackboard.TransformerPowerAnswer;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
@@ -56,8 +57,11 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	@Override
 	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup efmGroup) {
 		
-		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
+		String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.getSubAggregationConfiguration().getID();
+		String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.getSubAggregationConfiguration().getID();
 
+		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
+		
 		boolean isSkipNetworkCalculation = this.getAggregationHandler().debugIsSkipActualNetworkCalculation();
 		if (isSkipNetworkCalculation==false) {
 			
@@ -80,6 +84,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).resetCalculationBase(currentParentNode, efmGroup);
 			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).resetCalculationBase(currentParentNode, efmGroup);
 			// --- Notify all calculation threads to (re-)restart the calculation ------- 
+			this.getAggregationHandler().setPerformanceMeasurementStarted(netCalcID);
 			synchronized (this.getCalculationTrigger()) {
 				this.getCalculationTrigger().notifyAll();
 			}
@@ -89,6 +94,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		// --- Summarize interfaces that don't need a network calculation ---------------
 		// ------------------------------------------------------------------------------
 		FlowsMeasuredGroupMember efmSummarized = new FlowsMeasuredGroupMember();
+		this.getAggregationHandler().setPerformanceMeasurementStarted(flowSumID);
 		for (int i = 0; i < outerInterfaces.size(); i++) {
 			
 			TechnicalInterface ti = outerInterfaces.get(i);
@@ -107,9 +113,12 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				ex.printStackTrace();
 			}
 		}
+		this.getAggregationHandler().setPerformanceMeasurementFinalized(flowSumID);
 		
 		// --- Wait for the end of the power flow calculations --------------------------
 		this.waitUntilCalculationFinalized(this.getPowerFlowCalculationThreads().size());
+		this.getAggregationHandler().setPerformanceMeasurementFinalized(netCalcID);
+		
 		// --- Create the display notifications from the calculation results ------------  
 		this.summarizeResults(efmGroup.getGlobalTimeTo());
 		// -- Done ----------------------------------------------------------------------
