@@ -286,6 +286,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 				// --- New intermediate result ------------------------------------------
 				this.scheduleResult.setTechnicalSystemStateEvaluation(tsse);
 				this.scheduleResult.setCalculationTime(System.currentTimeMillis() - this.evaluationStart); 
+				this.applyScheduleLengthRestriction(tsse.getGlobalTime());
 				// --- Update visualization ---------------------------------------------
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override

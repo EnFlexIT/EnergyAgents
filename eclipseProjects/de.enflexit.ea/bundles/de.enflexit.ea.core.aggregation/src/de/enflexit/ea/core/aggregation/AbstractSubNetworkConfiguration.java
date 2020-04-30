@@ -377,9 +377,15 @@ public abstract class AbstractSubNetworkConfiguration {
 					netCalcStrategy = (AbstractNetworkCalculationStrategy) gc.getGroupOptionModelController().createEvaluationStrategy(netCalcStratClass.getName());
 					if (netCalcStrategy!=null) {
 						groupCalc.setGroupEvaluationStrategy(netCalcStrategy);
-						// --- Set further instance
+						// --- Set further instance -------------------------------------
 						netCalcStrategy.setAggregationHandler(this.getAggregationHandler());
 						netCalcStrategy.setSubAggregationConfiguration(this);
+						// --- Activate the performance measurements? -------------------
+						if (this.aggregationHandler.debugIsDoPerformanceMeasurements()==true) {
+							netCalcStrategy.setPerformanceMeasurementAverageBase(this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());
+							netCalcStrategy.setPerformanceMeasurementNameAddition(this.getID() + "");
+							netCalcStrategy.setDoPerformanceMeasurement(true);
+						}
 					}
 				}
 				

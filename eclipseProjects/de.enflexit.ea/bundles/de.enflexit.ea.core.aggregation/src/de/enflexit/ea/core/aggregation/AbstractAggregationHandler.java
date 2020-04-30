@@ -163,12 +163,29 @@ public abstract class AbstractAggregationHandler {
 		this.getPerformanceMeasurements().setMeasurementStarted(taskDescriptor);
 	}
 	/**
-	 * Sets the specified measurement finalized.
+	 * Sets the specified measurement finalized (applies regular and for loops).
 	 * @param taskDescriptor the new measurement finalized
 	 */
 	public void setPerformanceMeasurementFinalized(String taskDescriptor) {
 		if (this.getPerformanceMeasurements()==null) return;
 		this.getPerformanceMeasurements().setMeasurementFinalized(taskDescriptor);
+	}
+	
+	/**
+	 * Sets the loop performance measurement started / looped.
+	 * @param taskDescriptor the new loop performance measurement started
+	 */
+	public void setLoopPerformanceMeasurementStarted(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setLoopMeasurementStarted(taskDescriptor);
+	}
+	/**
+	 * Sets the specified loop measurement finalized (applies regular and for loops).
+	 * @param taskDescriptor the new measurement finalized
+	 */
+	public void setLoopPerformanceMeasurementFinalized(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setLoopMeasurementFinalized(taskDescriptor);
 	}
 	
 	
