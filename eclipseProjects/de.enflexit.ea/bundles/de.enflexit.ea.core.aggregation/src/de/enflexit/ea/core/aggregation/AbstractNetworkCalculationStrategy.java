@@ -2,7 +2,6 @@ package de.enflexit.ea.core.aggregation;
 
 import java.util.Vector;
 
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.awb.env.networkModel.NetworkModel;
@@ -287,18 +286,12 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 				this.scheduleResult.setTechnicalSystemStateEvaluation(tsse);
 				this.scheduleResult.setCalculationTime(System.currentTimeMillis() - this.evaluationStart); 
 				this.applyScheduleLengthRestriction(tsse.getGlobalTime());
-				// --- Update visualization ---------------------------------------------
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						// --- Update the result view -------------------------------------------
-						getEvaluationProcess().getScheduleController().setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleUpdated, scheduleResult));
-						// --- Remind the sub result schedules in the evaluation process ------
-						getEvaluationProcess().addSubSchedules(scheduleResult, getAddResultTreeAction().getSubScheduleHash());
-						// --- Start to collect the sub results -------------------------------
-						getAddResultTreeAction().doGroupTreeAction();
-					}
-				});
+				// --- Update the result view -------------------------------------------
+				getEvaluationProcess().getScheduleController().setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleUpdated, scheduleResult));
+				// --- Remind the sub result schedules in the evaluation process ------
+				getEvaluationProcess().addSubSchedules(scheduleResult, getAddResultTreeAction().getSubScheduleHash());
+				// --- Start to collect the sub results -------------------------------
+				getAddResultTreeAction().doGroupTreeAction();
 			}
 		}
 	}

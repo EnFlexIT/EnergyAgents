@@ -359,8 +359,8 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		for (int i=transformedSchedule.getTechnicalSystemStateList().size()-1; i>=0; i--) {
 			this.addToScheduleEnergyTransmission(transformedSchedule.getTechnicalSystemStateList().get(i));
 		}
-		// --- Activate length restriction by reset true ------------
-		this.getScheduleEnergyTransmission().setRealTimeSchedule(true);
+		// --- Apply length restriction check -----------------------
+		this.getScheduleEnergyTransmission().applyScheduleLengthRestriction(this.getIoSimulated().getTime());
 		
 		if (this.isDebug()==true) {
 			int sizeNew = this.getScheduleEnergyTransmission().getTechnicalSystemStateList().size();
