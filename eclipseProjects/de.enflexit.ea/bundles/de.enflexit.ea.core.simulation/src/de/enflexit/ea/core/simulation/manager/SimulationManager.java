@@ -73,7 +73,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private static final String dateFormat = "hh:mm:ss-SSS";
 	private SimpleDateFormat sdf;
 
-	private boolean isDoSimulationMeasurements;
+	private boolean isDoPerformanceMeasurements;
 	private static final String SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP  = "1 SimMa: Discrete-Round-Trip-Complete";
 	private static final String SIMA_MEASUREMENT_NETWORK_CALCULATIONS = "2 SimMa: - Aggregation-Execution     ";
 	
@@ -104,7 +104,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 
 		// --- Set debugging option -------------------------------------------
 		this.debug = false;
-		this.isDoSimulationMeasurements = true;
+		this.isDoPerformanceMeasurements = false;
 		
 		// --- Start the BlackBoardAgent --------------------------------------
 		this.startBlackBoardAgent();
@@ -155,10 +155,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	
 	/**
 	 * Registers the performance measurements of the simulation manager if the
-	 * local variable {@link #isDoSimulationMeasurements} is set to true.
+	 * local variable {@link #isDoPerformanceMeasurements} is set to true.
 	 */
 	private void registerPerformanceMeasurements() {
-		if (this.isDoSimulationMeasurements==true) {
+		if (this.isDoPerformanceMeasurements==true) {
 			
 			// --- Get PerformanceMeasurements instance ---
 			PerformanceMeasurements pm = PerformanceMeasurements.getInstance();
@@ -193,7 +193,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 
 			pm.addPerformanceGroup("Simulation Procedure", pGroup, true);
 
-			// --- 
+			// --- Define the calculation base ------------
 			int avgBase = 480;
 			
 			// --- Activate in aggregation handler --------
@@ -211,7 +211,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * @return the performance measurements
 	 */
 	public PerformanceMeasurements getPerformanceMeasurements() {
-		if (this.isDoSimulationMeasurements==true) {
+		if (this.isDoPerformanceMeasurements==true) {
 			return PerformanceMeasurements.getInstance();
 		}
 		return null;
