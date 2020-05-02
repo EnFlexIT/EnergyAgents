@@ -126,6 +126,9 @@ public abstract class AbstractStateQueueKeeper {
 		// --- Finally, update the average ----------------
 		this.updateTickingIntervalAverage();
 
+		// --- Is there enough data until simulation end --
+		if (this.isStateDataUntilSimulationEndTime()==true) return;
+		
 		// --- Recommend to reload data? ------------------
 		int noOfStatesInQueueRemaining   = this.getNumberOfStatesInQueueRemaining();
 		long durationWhereNoStatesRemain = this.getTickingIntervalAverage() * noOfStatesInQueueRemaining;
@@ -147,6 +150,28 @@ public abstract class AbstractStateQueueKeeper {
 		// --- Start a SystemStateLoadRequest? ------------
 		this.checkRemainingStatesAndPossiblyStartLoading(this.getNumberOfStatesInQueueRemaining(), isDataReloadRecommended);
 	}
+	
+	/**
+	 * Checks if is state data until the simulation end time available.
+	 * @return true, if available
+	 */
+	private boolean isStateDataUntilSimulationEndTime() {
+		
+		long simEndTime = Long.MAX_VALUE;
+		switch (this.eomInputStream.getIoSimulated().getTimeModelType()) {
+		case TimeModelDiscrete:
+			simEndTime = this.eomInputStream.getIoSimulated().getTimeModelDiscrete().getTimeStop();
+			break;
+		case TimeModelContinuous:
+			simEndTime = this.eomInputStream.getIoSimulated().getTimeModelContinuous().getTimeStop();
+			break;
+		}
+		
+		long queueEndTime = this.getScheduleEnergyTransmission().getTechnicalSystemStateList().get(0).getGlobalTime();
+				
+		return queueEndTime >= simEndTime;
+	}
+	
 	
 	/**
 	 * Has to consider the specified, remaining number of states and finally decide if a load process needs to be executed.
