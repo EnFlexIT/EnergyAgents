@@ -57,6 +57,7 @@ public abstract class AbstractAggregationHandler {
 	private Object ownerInstance;
 	
 	private NetworkModel networkModel;
+	private long evaluationEndTime;
 	private String timeFormat;
 	private boolean headlessOperation;
 	private ExecutionDataBase executionDataBase;
@@ -982,6 +983,21 @@ public abstract class AbstractAggregationHandler {
 	}	
 	
 	/**
+	 * Returns the (possibly current and interim) evaluation end time.
+	 * @return the evaluation end time
+	 */
+	public long getEvaluationEndTime() {
+		return evaluationEndTime;
+	}
+	/**
+	 * Sets the (possibly current and interim) evaluation end time.
+	 * @param evaluationEndTime the new evaluation end time
+	 */
+	public void setEvaluationEndTime(long evaluationEndTime) {
+		this.evaluationEndTime = evaluationEndTime;
+	}
+	
+	/**
 	 * Runs the aggregators evaluations or network calculation until the specified time.
 	 * The method will return when the calculation is done.
 	 * @param timeUntil the time until the evaluation should be executed
@@ -998,6 +1014,9 @@ public abstract class AbstractAggregationHandler {
 	 */
 	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph) {
 
+		// --- Remind the current evaluation end time ---------------
+		this.setEvaluationEndTime(timeUntil);
+		
 		// --- Assign actual job to task thread ---------------------
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			// --- Get corresponding NetworkCalculationStrategy -----

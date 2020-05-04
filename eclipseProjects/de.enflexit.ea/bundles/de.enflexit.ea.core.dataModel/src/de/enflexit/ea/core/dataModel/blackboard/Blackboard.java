@@ -25,6 +25,7 @@ public class Blackboard {
 	private Object notificationTrigger;
 	private boolean doTerminate;
 	
+	private long stateTime;
 	private NetworkModel networkModel;
 	
 	private HashMap<String, ElectricalNodeState> graphNodeStates;
@@ -125,6 +126,20 @@ public class Blackboard {
 		this.transformerStates = null;	
 	}
 	
+	/**
+	 * Sets the state time of the blackboard and its variables.
+	 * @param stateTime the new state time
+	 */
+	public void setStateTime(long stateTime) {
+		this.stateTime = stateTime;
+	}
+	/**
+	 * Returns the state time of the blackboard states.
+	 * @return the state time
+	 */
+	public long getStateTime() {
+		return stateTime;
+	}
 	
 	/**
 	 * Gets the {@link NetworkModel}.
@@ -172,5 +187,6 @@ public class Blackboard {
 		}
 		return transformerStates;
 	}
+	
 	
 }

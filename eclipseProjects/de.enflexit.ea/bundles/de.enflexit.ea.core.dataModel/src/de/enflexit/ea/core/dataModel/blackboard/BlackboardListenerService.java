@@ -14,5 +14,12 @@ public interface BlackboardListenerService {
 	 * @param blackboard the blackboard with its current state
 	 */
 	public void onNetworkCalculationDone(Blackboard blackboard);
+
+	
+	/**
+	 * Will be invoked if the simulation is done or finished and give a chance to cleanup 
+	 * variable used in service.
+	 */
+	public void onSimulationDone();
 	
 }

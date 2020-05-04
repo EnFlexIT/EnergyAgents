@@ -727,6 +727,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 		}
 
+		// --- Set stte time to the blackboard --------------------------------
+		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
+		
 		// --- Notify blackboard listeners about the new results --------------
 		synchronized (this.getBlackboard().getNotificationTrigger()) {
 			this.getBlackboard().getNotificationTrigger().notifyAll();

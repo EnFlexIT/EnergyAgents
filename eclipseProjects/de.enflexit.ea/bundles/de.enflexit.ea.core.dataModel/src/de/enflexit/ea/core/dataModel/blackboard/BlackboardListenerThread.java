@@ -12,8 +12,12 @@ import de.enflexit.common.ServiceFinder;
  */
 public class BlackboardListenerThread extends Thread {
 
-	private Blackboard blackboard;
+	private enum Job {
+		DoneNetworkCalculation,
+		DoneSimulation
+	}
 	
+	private Blackboard blackboard;
 	private List<BlackboardListenerService> blackboardListenerServiceList; 
 	
 	
@@ -30,17 +34,6 @@ public class BlackboardListenerThread extends Thread {
 			blackboard = Blackboard.getInstance();
 		}
 		return blackboard;
-	}
-	
-	/**
-	 * Returns the list of registered {@link BlackboardListenerService}s.
-	 * @return the blackboard listener service list
-	 */
-	private List<BlackboardListenerService> getBlackboardListenerServiceList() {
-		if (blackboardListenerServiceList==null) {
-			blackboardListenerServiceList = ServiceFinder.findServices(BlackboardListenerService.class);;
-		}
-		return blackboardListenerServiceList;
 	}
 	
 	/* (non-Javadoc)
@@ -62,20 +55,56 @@ public class BlackboardListenerThread extends Thread {
 			}
 			
 			// --- Terminate thread? --------------------------------
-			if (this.getBlackboard().isDoTerminate()==true) break;
-			
-			// --- Notify registered new Blackboard state -----------
-			for (int i = 0; i < this.getBlackboardListenerServiceList().size(); i++) {
-				try {
-					this.getBlackboardListenerServiceList().get(i).onNetworkCalculationDone(this.getBlackboard());
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+			if (this.getBlackboard().isDoTerminate()==true) {
+				this.notifyServices(Job.DoneSimulation);
+				break;
 			}
+			
+			// --- Notify about new Blackboard state ----------------
+			this.notifyServices(Job.DoneNetworkCalculation);
+			
 			// --- Terminate thread? --------------------------------
-			if (this.getBlackboard().isDoTerminate()==true) break;
+			if (this.getBlackboard().isDoTerminate()==true) {
+				this.notifyServices(Job.DoneSimulation);
+				break;
+			}
 		}
 		
+	}
+	
+	
+	/**
+	 * Returns the list of registered {@link BlackboardListenerService}s.
+	 * @return the blackboard listener service list
+	 */
+	private List<BlackboardListenerService> getBlackboardListenerServiceList() {
+		if (blackboardListenerServiceList==null) {
+			blackboardListenerServiceList = ServiceFinder.findServices(BlackboardListenerService.class);;
+		}
+		return blackboardListenerServiceList;
+	}
+	/**
+	 * Notifies all services.
+	 * @param job the job to be called on the service interfaces
+	 */
+	private void notifyServices(Job job) {
+		
+		for (int i = 0; i < this.getBlackboardListenerServiceList().size(); i++) {
+			try {
+				switch (job) {
+				case DoneNetworkCalculation:
+					this.getBlackboardListenerServiceList().get(i).onNetworkCalculationDone(this.getBlackboard());
+					break;
+
+				case DoneSimulation:
+					this.getBlackboardListenerServiceList().get(i).onSimulationDone();
+					break;
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 }
