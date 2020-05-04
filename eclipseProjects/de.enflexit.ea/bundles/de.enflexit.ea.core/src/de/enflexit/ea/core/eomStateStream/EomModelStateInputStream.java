@@ -43,7 +43,7 @@ import energygroup.evaluation.IOSelectTreeAction;
  */
 public class EomModelStateInputStream extends AbstractStateInputStream {
 
-	protected boolean debug = true;
+	protected boolean debug = false;
 	protected String debugNetworkComponentID = "LV1.101 Bus 11";
 	
 	private SystemStateDispatcherAgentConnector dispatchConnector;
