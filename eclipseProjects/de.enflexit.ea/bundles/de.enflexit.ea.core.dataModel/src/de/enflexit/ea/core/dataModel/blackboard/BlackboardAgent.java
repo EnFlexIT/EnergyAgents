@@ -45,7 +45,7 @@ public class BlackboardAgent extends Agent {
 		}
 		
 		this.tbf = new ThreadedBehaviourFactory();
-		this.simServiceBehaviour = new SimServiceBehaviour(this, this.blackboard);
+		this.simServiceBehaviour = new SimServiceBehaviour(this);
 		this.addBehaviour(tbf.wrap(this.simServiceBehaviour));
 	}
 	
@@ -59,13 +59,23 @@ public class BlackboardAgent extends Agent {
 	}
 	
 	/**
+	 * Return the instance of the blackboard.
+	 * @return the blackboard
+	 */
+	public Blackboard getBlackboard() {
+		if (blackboard==null) {
+			blackboard = Blackboard.getInstance();
+		}
+		return blackboard;
+	}
+	
+	/**
 	 * The Class SimServiceBehaviour connects this agent to the {@link SimulationService}.
 	 */
 	private class SimServiceBehaviour extends SimulationServiceBehaviour {
 
 		private static final long serialVersionUID = 3060575302036731885L;
 
-		private Blackboard blackboard;
 		private Vector<BlackboardRequest> bbRequestVector;
 		private boolean exit;
 		
@@ -73,9 +83,8 @@ public class BlackboardAgent extends Agent {
 		 * Instantiates a new simulation service behaviour.
 		 * @param agent the agent
 		 */
-		public SimServiceBehaviour(Agent agent, Blackboard blackboard) {
+		public SimServiceBehaviour(Agent agent) {
 			super(agent, true);
-			this.blackboard = blackboard;
 		}
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.sensoring.ServiceSensorInterface#setPauseSimulation(boolean)
@@ -119,8 +128,8 @@ public class BlackboardAgent extends Agent {
 			
 			try {
 				// --- Wait for the next restart call -------------------------
-				synchronized (this.blackboard.getNotificationTrigger()) {
-					this.blackboard.getNotificationTrigger().wait();	
+				synchronized (BlackboardAgent.this.getBlackboard().getNotificationTrigger()) {
+					BlackboardAgent.this.getBlackboard().getNotificationTrigger().wait();	
 				}
 				
 			} catch (IllegalMonitorStateException imse) {
@@ -129,7 +138,7 @@ public class BlackboardAgent extends Agent {
 				// ie.printStackTrace();
 			}
 			
-			if (this.isExit()==false) {
+			if (this.isExit()==false && BlackboardAgent.this.getBlackboard().isDoTerminate()==false) {
 				// --- Execute to answer the BlackboardRequestVector ----------
 				this.answerBlackboardRequestVector();
 				// --- Restart this behaviour --------------------------------- 
@@ -193,13 +202,13 @@ public class BlackboardAgent extends Agent {
 						// --- Special case for sensor agents -----------------
 						RequestSpecifier spec1 = bbRequest.getRequestSpecifierVector().get(0);
 						RequestSpecifier spec2 = bbRequest.getRequestSpecifierVector().get(1);
-						ElectricalNodeState nodeState = this.blackboard.getGraphNodeStates().get(spec1.getIdentifier());
+						ElectricalNodeState nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec1.getIdentifier());
 						if (nodeState==null) {
-							nodeState = this.blackboard.getGraphNodeStates().get(spec2.getIdentifier());
+							nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec2.getIdentifier());
 						}
-						CableState cableState = this.blackboard.getNetworkComponentStates().get(spec2.getIdentifier());
+						CableState cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec2.getIdentifier());
 						if (cableState==null) {
-							cableState = this.blackboard.getNetworkComponentStates().get(spec1.getIdentifier());
+							cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec1.getIdentifier());
 						}
 						if (nodeState!=null & cableState!=null) {
 							answer = new VoltageAndCurrentLevelAnswer(spec1.getIdentifier(), nodeState, cableState);
@@ -237,7 +246,7 @@ public class BlackboardAgent extends Agent {
 		private AbstractBlackoardAnswer getBlackboardAnswer(RequestSpecifier singleRequest) {
 		
 			AbstractBlackoardAnswer answer = null;
-			NetworkModel networkModel = this.blackboard.getNetworkModel();
+			NetworkModel networkModel = BlackboardAgent.this.getBlackboard().getNetworkModel();
 			
 			switch (singleRequest.getRequestObjective()) {
 			case NetworkModel:
@@ -252,16 +261,16 @@ public class BlackboardAgent extends Agent {
 				answer = new GraphNodeAnswer(singleRequest.getIdentifier(), netComp.getDataModel());
 				break;
 			case PowerFlowCalculationResults:
-				answer = new PowerFlowCalculationResultAnswer(this.blackboard.getGraphNodeStates(), this.blackboard.getNetworkComponentStates());
+				answer = new PowerFlowCalculationResultAnswer(BlackboardAgent.this.getBlackboard().getGraphNodeStates(), BlackboardAgent.this.getBlackboard().getNetworkComponentStates());
 				break;
 			case TransformerPower:
-				answer = new TransformerPowerAnswer(singleRequest.getIdentifier(), this.blackboard.getTransformerStates().get(singleRequest.getIdentifier()));
+				answer = new TransformerPowerAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getTransformerStates().get(singleRequest.getIdentifier()));
 				break;
 			case VoltageLevels:
-				answer = new VoltageLevelAnswer(singleRequest.getIdentifier(), this.blackboard.getGraphNodeStates().get(singleRequest.getIdentifier()));
+				answer = new VoltageLevelAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(singleRequest.getIdentifier()));
 				break;
 			case CurrentLevels:
-				answer = new CurrentLevelAnswer(singleRequest.getIdentifier(), this.blackboard.getNetworkComponentStates().get(singleRequest.getIdentifier()));
+				answer = new CurrentLevelAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(singleRequest.getIdentifier()));
 				break;
 			case VoltageAndCurrentLevels:
 				break;
@@ -270,8 +279,6 @@ public class BlackboardAgent extends Agent {
 		}
 		
 	} // end sub class 
-	
-	
 	
 	
 }

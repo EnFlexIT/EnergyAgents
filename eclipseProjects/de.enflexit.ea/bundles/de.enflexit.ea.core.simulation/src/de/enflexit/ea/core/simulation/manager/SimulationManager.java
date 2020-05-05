@@ -149,6 +149,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	protected void takeDown() {
 		this.getAggregationHandler().terminate();
 		this.stopNetworkCalculationExecuter();
+		this.getBlackboard().stopBlackboardListenerServiceThread();
 		super.takeDown();
 	}
 	
@@ -290,7 +291,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	public Blackboard getBlackboard() {
 		if (blackboard==null) {
-			blackboard = new Blackboard();
+			blackboard = Blackboard.getInstance();
+			blackboard.startBlackboardListenerServiceThread();
 		}
 		return blackboard;
 	}
@@ -725,6 +727,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 		}
 
+		// --- Set stte time to the blackboard --------------------------------
+		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
+		
 		// --- Notify blackboard listeners about the new results --------------
 		synchronized (this.getBlackboard().getNotificationTrigger()) {
 			this.getBlackboard().getNotificationTrigger().notifyAll();
