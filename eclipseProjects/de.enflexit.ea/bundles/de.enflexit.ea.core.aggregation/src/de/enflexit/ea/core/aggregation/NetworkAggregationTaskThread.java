@@ -46,7 +46,6 @@ public class NetworkAggregationTaskThread extends Thread {
 		this.subNetConfig = subNetConfig;
 		this.setName(executerThreadName + "-SubAggregationTaskThread-" + this.subNetConfig.getID());
 		this.registerPerformanceMeasurements();
-		this.start();
 	}
 	/**
 	 * Register the performance measurements if configured so in the aggregation handler .
@@ -109,18 +108,22 @@ public class NetworkAggregationTaskThread extends Thread {
 		while (true) {
 			
 			// --- Wait for notification on the below HashMap -------
-			synchronized(this.aggregationHandler.getNetworkAggregationTaskTrigger()) {
-				try {
-					this.aggregationHandler.setNetworkAggregationTaskThreadDone(this);
-					this.aggregationHandler.getNetworkAggregationTaskTrigger().wait();
-					
-				} catch (InterruptedException iEx) {
-					//iEx.printStackTrace();
+			if (this.currentJob==null) {
+				synchronized(this.aggregationHandler.getNetworkAggregationTaskTrigger()) {
+					try {
+						this.aggregationHandler.setNetworkAggregationTaskThreadDone(this);
+						this.aggregationHandler.getNetworkAggregationTaskTrigger().wait();
+						
+					} catch (InterruptedException iEx) {
+						//iEx.printStackTrace();
+					}
 				}
 			}
 			
 			// --- Terminate this thread ? --------------------------
 			if (this.isDoTerminate()==true) break;
+			
+			if (this.currentJob==null) continue;
 			
 			switch (this.currentJob) {
 			case ExecuteNetworkCalculation:
@@ -132,6 +135,7 @@ public class NetworkAggregationTaskThread extends Thread {
 					netClacStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
 					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
 				}
+				this.currentJob = null;
 				break;
 
 			case CreateDisplayUpdates:
@@ -142,10 +146,11 @@ public class NetworkAggregationTaskThread extends Thread {
 					displayUpdater.updateNetworkModelDisplay(this.lastStateUpdates, this.displayTime);
 					this.aggregationHandler.setPerformanceMeasurementFinalized(disUpMeasureID);
 				}
+				this.currentJob = null;
 				break;
 				
-			default:
-				// --- Do Nothing -----
+			case DoNothing:
+				this.currentJob = null;
 				break;
 			}
 			

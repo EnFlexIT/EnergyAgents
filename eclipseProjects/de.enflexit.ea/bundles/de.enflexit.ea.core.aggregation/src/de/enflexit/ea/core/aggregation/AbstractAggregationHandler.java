@@ -1012,7 +1012,7 @@ public abstract class AbstractAggregationHandler {
 		}
 
 		// --- Start and wait for task threads ---------------------- 
-		this.startAndWaitForNetworkAggregationTaskThreads();;
+		this.startAndWaitForNetworkAggregationTaskThreads();
 		
 		// --- Notify listeners that calculation is done ------------
 		this.notifyListenerAboutNetworkCalculationDone();
@@ -1044,6 +1044,7 @@ public abstract class AbstractAggregationHandler {
 		if (netAggTaskThread==null) {
 			netAggTaskThread = new NetworkAggregationTaskThread(this, subNetConfig, Thread.currentThread().getName());
 			this.getNetworkAggregationTaskThreadHashMap().put(subNetConfig, netAggTaskThread);
+			netAggTaskThread.start();
 		}
 		return netAggTaskThread;
 	}
