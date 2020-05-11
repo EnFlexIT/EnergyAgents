@@ -108,7 +108,7 @@ public class ScheduleTimeRangeListener extends ScheduleTimeRangeAdapter {
 			}
 			// --- Get components to do the reload on ---------------
 			Vector<DataModelNetworkElement> reloadVector = this.getNetworkElementsToReload();
-			this.graphController.loadDataModelNetworkElements(isAwMainWindowEvent, reloadVector);
+			this.graphController.loadDataModelNetworkElements(isAwMainWindowEvent, reloadVector, null);
 			// --- Set project unsaved ------------------------------ 
 			this.graphController.setProjectUnsaved();
 		}

@@ -125,6 +125,14 @@ public class CSV_FileImporterMediumVoltageGrid extends AbstractNetworkModelCsvIm
 	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave() {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#getMaxNumberOfThreadsForSaveAction()
+	 */
+	@Override
+	public Integer getMaxNumberOfThreadsForSaveAction() {
+		return null;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see hygrid.electricalNetwork.csvImport.CsvFileImporter#importGraphFromFile(java.io.File)

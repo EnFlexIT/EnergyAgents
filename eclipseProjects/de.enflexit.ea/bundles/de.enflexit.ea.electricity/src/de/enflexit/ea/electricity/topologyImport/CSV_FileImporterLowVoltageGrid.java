@@ -66,6 +66,13 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 	public Vector<DataModelNetworkElement> getDataModelNetworkElementToSave() {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.awb.env.networkModel.persistence.NetworkModelImportService#getMaxNumberOfThreadsForSaveAction()
+	 */
+	@Override
+	public Integer getMaxNumberOfThreadsForSaveAction() {
+		return null;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter#importNetworkModelFromFile(java.io.File)
