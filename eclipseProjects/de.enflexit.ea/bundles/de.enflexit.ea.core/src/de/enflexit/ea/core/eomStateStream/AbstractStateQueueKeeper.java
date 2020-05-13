@@ -31,7 +31,7 @@ public abstract class AbstractStateQueueKeeper {
 	private long tickingIntervalAverage;
 	
 	// --- Variables to measure provisioning of new state data ----------------
-	private long provisionTimeStart = 0;
+	private Long provisionTimeStart = null;
 	private List<Long> provisionIntervalList;
 	private long provisionIntervalAverage = 5000;	// 5s
 	
@@ -136,11 +136,11 @@ public abstract class AbstractStateQueueKeeper {
 		boolean isDataReloadRecommended  = isMoreThanThreeTicks==true && (noOfStatesInQueueRemaining<=this.minNumberOfStates || durationWhereNoStatesRemain <= (this.getProvisionIntervalAverage() * 1.5));
 
 		// --- Print some debugging output? ---------------
-		if (this.isDebug()==true && isDataReloadRecommended) {
+		if (this.isDebug()==true && isDataReloadRecommended==true  && this.isProvisioningPending()==false) {
 			String debugText = "[" + this.getClass().getSimpleName() + "]";
 			debugText += "[" + this.eomInputStream.getNetworkComponent().getId() + "] ";
 			debugText += "Ticking Average: " + this.getTickingIntervalAverage() + " ms, ";
-			debugText += "Remaining States in queue: " + this.getNumberOfStatesInQueueRemaining() + ", "; 
+			debugText += "Remaining States in queue: " + this.getNumberOfStatesInQueueRemaining() + " (" + this.getNumberOfStatesInQueue() + "), "; 
 			debugText += "Recommend to reload: " + isDataReloadRecommended + ", ";
 			debugText += "Provisioning Time for new states " + this.getProvisionIntervalAverage() + " ms";
 			System.out.println(debugText);
@@ -251,10 +251,19 @@ public abstract class AbstractStateQueueKeeper {
 	 */
 	protected void setProvisioningFinalized() {
 		long provisionDuration = System.currentTimeMillis() - this.provisionTimeStart;
+		this.provisionTimeStart = null;
 		this.getProvisionIntervalList().add(provisionDuration);
 		this.updateProvisionIntervalAverage();
 	}
 
+	/**
+	 * Checks if the data provisioning is running / pending 
+	 * @return true, if the state queue keeper is waiting for data 
+	 */
+	protected boolean isProvisioningPending() {
+		return this.provisionTimeStart!=null;
+	}
+	
 	/**
 	 * Return the list of provision interval list.
 	 * @return the provision interval list

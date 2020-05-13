@@ -44,7 +44,7 @@ import energygroup.evaluation.IOSelectTreeAction;
 public class EomModelStateInputStream extends AbstractStateInputStream {
 
 	protected boolean debug = false;
-	protected String debugNetworkComponentID = "LV1.101 Bus 11";
+	protected String debugNetworkComponentID = "LV3.101 Bus 1";
 	
 	private SystemStateDispatcherAgentConnector dispatchConnector;
 	private AbstractStateQueueKeeper stateQueueKeeper;
@@ -261,7 +261,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		}
 		
 		// --- Set the schedule that is to be used for simulation -------------
-		this.setScheduleToExecute(scheduleToUse);
+		this.setScheduleEnergyTransmission(this.getScheduleToExecuteTransformed(scheduleToUse));
 	}
 	/**
 	 * Waits for the end of an evaluation process.
@@ -274,17 +274,6 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 				ie.printStackTrace();
 			}
 		}
-	}
-	
-	/**
-	 * Sets the schedule to execute as well as the Schedule that is used for the energy and state transmission to the SimulationManager.
-	 * @param scheduleToExecute the new {@link Schedule} to execute
-	 */
-	public void setScheduleToExecute(Schedule scheduleToExecute) {
-		
-		Schedule stet = this.getScheduleToExecuteTransformed(scheduleToExecute);
-		if (stet!=null) stet.setRealTimeSchedule(true);
-		this.setScheduleEnergyTransmission(stet);
 	}
 	/**
 	 * Will transform the specified Schedule to a timely equidistant Schedule (for discrete simulations) or
@@ -326,9 +315,17 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * @see ScheduleList_StorageHandler#convertToListSchedule(Schedule)
 	 */
 	public void setScheduleEnergyTransmission(Schedule scheduleEnergyTransmission) {
-		this.scheduleEnergyTransmission = scheduleEnergyTransmission;
-		this.indexLastStateAccess = null;
+		
 		ScheduleList_StorageHandler.convertToListSchedule(scheduleEnergyTransmission);
+		this.scheduleEnergyTransmission = scheduleEnergyTransmission;
+		if (this.scheduleEnergyTransmission!=null) {
+			this.scheduleEnergyTransmission.setRealTimeSchedule(true, false);
+			if (this.scheduleEnergyTransmission!=null && this.scheduleEnergyTransmission.getTechnicalSystemStateList().size()>0) {
+				this.indexLastStateAccess = (scheduleEnergyTransmission.getTechnicalSystemStateList().size()-1);
+			} else {
+				this.indexLastStateAccess = null;
+			}	
+		}
 	}
 	/**
 	 * Returns the Schedule for the energy and state transmission to the {@link SimulationManagerAgent}
@@ -360,11 +357,27 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 			this.addToScheduleEnergyTransmission(transformedSchedule.getTechnicalSystemStateList().get(i));
 		}
 		// --- Apply length restriction check -----------------------
+		int sizeInBetween = this.getScheduleEnergyTransmission().getTechnicalSystemStateList().size();
 		this.getScheduleEnergyTransmission().applyScheduleLengthRestriction(this.getIoSimulated().getTime());
 		
 		if (this.isDebug()==true) {
+
+			String msgPrefix = "[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] ";
+			
+			//scheduleToAdd.updateStateTimes();
+			//long timeDeliveredFrom = scheduleToAdd.getStateTimeFrom();
+			//long timeDeliveredTo = scheduleToAdd.getStateTimeTo();
+			
+			//transformedSchedule.updateStateTimes();
+			//long timeTransforemdFrom = transformedSchedule.getStateTimeFrom();
+			//long timeTransforemdTo = transformedSchedule.getStateTimeTo();
+			
+			//SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+			//System.out.println(msgPrefix + "Time Range of delivered data   - From: " + sdf.format(new Date(timeDeliveredFrom)) + ", To: " +sdf.format(new Date(timeDeliveredTo)));
+			//System.out.println(msgPrefix + "Time Range of transformed data - From: " + sdf.format(new Date(timeTransforemdFrom)) + ", To: " +sdf.format(new Date(timeTransforemdTo)));
+			
 			int sizeNew = this.getScheduleEnergyTransmission().getTechnicalSystemStateList().size();
-			System.out.println("[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] Number of states in transmision queue before/after: " + sizeOld + "/" + sizeNew + " => added " + transformedSchedule.getTechnicalSystemStateList().size() + " new states.");
+			System.out.println(msgPrefix + "Number of states in transmision queue before/between/after: " + sizeOld + "/" + sizeInBetween + "/" + sizeNew + " => added " + transformedSchedule.getTechnicalSystemStateList().size() + " new states.");
 		}
 	}
 	/**
@@ -382,7 +395,9 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		int newIndex = oldIndex + 1;
 		
 		List<TechnicalSystemStateEvaluation> tsseList = this.getScheduleEnergyTransmission().getTechnicalSystemStateList();
-		if (tsseToAdd.getGlobalTime()> tsseList.get(0).getGlobalTime()) {
+		long timeInListLast = tsseList.get(0).getGlobalTime();
+		long timeAddToList  = tsseToAdd.getGlobalTime(); 
+		if (timeAddToList > timeInListLast) {
 			tsseList.add(0, tsseToAdd);
 			this.setIndexLastStateAccess(newIndex);
 		}
