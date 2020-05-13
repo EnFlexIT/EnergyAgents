@@ -841,6 +841,11 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		Vector<PlugIn> projectPlugIns = this.getProject().getPlugInsLoaded();
 		for(int i=0; i<projectPlugIns.size(); i++) {
 			PlugIn plugIn = projectPlugIns.get(i);
+			
+			// --- The AWBIntegration PlugIn won't be recognized as required by the old approach, since it is no longer located in a project bundle 
+			//TODO find a better solution
+			if (plugIn instanceof AWBIntegrationPlugIn) continue;
+			
 			Bundle pluginBundle = FrameworkUtil.getBundle(plugIn.getClass());
 			if (this.isBundleIncluded(pluginBundle)==false) {
 				projectForDeployment.removePlugInClassReference(plugIn.getClassReference());
