@@ -18,7 +18,7 @@
         <entry>
             <key>Breaker</key>
             <value>
-                <adapterClass>hygrid.env.adapter.triPhase.TriPhaseBreakerAdapter</adapterClass>
+                <adapterClass>de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseBreakerAdapter</adapterClass>
                 <color>-3407668</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Breaker.png</edgeImage>
@@ -30,8 +30,8 @@
         <entry>
             <key>CEA</key>
             <value>
-                <adapterClass>hygrid.agent.centralExecutiveAgent.dataModel.CeaNetworkAdapter</adapterClass>
-                <agentClass>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</agentClass>
+                <adapterClass>de.enflexit.ea.core.centralExecutiveAgent.dataModel.CeaNetworkAdapter</adapterClass>
+                <agentClass>de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent</agentClass>
                 <color>-16777216</color>
                 <domain>Coordination</domain>
                 <edgeImage>/energy-agent/images/Marvin15DPI.png</edgeImage>
@@ -43,7 +43,7 @@
         <entry>
             <key>Cable</key>
             <value>
-                <adapterClass>hygrid.env.adapter.triPhase.TriPhaseCableAdapter</adapterClass>
+                <adapterClass>de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseCableAdapter</adapterClass>
                 <color>-16777216</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>MissingIcon</edgeImage>
@@ -56,7 +56,7 @@
             <key>CableCabinet</key>
             <value>
                 <adapterClass>de.enflexit.eom.awb.adapter.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
+                <agentClass>de.enflexit.ea.prosumer.ProsumerAgent</agentClass>
                 <color>-5000269</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeWidth>15.0</edgeWidth>
@@ -68,7 +68,7 @@
             <key>Prosumer</key>
             <value>
                 <adapterClass>de.enflexit.eom.awb.adapter.EomAdapter</adapterClass>
-                <agentClass>hygrid.agent.prosumer.ProsumerAgent</agentClass>
+                <agentClass>de.enflexit.ea.prosumer.ProsumerAgent</agentClass>
                 <color>-16738048</color>
                 <domain>ElectricityThriPhase</domain>
                 <edgeImage>/energy-agent/images/Prosumer_Grey_Contour.png</edgeImage>
@@ -80,7 +80,7 @@
         <entry>
             <key>Sensor</key>
             <value>
-                <adapterClass>hygrid.env.adapter.triPhase.TriPhaseSensorAdapter</adapterClass>
+                <adapterClass>de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseSensorAdapter</adapterClass>
                 <agentClass>hygrid.agent.lvSensor.LVSensorAgent</agentClass>
                 <color>-13395457</color>
                 <domain>ElectricityThriPhase</domain>
@@ -141,7 +141,7 @@
         <entry>
             <key>ElectricityThriPhase</key>
             <value>
-                <adapterClass>hygrid.env.adapter.triPhase.TriPhaseElectricalNodeAdapter</adapterClass>
+                <adapterClass>de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseElectricalNodeAdapter</adapterClass>
                 <clusterAgent>hygrid.agent.gridState.gridAgent.GridAgent</clusterAgent>
                 <clusterShape>Rectangle</clusterShape>
                 <showLabel>false</showLabel>
