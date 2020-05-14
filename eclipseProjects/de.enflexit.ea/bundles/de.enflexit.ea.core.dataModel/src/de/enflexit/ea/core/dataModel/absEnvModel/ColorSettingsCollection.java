@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.dataModel.absEnvModel;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -8,7 +9,9 @@ import java.util.Vector;
  * A set of interval-based color settings.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ColorSettingsCollection {
+public class ColorSettingsCollection implements Serializable{
+	
+	private static final long serialVersionUID = -6837405010868962317L;
 	
 	private boolean enabled;
 	private Vector<ColorSettingsIntervalBased> colorSettings;

@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.aggregation;
 
+import java.io.Serializable;
 import java.util.TreeMap;
 
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
@@ -10,7 +11,9 @@ import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSetti
  * General GraphElmentLayoutSettings implementation for all networks in the HyGrid-context
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayoutSettings {
+public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayoutSettings implements Serializable{
+
+	private static final long serialVersionUID = 8229652613983914843L;
 
 	private ColorSettingsCollection colorSettingsForNodes;
 	private ColorSettingsCollection colorSettingsForEdges;
