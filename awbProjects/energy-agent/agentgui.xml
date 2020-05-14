@@ -20,33 +20,33 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
     <projectView>Developer</projectView>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>false</projectTabHeaderVisible>
-    <version>1.4.0.20200404-1300</version>
+    <version>1.5.0.20200514-1200</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1586084606865</updateDateLastChecked>
+    <updateDateLastChecked>1589450156699</updateDateLastChecked>
     <environmentModel>gridEnvironment</environmentModel>
     <projectFeatures>
         <projectFeature>
-            <id>net.agenthygrid.feature.feature.group</id>
-            <name>Agent.HyGrid</name>
+            <id>de.enflexit.ea.feature.feature.group</id>
+            <name>Energ Agent - Life Cycle Feature</name>
             <repositoryName>Enflex.IT Update Site</repositoryName>
-            <repositoryURI>https://p2.enflex.it/awb/2.1/</repositoryURI>
-            <version>2.2.2.201911221138</version>
+            <repositoryURI>https://p2.enflex.it/awb/latest/</repositoryURI>
+            <version>1.0.0.202005132033</version>
         </projectFeature>
     </projectFeatures>
     <plugins>
-        <className>hygrid.plugin.HyGridPlugIn</className>
-        <className>hygrid.deployment.plugin.DeploymentPlugIn</className>
-        <className>hygrid.ops.plugin.OpsPlugin</className>
+        <className>de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn</className>
+        <className>de.enflexit.ea.deployment.plugin.DeploymentPlugIn</className>
+        <className>de.enflexit.ea.core.ops.plugin.OpsPlugin</className>
     </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
-        <subOntology>hygrid.globalDataModel.ontology.HyGridOntology</subOntology>
+        <subOntology>de.enflexit.ea.core.dataModel.ontology.HyGridOntology</subOntology>
     </subOntologies>
     <agentStartConfiguration>
         <agentVector>
-            <agent agentReference="hygrid.agent.manager.SimulationManager">
+            <agent agentReference="de.enflexit.ea.core.simulation.manager.SimulationManager">
                 <startArgumentVector>
                     <startArgument position="1" displayTitle="Headless Operation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
                 </startArgumentVector>
@@ -293,7 +293,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <userObjectClassName>hygrid.env.HyGridAbstractEnvironmentModel</userObjectClassName>
+    <userObjectClassName>de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel</userObjectClassName>
     <simulationSetupCurrent>Energy Agent Scenario 2</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
     <simulationSetups>

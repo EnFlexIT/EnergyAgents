@@ -4,79 +4,79 @@
         <agent>
             <postionNo>1</postionNo>
             <listMembership>01 AgentStartManual</listMembership>
-            <agentClassReference>hygrid.agent.manager.SimulationManager</agentClassReference>
+            <agentClassReference>de.enflexit.ea.core.simulation.manager.SimulationManager</agentClassReference>
             <startAsName>SiMa</startAsName>
         </agent>
         <agent>
             <postionNo>1</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent</agentClassReference>
             <startAsName>CeExAg</startAsName>
         </agent>
         <agent>
             <postionNo>2</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n1</startAsName>
         </agent>
         <agent>
             <postionNo>3</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n10</startAsName>
         </agent>
         <agent>
             <postionNo>4</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n11</startAsName>
         </agent>
         <agent>
             <postionNo>5</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n12</startAsName>
         </agent>
         <agent>
             <postionNo>6</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n13</startAsName>
         </agent>
         <agent>
             <postionNo>7</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n14</startAsName>
         </agent>
         <agent>
             <postionNo>8</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n15</startAsName>
         </agent>
         <agent>
             <postionNo>9</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n16</startAsName>
         </agent>
         <agent>
             <postionNo>10</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n17</startAsName>
         </agent>
         <agent>
             <postionNo>11</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n18</startAsName>
         </agent>
         <agent>
             <postionNo>12</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n19</startAsName>
         </agent>
         <agent>
@@ -88,193 +88,193 @@
         <agent>
             <postionNo>14</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n20</startAsName>
         </agent>
         <agent>
             <postionNo>15</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n21</startAsName>
         </agent>
         <agent>
             <postionNo>16</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n22</startAsName>
         </agent>
         <agent>
             <postionNo>17</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n23</startAsName>
         </agent>
         <agent>
             <postionNo>18</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n24</startAsName>
         </agent>
         <agent>
             <postionNo>19</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n25</startAsName>
         </agent>
         <agent>
             <postionNo>20</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n26</startAsName>
         </agent>
         <agent>
             <postionNo>21</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n27</startAsName>
         </agent>
         <agent>
             <postionNo>22</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n28</startAsName>
         </agent>
         <agent>
             <postionNo>23</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n29</startAsName>
         </agent>
         <agent>
             <postionNo>24</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n3</startAsName>
         </agent>
         <agent>
             <postionNo>25</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n30</startAsName>
         </agent>
         <agent>
             <postionNo>26</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n31</startAsName>
         </agent>
         <agent>
             <postionNo>27</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n32</startAsName>
         </agent>
         <agent>
             <postionNo>28</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n33</startAsName>
         </agent>
         <agent>
             <postionNo>29</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n34</startAsName>
         </agent>
         <agent>
             <postionNo>30</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n35</startAsName>
         </agent>
         <agent>
             <postionNo>31</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n36</startAsName>
         </agent>
         <agent>
             <postionNo>32</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n37</startAsName>
         </agent>
         <agent>
             <postionNo>33</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n38</startAsName>
         </agent>
         <agent>
             <postionNo>34</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n39</startAsName>
         </agent>
         <agent>
             <postionNo>35</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n4</startAsName>
         </agent>
         <agent>
             <postionNo>36</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n40</startAsName>
         </agent>
         <agent>
             <postionNo>37</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n41</startAsName>
         </agent>
         <agent>
             <postionNo>38</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n42</startAsName>
         </agent>
         <agent>
             <postionNo>39</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n43</startAsName>
         </agent>
         <agent>
             <postionNo>40</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n44</startAsName>
         </agent>
         <agent>
             <postionNo>41</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n45</startAsName>
         </agent>
         <agent>
             <postionNo>42</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n46</startAsName>
         </agent>
         <agent>
             <postionNo>43</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n47</startAsName>
         </agent>
         <agent>
             <postionNo>44</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n48</startAsName>
         </agent>
         <agent>
             <postionNo>45</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n5</startAsName>
         </agent>
         <agent>
@@ -298,7 +298,7 @@
         <agent>
             <postionNo>49</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n6</startAsName>
         </agent>
         <agent>
@@ -316,13 +316,13 @@
         <agent>
             <postionNo>52</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n7</startAsName>
         </agent>
         <agent>
             <postionNo>53</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n8</startAsName>
         </agent>
         <agent>
@@ -346,7 +346,7 @@
         <agent>
             <postionNo>57</postionNo>
             <listMembership>02 AgentStartEnvironment</listMembership>
-            <agentClassReference>hygrid.agent.prosumer.ProsumerAgent</agentClassReference>
+            <agentClassReference>de.enflexit.ea.prosumer.ProsumerAgent</agentClassReference>
             <startAsName>n9</startAsName>
         </agent>
     </agentSetup>
@@ -368,5 +368,317 @@
             <value>1414796400000</value>
         </entry>
     </timeModelSettings>
-    <userObjectClassName>hygrid.deployment.dataModel.SetupExtension</userObjectClassName>
+    <userObjectClassName>de.enflexit.ea.core.dataModel.deployment.SetupExtension</userObjectClassName>
+    <project>
+        <projectName>Energy Agent - Example Project</projectName>
+        <projectDescription>Hello,
+
+this is the Agent.Workbench / Agent.HyGrid example project that demonstrates 
+the potentials and abilities of Energy Agents. 
+
+Further explanations can be found in the Wiki of the Github project under 
+https://github.com/EnFlexIT/EnergyAgentExample/wiki
+
+Have fun discovering the possibilities  and details. 
+
+Kind regards / Best wishes,
+
+Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
+&amp; Christian Derksen
+</projectDescription>
+        <projectStartTab>2|4</projectStartTab>
+        <projectView>Developer</projectView>
+        <projectTreeVisible>true</projectTreeVisible>
+        <projectTabHeaderVisible>false</projectTabHeaderVisible>
+        <version>1.5.0.20200514-1200</version>
+        <versionTag>Complete Project</versionTag>
+        <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
+        <updateAutoConfiguration>0</updateAutoConfiguration>
+        <updateDateLastChecked>1589450156699</updateDateLastChecked>
+        <environmentModel>gridEnvironment</environmentModel>
+        <projectFeatures>
+            <projectFeature>
+                <id>de.enflexit.ea.feature.feature.group</id>
+                <name>Energ Agent - Life Cycle Feature</name>
+                <repositoryName>Enflex.IT Update Site</repositoryName>
+                <repositoryURI>https://p2.enflex.it/awb/latest/</repositoryURI>
+                <version>1.0.0.202005132033</version>
+            </projectFeature>
+        </projectFeatures>
+        <plugins>
+            <className>de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn</className>
+            <className>de.enflexit.ea.deployment.plugin.DeploymentPlugIn</className>
+            <className>de.enflexit.ea.core.ops.plugin.OpsPlugin</className>
+        </plugins>
+        <subOntologies>
+            <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
+            <subOntology>de.enflexit.ea.core.dataModel.ontology.HyGridOntology</subOntology>
+        </subOntologies>
+        <agentStartConfiguration>
+            <agentVector>
+                <agent agentReference="de.enflexit.ea.core.simulation.manager.SimulationManager">
+                    <startArgumentVector>
+                        <startArgument position="1" displayTitle="Headless Operation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    </startArgumentVector>
+                </agent>
+                <agent agentReference="hygrid.agent.gridState.GridStateEstimationAgent">
+                    <startArgumentVector>
+                        <startArgument position="1" displayTitle="Headless Operation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    </startArgumentVector>
+                </agent>
+                <agent agentReference="hygrid.agent.gridState.GridStateAgent">
+                    <startArgumentVector>
+                        <startArgument position="1" displayTitle="isHeadlessOperation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                        <startArgument position="2" displayTitle="isDynamicAggregation" ontologyReference="agentgui.ontology.Simple_Boolean"/>
+                    </startArgumentVector>
+                </agent>
+                <agent agentReference="hygrid.agent.gridStateAggregator.districtAgent.DistrictAgent">
+                    <startArgumentVector>
+                        <startArgument position="1" displayTitle="ClusterComponents" ontologyReference="agentgui.ontology.Simple_String"/>
+                    </startArgumentVector>
+                </agent>
+                <agent agentReference="hygrid.agent.gridStateAggregator.GridStateAggregatorAgent">
+                    <startArgumentVector>
+                        <startArgument position="1" ontologyReference="agentgui.ontology.Simple_String"/>
+                    </startArgumentVector>
+                </agent>
+            </agentVector>
+        </agentStartConfiguration>
+        <jadeConfiguration>
+            <skipUserRequestForJadeStart>true</skipUserRequestForJadeStart>
+            <useLocalPort>1099</useLocalPort>
+            <useLocalMtpPort>7778</useLocalMtpPort>
+            <mtpCreation>ConfiguredByIPandPort</mtpCreation>
+            <mtpIpAddress>Auto-Configuration</mtpIpAddress>
+            <mtpProtocol>HTTP</mtpProtocol>
+            <serviceList>
+                <service>agentgui.logging.DebugService</service>
+                <service>agentgui.simulationService.LoadService</service>
+                <service>jade.core.event.NotificationService</service>
+                <service>agentgui.simulationService.SimulationService</service>
+                <service>jade.core.mobility.AgentMobilityService</service>
+                <service>de.enflexit.eom.awb.jadeService.EomService</service>
+            </serviceList>
+        </jadeConfiguration>
+        <distributionSetup>
+            <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+            <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
+            <doStaticLoadBalancing>false</doStaticLoadBalancing>
+            <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+            <evenDistribution>false</evenDistribution>
+            <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
+            <loadRecordingInterval>500</loadRecordingInterval>
+            <numberOfAgents>50</numberOfAgents>
+            <numberOfContainer>2</numberOfContainer>
+            <remoteOnly>false</remoteOnly>
+            <showLoadMonitorAtPlatformStart>true</showLoadMonitorAtPlatformStart>
+            <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
+            <staticLoadBalancingClass>agentgui.simulationService.balancing.StaticLoadBalancing</staticLoadBalancingClass>
+            <useUserThresholds>false</useUserThresholds>
+            <userThresholds>
+                <thCpuH>80</thCpuH>
+                <thCpuL>5</thCpuL>
+                <thMemoH>80</thMemoH>
+                <thMemoL>5</thMemoL>
+                <thNoThreadsH>500</thNoThreadsH>
+                <thNoThreadsL>5</thNoThreadsL>
+            </userThresholds>
+        </distributionSetup>
+        <agentClassLoadMetricsTable>
+            <agentClassMetricDescriptionVector>
+                <agentClass>
+                    <className>hygrid.agent.prosumer.ProsumerAgent</className>
+                    <realMetric>0.1</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.electrolyser.ElectrolyserAgent</className>
+                    <realMetric>0.1</realMetric>
+                    <realMetricAverage>5.390519313623548</realMetricAverage>
+                    <realMetricMax>5.390519313623548</realMetricMax>
+                    <realMetricMin>5.390519313623548</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>agent.class.UNKNOWN-AGENT-CLASS</className>
+                    <realMetric>0.1</realMetric>
+                    <realMetricAverage>2.000470015218601</realMetricAverage>
+                    <realMetricMax>2.000470015218592</realMetricMax>
+                    <realMetricMin>2.000470015218592</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.sensor.SensorAgent</className>
+                    <realMetric>0.1</realMetric>
+                    <realMetricAverage>0.8283733182246112</realMetricAverage>
+                    <realMetricMax>0.8283733182246111</realMetricMax>
+                    <realMetricMin>0.8283733182246111</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.manager.SimulationManager</className>
+                    <realMetric>0.1</realMetric>
+                    <realMetricAverage>1.0470502823479262</realMetricAverage>
+                    <realMetricMax>1.0470502823479262</realMetricMax>
+                    <realMetricMin>1.0470502823479262</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.gridState.GridStateEstimationAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>26.806978798735763</realMetricAverage>
+                    <realMetricMax>26.806978798735763</realMetricMax>
+                    <realMetricMin>26.806978798735763</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.transformer.TransformerAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>1.044409660666894</realMetricAverage>
+                    <realMetricMax>1.044409660666894</realMetricMax>
+                    <realMetricMin>1.044409660666894</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.gasSensor.GasSensorAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.10776413726157569</realMetricAverage>
+                    <realMetricMax>0.10776413726157569</realMetricMax>
+                    <realMetricMin>0.10776413726157569</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>system.class.-Regular-Thread-</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>8.889332509516018</realMetricAverage>
+                    <realMetricMax>8.889332509516008</realMetricMax>
+                    <realMetricMin>8.889332509516008</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>agentgui.simulationService.agents.ServerClientAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>agentgui.simulationService.agents.LoadMeasureAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>jade.domain.df</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>jade.tools.rma.rma</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>jade.domain.ams</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>jade.misc.FileManagerAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>jade.core.ContainerMonitorAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.agent.battery.BatteryAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>3.6890613210884977</realMetricAverage>
+                    <realMetricMax>3.6890613210884977</realMetricMax>
+                    <realMetricMin>3.6890613210884977</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>agentgui.envModel.graph.visualisation.DisplayAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.globalDataModel.blackboard.BlackboardAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+                <agentClass>
+                    <className>hygrid.ops.agent.CeaConnectorAgent</className>
+                    <realMetric>1.0</realMetric>
+                    <realMetricAverage>0.0</realMetricAverage>
+                    <realMetricMax>0.0</realMetricMax>
+                    <realMetricMin>0.0</realMetricMin>
+                    <userPredictedMetric>1.0</userPredictedMetric>
+                </agentClass>
+            </agentClassMetricDescriptionVector>
+            <useRealLoadMetric>false</useRealLoadMetric>
+        </agentClassLoadMetricsTable>
+        <remoteContainerConfiguration>
+            <jvmMemAllocInitial>512m</jvmMemAllocInitial>
+            <jvmMemAllocMaximum>4g</jvmMemAllocMaximum>
+            <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
+            <showJADErmaGUI>false</showJADErmaGUI>
+        </remoteContainerConfiguration>
+        <userObjectClassName>de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel</userObjectClassName>
+        <simulationSetupCurrent>Energy Agent Scenario 2</simulationSetupCurrent>
+        <timeModelClass>agentgui.simulationService.time.TimeModelContinuous</timeModelClass>
+        <simulationSetups>
+            <entry>
+                <key>Energy Agent Scenario 1</key>
+                <value>energy_agent_scenario_1.xml</value>
+            </entry>
+            <entry>
+                <key>Energy Agent Scenario 2</key>
+                <value>Energy_Agent_Scenario_2.xml</value>
+            </entry>
+            <entry>
+                <key>Energy Agent Scenario 3</key>
+                <value>energy_agent_scenario_3.xml</value>
+            </entry>
+        </simulationSetups>
+    </project>
 </simulationSetup>
