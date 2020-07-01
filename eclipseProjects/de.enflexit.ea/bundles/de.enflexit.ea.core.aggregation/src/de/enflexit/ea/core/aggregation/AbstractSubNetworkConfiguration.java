@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
@@ -92,6 +93,14 @@ public abstract class AbstractSubNetworkConfiguration {
 			description = "Undescribed Sub-Network Description of class " + this.getClass().getSimpleName(); 
 		}
 		return this.getID() + ": " + description;
+	}
+	
+	/**
+	 * Gets the sub network model.
+	 * @return the sub network model
+	 */
+	public NetworkModel getSubNetworkModel() {
+		return this.getSubAggregationBuilder().getNetworkModel();
 	}
 	
 	
