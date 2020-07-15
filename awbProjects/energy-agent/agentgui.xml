@@ -299,7 +299,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
     <simulationSetups>
         <entry>
             <key>Energy Agent Scenario 1</key>
-            <value>energy_agent_scenario_1.xml</value>
+            <value>Energy_Agent_Scenario_1.xml</value>
         </entry>
         <entry>
             <key>Energy Agent Scenario 2</key>
@@ -307,7 +307,7 @@ Nils Loose, Marcel Ludwig, Sebastian Toersleff, Erik Wassermann
         </entry>
         <entry>
             <key>Energy Agent Scenario 3</key>
-            <value>energy_agent_scenario_3.xml</value>
+            <value>Energy_Agent_Scenario_3.xml</value>
         </entry>
     </simulationSetups>
 </project>
