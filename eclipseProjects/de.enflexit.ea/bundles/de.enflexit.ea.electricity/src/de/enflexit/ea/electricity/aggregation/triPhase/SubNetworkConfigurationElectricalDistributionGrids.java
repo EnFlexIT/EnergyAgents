@@ -9,6 +9,8 @@ import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
+import de.enflexit.ea.electricity.aggregation.DomainBlackboardElectricity;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
@@ -95,6 +97,14 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 //		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculationPV.class);
 		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, CentralEstimationManager.class);
 		return myUserClasses;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#getDomainBlackboardInstance()
+	 */
+	@Override
+	public DomainBlackboard getDomainBlackboardInstance() {
+		return new DomainBlackboardElectricity();
 	}
 	
 }

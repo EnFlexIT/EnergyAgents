@@ -9,6 +9,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
 import energy.OptionModelController;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.InterfaceSetting;
@@ -542,5 +543,11 @@ public abstract class AbstractSubNetworkConfiguration {
 	public String toString() {
 		return this.getClass().getSimpleName() + " for " + this.getSubNetworkDescriptionID(); 
 	}
+	
+	/**
+	 * Gets the domain blackboard instance.
+	 * @return the domain blackboard instance
+	 */
+	public abstract DomainBlackboard getDomainBlackboardInstance();
 	
 }

@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.dataModel.blackboard;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkModel;
 
@@ -28,9 +29,7 @@ public class Blackboard {
 	private long stateTime;
 	private NetworkModel networkModel;
 	
-	private HashMap<String, ElectricalNodeState> graphNodeStates;
-	private HashMap<String, CableState> networkComponentStates;
-	private HashMap<String, TechnicalSystemState> transformerStates;	
+	private HashMap<String, DomainBlackboard> domainBlackboards;
 	
 	// --- The listener thread for OSGI services ---------- 
 	private BlackboardListenerThread listenerServiceThread;
@@ -112,6 +111,30 @@ public class Blackboard {
 		return doTerminate;
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, domain blackboard handling ------------------------------
+	// ------------------------------------------------------------------------
+	
+	private HashMap<String, DomainBlackboard> getDomainBlackboards() {
+		if (domainBlackboards==null) {
+			domainBlackboards = new HashMap<>();
+		}
+		return domainBlackboards;
+	}
+	
+	/**
+	 * Gets the domain blackboard for the specified domain
+	 * @param domain the domain
+	 * @return the domain blackboard
+	 */
+	public DomainBlackboard getDomainBlackboard(String domain) {
+		DomainBlackboard domainBlackboard = this.getDomainBlackboards().get(domain);
+		if (domainBlackboard==null) {
+			//TODO implement domain blackboard initialization
+		}
+		return domainBlackboard;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here, blackboard content and management -----------------------
@@ -121,9 +144,10 @@ public class Blackboard {
 	 */
 	private void resetBlackboardDataModel() {
 		this.setNetworkModel(null);
-		this.graphNodeStates = null;
-		this.networkComponentStates = null;
-		this.transformerStates = null;	
+		Vector<DomainBlackboard> subBlackboards = new Vector<>(this.getDomainBlackboards().values());
+		for (int i=0; i<subBlackboards.size(); i++) {
+			subBlackboards.get(i).resetBlackboardDataModel();
+		}
 	}
 	
 	/**
@@ -155,38 +179,5 @@ public class Blackboard {
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
 	}
-	
-	
-	/**
-	 * Gets the graph node states as HashMap.
-	 * @return the graph node states
-	 */
-	public HashMap<String, ElectricalNodeState> getGraphNodeStates() {
-		if (graphNodeStates==null) {
-			graphNodeStates = new HashMap<String, ElectricalNodeState>();
-		}
-		return graphNodeStates;
-	}
-	/**
-	 * Gets the network component states as HashMap.
-	 * @return the network component states
-	 */
-	public HashMap<String, CableState> getNetworkComponentStates() {
-		if (networkComponentStates==null) {
-			networkComponentStates = new HashMap<String, CableState>();
-		}
-		return networkComponentStates;
-	}
-	/**
-	 * Returns the transformer states of the current network.
-	 * @return the transformer states
-	 */
-	public HashMap<String, TechnicalSystemState> getTransformerStates() {
-		if (transformerStates==null) {
-			transformerStates = new HashMap<String, TechnicalSystemState>();
-		}
-		return transformerStates;
-	}
-	
 	
 }
