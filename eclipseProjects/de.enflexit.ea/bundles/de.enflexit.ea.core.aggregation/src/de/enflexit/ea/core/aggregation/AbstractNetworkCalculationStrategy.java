@@ -9,6 +9,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
 import energy.DisplayHelper;
 import energy.OptionModelController;
 import energy.evaluation.EvaluationProcess;
@@ -466,4 +467,10 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		
 		return gfm;
 	}
+	
+	/**
+	 * Publish the calculation results to the blackboard.
+	 * @param domainBlackboard the blackboard
+	 */
+	public abstract void publishResultsToDomainBlackboard(DomainBlackboard domainBlackboard); 
 }

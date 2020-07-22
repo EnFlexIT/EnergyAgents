@@ -548,6 +548,6 @@ public abstract class AbstractSubNetworkConfiguration {
 	 * Gets the domain blackboard instance.
 	 * @return the domain blackboard instance
 	 */
-	public abstract DomainBlackboard getDomainBlackboardInstance();
+	public abstract DomainBlackboard getDomainBlackboardInstance(NetworkModel networkModel);
 	
 }

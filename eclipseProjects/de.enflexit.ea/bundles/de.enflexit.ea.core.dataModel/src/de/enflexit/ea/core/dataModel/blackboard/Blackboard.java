@@ -5,10 +5,6 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkModel;
 
-import de.enflexit.ea.core.dataModel.ontology.CableState;
-import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
-import energy.optionModel.TechnicalSystemState;
-
 /**
  * The Class Blackboard contains the currents data representations of the SimulationManager.<p>
  * 

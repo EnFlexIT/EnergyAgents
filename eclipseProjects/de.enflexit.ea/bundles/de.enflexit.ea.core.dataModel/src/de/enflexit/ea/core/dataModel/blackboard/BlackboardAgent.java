@@ -2,17 +2,10 @@ package de.enflexit.ea.core.dataModel.blackboard;
 
 import java.util.Vector;
 
-import org.awb.env.networkModel.GraphNode;
-import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.NetworkModel;
-
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
-import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestObjective;
 import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestType;
-import de.enflexit.ea.core.dataModel.ontology.CableState;
-import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import jade.core.Agent;
 import jade.core.Location;
 import jade.core.behaviours.ThreadedBehaviourFactory;
@@ -191,44 +184,11 @@ public class BlackboardAgent extends Agent {
 
 			try {
 				
-				AbstractBlackoardAnswer answer = null;
-				if (bbRequest.getRequestSpecifierVector().size()==1) {
-					// --- Single value request -------------------------------
-					answer = this.getBlackboardAnswer(bbRequest.getRequestSpecifierVector().get(0));					
+				// --- Get the answer from the corresponding domain blackboard ----------
+				DomainBlackboard subBlackboard = BlackboardAgent.this.getBlackboard().getDomainBlackboard(bbRequest.getDomainIdentifier());
+				AbstractBlackboardAnswer answer = subBlackboard.processBlackboardRequest(bbRequest);
 					
-				} else {
-					
-					if (bbRequest.getRequestSpecifierVector().size()==2 && bbRequest.getRequestSpecifierVector().get(0).getRequestObjective()==RequestObjective.VoltageAndCurrentLevels) {
-						// --- Special case for sensor agents -----------------
-						RequestSpecifier spec1 = bbRequest.getRequestSpecifierVector().get(0);
-						RequestSpecifier spec2 = bbRequest.getRequestSpecifierVector().get(1);
-						ElectricalNodeState nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec1.getIdentifier());
-						if (nodeState==null) {
-							nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec2.getIdentifier());
-						}
-						CableState cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec2.getIdentifier());
-						if (cableState==null) {
-							cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec1.getIdentifier());
-						}
-						if (nodeState!=null & cableState!=null) {
-							answer = new VoltageAndCurrentLevelAnswer(spec1.getIdentifier(), nodeState, cableState);
-						}
-						
-					} else {
-						// --- Multiple Request -------------------------------
-						Vector<AbstractBlackoardAnswer> answers = new Vector<>();
-						for (RequestSpecifier spec : bbRequest.getRequestSpecifierVector()) {
-							AbstractBlackoardAnswer tmpAnswer = this.getBlackboardAnswer(spec);
-							if (tmpAnswer!=null) {
-								answers.add(tmpAnswer);	
-							}
-						}
-						// --- Send multiple answers --------------------------
-						answer = new MultipleBlackboardAnswer(answers); 
-					}
-				}
-					
-				// --- Finally, send notification that can be used as I/O-input ---
+				// --- Finally, send notification that can be used as I/O-input ---------
 				if (answer!=null) {
 					this.sendAgentNotification(bbRequest.getRequester(), answer);
 				}
@@ -236,46 +196,6 @@ public class BlackboardAgent extends Agent {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		}
-		
-		/**
-		 * Returns the blackboard answer for the specified request.
-		 * @param singleRequest the single request 
-		 * @return the blackboard answer
-		 */
-		private AbstractBlackoardAnswer getBlackboardAnswer(RequestSpecifier singleRequest) {
-		
-			AbstractBlackoardAnswer answer = null;
-			NetworkModel networkModel = BlackboardAgent.this.getBlackboard().getNetworkModel();
-			
-			switch (singleRequest.getRequestObjective()) {
-			case NetworkModel:
-				answer = new NetworkModelAnswer(networkModel);
-				break;
-			case GraphNodeDataModel:
-				GraphNode node = (GraphNode) networkModel.getGraphElement(singleRequest.getIdentifier());
-				answer = new GraphNodeAnswer(singleRequest.getIdentifier(), node.getDataModel());
-				break;
-			case NetworkComponentDataModel:
-				NetworkComponent netComp = networkModel.getNetworkComponent(singleRequest.getIdentifier());
-				answer = new GraphNodeAnswer(singleRequest.getIdentifier(), netComp.getDataModel());
-				break;
-			case PowerFlowCalculationResults:
-				answer = new PowerFlowCalculationResultAnswer(BlackboardAgent.this.getBlackboard().getGraphNodeStates(), BlackboardAgent.this.getBlackboard().getNetworkComponentStates());
-				break;
-			case TransformerPower:
-				answer = new TransformerPowerAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getTransformerStates().get(singleRequest.getIdentifier()));
-				break;
-			case VoltageLevels:
-				answer = new VoltageLevelAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(singleRequest.getIdentifier()));
-				break;
-			case CurrentLevels:
-				answer = new CurrentLevelAnswer(singleRequest.getIdentifier(), BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(singleRequest.getIdentifier()));
-				break;
-			case VoltageAndCurrentLevels:
-				break;
-			}
-			return answer;
 		}
 		
 	} // end sub class 

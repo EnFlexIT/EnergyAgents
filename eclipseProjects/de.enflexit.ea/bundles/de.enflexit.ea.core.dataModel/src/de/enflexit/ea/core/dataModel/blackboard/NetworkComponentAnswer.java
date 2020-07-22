@@ -1,11 +1,11 @@
 package de.enflexit.ea.core.dataModel.blackboard;
 
 /**
- * The Class NetworkComponentAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class NetworkComponentAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class NetworkComponentAnswer extends AbstractBlackoardAnswer {
+public class NetworkComponentAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

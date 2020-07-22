@@ -1,11 +1,11 @@
 package de.enflexit.ea.core.dataModel.blackboard;
 
 /**
- * The Class GraphNodeAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class GraphNodeAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class GraphNodeAnswer extends AbstractBlackoardAnswer {
+public class GraphNodeAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

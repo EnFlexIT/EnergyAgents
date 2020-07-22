@@ -3,6 +3,7 @@ package de.enflexit.ea.electricity.aggregation.triPhase;
 import java.util.HashMap;
 
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
@@ -103,8 +104,8 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#getDomainBlackboardInstance()
 	 */
 	@Override
-	public DomainBlackboard getDomainBlackboardInstance() {
-		return new DomainBlackboardElectricity();
+	public DomainBlackboard getDomainBlackboardInstance(NetworkModel networkModel) {
+		return new DomainBlackboardElectricity(networkModel);
 	}
 	
 }

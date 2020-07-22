@@ -6,11 +6,11 @@ import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 
 /**
- * The Class PowerFlowCalculationResultAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class PowerFlowCalculationResultAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class PowerFlowCalculationResultAnswer extends AbstractBlackoardAnswer {
+public class PowerFlowCalculationResultAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

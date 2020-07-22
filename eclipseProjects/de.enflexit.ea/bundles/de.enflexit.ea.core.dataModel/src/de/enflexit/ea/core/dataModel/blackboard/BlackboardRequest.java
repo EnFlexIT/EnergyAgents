@@ -26,6 +26,8 @@ public class BlackboardRequest implements Serializable {
 	private RequestType requestType;
 	private Vector<RequestSpecifier> requestSpecifierVector;
 	
+	private String domainIdentifier;
+	
 	
 	/**
 	 * Instantiates a new blackboard request.
@@ -105,5 +107,22 @@ public class BlackboardRequest implements Serializable {
 		}
 		return requestSpecifierVector;
 	}
+	
+	/**
+	 * Gets the domain identifier.
+	 * @return the domain identifier
+	 */
+	public String getDomainIdentifier() {
+		return domainIdentifier;
+	}
+	/**
+	 * Sets the domain identifier.
+	 * @param domainIdentifier the new domain identifier
+	 */
+	public void setDomainIdentifier(String domainIdentifier) {
+		this.domainIdentifier = domainIdentifier;
+	}
+	
+	
 	
 }
