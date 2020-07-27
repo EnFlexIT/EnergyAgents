@@ -1,7 +1,9 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.electricity.blackboard;
 
 import java.util.HashMap;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 

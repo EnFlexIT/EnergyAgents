@@ -1,5 +1,7 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.electricity.blackboard;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 
 /**
