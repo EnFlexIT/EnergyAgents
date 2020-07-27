@@ -13,7 +13,6 @@ import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
@@ -389,16 +388,6 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	@Override
 	public Vector<JComponent> getCustomToolBarElements() {
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy#publishResultsToBlackboard(de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard)
-	 */
-	@Override
-	public void publishResultsToDomainBlackboard(DomainBlackboard domainBlackboard) {
-		((DomainBlackboardElectricity)domainBlackboard).getGraphNodeStates().putAll(this.getGraphNodeStates());
-		((DomainBlackboardElectricity)domainBlackboard).getNetworkComponentStates().putAll(this.getNetworkComponentStates());
-		((DomainBlackboardElectricity)domainBlackboard).getTransformerStates().putAll(this.getTransformerStates());
 	}
 	
 }

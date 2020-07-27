@@ -9,7 +9,6 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
-import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
 import energy.OptionModelController;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.InterfaceSetting;
@@ -38,6 +37,7 @@ public abstract class AbstractSubNetworkConfiguration {
 	private AbstractSubAggregationBuilder subAggregationBuilder;
 	private AbstractNetworkCalculationPreprocessor netCalcPreprocessor; 
 	private AbstractNetworkCalculationStrategy netCalcStrategy;
+	private AbstractSubBlackboardModel subBlackboardModel;
 
 	private AbstractNetworkModelDisplayUpdater netDisplayUpdater;
 	
@@ -363,10 +363,6 @@ public abstract class AbstractSubNetworkConfiguration {
 		
 		// --- Get the specified class ------------------------------
 		Class<? extends AbstractNetworkCalculationStrategy> calculationStrategyClass = this.getNetworkCalculationStrategyClass();
-		// --- If nothing is specified, use the default -------------
-//		if (calculationStrategyClass == null) {
-//			calculationStrategyClass = AbstractElectricalNetworkCalculationStrategy.class;
-//		}
 		return calculationStrategyClass;
 	}
 	/**
@@ -404,6 +400,48 @@ public abstract class AbstractSubNetworkConfiguration {
 			}
 		}
 		return netCalcStrategy;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- Handling of the sub blackboard model -------------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the class that implements the sub blackboard model for the current sub aggregation.
+	 * @return the sub blackboard model class
+	 */
+	public abstract Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClass();
+	/**
+	 * Gets the network calculation strategy class internal.
+	 * @return the network calculation strategy class internal
+	 */
+	private final Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClassInternal() {
+		
+		// --- Get the specified class ------------------------------
+		Class<? extends AbstractSubBlackboardModel> subBlackboardModelClass = this.getSubBlackboardModelClass();
+		return subBlackboardModelClass;
+	}
+	/**
+	 * Returns the sub blackboard model for the current sub network. Therefore, the configured class of the
+	 * type {@link AbstractSubBlackboardModel} is used.
+	 * 
+	 * @see #getSubBlackboardModelClass()
+	 *  
+	 * @return the aggregation builder
+	 */
+	public final AbstractSubBlackboardModel getSubBlackboardModel() {
+		if (subBlackboardModel==null) {
+			// --- Get the class --------------------------
+			Class<? extends AbstractSubBlackboardModel> blackboardModelClass = this.getSubBlackboardModelClassInternal();
+			if (blackboardModelClass!=null) {
+				subBlackboardModel = this.getNewInstance(blackboardModelClass);
+				if (subBlackboardModel!=null) {
+					subBlackboardModel.setAggregationHandler(this.getAggregationHandler());
+					subBlackboardModel.setSubAggregationConfiguration(this);
+				}
+			}
+		}
+		return subBlackboardModel;
 	}
 	
 	
@@ -543,11 +581,5 @@ public abstract class AbstractSubNetworkConfiguration {
 	public String toString() {
 		return this.getClass().getSimpleName() + " for " + this.getSubNetworkDescriptionID(); 
 	}
-	
-	/**
-	 * Gets the domain blackboard instance.
-	 * @return the domain blackboard instance
-	 */
-	public abstract DomainBlackboard getDomainBlackboardInstance(NetworkModel networkModel);
 	
 }

@@ -1,9 +1,8 @@
 package de.enflexit.ea.core.dataModel.blackboard;
 
-import java.util.HashMap;
-import java.util.Vector;
-
 import org.awb.env.networkModel.NetworkModel;
+
+import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 
 /**
  * The Class Blackboard contains the currents data representations of the SimulationManager.<p>
@@ -24,8 +23,7 @@ public class Blackboard {
 	
 	private long stateTime;
 	private NetworkModel networkModel;
-	
-	private HashMap<String, DomainBlackboard> domainBlackboards;
+	private AbstractAggregationHandler aggregationHandler;
 	
 	// --- The listener thread for OSGI services ---------- 
 	private BlackboardListenerThread listenerServiceThread;
@@ -108,31 +106,6 @@ public class Blackboard {
 	}
 	
 	// ------------------------------------------------------------------------
-	// --- From here, domain blackboard handling ------------------------------
-	// ------------------------------------------------------------------------
-	
-	private HashMap<String, DomainBlackboard> getDomainBlackboards() {
-		if (domainBlackboards==null) {
-			domainBlackboards = new HashMap<>();
-		}
-		return domainBlackboards;
-	}
-	
-	/**
-	 * Gets the domain blackboard for the specified domain
-	 * @param domain the domain
-	 * @return the domain blackboard
-	 */
-	public DomainBlackboard getDomainBlackboard(String domain) {
-		DomainBlackboard domainBlackboard = this.getDomainBlackboards().get(domain);
-		if (domainBlackboard==null) {
-			//TODO implement domain blackboard initialization
-		}
-		return domainBlackboard;
-	}
-	
-	
-	// ------------------------------------------------------------------------
 	// --- From here, blackboard content and management -----------------------
 	// ------------------------------------------------------------------------
 	/**
@@ -140,10 +113,7 @@ public class Blackboard {
 	 */
 	private void resetBlackboardDataModel() {
 		this.setNetworkModel(null);
-		Vector<DomainBlackboard> subBlackboards = new Vector<>(this.getDomainBlackboards().values());
-		for (int i=0; i<subBlackboards.size(); i++) {
-			subBlackboards.get(i).resetBlackboardDataModel();
-		}
+		this.setAggregationHandler(null);
 	}
 	
 	/**
@@ -174,6 +144,21 @@ public class Blackboard {
 	 */
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
+	}
+	
+	/**
+	 * Sets the aggregation handler.
+	 * @param aggregationHandler the new aggregation handler
+	 */
+	public void setAggregationHandler(AbstractAggregationHandler aggregationHandler) {
+		this.aggregationHandler = aggregationHandler;
+	}
+	/**
+	 * Gets the aggregation handler.
+	 * @return the aggregation handler
+	 */
+	public AbstractAggregationHandler getAggregationHandler() {
+		return aggregationHandler;
 	}
 	
 }

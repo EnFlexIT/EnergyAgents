@@ -3,15 +3,12 @@ package de.enflexit.ea.electricity.aggregation.triPhase;
 import java.util.HashMap;
 
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.NetworkModel;
-
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
+import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
-import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
-import de.enflexit.ea.electricity.aggregation.DomainBlackboardElectricity;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
@@ -100,12 +97,10 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 		return myUserClasses;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#getDomainBlackboardInstance()
-	 */
 	@Override
-	public DomainBlackboard getDomainBlackboardInstance(NetworkModel networkModel) {
-		return new DomainBlackboardElectricity(networkModel);
+	public Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClass() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

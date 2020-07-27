@@ -43,9 +43,6 @@ import de.enflexit.ea.core.dataModel.blackboard.Blackboard;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.blackboard.DomainBlackboard;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
-import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
-import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
@@ -136,7 +133,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		
 		// --- Prepare the aggregation handler --------------------------------
-		this.getAggregationHandler();
+		this.getBlackboard().setAggregationHandler(this.getAggregationHandler());
 		// --- If measurements are activated, configure aggregation handler ---
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
@@ -704,42 +701,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	@Override
 	public void networkCalculationDone() {
-
-		// --------------------------------------------------------------------
-		// --- Get all electrical distribution grid aggregations --------------
-		// --------------------------------------------------------------------
-		
-//		//TODO implement domain-independent, remove dependency to electricity bundle
-//		String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-//		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
-//		for (int i = 0; i < subnetConfigList.size(); i++) {
-//			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-//			if (subnetConfig!=null) {
-//				AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-//				if (netClacStrategy!=null) {
-//					// --- Put the calculation results on the blackboard ------
-//					this.getBlackboard().getGraphNodeStates().putAll(netClacStrategy.getGraphNodeStates());
-//					this.getBlackboard().getNetworkComponentStates().putAll(netClacStrategy.getNetworkComponentStates());
-//					this.getBlackboard().getTransformerStates().putAll(netClacStrategy.getTransformerStates());
-//				}
-//
-//			} else {
-//				System.err.println("[" + this.getClass().getSimpleName() + "] Could not find subnetwork configuration with the ID '" + subnetworkDescription + "'.");
-//			}
-//		}
-
-		// --- Publish calculation results to the domain-specific sub-blackboard --------
-		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
-		for (int i = 0; i < subnetConfigList.size(); i++) {
-			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-			if (subnetConfig!=null) {
-				AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-				if (netClacStrategy!=null) {
-					DomainBlackboard domainBlackboard = this.getBlackboard().getDomainBlackboard(subnetConfig.getSubNetworkDescription());
-					netClacStrategy.publishResultsToDomainBlackboard(domainBlackboard);
-				}
-			}
-		}
 
 		// --- Set state time to the blackboard --------------------------------
 		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());

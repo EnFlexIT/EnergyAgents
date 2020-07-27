@@ -20,6 +20,4 @@ Require-Bundle: de.enflexit.common,
  org.awb.env.networkModel,
  org.eclipse.osgi,
  de.enflexit.ea.core.dataModel,
- de.enflexit.ea.electricity.powerFlowCalculation,
- de.enflexit.ea.electricity.powerFlowEstimation,
  de.enflexit.ea.core.awbIntegration
