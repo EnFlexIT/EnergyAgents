@@ -10,6 +10,7 @@ import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
+import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
@@ -97,10 +98,12 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 		return myUserClasses;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#getSubBlackboardModelClass()
+	 */
 	@Override
 	public Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return SubBlackboardModelElectricity.class;
 	}
 	
 }

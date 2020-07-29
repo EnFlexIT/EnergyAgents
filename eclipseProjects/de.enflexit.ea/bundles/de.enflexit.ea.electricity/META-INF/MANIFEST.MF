@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.ea.electricity.aggregation,
  de.enflexit.ea.electricity.aggregation.triPhase,
  de.enflexit.ea.electricity.aggregation.uniPhase,
+ de.enflexit.ea.electricity.blackboard,
  de.enflexit.ea.electricity.classLoadService,
  de.enflexit.ea.electricity.scheduleImport,
  de.enflexit.ea.electricity.topologyImport

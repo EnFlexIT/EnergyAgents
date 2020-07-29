@@ -18,10 +18,14 @@ public class RequestSpecifier implements Serializable {
 	}
 	
 	/** The Enumeration RequestObjective. */
-	public enum RequestObjective {
+	public enum RequestObjective implements RequestObjectiveInterface {
+		
+		// General
 		NetworkModel,
 		NetworkComponentDataModel,
 		GraphNodeDataModel,
+		
+		// Electricity
 		PowerFlowCalculationResults,
 		TransformerPower,
 		VoltageAndCurrentLevels,
