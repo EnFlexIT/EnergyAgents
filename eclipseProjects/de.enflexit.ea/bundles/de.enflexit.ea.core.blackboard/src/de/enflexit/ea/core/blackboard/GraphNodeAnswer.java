@@ -1,4 +1,7 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
+
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 
 /**
  * The Class GraphNodeAnswer represents an extended {@link AbstractBlackboardAnswer}.

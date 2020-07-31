@@ -1,6 +1,9 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
 
 import org.awb.env.networkModel.NetworkModel;
+
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 
 /**
  * The Class NetworkModelAnswer represents an extended {@link AbstractBlackboardAnswer}.

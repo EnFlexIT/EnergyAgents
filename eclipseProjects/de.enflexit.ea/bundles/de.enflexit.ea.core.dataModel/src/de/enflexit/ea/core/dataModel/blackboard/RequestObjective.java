@@ -1,5 +1,5 @@
 package de.enflexit.ea.core.dataModel.blackboard;
 
-public interface RequestObjectiveInterface {
+public interface RequestObjective {
 
 }

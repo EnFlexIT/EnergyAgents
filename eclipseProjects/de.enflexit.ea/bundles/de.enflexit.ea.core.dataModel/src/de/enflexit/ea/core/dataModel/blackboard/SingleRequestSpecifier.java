@@ -7,32 +7,16 @@ import java.io.Serializable;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class RequestSpecifier implements Serializable {
+public class SingleRequestSpecifier implements Serializable {
 	
 	private static final long serialVersionUID = 7973526480931244163L;
 	
 	/**The Enumeration RequestType. */
 	public enum RequestType {
 		SingleRequest,
-		ChangeRequest
+		SubscriptionRequest
 	}
 	
-	/** The Enumeration RequestObjective. */
-	public enum RequestObjective implements RequestObjectiveInterface {
-		
-		// General
-		NetworkModel,
-		NetworkComponentDataModel,
-		GraphNodeDataModel,
-		
-		// Electricity
-		PowerFlowCalculationResults,
-		TransformerPower,
-		VoltageAndCurrentLevels,
-		VoltageLevels,
-		CurrentLevels
-	}
-
 	private RequestObjective requestObjective;
 	private String identifier;
 	
@@ -43,7 +27,7 @@ public class RequestSpecifier implements Serializable {
 	 * @param requestObjective the request objective
 	 * @param identifier the identifier for the required object
 	 */
-	public RequestSpecifier(RequestObjective requestObjective, String identifier) {
+	public SingleRequestSpecifier(RequestObjective requestObjective, String identifier) {
 		this.requestObjective = requestObjective;
 		this.identifier = identifier;
 	}

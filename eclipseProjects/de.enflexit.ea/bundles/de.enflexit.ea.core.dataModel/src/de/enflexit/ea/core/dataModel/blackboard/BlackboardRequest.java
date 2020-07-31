@@ -3,8 +3,7 @@ package de.enflexit.ea.core.dataModel.blackboard;
 import java.io.Serializable;
 import java.util.Vector;
 
-import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestObjective;
-import de.enflexit.ea.core.dataModel.blackboard.RequestSpecifier.RequestType;
+import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier.RequestType;
 import jade.core.AID;
 
 /**
@@ -24,10 +23,7 @@ public class BlackboardRequest implements Serializable {
 
 	private AID requester;
 	private RequestType requestType;
-	private Vector<RequestSpecifier> requestSpecifierVector;
-	
-	private String domainIdentifier;
-	
+	private Vector<SingleRequestSpecifier> requestSpecifierVector;
 	
 	/**
 	 * Instantiates a new blackboard request.
@@ -40,7 +36,7 @@ public class BlackboardRequest implements Serializable {
 	public BlackboardRequest(AID requester, RequestType requestType, RequestObjective objective, String identifier) {
 		this.requester = requester;
 		this.requestType = requestType;
-		this.getRequestSpecifierVector().add(new RequestSpecifier(objective, identifier));
+		this.getRequestSpecifierVector().add(new SingleRequestSpecifier(objective, identifier));
 	}
 	/**
 	 * Instantiates a new blackboard request.
@@ -49,7 +45,7 @@ public class BlackboardRequest implements Serializable {
 	 * @param requestType the request type
 	 * @param requestSpecifier the request specifier
 	 */
-	public BlackboardRequest(AID requester, RequestType requestType, RequestSpecifier requestSpecifier) {
+	public BlackboardRequest(AID requester, RequestType requestType, SingleRequestSpecifier requestSpecifier) {
 		this.requester = requester;
 		this.requestType = requestType;
 		this.getRequestSpecifierVector().add(requestSpecifier);
@@ -61,7 +57,7 @@ public class BlackboardRequest implements Serializable {
 	 * @param requestType the request type
 	 * @param requestSpecifierVector the request specifier vector
 	 */
-	public BlackboardRequest(AID requester, RequestType requestType, Vector<RequestSpecifier> requestSpecifierVector) {
+	public BlackboardRequest(AID requester, RequestType requestType, Vector<SingleRequestSpecifier> requestSpecifierVector) {
 		this.requester = requester;
 		this.requestType = requestType;
 		this.getRequestSpecifierVector().addAll(requestSpecifierVector);
@@ -101,28 +97,11 @@ public class BlackboardRequest implements Serializable {
 	 * Gets the request specifier vector.
 	 * @return the request specifier vector
 	 */
-	public Vector<RequestSpecifier> getRequestSpecifierVector() {
+	public Vector<SingleRequestSpecifier> getRequestSpecifierVector() {
 		if (requestSpecifierVector==null) {
-			requestSpecifierVector = new Vector<RequestSpecifier>();
+			requestSpecifierVector = new Vector<SingleRequestSpecifier>();
 		}
 		return requestSpecifierVector;
 	}
-	
-	/**
-	 * Gets the domain identifier.
-	 * @return the domain identifier
-	 */
-	public String getDomainIdentifier() {
-		return domainIdentifier;
-	}
-	/**
-	 * Sets the domain identifier.
-	 * @param domainIdentifier the new domain identifier
-	 */
-	public void setDomainIdentifier(String domainIdentifier) {
-		this.domainIdentifier = domainIdentifier;
-	}
-	
-	
 	
 }

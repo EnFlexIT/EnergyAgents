@@ -2,13 +2,19 @@ package de.enflexit.ea.core.aggregation;
 
 import java.io.Serializable;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
+
+/**
+ * Abstract superclass for aggregation-specific blackboard models.
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg - Essen
+ */
 public abstract class AbstractSubBlackboardModel implements Serializable {
 
 	private static final long serialVersionUID = 8939125806080187613L;
 	
 	private AbstractAggregationHandler aggregationHandler;
 	private AbstractSubNetworkConfiguration subAggregationConfiguration;
-	
 	
 	/**
 	 * Sets the aggregation handler.
@@ -42,6 +48,11 @@ public abstract class AbstractSubBlackboardModel implements Serializable {
 		return subAggregationConfiguration;
 	}
 	
-	
+	/**
+	 * Returns the blackboard request answer for the specified request, or null if not responsible.
+	 * @param request the BlackboardRequest 
+	 * @return the blackboard request answer
+	 */
+	public abstract AbstractBlackboardAnswer getBlackboardRequestAnswer(SingleRequestSpecifier request);
 	
 }

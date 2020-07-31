@@ -1,8 +1,9 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
 
 import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 
 /**
  * The Class Blackboard contains the currents data representations of the SimulationManager.<p>

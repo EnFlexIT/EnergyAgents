@@ -3,6 +3,8 @@ package de.enflexit.ea.electricity.blackboard;
 import java.util.HashMap;
 
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import energy.optionModel.TechnicalSystemState;
@@ -48,6 +50,40 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 			transformerStates = new HashMap<String, TechnicalSystemState>();
 		}
 		return transformerStates;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel#getBlackboardRequestAnswer(de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier)
+	 */
+	@Override
+	public AbstractBlackboardAnswer getBlackboardRequestAnswer(SingleRequestSpecifier request) {
+		
+		AbstractBlackboardAnswer answer = null;
+
+		// --- Check if it is an electricity-related request ------------------
+		if (request.getRequestObjective() instanceof ElectricityRequestObjective) {
+			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) request.getRequestObjective();
+		
+			switch (requestObjective) {
+				case PowerFlowCalculationResults:
+					answer = new PowerFlowCalculationResultAnswer(this.getGraphNodeStates(), this.getNetworkComponentStates());
+					break;
+				case TransformerPower:
+					answer = new TransformerPowerAnswer(request.getIdentifier(), this.getTransformerStates().get(request.getIdentifier()));
+					break;
+				case VoltageLevels:
+					answer = new VoltageLevelAnswer(request.getIdentifier(), this.getGraphNodeStates().get(request.getIdentifier()));
+					break;
+				case CurrentLevels:
+					answer = new CurrentLevelAnswer(request.getIdentifier(), this.getNetworkComponentStates().get(request.getIdentifier()));
+					break;
+				case VoltageAndCurrentLevels:
+					//TODO handle request
+					break;
+			}
+		}
+		
+		return answer;
 	}
 
 }
