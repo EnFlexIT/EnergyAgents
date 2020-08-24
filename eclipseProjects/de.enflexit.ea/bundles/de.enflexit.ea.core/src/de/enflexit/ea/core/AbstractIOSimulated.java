@@ -336,7 +336,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	}
 	
 	/**
-	 * This method will be executed if a ManagerNotification arrives this agent.
+	 * This method will be executed if an EnvironmentNotification arrives this agent.
 	 * @param notification the notification
 	 */
 	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification){
