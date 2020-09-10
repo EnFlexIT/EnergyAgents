@@ -13,3 +13,4 @@ Require-Bundle: de.enflexit.api,
  org.awb.env.networkModel,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.dataModel
+Bundle-ActivationPolicy: lazy
