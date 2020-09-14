@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
-  router="FAN">  
-  <class id="1" language="java" name="de.enflexit.energyAgent.core.AbstractIOSimulated" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractIOSimulated.java" binary="false" corner="BOTTOM_RIGHT">    
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="de.enflexit.ea.core.AbstractIOSimulated" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractIOSimulated.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="584" y="128"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="2" language="java" name="de.enflexit.energyAgent.core.SimulationConnector" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnector.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="2" language="java" name="de.enflexit.ea.core.SimulationConnector" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnector.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="584" y="314"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -20,8 +19,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="3" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorLocal.CyclicNotificationHandler" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorLocal.java" 
+  <class id="3" language="java" name="de.enflexit.ea.core.SimulationConnectorLocal.CyclicNotificationHandler" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorLocal.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="178" y="445"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -30,8 +29,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorRemoteForIOReal" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorRemoteForIOReal.java" binary="false" 
+  <class id="4" language="java" name="de.enflexit.ea.core.SimulationConnectorRemoteForIOReal" 
+    project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorRemoteForIOReal.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="870" y="445"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -40,8 +40,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorRemote.ServiceStimulus" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorRemote.java" 
+  <class id="5" language="java" name="de.enflexit.ea.core.SimulationConnectorRemote.ServiceStimulus" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorRemote.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1090" y="445"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -50,8 +50,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorLocal" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorLocal.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="de.enflexit.ea.core.SimulationConnectorLocal" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorLocal.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="238" y="313"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -59,8 +60,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorLocal.ServiceStimulus" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorLocal.java" 
+  <class id="7" language="java" name="de.enflexit.ea.core.SimulationConnectorLocal.ServiceStimulus" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorLocal.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="342" y="445"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -69,8 +70,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="de.enflexit.energyAgent.core.SimulationConnectorRemote" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/SimulationConnectorRemote.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="de.enflexit.ea.core.SimulationConnectorRemote" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/SimulationConnectorRemote.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="957" y="314"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -78,8 +80,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="9" language="java" name="de.enflexit.energyAgent.core.EnergyAgentIO" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/EnergyAgentIO.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="9" language="java" name="de.enflexit.ea.core.EnergyAgentIO" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/EnergyAgentIO.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="181" y="128"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -87,72 +89,72 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <realization id="10">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <nesting id="11">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <association id="12">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="13" name="simConnector">        
+  <association id="10">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="11" name="ioSimulated">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="14" minimum="0" maximum="1">        
+      <multiplicity id="12" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="15">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="5"/>  
-  </nesting>  
+  <association id="13">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="14" name="simConnector">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="15" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <realization id="16">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="2"/>  
   </realization>  
-  <realization id="17">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="8"/>  
-  </generalization>  
-  <association id="19">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
-      <attribute id="20" name="notificationHandler">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="21" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="22">    
+  <nesting id="17">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
-  <association id="23">    
-    <end type="SOURCE" refId="8" navigable="false" variant="ASSOCIATION">      
-      <attribute id="24" name="ioSimulated">        
+  <nesting id="18">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <realization id="19">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <association id="20">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="21" name="notificationHandler">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="25" minimum="0" maximum="1">        
+      <multiplicity id="22" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <realization id="23">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </realization>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
+  <nesting id="25">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
   <association id="26">    
-    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+    <end type="SOURCE" refId="6" navigable="false">      
       <attribute id="27" name="ioSimulated">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -160,7 +162,7 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

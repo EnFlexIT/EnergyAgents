@@ -283,8 +283,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	public void update(Observable observable, Object updateObject) {
 		if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
 			this.restart(); // --- Cause the invocation of the action method -- 
-		} else if (updateObject==AbstractInternalDataModel.CHANGED.TECHNICAL_SYSTEM_STATE_EVALUATION){
-			this.restart(); // call the action()
 		}
 	}
 	/* (non-Javadoc)

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
-  router="FAN">  
-  <class id="1" language="java" name="de.enflexit.energyAgent.core.AbstractEnergyAgent" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractEnergyAgent.java" binary="false" corner="BOTTOM_RIGHT">    
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="de.enflexit.ea.core.AbstractEnergyAgent" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractEnergyAgent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="53" width="162" x="300" y="163"/>    
     <background red="255" green="221" blue="187"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -12,19 +11,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="2" language="java" name="hygrid.deployment.dataModel.AgentOperatingMode" 
-    project="net.agenthygrid.core.globalDataModel" 
-    file="/net.agenthygrid.core.globalDataModel/src/hygrid/deployment/dataModel/AgentOperatingMode.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="53" width="171" x="78" y="163"/>    
-    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="3" language="java" name="de.enflexit.energyAgent.core.AbstractIORealSimIO" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractIORealSimIO.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="de.enflexit.ea.core.AbstractIORealSimIO" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractIORealSimIO.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="53" width="176" x="878" y="163"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -32,8 +20,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.enflexit.energyAgent.core.AbstractIOReal" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractIOReal.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="de.enflexit.ea.core.AbstractIOReal" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractIOReal.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="966" y="287"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -41,8 +29,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="de.enflexit.energyAgent.core.AbstractIOSimulated" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractIOSimulated.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="de.enflexit.ea.core.AbstractIOSimulated" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractIOSimulated.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="965" y="97"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -50,8 +38,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="6" language="java" name="de.enflexit.energyAgent.core.EnergyAgentIO" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/EnergyAgentIO.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="5" language="java" name="de.enflexit.ea.core.EnergyAgentIO" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/EnergyAgentIO.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="672" y="98"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -59,8 +47,9 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="7" language="java" name="de.enflexit.energyAgent.core.monitoring.MonitoringBehaviourRT" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/monitoring/MonitoringBehaviourRT.java" binary="false" 
+  <class id="6" language="java" name="de.enflexit.ea.core.monitoring.MonitoringBehaviourRT" 
+    project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/monitoring/MonitoringBehaviourRT.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="53" width="179" x="583" y="261"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -69,8 +58,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="8" language="java" name="de.enflexit.energyAgent.core.AbstractInternalDataModel.ControlledSystemType" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/AbstractInternalDataModel.java" 
+  <enumeration id="7" language="java" name="de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractInternalDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="380" y="417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -79,8 +68,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <enumeration id="9" language="java" name="de.enflexit.energyAgent.core.AbstractInternalDataModel.LoggingMode" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/AbstractInternalDataModel.java" 
+  <enumeration id="8" language="java" name="de.enflexit.ea.core.AbstractInternalDataModel.LoggingMode" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractInternalDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="163" y="417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -89,8 +78,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <enumeration id="10" language="java" name="de.enflexit.energyAgent.core.AbstractInternalDataModel.CHANGED" 
-    project="net.agenthygrid.core" file="/net.agenthygrid.core/src/hygrid/agent/AbstractInternalDataModel.java" 
+  <enumeration id="9" language="java" name="de.enflexit.ea.core.AbstractInternalDataModel.CHANGED" 
+    project="de.enflexit.ea.core" file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractInternalDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="163" y="287"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -99,7 +88,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="11" language="java" name="jade.core.Agent" project="org.agentgui.lib.jade" 
+  <class id="10" language="java" name="jade.core.Agent" project="org.agentgui.lib.jade" 
     file="/org.agentgui.lib.jade/jade.jar" binary="true" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="380" y="78"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -108,9 +97,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="12" language="java" name="de.enflexit.energyAgent.core.monitoring.MonitoringListenerForLogging.LoggingDestination" 
-    project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/monitoring/MonitoringListenerForLogging.java" binary="false" 
+  <enumeration id="11" language="java" 
+    name="de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/monitoring/MonitoringListenerForLogging.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="968" y="417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -119,9 +108,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="13" language="java" name="de.enflexit.energyAgent.core.monitoring.MonitoringListenerForLogging" 
-    project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/monitoring/MonitoringListenerForLogging.java" binary="false" 
+  <class id="12" language="java" name="de.enflexit.ea.core.monitoring.MonitoringListenerForLogging" 
+    project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/monitoring/MonitoringListenerForLogging.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="672" y="417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -130,8 +119,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="de.enflexit.energyAgent.core.AbstractInternalDataModel" project="net.agenthygrid.core" 
-    file="/net.agenthygrid.core/src/hygrid/agent/AbstractInternalDataModel.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="13" language="java" name="de.enflexit.ea.core.AbstractInternalDataModel" project="de.enflexit.ea.core" 
+    file="/de.enflexit.ea.core/src/de/enflexit/ea/core/AbstractInternalDataModel.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="53" width="195" x="283" y="261"/>    
     <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -139,180 +129,187 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <association id="15">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="16" name="agentIOBehaviour">        
-        <position height="0" width="0" x="401" y="-319"/>      
+  <enumeration id="14" language="java" name="de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode" 
+    project="de.enflexit.ea.core.dataModel" 
+    file="/de.enflexit.ea.core.dataModel/src/de/enflexit/ea/core/dataModel/deployment/AgentOperatingMode.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="163" y="189"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </enumeration>  
+  <nesting id="15">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
+  <association id="16">    
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+      <attribute id="17" name="loggingMode">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="17" minimum="0" maximum="1">        
-        <position height="0" width="0" x="401" y="-319"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="18">    
-    <end type="SOURCE" refId="7" navigable="false" variant="ASSOCIATION">      
-      <attribute id="19" name="typeOfControlledSystem">        
-        <position height="18" width="125" x="349" y="363"/>      
-      </attribute>      
-      <multiplicity id="20" minimum="0" maximum="1">        
+      <multiplicity id="18" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="8" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="21">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <association id="22">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
-      <attribute id="23" name="rtMonitoring">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="25">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="12"/>  
-  </nesting>  
-  <association id="26">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
-      <attribute id="27" name="myEnergyAgent">        
+  <association id="19">    
+    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+      <attribute id="20" name="myEnergyAgent">        
         <position height="18" width="85" x="323" y="236"/>      
       </attribute>      
-      <multiplicity id="28" minimum="0" maximum="1">        
+      <multiplicity id="21" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="29">    
-    <end type="SOURCE" refId="14"/>    
+  <generalization id="22">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <realization id="23">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <association id="24">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="25" name="operatingMode"/>      
+      <multiplicity id="26" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="27">    
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+      <attribute id="28" name="controlledSystemType">        
+        <position height="18" width="114" x="284" y="346"/>      
+      </attribute>      
+      <multiplicity id="29" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="30">    
+    <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="8"/>  
   </nesting>  
-  <association id="30">    
-    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
-      <attribute id="31" name="loggingDestination">        
+  <association id="31">    
+    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+      <attribute id="32" name="loggingDestination">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="32" minimum="0" maximum="1">        
+      <multiplicity id="33" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="34">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <association id="35">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="36" name="logWriter">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="37" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="12" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="33">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="34" name="monitoringBehaviourRT">        
-        <position height="0" width="0" x="7" y="-141"/>      
+  <association id="38">    
+    <end type="SOURCE" refId="6" navigable="false" variant="ASSOCIATION">      
+      <attribute id="39" name="typeOfControlledSystem">        
+        <position height="18" width="125" x="349" y="363"/>      
       </attribute>      
-      <multiplicity id="35" minimum="0" maximum="1">        
-        <position height="0" width="0" x="7" y="-141"/>      
+      <multiplicity id="40" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="7" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="37" name="myAgent">        
-        <position height="18" width="53" x="328" y="219"/>      
-      </attribute>      
-      <multiplicity id="38" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="39">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="10"/>  
-  </nesting>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="1"/>    
+  <nesting id="41">    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="11"/>  
-  </generalization>  
-  <association id="41">    
-    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
-      <attribute id="42" name="myAgent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="43" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="44">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <nesting id="45">    
-    <end type="SOURCE" refId="14"/>    
+  </nesting>  
+  <nesting id="42">    
+    <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="9"/>  
   </nesting>  
-  <association id="46">    
+  <association id="43">    
     <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="47" name="logWriter">        
+      <attribute id="44" name="agentIOBehaviour">        
+        <position height="0" width="0" x="401" y="-319"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1">        
+        <position height="0" width="0" x="401" y="-319"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="46">    
+    <end type="SOURCE" refId="2" navigable="false" variant="ASSOCIATION">      
+      <attribute id="47" name="myAgent">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="48" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="49">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <association id="50">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="51" name="controlledSystemType">        
-        <position height="18" width="114" x="284" y="346"/>      
+  <association id="49">    
+    <end type="SOURCE" refId="13" navigable="false" variant="ASSOCIATION">      
+      <attribute id="50" name="myAgent">        
+        <position height="18" width="53" x="328" y="219"/>      
       </attribute>      
-      <multiplicity id="52" minimum="0" maximum="1">        
+      <multiplicity id="51" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="53">    
-    <end type="SOURCE" refId="14" navigable="false" variant="ASSOCIATION">      
-      <attribute id="54" name="loggingMode">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="55" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="56">    
+  <association id="52">    
     <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="57" name="operatingMode">        
-        <position height="18" width="79" x="242" y="217"/>      
+      <attribute id="53" name="monitoringBehaviourRT">        
+        <position height="0" width="0" x="7" y="-141"/>      
+      </attribute>      
+      <multiplicity id="54" minimum="0" maximum="1">        
+        <position height="0" width="0" x="7" y="-141"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="55">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <association id="56">    
+    <end type="SOURCE" refId="12" navigable="false" variant="ASSOCIATION">      
+      <attribute id="57" name="rtMonitoring">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="58" minimum="0" maximum="1">        
-        <position height="16" width="23" x="259" y="201"/>      
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="6" navigable="true" variant="ASSOCIATION"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

@@ -47,7 +47,6 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 		NETWORK_MODEL,
 		NETWORK_COMPONENT,
 		MEASUREMENTS_FROM_SYSTEM,
-		TECHNICAL_SYSTEM_STATE_EVALUATION,
 		PHONE_BOOK
 	}
 	

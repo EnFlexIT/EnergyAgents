@@ -603,7 +603,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		// --- Will be invoked if the internal data model has changed ---------
 		if (observable instanceof AbstractInternalDataModel) {
 			if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_MODEL) {
-
+				// +++++++++++++++++++++++++++++++++++
+				// +++ Nothing ToDo here - remove? +++
+				// +++++++++++++++++++++++++++++++++++
+				
 			} else if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_COMPONENT) {
 				// --- Get the actual data model of the NetworkComponent ------ 
 				NetworkComponent netComp = this.getInternalDataModel().getNetworkComponent();
@@ -644,7 +647,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 				}
 				
 			} else if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-
+				// +++++++++++++++++++++++++++++++++++
+				// +++ Nothing ToDo here - remove? +++
+				// +++++++++++++++++++++++++++++++++++
+				
 			}
 		}
 		

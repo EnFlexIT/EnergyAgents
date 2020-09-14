@@ -395,7 +395,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Set IO Settings of this behaviour -------------------------
 			this.setMeasurementsFromSystem(ioSettings);
 			// --- Set system effect to the environment ----------------------
-			this.getSimulationConnector().setMyStimulusAnswer(tsseAnswer);
+			this.setMyStimulusAnswer(tsseAnswer);
 			
 		} else if (simState.getState()==STATE.C_StopSimulation) {
 			// ----------------------------------------------------------------
