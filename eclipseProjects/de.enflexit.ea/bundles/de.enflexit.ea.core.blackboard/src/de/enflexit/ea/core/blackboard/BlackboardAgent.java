@@ -214,6 +214,7 @@ public class BlackboardAgent extends Agent {
 							AbstractSubNetworkConfiguration subConfig = agHandler.getSubNetworkConfigurations().get(j);
 							subAnswer = subConfig.getSubBlackboardModel().getBlackboardRequestAnswer(singleRequest);
 							if (subAnswer!=null) {
+								//TODO what if several aggregations are responsible (eg. PowerFlowCalculationResults)?
 								break;
 							}
 						}

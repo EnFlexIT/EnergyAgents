@@ -1,7 +1,6 @@
 package de.enflexit.ea.core.aggregation;
 
 import java.io.Serializable;
-
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
 
@@ -47,6 +46,13 @@ public abstract class AbstractSubBlackboardModel implements Serializable {
 	public AbstractSubNetworkConfiguration getSubAggregationConfiguration() {
 		return subAggregationConfiguration;
 	}
+	
+	/**
+	 * Checks if this SubBlackboardModel is responsible for the request.
+	 * @param requestSpecifier the request specifier
+	 * @return true, if is responsible for request
+	 */
+	public abstract boolean isResponsibleForRequest(SingleRequestSpecifier requestSpecifier);
 	
 	/**
 	 * Returns the blackboard request answer for the specified request, or null if not responsible.

@@ -3,7 +3,7 @@ package de.enflexit.ea.electricity.blackboard;
 import de.enflexit.ea.core.dataModel.blackboard.RequestObjective;
 
 /**
- * Specifies blackboard request objectives for the electricity domain
+ * Domain-specific blackboard request objectives for electricity
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg - Essen
  */
 public enum ElectricityRequestObjective implements RequestObjective {

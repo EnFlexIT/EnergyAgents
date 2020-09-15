@@ -1,6 +1,10 @@
 package de.enflexit.ea.electricity.blackboard;
 
 import java.util.HashMap;
+import java.util.Vector;
+
+import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
@@ -56,26 +60,26 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	 * @see de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel#getBlackboardRequestAnswer(de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier)
 	 */
 	@Override
-	public AbstractBlackboardAnswer getBlackboardRequestAnswer(SingleRequestSpecifier request) {
+	public AbstractBlackboardAnswer getBlackboardRequestAnswer(SingleRequestSpecifier requestSpecifier) {
 		
 		AbstractBlackboardAnswer answer = null;
 
 		// --- Check if it is an electricity-related request ------------------
-		if (request.getRequestObjective() instanceof ElectricityRequestObjective) {
-			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) request.getRequestObjective();
+		if (this.isResponsibleForRequest(requestSpecifier)) {
+			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) requestSpecifier.getRequestObjective();
 		
 			switch (requestObjective) {
 				case PowerFlowCalculationResults:
 					answer = new PowerFlowCalculationResultAnswer(this.getGraphNodeStates(), this.getNetworkComponentStates());
 					break;
 				case TransformerPower:
-					answer = new TransformerPowerAnswer(request.getIdentifier(), this.getTransformerStates().get(request.getIdentifier()));
+					answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
 					break;
 				case VoltageLevels:
-					answer = new VoltageLevelAnswer(request.getIdentifier(), this.getGraphNodeStates().get(request.getIdentifier()));
+					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getGraphNodeStates().get(requestSpecifier.getIdentifier()));
 					break;
 				case CurrentLevels:
-					answer = new CurrentLevelAnswer(request.getIdentifier(), this.getNetworkComponentStates().get(request.getIdentifier()));
+					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getNetworkComponentStates().get(requestSpecifier.getIdentifier()));
 					break;
 				case VoltageAndCurrentLevels:
 					//TODO handle request
@@ -84,6 +88,52 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		}
 		
 		return answer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel#isResponsibleForRequest(de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier)
+	 */
+	@Override
+	public boolean isResponsibleForRequest(SingleRequestSpecifier requestSpecifier) {
+		// --- Check if the requested domain matches this aggregation ---------
+		if (requestSpecifier.getRequestObjective() instanceof ElectricityRequestObjective) {
+			if (requestSpecifier.getIdentifier()!=null) {
+				return this.checkIdentifier(requestSpecifier.getIdentifier());
+			} else {
+				// --- Identifier not set -> general electricity request -> responsible
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if the given identifier belongs to a network component or graph element of this aggregation.
+	 * @param identifier the identifier
+	 * @return true, if successful
+	 */
+	private boolean checkIdentifier(String identifier) {
+		Vector<NetworkComponent> networkComponents = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
+		for (int i=0; i<networkComponents.size(); i++) {
+			if (this.checkComponent(networkComponents.get(i), identifier)==true) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkComponent(NetworkComponent netComp, String identifier) {
+		if (netComp.getId().equals(identifier)) {
+			return true;
+		} else {
+			Vector<GraphElement> graphElements = this.getSubAggregationConfiguration().getSubNetworkModel().getGraphElementsFromNetworkComponent(netComp);
+			for (int i=0; i<graphElements.size(); i++) {
+				if (graphElements.get(i).getId().equals(identifier)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 }
