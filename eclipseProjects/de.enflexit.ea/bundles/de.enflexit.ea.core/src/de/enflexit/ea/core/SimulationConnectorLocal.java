@@ -40,7 +40,9 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 	
 	/**
 	 * Instantiates a new simulation connector.
+	 *
 	 * @param agent the agent
+	 * @param ioSimulated the current IO-simulated
 	 */
 	public SimulationConnectorLocal(AbstractEnergyAgent agent, AbstractIOSimulated ioSimulated) {
 		this.myAgent = agent;

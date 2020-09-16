@@ -11,7 +11,7 @@ import de.enflexit.ea.core.AbstractInternalDataModel.LoggingMode;
 import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
 import energy.FixedVariableList;
 import energy.OptionModelController;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 

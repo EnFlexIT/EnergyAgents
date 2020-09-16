@@ -22,7 +22,7 @@ import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import energy.GlobalInfo;
-import energy.UnitConverter;
+import energy.helper.UnitConverter;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.loading.ScheduleTimeRange;
 import energy.schedule.loading.ScheduleTimeRangeController;

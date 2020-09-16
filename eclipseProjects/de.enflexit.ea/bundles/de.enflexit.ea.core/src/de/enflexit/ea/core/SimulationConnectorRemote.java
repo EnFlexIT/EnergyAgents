@@ -20,7 +20,7 @@ import de.enflexit.ea.core.testbed.AgentNotificationContainer;
 import de.enflexit.ea.core.testbed.CEARegistrationBehaviour;
 import de.enflexit.ea.core.testbed.DeployedAgentMessageReceiveBehaviour;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.AID;
 import jade.core.Location;
@@ -178,7 +178,7 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 		try {
 			if(notification instanceof TechnicalSystemStateEvaluation){
 				TechnicalSystemStateEvaluation tsse = (TechnicalSystemStateEvaluation) notification;
-				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.getTsseCloneWithoutParent(tsse);
+				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, tsseClone);
 			}else{
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, notification);
@@ -245,7 +245,7 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 //			System.out.println(myAgent.getLocalName() + ": Sending stimulus answer to " + proxyAgentAID.getName());
 			if(myNextState instanceof TechnicalSystemStateEvaluation){
 				TechnicalSystemStateEvaluation tsse = (TechnicalSystemStateEvaluation) myNextState;
-				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.getTsseCloneWithoutParent(tsse);
+				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
 				stimulusResponseMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_STIMULUS_RESPONSE, tsseClone);
 			}else{
 				stimulusResponseMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_STIMULUS_RESPONSE, myNextState);

@@ -8,14 +8,18 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
-import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep.SystemStateType;
 import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
 import energy.FixedVariableList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
@@ -48,12 +52,15 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 
 	private Object setPointSynchronizer;
 	
+	private boolean isSetUpdateSystemStateFromControlBehaviourRT;
+	
 	
 	/**
 	 * Instantiates a new simulated IO behaviour. Assuming {@link AgentOperatingMode} simulation as default case.
 	 * @param energyAgent the current {@link AbstractEnergyAgent}
 	 */
 	public AbstractIOSimulated(AbstractEnergyAgent energyAgent) {
+		super(energyAgent);
 		this.energyAgent = energyAgent;
 		this.getSimulationConnector(energyAgent.getAgentOperatingMode()).pickEnvironmentModelAndStart();
 	}
@@ -163,7 +170,10 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	public NetworkComponent getNetworkComponent() {
 		NetworkModel networkModel = this.getNetworkModel(); 
 		if (networkModel!=null && networkComponent==null) {
-			networkComponent = networkModel.getNetworkComponent(this.myAgent.getLocalName()).getCopy();
+			NetworkComponent netCompTemp = networkModel.getNetworkComponent(this.getEnergyAgent().getLocalName());
+			if (netCompTemp!=null) {
+				networkComponent = netCompTemp.getCopy();
+			}
 		}
 		return networkComponent;
 	}
@@ -325,15 +335,6 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
 		this.getSimulationConnector().sendDisplayAgentNotification(displayAgentNotification);
 	}
-	/**
-	 * This method sets the answer respectively the change of a single simulation agent
-	 * back to the central simulation manager.
-	 *
-	 * @param myNextState the next state of this agent in the next instance of the environment model
-	 */
-	public void setMyStimulusAnswer(Object myNextState) {
-		this.getSimulationConnector().setMyStimulusAnswer(myNextState);
-	}
 	
 	/**
 	 * This method will be executed if an EnvironmentNotification arrives this agent.
@@ -371,7 +372,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Already done within the constructor of this class. ---------
 			// --- Notify that this agent is ready for simulation! ------------ 
 			// ----------------------------------------------------------------
-			this.setMyStimulusAnswer(STATE_CONFIRMATION.Done);
+			this.getSimulationConnector().setMyStimulusAnswer(STATE_CONFIRMATION.Done);
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
 			// ----------------------------------------------------------------
@@ -394,8 +395,19 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			
 			// --- Set IO Settings of this behaviour -------------------------
 			this.setMeasurementsFromSystem(ioSettings);
+
 			// --- Set system effect to the environment ----------------------
-			this.setMyStimulusAnswer(tsseAnswer);
+			switch (this.getTimeModelType()) {
+			case TimeModelDiscrete:
+				// --- Check the Round type of this IO simulated -------------
+				DiscreteSimulationStep dsStep = new DiscreteSimulationStep(tsseAnswer, this.getDiscretSimulationSystemStateType(tsseAnswer));
+				this.getSimulationConnector().setMyStimulusAnswer(dsStep);
+				break;
+
+			case TimeModelContinuous:
+				this.getSimulationConnector().setMyStimulusAnswer(tsseAnswer);
+				break;
+			}
 			
 		} else if (simState.getState()==STATE.C_StopSimulation) {
 			// ----------------------------------------------------------------
@@ -406,6 +418,66 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	// --- From here specific methods for discrete simulations can be found --- 
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the {@link SystemStateType} for the specified {@link TechnicalSystemStateEvaluation} for discrete simulations. 
+	 * By default the method returns a {@link SystemStateType#Final} to produce a regular behaviour for simulations according 
+	 * to a real time behaviour.
+	 * <b>Overwrite</b> this method to produce an individual behaviour for discrete simulations.
+	 *
+	 * @param tsse the TechnicalSystemStateEvaluation
+	 * @return the system state type
+	 */
+	public SystemStateType getDiscretSimulationSystemStateType(TechnicalSystemStateEvaluation tsse) {
+		return SystemStateType.Final;
+	}
+
+	/**
+	 * Returns if the end system state of the real time control behaviour is to be used as state in the environment model, too.
+	 * By default this method returns <code>false</code> to produce a regular simulation behaviour.
+	 *  
+	 * @return true, if the simulation step should be overwritten by the end state of the {@link ControlBehaviourRT}
+	 * @see #setTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel(boolean)
+	 */
+	public boolean isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel() {
+		return this.isSetUpdateSystemStateFromControlBehaviourRT;
+	}
+	/**
+	 * Sets that the {@link TechnicalSystemStateEvaluation} from {@link ControlBehaviourRT} should be used to update the environment model.
+	 * @param isSetUpdateSystemStateFromControlBehaviourRT the indicator to use the state from the {@link ControlBehaviourRT} or not
+	 */
+	public void setTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel(boolean isSetUpdateSystemStateFromControlBehaviourRT) {
+		this.isSetUpdateSystemStateFromControlBehaviourRT = isSetUpdateSystemStateFromControlBehaviourRT;
+	}
+	/**
+	 * Sends the specified {@link TechnicalSystemStateEvaluation} to the simulation manager, to update
+	 * the currently used system state.
+	 * @param tsse the TechnicalSystemStateEvaluation to be used to update the environment model
+	 */
+	public void updateTechnicalSystemStateInEnvironmentModel(TechnicalSystemStateEvaluation tsse) {
+		if (tsse!=null) {
+			this.sendManagerNotification(new ControlBehaviourRTStateUpdate(tsse));
+		}
+	}
+	
+	/**
+	 * Sets the DiscreteSimulationStep (a system state and a type marker) to environment model that is managed by the Simulation Manager.
+	 *
+	 * @param tsse the new technical system state to be set to the environment model
+	 * @param systemStateType the system state type
+	 */
+	public void setDiscreteSimulationStepToEnvironment(TechnicalSystemStateEvaluation tsse, SystemStateType systemStateType) {
+		if (tsse!=null) {
+			DiscreteSimulationStep dsStep = new DiscreteSimulationStep(tsse, systemStateType);
+			this.sendManagerNotification(dsStep);
+		}
+	}
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	
+	
 	/**
 	 * Stop TimeTrigger for the system input.
 	 */

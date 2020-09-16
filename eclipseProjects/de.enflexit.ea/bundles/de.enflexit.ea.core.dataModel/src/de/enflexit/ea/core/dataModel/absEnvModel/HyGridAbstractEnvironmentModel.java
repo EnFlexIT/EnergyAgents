@@ -25,7 +25,7 @@ import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import energy.GlobalInfo;
-import energy.UnitConverter;
+import energy.helper.UnitConverter;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 

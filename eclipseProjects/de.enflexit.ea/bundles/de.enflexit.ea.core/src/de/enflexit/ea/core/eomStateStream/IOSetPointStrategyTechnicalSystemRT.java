@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Vector;
 
 import de.enflexit.ea.core.AbstractIOSimulated;
-import energy.DisplayHelper;
 import energy.FixedVariableList;
 import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
+import energy.helper.DisplayHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;

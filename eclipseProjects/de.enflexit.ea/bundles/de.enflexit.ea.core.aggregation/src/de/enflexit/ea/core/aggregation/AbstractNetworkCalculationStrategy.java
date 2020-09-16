@@ -9,10 +9,11 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
-import energy.DisplayHelper;
 import energy.OptionModelController;
 import energy.evaluation.EvaluationProcess;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
+import energy.helper.DisplayHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyFlowMeasured;
 import energy.optionModel.EnergyMeasurement;
@@ -255,7 +256,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 			// --- Get energy flows, execute network calculation --------------
 			this.optionModelController.updateTechnicalSystemStateEnergyFlows(tssStart, 0, false);
 			// --- Convert to a TechnicalSystemStateEvaluation ---------------- 
-			tsse = this.optionModelController.convertToTechnicalSystemStateEvaluation(tssStart);
+			tsse = TechnicalSystemStateHelper.convertToTechnicalSystemStateEvaluation(tssStart);
 			// --- Set this as the initial state for the evaluation -----------
 			this.getEvaluationProcess().setInitialTechnicalSystemStateEvaluation(tsse);
 			this.setIntermediateStateToResult(tsse);

@@ -4,14 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Vector;
 
-import energy.FixedVariableHelper;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
-import energy.evaluation.TechnicalSystemStateDeltaHelper;
-import energy.evaluation.TechnicalSystemStateDeltaHelper.DeltaSelectionBy;
+import energy.helper.FixedVariableHelper;
+import energy.helper.TechnicalSystemStateDeltaHelper;
+import energy.helper.TechnicalSystemStateDeltaHelper.DeltaSelectionBy;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedInteger;
 import energy.optionModel.FixedVariable;

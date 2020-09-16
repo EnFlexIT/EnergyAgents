@@ -42,13 +42,14 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMA
 import de.enflexit.ea.core.dataModel.blackboard.Blackboard;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
+import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
@@ -768,6 +769,14 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			NetworkModel networkModelLocal = (NetworkModel) this.getDisplayEnvironment();
 			networkModelLocal.getAlternativeNetworkModel().put(senderName, networkModelAlternative);
 			this.sendDisplayAgentNotification(new EnvironmentModelUpdateNotification(this.getEnvironmentModel()));
+			return;
+			
+		} else if (notification.getNotification() instanceof ControlBehaviourRTStateUpdate) {
+			// --- Got a system state update from a system ----------------------------------------
+			ControlBehaviourRTStateUpdate tsseUpdate = (ControlBehaviourRTStateUpdate) notification.getNotification();
+			if (tsseUpdate.getTechnicalSystemStateEvaluation()!=null) {
+				this.getAggregationHandler().setAgentAnswer(notification);
+			}
 			return;
 		}
 		

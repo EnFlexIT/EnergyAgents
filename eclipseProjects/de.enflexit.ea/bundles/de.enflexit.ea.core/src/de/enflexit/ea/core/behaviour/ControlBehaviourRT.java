@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
@@ -50,6 +51,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 
 	private static final long serialVersionUID = -1460453061132067175L;
 
+	private AbstractEnergyAgent energyAgent;
 	private AbstractInternalDataModel internalDataModel;
 	private EnergyAgentIO agentIOBehaviour;
 	
@@ -73,6 +75,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 * @param ioBehaviour the IO behaviour of the current agent
 	 */
 	public ControlBehaviourRT(AbstractEnergyAgent agent) {
+		this.energyAgent = agent;
 		this.internalDataModel = agent.getInternalDataModel();
 		this.agentIOBehaviour = agent.getEnergyAgentIO();
 		this.initialize();
@@ -332,6 +335,9 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtEvaluationStrategy.runEvaluationUntil(this.currentTime);
 				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
+				// --- Set system state to environment model? -------
+				this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
+					
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -346,6 +352,36 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.agentIOBehaviour.setSetPointsToSystem(setPointList);
 			}
 		}
+	}
+	
+	/**
+	 * In the context of simulations, sets the local system state to the environment model if configured in the simulation interface.
+	 * @param tsseLocal the new local system state to environment model
+	 */
+	private void setLocalSystemStateToEnvironmentModelInSimulations(TechnicalSystemStateEvaluation tsseLocal) {
+		
+		switch (this.energyAgent.getAgentOperatingMode()) {
+		case Simulation:
+		case TestBedSimulation:
+			EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
+			if (eaIO instanceof AbstractIOSimulated) {
+				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) this.energyAgent.getEnergyAgentIO();
+				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+					ioSimulated.updateTechnicalSystemStateInEnvironmentModel(tsseLocal);
+				}
+			}
+			break;
+			
+		case TestBedReal:
+			// --- TODO ?? Involve monitoring behaviour? ----
+			break;
+			
+		case RealSystemSimulatedIO:
+		case RealSystem:
+			// --- Nothing to do here yet -------------------
+			break;
+		}
+		
 	}
 	
 	/**
@@ -407,6 +443,9 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(this.currentTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
+				
+				// --- Set system state to environment model? -------
+				this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

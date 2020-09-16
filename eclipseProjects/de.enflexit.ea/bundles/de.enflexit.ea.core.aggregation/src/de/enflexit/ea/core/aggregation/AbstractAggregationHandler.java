@@ -25,9 +25,13 @@ import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep.SystemStateType;
+import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemState;
@@ -61,6 +65,8 @@ public abstract class AbstractAggregationHandler {
 	private String timeFormat;
 	private boolean headlessOperation;
 	private ExecutionDataBase executionDataBase;
+	
+	private HashMap<String, SystemStateType> pendingSystemsInDiscreteSimulationStep;
 	
 	private int scheduleControllerFailuresMax = 5;
 	private HashMap<String, Integer> scheduleControllerFailureHashMap;
@@ -475,6 +481,20 @@ public abstract class AbstractAggregationHandler {
 	}
 	
 	// ----------------------------------------------------------------------------------
+	// --- From here, methods for discrete simulations steps ----------------------------
+	// ----------------------------------------------------------------------------------	
+	/**
+	 * Returns the pending systems within a discrete simulation step.
+	 * @return the pending systems in discrete simulation step
+	 */
+	protected HashMap<String, DiscreteSimulationStep.SystemStateType> getPendingSystemsInDiscreteSimulationStep() {
+		if (pendingSystemsInDiscreteSimulationStep==null) {
+			pendingSystemsInDiscreteSimulationStep = new HashMap<String, DiscreteSimulationStep.SystemStateType>();
+		}
+		return pendingSystemsInDiscreteSimulationStep;
+	}
+	
+	// ----------------------------------------------------------------------------------
 	// --- From here on, access to the individual Schedules will be organized -----------  
 	// ----------------------------------------------------------------------------------	
 	/**
@@ -494,7 +514,13 @@ public abstract class AbstractAggregationHandler {
 	 * @param agentAnswers the agent answers
 	 */
 	public void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
+
+		if (this.getHyGridAbstractEnvironmentModel().getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+			// --- Clear list of pending systems for a discrete simulation ---- 
+			this.getPendingSystemsInDiscreteSimulationStep().clear();
+		}
 		
+		// --- Append or update system states to/in local ScheduleController -- 
 		if (agentAnswers!=null && agentAnswers.size()>0) {
 			ArrayList<AID> aidKeys = new ArrayList<AID>(agentAnswers.keySet());
 			for (int i = 0; i < aidKeys.size(); i++) {
@@ -520,15 +546,37 @@ public abstract class AbstractAggregationHandler {
 		try {
 
 			if (updateObject instanceof String) {
-				// --- Most probably a 'null' feedback ------------------------
+				// --- Most probably a 'null' feedback --------------------------------------------
 				String newStateString = (String) updateObject;
 				if (newStateString.equals("null")==false) {
 					System.out.println("Answer from " + networkComponentID + ": " + newStateString);
 				}
 				
 			} else if (updateObject instanceof TechnicalSystemStateEvaluation) {
-				// --- Got a new system state from a part of the network ------
+				// --- Got a new system state from a part of the network --------------------------
  				this.appendToNetworkComponentsScheduleController(networkComponentID, (TechnicalSystemStateEvaluation)updateObject);
+ 				
+			} else if (updateObject instanceof ControlBehaviourRTStateUpdate) {
+				// --- Got a state update from a part of the network ------------------------------
+				ControlBehaviourRTStateUpdate stateUpdate = (ControlBehaviourRTStateUpdate) updateObject;
+				this.appendToNetworkComponentsScheduleController(networkComponentID, stateUpdate.getTechnicalSystemStateEvaluation(), 1, "States of ControlBehaviourRT", true);
+				
+			} else if (updateObject instanceof DiscreteSimulationStep) {
+				// --- Discrete Simulation: Got DiscreteSimulationStep from NetworkComponent ------
+				DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject; 
+				switch (dsStep.getSystemStateType()) {
+				case Initial:
+					this.getPendingSystemsInDiscreteSimulationStep().put(networkComponentID, dsStep.getSystemStateType());
+					break;
+				case Update:
+					this.getPendingSystemsInDiscreteSimulationStep().put(networkComponentID, dsStep.getSystemStateType());
+					break;
+				case Final:
+					this.getPendingSystemsInDiscreteSimulationStep().remove(networkComponentID);
+					break;
+				}
+				// --- Got a new system state from a part of the network --------------------------
+				this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getTechnicalSystemStateEvaluation());
 			}
 			
 		} catch (Exception ex) {
@@ -543,7 +591,7 @@ public abstract class AbstractAggregationHandler {
 	 * @param tsseNew the new {@link TechnicalSystemStateEvaluation} to append
 	 */
 	public void appendToNetworkComponentsScheduleController(String networkComponentID, TechnicalSystemStateEvaluation tsseNew) {
-		this.appendToNetworkComponentsScheduleController(networkComponentID, tsseNew, true);
+		this.appendToNetworkComponentsScheduleController(networkComponentID, tsseNew, 0, null, true);
 	}
 	/**
 	 * Appends the specified {@link TechnicalSystemStateEvaluation} to network components schedule controller.
@@ -553,6 +601,29 @@ public abstract class AbstractAggregationHandler {
 	 * @param isRealTimeSchedule the is real time schedule
 	 */
 	public void appendToNetworkComponentsScheduleController(String networkComponentID, TechnicalSystemStateEvaluation tsseNew, boolean isRealTimeSchedule) {
+		this.appendToNetworkComponentsScheduleController(networkComponentID, tsseNew, 0, null, isRealTimeSchedule);
+	}
+	/**
+	 * Appends the specified {@link TechnicalSystemStateEvaluation} to network components schedule controller.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @param tsseNew the new {@link TechnicalSystemStateEvaluation} to append
+	 * @param destinScheduleIndex the destination schedule index
+	 * @param isRealTimeSchedule the is real time schedule
+	 */
+	public void appendToNetworkComponentsScheduleController(String networkComponentID, TechnicalSystemStateEvaluation tsseNew, int destinScheduleIndex, boolean isRealTimeSchedule) {
+		this.appendToNetworkComponentsScheduleController(networkComponentID, tsseNew, destinScheduleIndex, null, isRealTimeSchedule);
+	}
+	/**
+	 * Appends the specified {@link TechnicalSystemStateEvaluation} to network components schedule controller.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @param tsseNew the new {@link TechnicalSystemStateEvaluation} to append
+	 * @param destinScheduleIndex the destination schedule index
+	 * @param scheduleDescription the schedule description
+	 * @param isRealTimeSchedule the is real time schedule
+	 */
+	public void appendToNetworkComponentsScheduleController(String networkComponentID, TechnicalSystemStateEvaluation tsseNew, int destinScheduleIndex, String scheduleDescription, boolean isRealTimeSchedule) {
 	
 		if (networkComponentID==null || tsseNew==null) return;
 		
@@ -572,7 +643,7 @@ public abstract class AbstractAggregationHandler {
 			}
 			return;
 		}
-		this.appendToNetworkComponentsScheduleController(sc, tsseNew, isRealTimeSchedule);
+		this.appendToNetworkComponentsScheduleController(sc, tsseNew, destinScheduleIndex, scheduleDescription, isRealTimeSchedule);
 	}
 	
 	/**
@@ -608,16 +679,18 @@ public abstract class AbstractAggregationHandler {
 	 * @param tsseNew the new {@link TechnicalSystemStateEvaluation} to append
 	 */
 	public void appendToNetworkComponentsScheduleController(ScheduleController sc, TechnicalSystemStateEvaluation tsseNew) {
-		this.appendToNetworkComponentsScheduleController(sc, tsseNew, true);
+		this.appendToNetworkComponentsScheduleController(sc, tsseNew, 0, null, true);
 	}
 	/**
 	 * Appends the specified {@link TechnicalSystemStateEvaluation} to network components schedule controller.
 	 *
 	 * @param sc the {@link ScheduleController} that controls the {@link ScheduleList}
 	 * @param tsseNew the new {@link TechnicalSystemStateEvaluation} to append
+	 * @param destinScheduleIndex the destination schedule index
+	 * @param scheduleDescription the schedule description to use for a new Schedule
 	 * @param isRealTimeSchedule the is real time schedule
 	 */
-	private void appendToNetworkComponentsScheduleController(ScheduleController sc, TechnicalSystemStateEvaluation tsseNew, boolean isRealTimeSchedule) {
+	private void appendToNetworkComponentsScheduleController(ScheduleController sc, TechnicalSystemStateEvaluation tsseNew, int destinScheduleIndex, String scheduleDescription, boolean isRealTimeSchedule) {
 		
 		if (sc==null || tsseNew==null) return;
 		
@@ -625,18 +698,25 @@ public abstract class AbstractAggregationHandler {
 		Schedule schedule = null;
 
 		boolean updateMemberEvaluationStrategy = false;
-		if (sl.getSchedules().size()==0) {
-			// --- Create a Schedule first --------------------------
-			schedule = this.createSchedule(isRealTimeSchedule);
-			sl.getSchedules().add(schedule);
+
+		// --- Create a Schedule first? -----------------------------
+		if ((sl.getSchedules().size()-1) < destinScheduleIndex) {
+			while ((sl.getSchedules().size()-1) < destinScheduleIndex) {
+				// --- Get a new Schedule ---------------------------
+				schedule = this.createSchedule(isRealTimeSchedule);
+				// --- Consider Schedule description ----------------
+				if (scheduleDescription!=null && scheduleDescription.isEmpty()==false && sl.getSchedules().size()==destinScheduleIndex) {
+					schedule.setStrategyClass(schedule.getStrategyClass() + " - " + scheduleDescription);
+				}
+				sl.getSchedules().add(schedule);
+			}
 			// --- Remind to update the MemberEvaluationStrategy ----
 			updateMemberEvaluationStrategy = true;
 			this.notifyScheduleListObserver(sc, ScheduleNotification.Reason.ScheduleListLoaded, null);
-			
-		} else {
-			// --- Get the schedule ---------------------------------
-			schedule = sl.getSchedules().get(0);
 		}
+
+		// --- Get the schedule ---------------------------------
+		schedule = sl.getSchedules().get(destinScheduleIndex);
 		
 		// --- Check the required real time attribute --------------- 
 		if (schedule.isRealTimeSchedule()!=isRealTimeSchedule) {
@@ -646,12 +726,41 @@ public abstract class AbstractAggregationHandler {
 		// --- Set the parent of the new state ----------------------
 		TechnicalSystemStateEvaluation tssePrev = schedule.getTechnicalSystemStateEvaluation();
 		if (tssePrev!=null) {
-			if(tssePrev.getGlobalTime()<tsseNew.getGlobalTime()) {
+			if (tssePrev.getGlobalTime()<tsseNew.getGlobalTime()) {
 				// --- Later time stamp -> append -------------------
 				tsseNew.setParent(tssePrev);
+				
 			} else if (tssePrev.getGlobalTime()==tsseNew.getGlobalTime()) {
 				// --- Same time stamp -> replace -------------------
 				tsseNew.setParent(tssePrev.getParent());
+				
+			} else if (tssePrev.getGlobalTime()>tsseNew.getGlobalTime()) {
+				// --- Place in queue -------------------------------
+				TechnicalSystemStateEvaluation tsseQueue = tssePrev;
+				List<TechnicalSystemStateEvaluation> tsseListTmp = new ArrayList<TechnicalSystemStateEvaluation>();
+				while (tsseQueue.getGlobalTime() >= tsseNew.getGlobalTime()) {
+
+					TechnicalSystemStateEvaluation tsseToTmpList = tsseQueue;
+					if (tsseQueue.getParent()==null) break;
+					tsseQueue = tsseQueue.getParent();
+					
+					tsseToTmpList.setParent(null);
+					tsseListTmp.add(tsseToTmpList);
+				}
+				
+				// --- Rearrange system states again ----------------
+				for (int i=tsseListTmp.size()-1; i>=0; i--) {
+					
+					TechnicalSystemStateEvaluation tsseFromTmpList = tsseListTmp.get(i);
+					if (tsseFromTmpList.getGlobalTime()==tsseNew.getGlobalTime()) {
+						// --- Replace by newly provided state ------
+						tsseFromTmpList = tsseNew;
+					}
+					tsseFromTmpList.setParent(tsseQueue);
+					tsseQueue = tsseFromTmpList; 
+				}
+				tsseNew = tsseQueue;
+				
 			}
 		}
 		// --- Set new state as new final state of the Schedule -----
@@ -693,7 +802,7 @@ public abstract class AbstractAggregationHandler {
 				if (schedule!=null) {
 					TechnicalSystemStateEvaluation tsse = schedule.getTechnicalSystemStateEvaluation();
 					if (tsse!=null) {
-						TechnicalSystemStateEvaluation tsseCopy = TechnicalSystemStateHelper.getTsseCloneWithoutParent(tsse);
+						TechnicalSystemStateEvaluation tsseCopy = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
 						latestTSSEs.put(netCompID, tsseCopy);
 					}
 				}
