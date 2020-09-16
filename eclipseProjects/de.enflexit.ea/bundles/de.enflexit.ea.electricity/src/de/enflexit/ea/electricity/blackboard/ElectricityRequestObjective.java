@@ -9,7 +9,6 @@ import de.enflexit.ea.core.dataModel.blackboard.RequestObjective;
 public enum ElectricityRequestObjective implements RequestObjective {
 	PowerFlowCalculationResults,
 	TransformerPower,
-	VoltageAndCurrentLevels,
 	VoltageLevels,
 	CurrentLevels
 }

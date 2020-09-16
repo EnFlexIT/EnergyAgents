@@ -81,9 +81,6 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 				case CurrentLevels:
 					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getNetworkComponentStates().get(requestSpecifier.getIdentifier()));
 					break;
-				case VoltageAndCurrentLevels:
-					//TODO handle request
-					break;
 			}
 		}
 		
