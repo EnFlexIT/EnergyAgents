@@ -8,9 +8,14 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.RequestObjective;
 import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
+import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
+import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricityRequestObjective;
+import de.enflexit.ea.electricity.aggregation.uniPhase.SubNetworkConfigurationElectricity10kV;
+import de.enflexit.ea.electricity.aggregation.uniPhase.UniPhaseElectricityRequestObjective;
 import energy.optionModel.TechnicalSystemState;
 
 /**
@@ -66,7 +71,7 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 
 		// --- Check if it is an electricity-related request ------------------
 		if (this.isResponsibleForRequest(requestSpecifier)) {
-			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) requestSpecifier.getRequestObjective();
+			TriPhaseElectricityRequestObjective requestObjective = (TriPhaseElectricityRequestObjective) requestSpecifier.getRequestObjective();
 		
 			switch (requestObjective) {
 				case PowerFlowCalculationResults:
@@ -93,8 +98,9 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	@Override
 	public boolean isResponsibleForRequest(SingleRequestSpecifier requestSpecifier) {
 		// --- Check if the requested domain matches this aggregation ---------
-		if (requestSpecifier.getRequestObjective() instanceof ElectricityRequestObjective) {
+		if (this.checkDomain(requestSpecifier.getRequestObjective())==true) {
 			if (requestSpecifier.getIdentifier()!=null) {
+				// --- Check if the requested element is part of this aggregation
 				return this.checkIdentifier(requestSpecifier.getIdentifier());
 			} else {
 				// --- Identifier not set -> general electricity request -> responsible
@@ -102,6 +108,17 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 			}
 		}
 		return false;
+	}
+	
+	private boolean checkDomain(RequestObjective requestSpecifier) {
+		String subNetworkDescription = this.getSubAggregationConfiguration().getSubNetworkDescription();
+		if (requestSpecifier instanceof TriPhaseElectricityRequestObjective && subNetworkDescription.equals(SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS)) {
+			return true;
+		} else if (requestSpecifier instanceof UniPhaseElectricityRequestObjective && subNetworkDescription.equals(SubNetworkConfigurationElectricity10kV.SUBNET_DESCRIPTION_ELECTRICITY_10KV)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
