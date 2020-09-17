@@ -8,14 +8,9 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
-import de.enflexit.ea.core.dataModel.blackboard.RequestObjective;
 import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
-import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricityRequestObjective;
-import de.enflexit.ea.electricity.aggregation.uniPhase.SubNetworkConfigurationElectricity10kV;
-import de.enflexit.ea.electricity.aggregation.uniPhase.UniPhaseElectricityRequestObjective;
 import energy.optionModel.TechnicalSystemState;
 
 /**
@@ -71,7 +66,7 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 
 		// --- Check if it is an electricity-related request ------------------
 		if (this.isResponsibleForRequest(requestSpecifier)) {
-			TriPhaseElectricityRequestObjective requestObjective = (TriPhaseElectricityRequestObjective) requestSpecifier.getRequestObjective();
+			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) requestSpecifier.getRequestObjective();
 		
 			switch (requestObjective) {
 				case PowerFlowCalculationResults:
@@ -98,7 +93,7 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	@Override
 	public boolean isResponsibleForRequest(SingleRequestSpecifier requestSpecifier) {
 		// --- Check if the requested domain matches this aggregation ---------
-		if (this.checkDomain(requestSpecifier.getRequestObjective())==true) {
+		if (requestSpecifier.getRequestObjective() instanceof ElectricityRequestObjective) {
 			if (requestSpecifier.getIdentifier()!=null) {
 				// --- Check if the requested element is part of this aggregation
 				return this.checkIdentifier(requestSpecifier.getIdentifier());
@@ -110,17 +105,6 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		return false;
 	}
 	
-	private boolean checkDomain(RequestObjective requestSpecifier) {
-		String subNetworkDescription = this.getSubAggregationConfiguration().getSubNetworkDescription();
-		if (requestSpecifier instanceof TriPhaseElectricityRequestObjective && subNetworkDescription.equals(SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS)) {
-			return true;
-		} else if (requestSpecifier instanceof UniPhaseElectricityRequestObjective && subNetworkDescription.equals(SubNetworkConfigurationElectricity10kV.SUBNET_DESCRIPTION_ELECTRICITY_10KV)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	/**
 	 * Check if the given identifier belongs to a network component or graph element of this aggregation.
 	 * @param identifier the identifier
@@ -129,25 +113,21 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	private boolean checkIdentifier(String identifier) {
 		Vector<NetworkComponent> networkComponents = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
 		for (int i=0; i<networkComponents.size(); i++) {
-			if (this.checkComponent(networkComponents.get(i), identifier)==true) {
+			// --- Check the network component itself ---------------
+			NetworkComponent networkComponent = networkComponents.get(i);
+			if (networkComponent.getId().equals(identifier)) {
 				return true;
+			} else {
+				// --- Check the component's graph elements ---------
+				Vector<GraphElement> graphElements = this.getSubAggregationConfiguration().getSubNetworkModel().getGraphElementsFromNetworkComponent(networkComponent);
+				for (int j=0; j<graphElements.size(); j++) {
+					if (graphElements.get(j).getId().equals(identifier)) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
-	}
-	
-	private boolean checkComponent(NetworkComponent netComp, String identifier) {
-		if (netComp.getId().equals(identifier)) {
-			return true;
-		} else {
-			Vector<GraphElement> graphElements = this.getSubAggregationConfiguration().getSubNetworkModel().getGraphElementsFromNetworkComponent(netComp);
-			for (int i=0; i<graphElements.size(); i++) {
-				if (graphElements.get(i).getId().equals(identifier)) {
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 
 }

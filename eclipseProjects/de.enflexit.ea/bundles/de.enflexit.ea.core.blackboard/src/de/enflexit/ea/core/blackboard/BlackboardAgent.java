@@ -10,9 +10,11 @@ import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
+import de.enflexit.ea.core.dataModel.blackboard.EmptyBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.MultipleBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier;
 import de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier.RequestType;
@@ -201,30 +203,36 @@ public class BlackboardAgent extends Agent {
 				Vector<AbstractBlackboardAnswer> answerVector = new Vector<AbstractBlackboardAnswer>();
 				for (int i=0; i<requestVector.size(); i++) {
 					
-					AbstractBlackboardAnswer subAnswer = null;
+					AbstractBlackboardAnswer requestAnswer = null;
 					SingleRequestSpecifier singleRequest = requestVector.get(i);
 
 					// --- Answer general requests here ---------------------------------
 					if (singleRequest.getRequestObjective() instanceof GeneralRequestObjective) {
-						subAnswer = this.getBlackboardAnswer(singleRequest);
-						break;
+						requestAnswer = this.getGeneralBlackboardAnswer(singleRequest);
+						answerVector.add(requestAnswer);
+						
 					} else {
 						// --- Delegate specific requests to the sub model --------------
 						for (int j = 0; j < agHandler.getSubNetworkConfigurations().size(); j++) {
 							AbstractSubNetworkConfiguration subConfig = agHandler.getSubNetworkConfigurations().get(j);
-							subAnswer = subConfig.getSubBlackboardModel().getBlackboardRequestAnswer(singleRequest);
-							if (subAnswer!=null) {
-								//TODO what if several aggregations are responsible (eg. PowerFlowCalculationResults)?
-								break;
+							AbstractSubBlackboardModel subBlackboardModel = subConfig.getSubBlackboardModel();
+							if (subBlackboardModel!=null) {
+								AbstractBlackboardAnswer subAnswer = subBlackboardModel.getBlackboardRequestAnswer(singleRequest);
+								if (subAnswer!=null) {
+									subAnswer.setSubConfigurationID(subConfig.getID());
+									subAnswer.setSubConfigurationDomain(subConfig.getDomain());
+									answerVector.add(subAnswer);
+								}
 							}
 						}
 					}
-					answerVector.add(subAnswer);
 				}
 				
 				// --- Prepare answer type ----------------------------------------------
 				AbstractBlackboardAnswer finalAnswer = null;
-				if (answerVector.size()==1) {
+				if (answerVector.size()==0) {
+					finalAnswer = new EmptyBlackboardAnswer();
+				} else if (answerVector.size()==1) {
 					finalAnswer = answerVector.get(0);
 				} else {
 					finalAnswer = new MultipleBlackboardAnswer(answerVector); 
@@ -235,24 +243,6 @@ public class BlackboardAgent extends Agent {
 					this.sendAgentNotification(bbRequest.getRequester(), finalAnswer);
 				}
 					
-				//TODO Handle sensor requests on the electricity level adequately 
-//					if (bbRequest.getRequestSpecifierVector().size()==2 && bbRequest.getRequestSpecifierVector().get(0).getRequestObjective()==GeneralRequestObjective.VoltageAndCurrentLevels) {
-//						// --- Special case for sensor agents -----------------
-//						//TODO move to electricity specific blackboard implementation
-//						RequestSpecifier spec1 = bbRequest.getRequestSpecifierVector().get(0);
-//						RequestSpecifier spec2 = bbRequest.getRequestSpecifierVector().get(1);
-//						ElectricalNodeState nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec1.getIdentifier());
-//						if (nodeState==null) {
-//							nodeState = BlackboardAgent.this.getBlackboard().getGraphNodeStates().get(spec2.getIdentifier());
-//						}
-//						CableState cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec2.getIdentifier());
-//						if (cableState==null) {
-//							cableState = BlackboardAgent.this.getBlackboard().getNetworkComponentStates().get(spec1.getIdentifier());
-//						}
-//						if (nodeState!=null & cableState!=null) {
-//							answer = new VoltageAndCurrentLevelAnswer(spec1.getIdentifier(), nodeState, cableState);
-//						}
-				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -263,7 +253,7 @@ public class BlackboardAgent extends Agent {
 		 * @param singleRequest the single request 
 		 * @return the blackboard answer
 		 */
-		private AbstractBlackboardAnswer getBlackboardAnswer(SingleRequestSpecifier singleRequest) {
+		private AbstractBlackboardAnswer getGeneralBlackboardAnswer(SingleRequestSpecifier singleRequest) {
 		
 			AbstractBlackboardAnswer answer = null;
 
