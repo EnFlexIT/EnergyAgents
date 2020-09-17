@@ -17,11 +17,12 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep.SystemStateType;
 import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
 import energy.FixedVariableList;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import jade.core.AID;
@@ -210,7 +211,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 */
 	public TimeModelDiscrete getTimeModelDiscrete() {
 		if (this.myEnvironmentModel.getTimeModel() instanceof TimeModelDiscrete ) {
-			return (TimeModelDiscrete ) this.myEnvironmentModel.getTimeModel();
+			return (TimeModelDiscrete) this.myEnvironmentModel.getTimeModel();
 		}
 		return null;
 	}
@@ -456,9 +457,9 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 * the currently used system state.
 	 * @param tsse the TechnicalSystemStateEvaluation to be used to update the environment model
 	 */
-	public void updateTechnicalSystemStateInEnvironmentModel(TechnicalSystemStateEvaluation tsse) {
-		if (tsse!=null) {
-			this.sendManagerNotification(new ControlBehaviourRTStateUpdate(tsse));
+	public void sendControlBehaviourRTStateUpdateToEnvironmentModel(TechnicalSystemStateEvaluation tsse) {
+		if (this.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+			this.sendManagerNotification(new ControlBehaviourRTStateUpdate(TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse)));
 		}
 	}
 	
@@ -474,6 +475,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			this.sendManagerNotification(dsStep);
 		}
 	}
+	
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	

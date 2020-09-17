@@ -67,7 +67,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	
 	private long currentTime;
 	
-	
 	/**
 	 * Instantiates a new control behaviour that is used during real time.
 	 *
@@ -278,7 +277,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return variableIDsForSetPoints;
 	}
 	
-
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
@@ -335,12 +334,13 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtEvaluationStrategy.runEvaluationUntil(this.currentTime);
 				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
-				// --- Set system state to environment model? -------
-				this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
 					
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			// --- If configured, set TSSE to environment model -----
+			this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {
@@ -367,15 +367,12 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			if (eaIO instanceof AbstractIOSimulated) {
 				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) this.energyAgent.getEnergyAgentIO();
 				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
-					ioSimulated.updateTechnicalSystemStateInEnvironmentModel(tsseLocal);
+					ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 				}
 			}
 			break;
 			
 		case TestBedReal:
-			// --- TODO ?? Involve monitoring behaviour? ----
-			break;
-			
 		case RealSystemSimulatedIO:
 		case RealSystem:
 			// --- Nothing to do here yet -------------------
@@ -444,12 +441,13 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(this.currentTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
-				// --- Set system state to environment model? -------
-				this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			// --- If configured, set TSSE to environment model -----
+			this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {

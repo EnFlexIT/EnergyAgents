@@ -3,6 +3,7 @@ package de.enflexit.ea.core.simulation.manager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -94,6 +95,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private Hashtable<AID, Object> environmentNotificationReminder;
 	private NetworkCalculationExecuter networkCalculationExecuter;
 	private Object networkCalculationTrigger;
+	
+	private HashSet<String> controlBehaviourRTStateUpdateSources;
+	private HashSet<String> controlBehaviourRTStateUpdateAnswered;
 	
 	
 	
@@ -582,6 +586,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					// --- Case separation Time Model --------------------------------------------
 					switch (this.hygridSettings.getTimeModelType()) {
 					case TimeModelDiscrete: // ---------------------------------------------------
+						this.getControlBehaviourRTStateUpdateAnswered().clear();
 						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
 						this.setEndTimeNextSimulationStep();
 						// --- Disable NetworkModel updates within GUI ----------------------------
@@ -604,17 +609,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					
 					switch (this.hygridSettings.getTimeModelType()) {
 					case TimeModelDiscrete:
-						this.waitUntilTheEndOfCurrentSimulationStep();
-						TimeModelDiscrete tmd = this.getTimeModelDiscrete();
-						if (tmd.getTime()<tmd.getTimeStop()) {
-							tmd.step();
-						} else {
-							simState.setState(STATE.C_StopSimulation);
-							this.print("Finalize Simulation!", false);
-							this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
-						}
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
-						this.setEndTimeNextSimulationStep();
+						// --- Check if discrete simulation step is done --------------------------
+						this.discreteSimulationCheckEndOfSimulationStep();
 						break;
 						
 					case TimeModelContinuous:
@@ -638,6 +634,101 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 	}
 
+	/**
+	 * Check if the end of a discrete simulation step is reached. If so, the next 
+	 * discrete simulation step will be initialized.
+	 */
+	private void discreteSimulationCheckEndOfSimulationStep() {
+		
+		// --- To avoid reaction in continuous time simulations -------------------------
+		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
+
+		// ------------------------------------------------------------------------------
+		// --- Do we expect further instances of ControlBehaviourRTStateUpdate? ---------
+		// ------------------------------------------------------------------------------
+		if (this.isPendingControlBehaviourRTStateUpdate()==true) return;
+		
+		// ------------------------------------------------------------------------------
+		// --- Do we expect further discrete simulation steps ---------------------------
+		// ------------------------------------------------------------------------------
+		
+		
+		
+		// --- Start next simulation step -----------------------------------------------
+		this.discreteSimulationStartNextSimulationStep();
+	}
+	/**
+	 * Start the next simulation step in discrete simulations.
+	 */
+	private void discreteSimulationStartNextSimulationStep() {
+
+		try {
+			// --- Wait until the end of configured time between simulations steps ------
+			this.waitUntilTheEndOfCurrentSimulationStep();
+
+			// --- Prepare next simulation step -----------------------------------------
+			TimeModelDiscrete tmd = this.getTimeModelDiscrete();
+			if (tmd.getTime()<tmd.getTimeStop()) {
+				tmd.step();
+			} else {
+				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
+				this.print("Finalize Simulation!", false);
+				this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
+			}
+			this.getControlBehaviourRTStateUpdateAnswered().clear();
+			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+			this.setEndTimeNextSimulationStep();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Returns the currently known sources of ControlBehaviourRTStateUpdate's.
+	 * @return the control behaviour RT state updates sources
+	 */
+	public HashSet<String> getControlBehaviourRTStateUpdateSources() {
+		if (controlBehaviourRTStateUpdateSources==null) {
+			controlBehaviourRTStateUpdateSources = new HashSet<String>();
+		}
+		return controlBehaviourRTStateUpdateSources;
+	}
+	/**
+	 * Returns the system ID's of the systems that have provided an ControlBehaviourRTStateUpdate per discrete simulation step.
+	 * @return the control behaviour RT state updates answered
+	 */
+	public HashSet<String> getControlBehaviourRTStateUpdateAnswered() {
+		if (controlBehaviourRTStateUpdateAnswered==null) {
+			controlBehaviourRTStateUpdateAnswered = new HashSet<String>();
+		}
+		return controlBehaviourRTStateUpdateAnswered;
+	}
+	/**
+	 * Adds the control behaviour RT state update answered by agent.
+	 * @param senderName the sender name
+	 */
+	private void addControlBehaviourRTStateUpdateAnsweredByAgent(String senderName) {
+	
+		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
+		// --- Found new sender? --------------------------
+		if (this.getControlBehaviourRTStateUpdateSources().contains(senderName)==false) {
+			this.getControlBehaviourRTStateUpdateSources().add(senderName);
+		}
+		// --- Add to answered system states -------------- 
+		this.getControlBehaviourRTStateUpdateAnswered().add(senderName);
+	}
+	/**
+	 * Checks if there is a pending ControlBehaviourRTStateUpdate.
+	 * @return true, if is pending control behaviour RT state update
+	 */
+	private boolean isPendingControlBehaviourRTStateUpdate() {
+		return this.getControlBehaviourRTStateUpdateAnswered().size()!=this.getControlBehaviourRTStateUpdateSources().size();
+	}	
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#proceedAgentAnswers(java.util.Hashtable)
 	 */
@@ -728,7 +819,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 		}
 
-		// --- Set stte time to the blackboard --------------------------------
+		// --- Set tsse time to the blackboard --------------------------------
 		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
 		
 		// --- Notify blackboard listeners about the new results --------------
@@ -754,6 +845,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.agentsNotifications = null;
 	}
 	
+	
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
@@ -772,11 +867,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			return;
 			
 		} else if (notification.getNotification() instanceof ControlBehaviourRTStateUpdate) {
-			// --- Got a system state update from a system ----------------------------------------
-			ControlBehaviourRTStateUpdate tsseUpdate = (ControlBehaviourRTStateUpdate) notification.getNotification();
-			if (tsseUpdate.getTechnicalSystemStateEvaluation()!=null) {
-				this.getAggregationHandler().setAgentAnswer(notification);
-			}
+			// --- Got a ControlBehaviourRTStateUpdate from a system ------------------------------
+			this.getAggregationHandler().setAgentAnswer(notification);
+			this.addControlBehaviourRTStateUpdateAnsweredByAgent(notification.getSender().getLocalName());
+			this.discreteSimulationCheckEndOfSimulationStep();
 			return;
 		}
 		
