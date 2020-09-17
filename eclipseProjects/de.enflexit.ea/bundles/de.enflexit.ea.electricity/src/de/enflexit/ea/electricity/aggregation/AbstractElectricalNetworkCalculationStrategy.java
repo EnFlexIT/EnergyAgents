@@ -17,6 +17,7 @@ import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
+import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
@@ -390,4 +391,15 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy#updateAggregationBlackboardModel(de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel)
+	 */
+	@Override
+	public void updateSubBlackboardModel() {
+		SubBlackboardModelElectricity subBlackboardModel = (SubBlackboardModelElectricity) this.getSubBlackboardModel();
+		subBlackboardModel.getGraphNodeStates().putAll(this.getGraphNodeStates());
+		subBlackboardModel.getNetworkComponentStates().putAll(this.getNetworkComponentStates());
+		subBlackboardModel.getTransformerStates().putAll(this.getTransformerStates());
+	}
+	
 }

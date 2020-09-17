@@ -18,6 +18,7 @@ Require-Bundle: de.enflexit.common,
  org.awb.env.networkModel,
  de.enflexit.ea.core,
  de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.blackboard,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.validation,
  de.enflexit.ea.electricity

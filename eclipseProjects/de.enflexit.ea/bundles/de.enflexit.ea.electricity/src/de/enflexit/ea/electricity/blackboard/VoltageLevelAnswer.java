@@ -1,13 +1,15 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.electricity.blackboard;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 
 /**
- * The Class VoltageLevelAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class VoltageLevelAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class VoltageLevelAnswer extends AbstractBlackoardAnswer {
+public class VoltageLevelAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

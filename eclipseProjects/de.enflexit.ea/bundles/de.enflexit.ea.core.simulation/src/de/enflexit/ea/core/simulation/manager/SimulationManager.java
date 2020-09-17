@@ -31,19 +31,19 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
+import de.enflexit.ea.core.blackboard.Blackboard;
+import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
-import de.enflexit.ea.core.dataModel.blackboard.Blackboard;
-import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
-import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.AbstractEvaluationStrategy;
@@ -135,7 +135,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		
 		// --- Prepare the aggregation handler --------------------------------
-		this.getAggregationHandler();
+		this.getBlackboard().setAggregationHandler(this.getAggregationHandler());
 		// --- If measurements are activated, configure aggregation handler ---
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
@@ -703,31 +703,20 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	@Override
 	public void networkCalculationDone() {
-
-		// --------------------------------------------------------------------
-		// --- Get all electrical distribution grid aggregations --------------
-		// --------------------------------------------------------------------
 		
-		//TODO implement domain-independent, remove dependency to electricity bundle
-		String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
+		// --- Update the aggregation-specific blackboard models
+		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
 		for (int i = 0; i < subnetConfigList.size(); i++) {
 			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
 			if (subnetConfig!=null) {
-				AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-				if (netClacStrategy!=null) {
-					// --- Put the calculation results on the blackboard ------
-					this.getBlackboard().getGraphNodeStates().putAll(netClacStrategy.getGraphNodeStates());
-					this.getBlackboard().getNetworkComponentStates().putAll(netClacStrategy.getNetworkComponentStates());
-					this.getBlackboard().getTransformerStates().putAll(netClacStrategy.getTransformerStates());
+				AbstractNetworkCalculationStrategy calculationStrategy = subnetConfig.getNetworkCalculationStrategy();
+				if (calculationStrategy!=null) {
+					calculationStrategy.updateSubBlackboardModel();
 				}
-
-			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Could not find subnetwork configuration with the ID '" + subnetworkDescription + "'.");
 			}
 		}
 
-		// --- Set stte time to the blackboard --------------------------------
+		// --- Set state time to the blackboard --------------------------------
 		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
 		
 		// --- Notify blackboard listeners about the new results --------------
@@ -797,6 +786,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
 			
+			//TODO Domain-specific code in the general SimulationManager class - find a better place for this! 
 			// --------------------------------------------------------------------------
 			// --- Received a notification for the 'SlackNodeSetVoltageLevel' ? ---------
 			// --------------------------------------------------------------------------
