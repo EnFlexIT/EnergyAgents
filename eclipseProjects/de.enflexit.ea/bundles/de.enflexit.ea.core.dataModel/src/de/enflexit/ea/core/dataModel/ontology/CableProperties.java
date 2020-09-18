@@ -7,9 +7,31 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class CableProperties extends EdgeComponentProperties{ 
+
+   /**
+* Protege name: linearReactance
+   */
+   private UnitValue linearReactance;
+   public void setLinearReactance(UnitValue value) { 
+    this.linearReactance=value;
+   }
+   public UnitValue getLinearReactance() {
+     return this.linearReactance;
+   }
+
+   /**
+* Protege name: linearResistance
+   */
+   private UnitValue linearResistance;
+   public void setLinearResistance(UnitValue value) { 
+    this.linearResistance=value;
+   }
+   public UnitValue getLinearResistance() {
+     return this.linearResistance;
+   }
 
    /**
 * Protege name: length
@@ -31,6 +53,18 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public String getDin() {
      return this.din;
+   }
+
+   /**
+   * The linear conductance of this medium voltage cable.
+* Protege name: linearConductance
+   */
+   private UnitValue linearConductance;
+   public void setLinearConductance(UnitValue value) { 
+    this.linearConductance=value;
+   }
+   public UnitValue getLinearConductance() {
+     return this.linearConductance;
    }
 
    /**
@@ -56,18 +90,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-   * The linear conductance of this medium voltage cable.
-* Protege name: linearConductance
-   */
-   private UnitValue linearConductance;
-   public void setLinearConductance(UnitValue value) { 
-    this.linearConductance=value;
-   }
-   public UnitValue getLinearConductance() {
-     return this.linearConductance;
-   }
-
-   /**
    * The linear capacitance of this medium voltage cable.
 * Protege name: linearCapacitance
    */
@@ -77,28 +99,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public UnitValue getLinearCapacitance() {
      return this.linearCapacitance;
-   }
-
-   /**
-* Protege name: linearReactance
-   */
-   private UnitValue linearReactance;
-   public void setLinearReactance(UnitValue value) { 
-    this.linearReactance=value;
-   }
-   public UnitValue getLinearReactance() {
-     return this.linearReactance;
-   }
-
-   /**
-* Protege name: linearResistance
-   */
-   private UnitValue linearResistance;
-   public void setLinearResistance(UnitValue value) { 
-    this.linearResistance=value;
-   }
-   public UnitValue getLinearResistance() {
-     return this.linearResistance;
    }
 
 }

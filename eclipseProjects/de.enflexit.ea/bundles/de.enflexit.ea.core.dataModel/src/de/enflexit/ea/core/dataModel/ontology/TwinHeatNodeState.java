@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TwinHeatNodeState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class TwinHeatNodeState extends NodeComponentState{ 
 
@@ -20,17 +20,6 @@ public class TwinHeatNodeState extends NodeComponentState{
    }
    public HeatNodeState getReturnNodeState() {
      return this.returnNodeState;
-   }
-
-   /**
-* Protege name: ambientTemperature
-   */
-   private UnitValue ambientTemperature;
-   public void setAmbientTemperature(UnitValue value) { 
-    this.ambientTemperature=value;
-   }
-   public UnitValue getAmbientTemperature() {
-     return this.ambientTemperature;
    }
 
    /**
@@ -53,6 +42,17 @@ public class TwinHeatNodeState extends NodeComponentState{
    }
    public HeatNodeState getSupplyNodeState() {
      return this.supplyNodeState;
+   }
+
+   /**
+* Protege name: ambientTemperature
+   */
+   private UnitValue ambientTemperature;
+   public void setAmbientTemperature(UnitValue value) { 
+    this.ambientTemperature=value;
+   }
+   public UnitValue getAmbientTemperature() {
+     return this.ambientTemperature;
    }
 
 }

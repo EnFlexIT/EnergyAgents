@@ -9,6 +9,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import energy.OptionModelController;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.InterfaceSetting;
@@ -21,6 +22,7 @@ import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateTime;
 import energygroup.GroupController;
 import energygroup.calculation.GroupCalculation;
+import jade.core.AID;
 
 /**
  * The Class AggregationHandlerConfiguration.
@@ -581,5 +583,13 @@ public abstract class AbstractSubNetworkConfiguration {
 	public String toString() {
 		return this.getClass().getSimpleName() + " for " + this.getSubNetworkDescriptionID(); 
 	}
+	
+	/**
+	 * Handle domain-specific network state information notifications
+	 * @param sender the sender
+	 * @param networkStateInformation the network state information
+	 * @return true, if processed by this subNetworkConfiguration
+	 */
+	public abstract boolean onNetworkStateInformation(AID sender, NetworkStateInformation networkStateInformation);
 	
 }

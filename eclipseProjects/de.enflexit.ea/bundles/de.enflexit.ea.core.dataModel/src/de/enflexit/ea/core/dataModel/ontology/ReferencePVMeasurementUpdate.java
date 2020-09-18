@@ -8,20 +8,9 @@ import jade.core.*;
    * Measurement Update of reference PV Measurement
 * Protege name: ReferencePVMeasurementUpdate
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class ReferencePVMeasurementUpdate extends GridStateAgentManagement{ 
-
-   /**
-* Protege name: relativePower
-   */
-   private float relativePower;
-   public void setRelativePower(float value) { 
-    this.relativePower=value;
-   }
-   public float getRelativePower() {
-     return this.relativePower;
-   }
 
    /**
 * Protege name: TimeStampRefPV
@@ -32,6 +21,17 @@ public class ReferencePVMeasurementUpdate extends GridStateAgentManagement{
    }
    public String getTimeStampRefPV() {
      return this.timeStampRefPV;
+   }
+
+   /**
+* Protege name: relativePower
+   */
+   private float relativePower;
+   public void setRelativePower(float value) { 
+    this.relativePower=value;
+   }
+   public float getRelativePower() {
+     return this.relativePower;
    }
 
 }

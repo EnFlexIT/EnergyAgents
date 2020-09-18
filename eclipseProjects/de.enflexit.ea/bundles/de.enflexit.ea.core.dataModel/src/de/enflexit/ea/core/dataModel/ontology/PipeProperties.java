@@ -8,7 +8,7 @@ import jade.core.*;
    * This class describes static properties of a heat pipe
 * Protege name: PipeProperties
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:26
 */
 public class PipeProperties extends EdgeComponentProperties{ 
 
@@ -25,14 +25,14 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: length
+* Protege name: roughness
    */
-   private UnitValue length;
-   public void setLength(UnitValue value) { 
-    this.length=value;
+   private UnitValue roughness;
+   public void setRoughness(UnitValue value) { 
+    this.roughness=value;
    }
-   public UnitValue getLength() {
-     return this.length;
+   public UnitValue getRoughness() {
+     return this.roughness;
    }
 
    /**
@@ -47,6 +47,17 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
+* Protege name: minorLossCoefficient
+   */
+   private int minorLossCoefficient;
+   public void setMinorLossCoefficient(int value) { 
+    this.minorLossCoefficient=value;
+   }
+   public int getMinorLossCoefficient() {
+     return this.minorLossCoefficient;
+   }
+
+   /**
 * Protege name: nominalSize
    */
    private int nominalSize;
@@ -55,17 +66,6 @@ public class PipeProperties extends EdgeComponentProperties{
    }
    public int getNominalSize() {
      return this.nominalSize;
-   }
-
-   /**
-* Protege name: make
-   */
-   private String make;
-   public void setMake(String value) { 
-    this.make=value;
-   }
-   public String getMake() {
-     return this.make;
    }
 
    /**
@@ -80,14 +80,14 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: minorLossCoefficient
+* Protege name: length
    */
-   private int minorLossCoefficient;
-   public void setMinorLossCoefficient(int value) { 
-    this.minorLossCoefficient=value;
+   private UnitValue length;
+   public void setLength(UnitValue value) { 
+    this.length=value;
    }
-   public int getMinorLossCoefficient() {
-     return this.minorLossCoefficient;
+   public UnitValue getLength() {
+     return this.length;
    }
 
    /**
@@ -102,14 +102,14 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: roughness
+* Protege name: make
    */
-   private UnitValue roughness;
-   public void setRoughness(UnitValue value) { 
-    this.roughness=value;
+   private String make;
+   public void setMake(String value) { 
+    this.make=value;
    }
-   public UnitValue getRoughness() {
-     return this.roughness;
+   public String getMake() {
+     return this.make;
    }
 
 }

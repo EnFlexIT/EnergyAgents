@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseElectricalNodeState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:26
 */
 public class UniPhaseElectricalNodeState extends ElectricalNodeState{ 
 
@@ -113,72 +113,6 @@ public double getSCalculated() {
  return this.getVoltageAbsNotNull().getValue() * this.getCurrentNotNull().getValue(); 
 }
    /**
-* Protege name: current
-   */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
-   }
-   public UnitValue getCurrent() {
-     return this.current;
-   }
-
-   /**
-* Protege name: voltageImag
-   */
-   private UnitValue voltageImag;
-   public void setVoltageImag(UnitValue value) { 
-    this.voltageImag=value;
-   }
-   public UnitValue getVoltageImag() {
-     return this.voltageImag;
-   }
-
-   /**
-* Protege name: voltageAbs
-   */
-   private UnitValue voltageAbs;
-   public void setVoltageAbs(UnitValue value) { 
-    this.voltageAbs=value;
-   }
-   public UnitValue getVoltageAbs() {
-     return this.voltageAbs;
-   }
-
-   /**
-* Protege name: voltageReal
-   */
-   private UnitValue voltageReal;
-   public void setVoltageReal(UnitValue value) { 
-    this.voltageReal=value;
-   }
-   public UnitValue getVoltageReal() {
-     return this.voltageReal;
-   }
-
-   /**
-* Protege name: Q
-   */
-   private UnitValue q;
-   public void setQ(UnitValue value) { 
-    this.q=value;
-   }
-   public UnitValue getQ() {
-     return this.q;
-   }
-
-   /**
-* Protege name: cosPhi
-   */
-   private float cosPhi;
-   public void setCosPhi(float value) { 
-    this.cosPhi=value;
-   }
-   public float getCosPhi() {
-     return this.cosPhi;
-   }
-
-   /**
 * Protege name: P
    */
    private UnitValue p;
@@ -198,6 +132,72 @@ public double getSCalculated() {
    }
    public UnitValue getS() {
      return this.s;
+   }
+
+   /**
+* Protege name: voltageImag
+   */
+   private UnitValue voltageImag;
+   public void setVoltageImag(UnitValue value) { 
+    this.voltageImag=value;
+   }
+   public UnitValue getVoltageImag() {
+     return this.voltageImag;
+   }
+
+   /**
+* Protege name: Q
+   */
+   private UnitValue q;
+   public void setQ(UnitValue value) { 
+    this.q=value;
+   }
+   public UnitValue getQ() {
+     return this.q;
+   }
+
+   /**
+* Protege name: voltageReal
+   */
+   private UnitValue voltageReal;
+   public void setVoltageReal(UnitValue value) { 
+    this.voltageReal=value;
+   }
+   public UnitValue getVoltageReal() {
+     return this.voltageReal;
+   }
+
+   /**
+* Protege name: voltageAbs
+   */
+   private UnitValue voltageAbs;
+   public void setVoltageAbs(UnitValue value) { 
+    this.voltageAbs=value;
+   }
+   public UnitValue getVoltageAbs() {
+     return this.voltageAbs;
+   }
+
+   /**
+* Protege name: cosPhi
+   */
+   private float cosPhi;
+   public void setCosPhi(float value) { 
+    this.cosPhi=value;
+   }
+   public float getCosPhi() {
+     return this.cosPhi;
+   }
+
+   /**
+* Protege name: current
+   */
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
+   }
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
 }

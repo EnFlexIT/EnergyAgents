@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class FlexibilityOffer extends GridStateControl{ 
-
-   /**
-* Protege name: possiblePowerReal
-   */
-   private float possiblePowerReal;
-   public void setPossiblePowerReal(float value) { 
-    this.possiblePowerReal=value;
-   }
-   public float getPossiblePowerReal() {
-     return this.possiblePowerReal;
-   }
 
    /**
 * Protege name: priority
@@ -45,6 +34,28 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
+* Protege name: possibleVoltageAdjustment
+   */
+   private float possibleVoltageAdjustment;
+   public void setPossibleVoltageAdjustment(float value) { 
+    this.possibleVoltageAdjustment=value;
+   }
+   public float getPossibleVoltageAdjustment() {
+     return this.possibleVoltageAdjustment;
+   }
+
+   /**
+* Protege name: possiblePowerReal
+   */
+   private float possiblePowerReal;
+   public void setPossiblePowerReal(float value) { 
+    this.possiblePowerReal=value;
+   }
+   public float getPossiblePowerReal() {
+     return this.possiblePowerReal;
+   }
+
+   /**
 * Protege name: possibleCurrentAdjustment
    */
    private float possibleCurrentAdjustment;
@@ -64,17 +75,6 @@ public class FlexibilityOffer extends GridStateControl{
    }
    public float getPossiblePowerImag() {
      return this.possiblePowerImag;
-   }
-
-   /**
-* Protege name: possibleVoltageAdjustment
-   */
-   private float possibleVoltageAdjustment;
-   public void setPossibleVoltageAdjustment(float value) { 
-    this.possibleVoltageAdjustment=value;
-   }
-   public float getPossibleVoltageAdjustment() {
-     return this.possibleVoltageAdjustment;
    }
 
 }

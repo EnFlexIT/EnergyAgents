@@ -6,11 +6,11 @@ import jade.util.leap.*;
 import jade.core.*;
 
 /**
-* Protege name: Physical
+* Protege name: NetworkStateInformation
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
-public class Physical implements AgentAction {
+public class NetworkStateInformation implements AgentAction {
 
    /**
 * Protege name: timeStamp

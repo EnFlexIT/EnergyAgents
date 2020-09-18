@@ -7,9 +7,9 @@ import jade.core.*;
 /**
 * Protege name: SlackNodeSetVoltageLevelNotification
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
-public class SlackNodeSetVoltageLevelNotification extends Physical{ 
+public class SlackNodeSetVoltageLevelNotification extends NetworkStateInformation{ 
 
    /**
 * Protege name: voltageAbs

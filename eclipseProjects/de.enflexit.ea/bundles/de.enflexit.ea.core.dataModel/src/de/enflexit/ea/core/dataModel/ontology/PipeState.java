@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: PipeState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:26
 */
 public class PipeState extends EdgeComponentState{ 
 
    /**
-* Protege name: pressureOut
+* Protege name: pressureIn
    */
-   private UnitValue pressureOut;
-   public void setPressureOut(UnitValue value) { 
-    this.pressureOut=value;
+   private UnitValue pressureIn;
+   public void setPressureIn(UnitValue value) { 
+    this.pressureIn=value;
    }
-   public UnitValue getPressureOut() {
-     return this.pressureOut;
+   public UnitValue getPressureIn() {
+     return this.pressureIn;
    }
 
    /**
@@ -34,14 +34,14 @@ public class PipeState extends EdgeComponentState{
    }
 
    /**
-* Protege name: velocityOut
+* Protege name: pressureOut
    */
-   private UnitValue velocityOut;
-   public void setVelocityOut(UnitValue value) { 
-    this.velocityOut=value;
+   private UnitValue pressureOut;
+   public void setPressureOut(UnitValue value) { 
+    this.pressureOut=value;
    }
-   public UnitValue getVelocityOut() {
-     return this.velocityOut;
+   public UnitValue getPressureOut() {
+     return this.pressureOut;
    }
 
    /**
@@ -57,14 +57,25 @@ public class PipeState extends EdgeComponentState{
    }
 
    /**
-* Protege name: pressureIn
+* Protege name: velocityIn
    */
-   private UnitValue pressureIn;
-   public void setPressureIn(UnitValue value) { 
-    this.pressureIn=value;
+   private UnitValue velocityIn;
+   public void setVelocityIn(UnitValue value) { 
+    this.velocityIn=value;
    }
-   public UnitValue getPressureIn() {
-     return this.pressureIn;
+   public UnitValue getVelocityIn() {
+     return this.velocityIn;
+   }
+
+   /**
+* Protege name: velocityOut
+   */
+   private UnitValue velocityOut;
+   public void setVelocityOut(UnitValue value) { 
+    this.velocityOut=value;
+   }
+   public UnitValue getVelocityOut() {
+     return this.velocityOut;
    }
 
    /**
@@ -76,17 +87,6 @@ public class PipeState extends EdgeComponentState{
    }
    public UnitValue getTemperatureIn() {
      return this.temperatureIn;
-   }
-
-   /**
-* Protege name: velocityIn
-   */
-   private UnitValue velocityIn;
-   public void setVelocityIn(UnitValue value) { 
-    this.velocityIn=value;
-   }
-   public UnitValue getVelocityIn() {
-     return this.velocityIn;
    }
 
 }

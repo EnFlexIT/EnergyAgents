@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class UniPhaseCableState extends CableState{ 
 
    /**
-* Protege name: current
+* Protege name: P
    */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
+   private UnitValue p;
+   public void setP(UnitValue value) { 
+    this.p=value;
    }
-   public UnitValue getCurrent() {
-     return this.current;
+   public UnitValue getP() {
+     return this.p;
    }
 
    /**
@@ -56,14 +56,14 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
-* Protege name: P
+* Protege name: current
    */
-   private UnitValue p;
-   public void setP(UnitValue value) { 
-    this.p=value;
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
    }
-   public UnitValue getP() {
-     return this.p;
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
 }

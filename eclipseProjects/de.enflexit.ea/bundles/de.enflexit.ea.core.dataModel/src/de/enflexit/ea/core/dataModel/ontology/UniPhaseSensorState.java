@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseSensorState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 12:50:27
 */
 public class UniPhaseSensorState extends UniPhaseCableState{ 
 
