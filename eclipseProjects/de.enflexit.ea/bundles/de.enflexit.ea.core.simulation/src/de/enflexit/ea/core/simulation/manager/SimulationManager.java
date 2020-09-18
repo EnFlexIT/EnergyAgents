@@ -10,8 +10,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
@@ -43,11 +41,8 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
-import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
+import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
-import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
-import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.TechnicalSystemStateHelper;
@@ -57,7 +52,6 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.schedule.ScheduleController;
 import energy.schedule.ScheduleNotification;
 import energy.schedule.ScheduleNotification.Reason;
-import energygroup.GroupController;
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.wrapper.StaleProxyException;
@@ -889,35 +883,19 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
 			
-			//TODO Domain-specific code in the general SimulationManager class - find a better place for this! 
 			// --------------------------------------------------------------------------
-			// --- Received a notification for the 'SlackNodeSetVoltageLevel' ? ---------
+			// --- Received a notification of the type NetworkStateInformation ? --------
 			// --------------------------------------------------------------------------
-			if (notification.getNotification() instanceof SlackNodeSetVoltageLevelNotification) {
-				// --- Cast to SlackNodeSetVoltageLevel and set new voltage level -------
-				SlackNodeSetVoltageLevelNotification snvl = (SlackNodeSetVoltageLevelNotification) notification.getNotification();
+			if (notification.getNotification() instanceof NetworkStateInformation) {
+
+				NetworkStateInformation nsInf = (NetworkStateInformation) notification.getNotification();
 				AID senderAID = notification.getSender();
 				
-				// --- Find the corresponding calculation strategy ---------------------- 
-				String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-				List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
+				// --- Find the corresponding sub aggregation --------------------------- 
+				List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
 				for (int i = 0; i < subnetConfigList.size(); i++) {
-					
-					AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-					
-					// --- Check if the aggregator contains the sender system -----------
-					GroupController groupController = subnetConfig.getSubAggregationBuilder().getGroupController();
-					DefaultMutableTreeNode treeNode = groupController.getGroupTreeModel().getGroupTreeNodeByNetworkID(senderAID.getLocalName());
-					if (treeNode==null) continue;
-					
-					// --- Put slack node voltage level to network calculation strategy - 
-					AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-					if (netClacStrategy!=null) {
-						HashMap<Phase, Double> slackNodeVoltageLevel = new HashMap<>();
-						slackNodeVoltageLevel.put(Phase.L1, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L2, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L3, (double) snvl.getVoltageAbs().getValue());
-						netClacStrategy.setSlackNodeVoltageLevel(slackNodeVoltageLevel);
+					if (subnetConfigList.get(i).onNetworkStateInformation(senderAID, nsInf)==true) {
+						//TODO Check if multiple aggregations can depend on the same
 						break;
 					}
 				}

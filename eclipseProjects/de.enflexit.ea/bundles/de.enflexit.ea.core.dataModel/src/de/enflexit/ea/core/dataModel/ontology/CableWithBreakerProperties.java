@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: CableWithBreakerProperties
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class CableWithBreakerProperties extends CableProperties{ 
-
-   /**
-* Protege name: breakerEnd
-   */
-   private CircuitBreaker breakerEnd;
-   public void setBreakerEnd(CircuitBreaker value) { 
-    this.breakerEnd=value;
-   }
-   public CircuitBreaker getBreakerEnd() {
-     return this.breakerEnd;
-   }
 
    /**
 * Protege name: breakerBegin
@@ -31,6 +20,17 @@ public class CableWithBreakerProperties extends CableProperties{
    }
    public CircuitBreaker getBreakerBegin() {
      return this.breakerBegin;
+   }
+
+   /**
+* Protege name: breakerEnd
+   */
+   private CircuitBreaker breakerEnd;
+   public void setBreakerEnd(CircuitBreaker value) { 
+    this.breakerEnd=value;
+   }
+   public CircuitBreaker getBreakerEnd() {
+     return this.breakerEnd;
    }
 
 }

@@ -9,20 +9,9 @@ import jade.core.*;
    * Specifies the time range or number  of states for a schedule request
 * Protege name: ScheduleRangeDefinition
 * @author ontology bean generator
-* @version 2018/11/20, 12:59:18
+* @version 2020/09/18, 14:36:59
 */
 public class ScheduleRangeDefinition implements Concept {
-
-   /**
-* Protege name: timestampFrom
-   */
-   private LongValue timestampFrom;
-   public void setTimestampFrom(LongValue value) { 
-    this.timestampFrom=value;
-   }
-   public LongValue getTimestampFrom() {
-     return this.timestampFrom;
-   }
 
    /**
 * Protege name: numberOfStates
@@ -56,6 +45,17 @@ public class ScheduleRangeDefinition implements Concept {
    }
    public boolean getIncludeAllStates() {
      return this.includeAllStates;
+   }
+
+   /**
+* Protege name: timestampFrom
+   */
+   private LongValue timestampFrom;
+   public void setTimestampFrom(LongValue value) { 
+    this.timestampFrom=value;
+   }
+   public LongValue getTimestampFrom() {
+     return this.timestampFrom;
    }
 
 }

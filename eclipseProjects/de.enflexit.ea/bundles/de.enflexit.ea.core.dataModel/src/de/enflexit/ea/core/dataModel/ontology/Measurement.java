@@ -7,8 +7,8 @@ import jade.core.*;
 /**
 * Protege name: Measurement
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:59
 */
-public class Measurement extends Physical{ 
+public class Measurement extends NetworkStateInformation{ 
 
 }

@@ -8,21 +8,9 @@ import jade.core.*;
 /**
 * Protege name: FieldDataReply
 * @author ontology bean generator
-* @version 2018/11/20, 12:59:18
+* @version 2020/09/18, 14:36:59
 */
 public class FieldDataReply implements AgentAction {
-
-   /**
-   * Indicates of there will be more partial replies for this request
-* Protege name: moreComming
-   */
-   private boolean moreComming;
-   public void setMoreComming(boolean value) { 
-    this.moreComming=value;
-   }
-   public boolean getMoreComming() {
-     return this.moreComming;
-   }
 
    /**
    * The local name of the agent originally sending this data
@@ -34,6 +22,18 @@ public class FieldDataReply implements AgentAction {
    }
    public String getAgentID() {
      return this.agentID;
+   }
+
+   /**
+   * Indicates of there will be more partial replies for this request
+* Protege name: moreComming
+   */
+   private boolean moreComming;
+   public void setMoreComming(boolean value) { 
+    this.moreComming=value;
+   }
+   public boolean getMoreComming() {
+     return this.moreComming;
    }
 
    /**

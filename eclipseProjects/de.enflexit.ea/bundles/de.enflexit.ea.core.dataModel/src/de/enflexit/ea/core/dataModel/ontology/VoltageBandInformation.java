@@ -7,9 +7,9 @@ import jade.core.*;
 /**
 * Protege name: VoltageBandInformation
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:59
 */
-public class VoltageBandInformation extends Physical{ 
+public class VoltageBandInformation extends NetworkStateInformation{ 
 
 //////////////////////////// User code
 public VoltageBand getVoltageBandNotNull() {

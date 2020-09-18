@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: HeatPipeProperties
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class HeatPipeProperties extends PipeProperties{ 
-
-   /**
-* Protege name: coatingThickness
-   */
-   private UnitValue coatingThickness;
-   public void setCoatingThickness(UnitValue value) { 
-    this.coatingThickness=value;
-   }
-   public UnitValue getCoatingThickness() {
-     return this.coatingThickness;
-   }
 
    /**
 * Protege name: isolationThermalConductivity
@@ -34,17 +23,6 @@ public class HeatPipeProperties extends PipeProperties{
    }
 
    /**
-* Protege name: isolationThickness
-   */
-   private UnitValue isolationThickness;
-   public void setIsolationThickness(UnitValue value) { 
-    this.isolationThickness=value;
-   }
-   public UnitValue getIsolationThickness() {
-     return this.isolationThickness;
-   }
-
-   /**
 * Protege name: surrounding
    */
    private PipeSurrounding surrounding;
@@ -53,6 +31,28 @@ public class HeatPipeProperties extends PipeProperties{
    }
    public PipeSurrounding getSurrounding() {
      return this.surrounding;
+   }
+
+   /**
+* Protege name: coatingThickness
+   */
+   private UnitValue coatingThickness;
+   public void setCoatingThickness(UnitValue value) { 
+    this.coatingThickness=value;
+   }
+   public UnitValue getCoatingThickness() {
+     return this.coatingThickness;
+   }
+
+   /**
+* Protege name: isolationThickness
+   */
+   private UnitValue isolationThickness;
+   public void setIsolationThickness(UnitValue value) { 
+    this.isolationThickness=value;
+   }
+   public UnitValue getIsolationThickness() {
+     return this.isolationThickness;
    }
 
    /**

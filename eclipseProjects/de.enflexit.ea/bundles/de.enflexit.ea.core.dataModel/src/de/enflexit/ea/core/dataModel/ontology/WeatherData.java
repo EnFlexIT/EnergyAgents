@@ -8,33 +8,9 @@ import jade.core.*;
 /**
 * Protege name: WeatherData
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class WeatherData implements Concept {
-
-   /**
-   * Predicted Wind Speed in m/s
-* Protege name: PredictedWindSpeed
-   */
-   private float predictedWindSpeed;
-   public void setPredictedWindSpeed(float value) { 
-    this.predictedWindSpeed=value;
-   }
-   public float getPredictedWindSpeed() {
-     return this.predictedWindSpeed;
-   }
-
-   /**
-   * Predicted Temperature in ï¿½C
-* Protege name: PredictedTemperature
-   */
-   private float predictedTemperature;
-   public void setPredictedTemperature(float value) { 
-    this.predictedTemperature=value;
-   }
-   public float getPredictedTemperature() {
-     return this.predictedTemperature;
-   }
 
    /**
    * Hour to predict
@@ -46,6 +22,18 @@ public class WeatherData implements Concept {
    }
    public int getPredictedHour() {
      return this.predictedHour;
+   }
+
+   /**
+   * Predicted Temperature in °C
+* Protege name: PredictedTemperature
+   */
+   private float predictedTemperature;
+   public void setPredictedTemperature(float value) { 
+    this.predictedTemperature=value;
+   }
+   public float getPredictedTemperature() {
+     return this.predictedTemperature;
    }
 
    /**
@@ -70,6 +58,18 @@ public class WeatherData implements Concept {
    }
    public String getPredictedWeatherCondition() {
      return this.predictedWeatherCondition;
+   }
+
+   /**
+   * Predicted Wind Speed in m/s
+* Protege name: PredictedWindSpeed
+   */
+   private float predictedWindSpeed;
+   public void setPredictedWindSpeed(float value) { 
+    this.predictedWindSpeed=value;
+   }
+   public float getPredictedWindSpeed() {
+     return this.predictedWindSpeed;
    }
 
 }

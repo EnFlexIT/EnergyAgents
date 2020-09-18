@@ -1,0 +1,32 @@
+; Fri Sep 18 14:37:52 CEST 2020
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([FieldDataReply] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([FieldDataRequest] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LiveMonitoringUpdate] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LongValue] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Long getLongValue(){\n try{\n  return Long.parseLong(getStringLongValue());\n }catch(NumberFormatException ex){\n  return null;\n }\n}\npublic void setLongValue(long value){\n setStringLongValue(\"\"+value);\n}\npublic void setLongValue(Long value){\n setStringLongValue(value.toString());\n}"))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\20_GIT\\04_EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
+	(%3AONTOLOGYNAME "Ops")
+	(%3APACKAGE "de.enflexit.ea.core.dataModel.opsOntology")
+	(%3ASUPPORT "j2se"))
+
+([ScheduleRangeDefinition] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

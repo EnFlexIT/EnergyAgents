@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: LongValue
 * @author ontology bean generator
-* @version 2018/11/20, 12:59:18
+* @version 2020/09/18, 14:36:59
 */
 public class LongValue implements Concept {
 

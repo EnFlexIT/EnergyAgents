@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:59
 */
 public class FlexibilityOffer extends GridStateControl{ 
 
@@ -34,17 +34,6 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: actuatorName
-   */
-   private String actuatorName;
-   public void setActuatorName(String value) { 
-    this.actuatorName=value;
-   }
-   public String getActuatorName() {
-     return this.actuatorName;
-   }
-
-   /**
 * Protege name: possibleCurrentAdjustment
    */
    private float possibleCurrentAdjustment;
@@ -53,6 +42,17 @@ public class FlexibilityOffer extends GridStateControl{
    }
    public float getPossibleCurrentAdjustment() {
      return this.possibleCurrentAdjustment;
+   }
+
+   /**
+* Protege name: possibleVoltageAdjustment
+   */
+   private float possibleVoltageAdjustment;
+   public void setPossibleVoltageAdjustment(float value) { 
+    this.possibleVoltageAdjustment=value;
+   }
+   public float getPossibleVoltageAdjustment() {
+     return this.possibleVoltageAdjustment;
    }
 
    /**
@@ -67,14 +67,14 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: possibleVoltageAdjustment
+* Protege name: actuatorName
    */
-   private float possibleVoltageAdjustment;
-   public void setPossibleVoltageAdjustment(float value) { 
-    this.possibleVoltageAdjustment=value;
+   private String actuatorName;
+   public void setActuatorName(String value) { 
+    this.actuatorName=value;
    }
-   public float getPossibleVoltageAdjustment() {
-     return this.possibleVoltageAdjustment;
+   public String getActuatorName() {
+     return this.actuatorName;
    }
 
 }

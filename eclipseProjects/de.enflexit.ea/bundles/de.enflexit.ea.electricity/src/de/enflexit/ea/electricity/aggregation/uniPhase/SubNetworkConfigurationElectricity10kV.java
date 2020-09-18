@@ -9,6 +9,7 @@ import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricalNetworkPreprocessor;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
@@ -17,6 +18,7 @@ import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimatio
 import energy.domain.DefaultDomainModelElectricity;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.EnergyCarrier;
+import jade.core.AID;
 
 /**
  * The Class SubNetworkConfigurationElectricity10kV.
@@ -104,6 +106,15 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 	@Override
 	public Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClass() {
 		return SubBlackboardModelElectricity.class;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#onNetworkStateInformation(jade.core.AID, de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation)
+	 */
+	@Override
+	public boolean onNetworkStateInformation(AID sender, NetworkStateInformation networkStateInformation) {
+		// TODO Check with Jan if this is relevant for MV, and how to distinguish LV and MV
+		return false;
 	}
 	
 }
