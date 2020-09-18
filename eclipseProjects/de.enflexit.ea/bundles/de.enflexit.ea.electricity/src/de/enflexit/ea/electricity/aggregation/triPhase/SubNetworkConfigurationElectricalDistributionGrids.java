@@ -3,13 +3,14 @@ package de.enflexit.ea.electricity.aggregation.triPhase;
 import java.util.HashMap;
 
 import org.awb.env.networkModel.NetworkComponent;
-
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
+import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
+import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
@@ -95,6 +96,14 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 //		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculationPV.class);
 		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, CentralEstimationManager.class);
 		return myUserClasses;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration#getSubBlackboardModelClass()
+	 */
+	@Override
+	public Class<? extends AbstractSubBlackboardModel> getSubBlackboardModelClass() {
+		return SubBlackboardModelElectricity.class;
 	}
 	
 }

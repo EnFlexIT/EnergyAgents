@@ -467,4 +467,22 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		
 		return gfm;
 	}
+	
+	// ----------------------------------------------------
+	// --- Methods for handling the subBlackboardModel ----
+	
+	/**
+	 * Update the subBlackboardModel for this aggregation. 
+	 * @param subBlackboardModel the sub blackboard model
+	 */
+	public abstract void updateSubBlackboardModel();
+	
+	/**
+	 * Gets the sub blackboard model for the current aggregation.
+	 * @return the sub blackboard model
+	 */
+	protected AbstractSubBlackboardModel getSubBlackboardModel() {
+		return this.getSubAggregationConfiguration().getSubBlackboardModel();
+	}
+	
 }

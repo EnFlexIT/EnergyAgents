@@ -1,13 +1,15 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.electricity.blackboard;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 
 /**
- * The Class CurrentLevelAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class CurrentLevelAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class CurrentLevelAnswer extends AbstractBlackoardAnswer {
+public class CurrentLevelAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

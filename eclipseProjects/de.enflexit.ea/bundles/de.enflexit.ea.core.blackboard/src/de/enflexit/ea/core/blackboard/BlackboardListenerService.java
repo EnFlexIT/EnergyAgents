@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
 
 /**
  * The Interface BlackboardListenerService can be used to register an OSGI service to 
