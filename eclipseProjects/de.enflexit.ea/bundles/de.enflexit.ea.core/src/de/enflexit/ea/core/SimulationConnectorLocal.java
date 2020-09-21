@@ -10,6 +10,7 @@ import agentgui.simulationService.sensoring.ServiceSensorInterface;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;
 import jade.core.AID;
@@ -17,7 +18,6 @@ import jade.core.Location;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.wrapper.AgentContainer;
 
 /**
  * The Class SimulationConnectorLocal is used for the pure simulation environment.
@@ -102,24 +102,26 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 
 					// --- Get the actual environment model -------------------
 					EnvironmentModel envModel = simHelper.getEnvironmentModel();
+					// --- Inform manager about initialization ----------------
+					SimulationConnectorLocal.this.sendManagerNotification(STATE_CONFIRMATION.Initialized);
 					
 					// --- Check if this simulated agent has to die -----------
 					HyGridAbstractEnvironmentModel hygridModel = (HyGridAbstractEnvironmentModel) envModel.getAbstractEnvironment();
 					if (hygridModel!=null && hygridModel.getSetupExtension()!=null) {
-						// --- Check if this agent is deployed ----------------
+
 						SetupExtension setupExtension = hygridModel.getSetupExtension();
-						if (setupExtension.getDeploymentGroupsHelper().isAgentDeployed(myAgent.getAID())==true) {
-							// --- Check if the deployment is currently activated ------- 
-							if (setupExtension.getDeploymentGroupsHelper().isDeploymentActivated(myAgent.getAID())==true) {
-								// --- Terminate local agent and start proxy ------------ 
-								AgentContainer agentContainer = myAgent.getContainerController();
-								Thread proxyStarterThread = new AgentStarterThread(myAgent.getAID().getLocalName(), PROXY_AGENT_CLASS_NAME, agentContainer);
-								proxyStarterThread.start();
-								
-								sensorPlugOut();
-								myAgent.doDelete();
-								return;
-							}
+						// --- Check if this agent is deployed ----------------
+						boolean isAgentDepolyed = setupExtension.getDeploymentGroupsHelper().isAgentDeployed(myAgent.getAID());
+						// --- Check if the deployment is activated ----------- 
+						boolean isDeploymentActivated = setupExtension.getDeploymentGroupsHelper().isDeploymentActivated(myAgent.getAID());
+						if (isAgentDepolyed==true && isDeploymentActivated==true) {
+							// --- Terminate local agent and start proxy ------ 
+							Thread proxyStarterThread = new AgentStarterThread(myAgent.getAID().getLocalName(), PROXY_AGENT_CLASS_NAME, myAgent.getContainerController());
+							proxyStarterThread.start();
+							
+							sensorPlugOut();
+							myAgent.doDelete();
+							return;
 						}
 					}
 					

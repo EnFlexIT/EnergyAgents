@@ -13,7 +13,7 @@ import jade.core.AID;
 public interface SimulationConnector {
 
 	/**
-	 * Should try to get the environment model and start the initialisation of the {@link AbstractIOSimulated}
+	 * Should try to get the environment model and start the initialization of the {@link AbstractIOSimulated}
 	 * by calling {@link AbstractIOSimulated#initialize(agentgui.simulationService.environment.EnvironmentModel)}.
 	 *
 	 * @see AbstractIOSimulated#initialize(agentgui.simulationService.environment.EnvironmentModel)

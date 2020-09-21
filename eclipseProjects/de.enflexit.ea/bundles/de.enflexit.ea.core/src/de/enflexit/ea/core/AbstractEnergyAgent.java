@@ -499,7 +499,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Gets the real time control behaviour.
 	 * @return the ControlBehaviourRT
 	 */
-	protected ControlBehaviourRT getControlBehaviourRT() {
+	public ControlBehaviourRT getControlBehaviourRT() {
 		if (controlBehaviourRT==null) {
 			controlBehaviourRT = new ControlBehaviourRT(this);
 		}
@@ -528,7 +528,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Checks if the real time control behaviour is executed by the current Energy Agent.
 	 * @return true, if is executed control behaviour RT
 	 */
-	protected boolean isExecutedControlBehaviourRT() {
+	public boolean isExecutedControlBehaviourRT() {
 		if (this.controlBehaviourRT==null || this.controlBehaviourRT.getAgent()==null) return false;
 		return true;
 	}

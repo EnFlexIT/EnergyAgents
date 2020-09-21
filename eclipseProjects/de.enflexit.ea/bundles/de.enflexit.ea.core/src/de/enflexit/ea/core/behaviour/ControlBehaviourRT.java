@@ -8,17 +8,22 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.SystemStateType;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.eom.awb.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategyRT;
+import energy.helper.DisplayHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -277,6 +282,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return variableIDsForSetPoints;
 	}
 	
+	/**
+	 * Returns the current TimeModelType.
+	 * @return the time model type
+	 */
+	private TimeModelType getTimeModelType() {
+		return this.internalDataModel.getHyGridAbstractEnvironmentModel().getTimeModelType();
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -284,7 +297,24 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	@Override
 	public void update(Observable observable, Object updateObject) {
 		if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-			this.restart(); // --- Cause the invocation of the action method -- 
+			// --- Are we in discrete simulations ? -------------------------------------
+			switch (this.getTimeModelType()) {
+			case TimeModelContinuous:
+				// ----------------------------------------------------------------------
+				// --- Leave the control of the behaviour by the agents internal --------
+				// --- Scheduler for behaviour's                                 --------
+				// ----------------------------------------------------------------------
+				this.restart();
+				break;
+			
+			case TimeModelDiscrete:
+				// ----------------------------------------------------------------------
+				// --- Invoke the action method to directly cause an reaction. ----------
+				// --- => Avoids to integrate a wait process within IO simulated! -------
+				// ----------------------------------------------------------------------
+				this.action();
+				break;
+			}
 		}
 	}
 	/* (non-Javadoc)
@@ -295,21 +325,61 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		
 		// --- Get the current time ---------------------------------
 		this.currentTime = this.agentIOBehaviour.getTime();
-		
-		// --- Case separation for single or multiple systems -------
-		if (this.typeOfControlledSystem!=null) {
-			switch (this.typeOfControlledSystem) {
-			case TechnicalSystem:
-				this.actionForTechnicalSystem();
-				break;
-			case TechnicalSystemGroup:
-				this.actionForTechnicalSystemGroup();
-				break;
-			default:
-				break;
+		try {
+			// --- Case separation for single or multiple systems ---
+			if (this.typeOfControlledSystem!=null) {
+				switch (this.typeOfControlledSystem) {
+				case TechnicalSystem:
+					this.actionForTechnicalSystem();
+					break;
+				case TechnicalSystemGroup:
+					this.actionForTechnicalSystemGroup();
+					break;
+				default:
+					break;
+				}
 			}
+			
+		} catch (Exception ex) {
+			DisplayHelper.systemOutPrintlnGlobalTime(this.currentTime, "[" + this.getClass().getSimpleName() + "]", "Error during execution of real time control behaviour:");
+			ex.printStackTrace();
 		}
+		
+		// --- Block this behaviour ---------------------------------
 		this.block();
+	}
+	
+	/**
+	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
+	 * important {@link SystemStateType} for the iteration between agent and environment 
+	 * in the current discrete simulation step.
+	 *
+	 * @return the discrete simulation step
+	 */
+	public DiscreteSimulationStep getDiscreteSimulationStep() {
+
+		TechnicalSystemStateEvaluation tsse = null;
+		SystemStateType systemStateType = SystemStateType.Final; 
+		
+		switch (this.typeOfControlledSystem) {
+		case TechnicalSystem:
+			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.rtEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
+				systemStateType = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getSystemStateType();
+			}
+			break;
+			
+		case TechnicalSystemGroup:
+			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.rtGroupEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
+				systemStateType = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getSystemStateType();
+			}
+			break;
+			
+		default:
+			break;
+		}
+		return new DiscreteSimulationStep(tsse, systemStateType);
 	}
 	
 	/**
@@ -333,7 +403,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtEvaluationStrategy.runEvaluationUntil(this.currentTime);
 				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
-				
 					
 			} catch (Exception ex) {
 				ex.printStackTrace();

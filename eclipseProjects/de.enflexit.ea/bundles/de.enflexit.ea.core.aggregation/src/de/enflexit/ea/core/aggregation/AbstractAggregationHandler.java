@@ -16,6 +16,7 @@ import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.SystemStateType;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
@@ -26,9 +27,8 @@ import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
-import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
-import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep.SystemStateType;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
+import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
 import energy.helper.TechnicalSystemStateHelper;
@@ -487,7 +487,7 @@ public abstract class AbstractAggregationHandler {
 	 * Returns the pending systems within a discrete simulation step.
 	 * @return the pending systems in discrete simulation step
 	 */
-	protected HashMap<String, DiscreteSimulationStep.SystemStateType> getPendingSystemsInDiscreteSimulationStep() {
+	public HashMap<String, DiscreteSimulationStep.SystemStateType> getPendingSystemsInDiscreteSimulationStep() {
 		if (pendingSystemsInDiscreteSimulationStep==null) {
 			pendingSystemsInDiscreteSimulationStep = new HashMap<String, DiscreteSimulationStep.SystemStateType>();
 		}
@@ -565,10 +565,7 @@ public abstract class AbstractAggregationHandler {
 				// --- Discrete Simulation: Got DiscreteSimulationStep from NetworkComponent ------
 				DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject; 
 				switch (dsStep.getSystemStateType()) {
-				case Initial:
-					this.getPendingSystemsInDiscreteSimulationStep().put(networkComponentID, dsStep.getSystemStateType());
-					break;
-				case Update:
+				case Iteration:
 					this.getPendingSystemsInDiscreteSimulationStep().put(networkComponentID, dsStep.getSystemStateType());
 					break;
 				case Final:
@@ -576,7 +573,7 @@ public abstract class AbstractAggregationHandler {
 					break;
 				}
 				// --- Got a new system state from a part of the network --------------------------
-				this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getTechnicalSystemStateEvaluation());
+				this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getSystemState());
 			}
 			
 		} catch (Exception ex) {

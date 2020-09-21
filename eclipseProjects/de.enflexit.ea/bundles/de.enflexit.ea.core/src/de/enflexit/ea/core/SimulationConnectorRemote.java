@@ -160,7 +160,6 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 
 	/**
 	 * Gets the environment model.
-	 *
 	 * @return the environment model
 	 */
 	public EnvironmentModel getEnvironmentModel() {
@@ -176,11 +175,11 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 		boolean sent;
 		ACLMessage notificationMessage;
 		try {
-			if(notification instanceof TechnicalSystemStateEvaluation){
+			if (notification instanceof TechnicalSystemStateEvaluation) {
 				TechnicalSystemStateEvaluation tsse = (TechnicalSystemStateEvaluation) notification;
 				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, tsseClone);
-			}else{
+			} else {
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, notification);
 			}
 			myAgent.send(notificationMessage);
@@ -188,7 +187,6 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 		} catch (IOException e) {
 			sent = false;
 		}
-		
 		return sent;
 	}
 
@@ -225,14 +223,16 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 	 */
 	@Override
 	public void sendDisplayAgentNotification(DisplayAgentNotification displayAgentNotification) {
+		
 		ACLMessage notificationMessage;
-			try {
-//				System.out.println(myAgent.getLocalName() + ": Sending display agent notification to " + proxyAgentAID.getName());
-				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_DISPLAY_AGENT_NOTIFICATION, displayAgentNotification);
-				myAgent.send(notificationMessage);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+//			System.out.println(myAgent.getLocalName() + ": Sending display agent notification to " + proxyAgentAID.getName());
+			notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_DISPLAY_AGENT_NOTIFICATION, displayAgentNotification);
+			myAgent.send(notificationMessage);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -240,17 +240,19 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 	 */
 	@Override
 	public void setMyStimulusAnswer(Object myNextState) {
+		
 		ACLMessage stimulusResponseMessage;
 		try {
 //			System.out.println(myAgent.getLocalName() + ": Sending stimulus answer to " + proxyAgentAID.getName());
-			if(myNextState instanceof TechnicalSystemStateEvaluation){
+			if (myNextState instanceof TechnicalSystemStateEvaluation) {
 				TechnicalSystemStateEvaluation tsse = (TechnicalSystemStateEvaluation) myNextState;
 				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
 				stimulusResponseMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_STIMULUS_RESPONSE, tsseClone);
-			}else{
+			} else {
 				stimulusResponseMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_STIMULUS_RESPONSE, myNextState);
 			}
 			myAgent.send(stimulusResponseMessage);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -300,20 +302,18 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 	 * @throws IOException Thrown if setting the content object fails
 	 */
 	private ACLMessage createMessage(String conversationID, Object contentObject) throws IOException{
-		ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 		
+		ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 		message.addReceiver(this.proxyAgentAID);
 		message.setConversationId(conversationID);
 		
-		if(contentObject != null){
-			if(contentObject instanceof Serializable){
+		if (contentObject!=null){
+			if (contentObject instanceof Serializable){
 				message.setContentObject((Serializable) contentObject);
-			}else{
+			} else {
 				throw(new IOException());
 			}
-			
 		}
-		
 		return message;
 	}
 	

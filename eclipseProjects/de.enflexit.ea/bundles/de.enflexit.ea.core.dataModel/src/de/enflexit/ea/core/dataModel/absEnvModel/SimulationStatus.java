@@ -25,6 +25,7 @@ public class SimulationStatus implements Serializable {
 	 * for the finalisation of a simulation state.
 	 */
 	public static enum STATE_CONFIRMATION {
+		Initialized,
 		Done,
 		Error
 	}

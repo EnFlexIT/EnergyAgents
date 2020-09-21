@@ -37,8 +37,8 @@ import de.enflexit.ea.core.blackboard.Blackboard;
 import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
-import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
@@ -79,8 +79,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
-	private Vector<EnvironmentNotification> agentsNotifications;
+	private HashSet<String> agentsInitialized;
+	private HashSet<String> agentsSuccessfulStarted;
 
+	private Vector<EnvironmentNotification> agentsNotifications;
+	
 	private long endTimeNextSimulationStep;
 	
 	private AbstractAggregationHandler aggregationHandler;
@@ -317,9 +320,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	public void print(String messageText, boolean isError) {
 		if (isError) {
-			System.err.println(this.getLocalName() + ": " + messageText);
+			System.err.println("[" + this.getLocalName() + "] " + messageText);
 		} else {
-			System.out.println(this.getLocalName() + ": " + messageText);
+			System.out.println("[" + this.getLocalName() + "] " + messageText);
 		}
 	}
 	/**
@@ -436,64 +439,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		return timeFormat;
 	}
 	
-	/**
-	 * Gets the number of executed agents from the simulation setup.
-	 * @return the number of executed agents from the simulation setup
-	 */
-	public int getNumberOfExpectedDeviceAgents() {
-		if (this.numberOfExecutedDeviceAgents==null) {
-			
-			// --- Extract number of agents from network model ------------
-			this.numberOfExecutedDeviceAgents = 0;
-			
-			// ----------------------------------------------------------------
-			// --- Check if a class extending AbstractEnergyAgent is        ---
-			// --- defined for the network component. If so, expect an      ---
-			// --- answer from that agent.                                  ---
-			// ----------------------------------------------------------------
-			GeneralGraphSettings4MAS ggMAS = this.getBlackboard().getNetworkModel().getGeneralGraphSettings4MAS();
-			Vector<NetworkComponent> netComps = this.getBlackboard().getNetworkModel().getNetworkComponentVectorSorted();
-			HashMap<String, Boolean> energyAgentClasses = new HashMap<String, Boolean>();
-			Class<?> energyAgentClass = AbstractEnergyAgent.class;
-			for (int i = 0; i < netComps.size(); i++) {
-				
-				NetworkComponent netComp = netComps.get(i);
-			
-				// --- Get the ComponentTypeSettings of the NetworkComponent -- 
-				ComponentTypeSettings cts = ggMAS.getCurrentCTS().get(netComp.getType());
-				
-				String className = cts.getAgentClass();
-				if (className!=null) {
-
-					// --- Check the HashMap first ----------------------------
-					Boolean subclassOfEnergyAgent = energyAgentClasses.get(className);
-					if (subclassOfEnergyAgent==null) {
-						// --- If no entry found, examine the class -----------
-						try {
-							// --- Check if class extends AbstractEnergyAgent -
-							Class<?> clazz = ClassLoadServiceUtility.forName(className);
-							subclassOfEnergyAgent = energyAgentClass.isAssignableFrom(clazz);
-							
-							// --- Remember the result ------------------------
-							energyAgentClasses.put(className, subclassOfEnergyAgent);
-							
-						} catch (NoClassDefFoundError e) {
-							e.printStackTrace();
-						} catch (ClassNotFoundException e) {
-							e.printStackTrace();
-						}
-					}
-					
-					// --- Agent available? -----------------------------------
-					if (subclassOfEnergyAgent==true) {
-						this.numberOfExecutedDeviceAgents++;
-					}
-				}
-			}
-			this.debugPrintLine(this.getTime(), "Number of device Agents = " + this.numberOfExecutedDeviceAgents);
-		}
-		return this.numberOfExecutedDeviceAgents;
-	}
 	/**
 	 * Distributes the specified {@link EnvironmentModel}.
 	 * @param notifyAgents the notify agents
@@ -618,7 +563,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				
 			} else if (simState.getState()==STATE.C_StopSimulation) {
 				// --------------------------------------------------------------------------------
-				// --- Finalise simulation --------------------------------------------------------
+				// --- Finalize simulation --------------------------------------------------------
 				// --------------------------------------------------------------------------------
 				this.resetEndTimeNextSimulationStep();
 			}
@@ -645,8 +590,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// ------------------------------------------------------------------------------
 		// --- Do we expect further discrete simulation steps ---------------------------
 		// ------------------------------------------------------------------------------
-		
-		
+		if (this.getAggregationHandler().getPendingSystemsInDiscreteSimulationStep().size()>0) return;
 		
 		// --- Start next simulation step -----------------------------------------------
 		this.discreteSimulationStartNextSimulationStep();
@@ -706,6 +650,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private void addControlBehaviourRTStateUpdateAnsweredByAgent(String senderName) {
 	
 		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
+		if (this.hygridSettings.getSimulationStatus().getState()!=STATE.B_ExecuteSimuation) return;
+		
 		// --- Found new sender? --------------------------
 		if (this.getControlBehaviourRTStateUpdateSources().contains(senderName)==false) {
 			this.getControlBehaviourRTStateUpdateSources().add(senderName);
@@ -739,16 +685,23 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			try {
 				// --- Get current time ---------------------------------------
 				long currTime = this.getTime();
+
 				// --- Set new states to the Schedules of the aggregation -----
-				this.getAggregationHandler().setAgentAnswers(agentAnswers);
-				this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states.");
+				STATE simState = this.hygridSettings.getSimulationStatus().getState();
+				if (simState==STATE.B_ExecuteSimuation) {
+					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states.");
+					this.getAggregationHandler().setAgentAnswers(agentAnswers);
+				}
+				
 				// --- Distinguish the time model type ------------------------ 
 				switch (this.hygridSettings.getTimeModelType()) {
 				case TimeModelDiscrete:
 					// --- (Re)Execute the network calculation ----------------
-					this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
-					this.getAggregationHandler().runEvaluationUntil(currTime);
-					this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
+					if (simState==STATE.B_ExecuteSimuation) {
+						this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
+						this.getAggregationHandler().runEvaluationUntil(currTime);
+						this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
+					}
 					break;
 
 				case TimeModelContinuous:
@@ -812,6 +765,86 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	}
 	
 	/**
+	 * Gets the number of executed agents from the simulation setup.
+	 * @return the number of executed agents from the simulation setup
+	 */
+	public int getNumberOfExpectedDeviceAgents() {
+		if (this.numberOfExecutedDeviceAgents==null) {
+			
+			// --- Extract number of agents from network model ------------
+			this.numberOfExecutedDeviceAgents = 0;
+			
+			// ----------------------------------------------------------------
+			// --- Check if a class extending AbstractEnergyAgent is        ---
+			// --- defined for the network component. If so, expect an      ---
+			// --- answer from that agent.                                  ---
+			// ----------------------------------------------------------------
+			GeneralGraphSettings4MAS ggMAS = this.getBlackboard().getNetworkModel().getGeneralGraphSettings4MAS();
+			Vector<NetworkComponent> netComps = this.getBlackboard().getNetworkModel().getNetworkComponentVectorSorted();
+			HashMap<String, Boolean> energyAgentClasses = new HashMap<String, Boolean>();
+			Class<?> energyAgentClass = AbstractEnergyAgent.class;
+			for (int i = 0; i < netComps.size(); i++) {
+				
+				NetworkComponent netComp = netComps.get(i);
+			
+				// --- Get the ComponentTypeSettings of the NetworkComponent -- 
+				ComponentTypeSettings cts = ggMAS.getCurrentCTS().get(netComp.getType());
+				
+				String className = cts.getAgentClass();
+				if (className!=null) {
+
+					// --- Check the HashMap first ----------------------------
+					Boolean subclassOfEnergyAgent = energyAgentClasses.get(className);
+					if (subclassOfEnergyAgent==null) {
+						// --- If no entry found, examine the class -----------
+						try {
+							// --- Check if class extends AbstractEnergyAgent -
+							Class<?> clazz = ClassLoadServiceUtility.forName(className);
+							subclassOfEnergyAgent = energyAgentClass.isAssignableFrom(clazz);
+							
+							// --- Remember the result ------------------------
+							energyAgentClasses.put(className, subclassOfEnergyAgent);
+							
+						} catch (NoClassDefFoundError e) {
+							e.printStackTrace();
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+					}
+					
+					// --- Agent available? -----------------------------------
+					if (subclassOfEnergyAgent==true) {
+						this.numberOfExecutedDeviceAgents++;
+					}
+				}
+			}
+			this.debugPrintLine(this.getTime(), "Number of Energy Agents = " + this.numberOfExecutedDeviceAgents);
+		}
+		return this.numberOfExecutedDeviceAgents;
+	}
+	/**
+	 * Returns the agents that were initialized for the simulation.
+	 * @return the agents initialized
+	 */
+	private HashSet<String> getAgentsInitialized() {
+		if (agentsInitialized==null) {
+			agentsInitialized = new HashSet<String>();
+		}
+		return agentsInitialized;
+	}
+	/**
+	 * Return the agents that were successfully started for the simulation.
+	 * @return the agents successful started
+	 */
+	private HashSet<String> getAgentsSuccessfulStarted() {
+		if (agentsSuccessfulStarted==null) {
+			agentsSuccessfulStarted = new HashSet<String>();
+		}
+		return agentsSuccessfulStarted;
+	}
+	
+	
+	/**
 	 * Returns the agents that registered for this simulation.
 	 * @return the agents registered
 	 */
@@ -828,17 +861,13 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.agentsNotifications = null;
 	}
 	
-	
-	
-	
-	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
 	protected void onManagerNotification(EnvironmentNotification notification) {
 		
-		if (notification==null | notification.getNotification()==null) return;
+		if (notification==null || notification.getNotification()==null) return;
 		
 		if (notification.getNotification() instanceof NetworkModel) {
 			// --- Got an alternative NetworkModel ------------------------------------------------
@@ -848,37 +877,59 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			networkModelLocal.getAlternativeNetworkModel().put(senderName, networkModelAlternative);
 			this.sendDisplayAgentNotification(new EnvironmentModelUpdateNotification(this.getEnvironmentModel()));
 			return;
-			
-		} else if (notification.getNotification() instanceof ControlBehaviourRTStateUpdate) {
-			// --- Got a ControlBehaviourRTStateUpdate from a system ------------------------------
-			this.getAggregationHandler().setAgentAnswer(notification);
-			this.addControlBehaviourRTStateUpdateAnsweredByAgent(notification.getSender().getLocalName());
-			this.discreteSimulationCheckEndOfSimulationStep();
-			return;
 		}
 		
+		// Notification handling depending on simulation status
 		SimulationStatus simState = this.hygridSettings.getSimulationStatus();
 		if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
-			if (notification.getNotification().equals(STATE_CONFIRMATION.Done) || notification.getNotification() instanceof Schedule) {
+			
+			// --- Get the notification content / object ------------------------------------------
+			Object noteContent = notification.getNotification();
+			String agentName = notification.getSender().getLocalName();
+			
+			// --- Receiving register notification from agents in this simulation -----------------
+			this.getAgentNotifications().add(notification);
+			if (noteContent instanceof Schedule) {
+				// --- Receiving the Schedule for the energy transmission from agents -------------
+				Schedule schedule = (Schedule) notification.getNotification();
+				ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(agentName);
+				this.print("Received Schedule from " + agentName, false);
+				sc.getScheduleList().getSchedules().add(schedule);
+				sc.notifyObservers(new ScheduleNotification(Reason.ScheduleListLoaded, null));
 				
-				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION.Done from agent " + notification.getSender().getLocalName());
+			} else if (notification.getNotification() instanceof ControlBehaviourRTStateUpdate) {
+				// --- Got an initial ControlBehaviourRTStateUpdate from a system -----------------
+				this.addControlBehaviourRTStateUpdateAnsweredByAgent(notification.getSender().getLocalName());
+				this.getAggregationHandler().setAgentAnswer(notification);
+					
+			} else if (noteContent instanceof STATE_CONFIRMATION) {
+				// --- Check state confirmation type ----------------------------------------------
+				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION from agent " + agentName);
+				STATE_CONFIRMATION stateConformation = (STATE_CONFIRMATION) noteContent;
+				switch (stateConformation) {
+				case Initialized:
+					this.getAgentsInitialized().add(agentName);
+					break;
+
+				case Done:
+					this.getAgentsSuccessfulStarted().add(agentName);
+					// ----------------------------------------------------------------------------
+					// --- In distribute environments some agents may be slower in response !!----- 
+					// --- => At least have 95 % of expected agents started ----------------------- 
+					// ----------------------------------------------------------------------------
+					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()) * 0.95);
+					if (this.getAgentsSuccessfulStarted().size()>=minStarted &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
+						this.print("Initialization of agents completed (Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!", false);
+						this.resetAgentNotifications();
+						this.doNextSimulationStep();	
+					}
+					break;
+					
+				case Error:
+					// --- Nothing to do here yet -----
+					break;
+				}
 				
-				// --- Receiving register notification from agents in this simulation -------------
-				this.getAgentNotifications().add(notification);
-				if (notification.getNotification() instanceof Schedule) {
-					// --- Receiving the Schedule for the energy transmission from agents ---------
-					Schedule schedule = (Schedule) notification.getNotification();
-					String agentName = notification.getSender().getLocalName();
-					ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(agentName);
-					System.out.println("Received Schedule from " + agentName);
-					sc.getScheduleList().getSchedules().add(schedule);
-					sc.notifyObservers(new ScheduleNotification(Reason.ScheduleListLoaded, null));
-				}
-				if (this.getAgentNotifications().size()==this.getNumberOfExpectedDeviceAgents()) {
-					this.print("Initialization of simulation agents completed!", false);
-					this.resetAgentNotifications();
-					this.doNextSimulationStep();
-				}
 			}
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
@@ -900,6 +951,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					}
 				}
 				return;
+				
+			} else if (notification.getNotification() instanceof ControlBehaviourRTStateUpdate) {
+				// --- Got a ControlBehaviourRTStateUpdate from a system ------------------------------
+				this.getAggregationHandler().setAgentAnswer(notification);
+				this.addControlBehaviourRTStateUpdateAnsweredByAgent(notification.getSender().getLocalName());
+				this.discreteSimulationCheckEndOfSimulationStep();
 			}
 			
 			// --------------------------------------------------------------------------------
@@ -948,7 +1005,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return environmentNotificationReminder;
 	}
-	
 	/**
 	 * As a debug method, this allows to find system state in the the environmentNotificationReminder.
 	 *
