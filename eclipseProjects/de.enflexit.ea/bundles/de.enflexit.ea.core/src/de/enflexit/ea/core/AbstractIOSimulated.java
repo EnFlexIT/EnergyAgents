@@ -93,6 +93,11 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Enable individual preparation (e.g. for a voltage measurement) -------
 			this.prepareForSimulation(this.getNetworkModel());
 			
+			// --- Send null TSSE as registration for states from control behaviour? ----
+			if (this.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+				this.sendControlBehaviourRTStateUpdateToEnvironmentModel(null);
+			}
+			
 			// --- Send notification to simulation manager that this agent is ready -----
 			this.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
 			
@@ -368,11 +373,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 		if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
 			// ----------------------------------------------------------------
 			// --- Prepare this agent for the simulation ----------------------
+			// --- => Already done within the constructor of this class. ------
 			// ----------------------------------------------------------------
-			// --- Already done within the constructor of this class. ---------
-			// --- Notify that this agent is ready for simulation! ------------ 
-			// ----------------------------------------------------------------
-			//this.getSimulationConnector().setMyStimulusAnswer(STATE_CONFIRMATION.Done);
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
 			// ----------------------------------------------------------------
@@ -424,7 +426,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 						dsStep = this.getEnergyAgent().getControlBehaviourRT().getDiscreteSimulationStep();
 					}
 				}
-				// --- Check the Round type of this IO simulated --------------
+				// --- Send DiscreteSimulationStep to manager agent -----------
 				this.getSimulationConnector().setMyStimulusAnswer(dsStep);
 				break;
 

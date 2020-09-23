@@ -71,6 +71,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private AbstractGroupEvaluationStrategyRT rtGroupEvaluationStrategy;
 	
 	private long currentTime;
+	private boolean receivedNewMeasurements;
 	
 	/**
 	 * Instantiates a new control behaviour that is used during real time.
@@ -283,6 +284,27 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	
 	/**
+	 * Returns if the current execution environment is a simulation.
+	 * @return true, if is simulation
+	 */
+	private boolean isSimulation() {
+		boolean isSimulation = true;
+		switch (this.energyAgent.getAgentOperatingMode()) {
+		case Simulation:
+		case TestBedSimulation:
+			isSimulation = true;
+			break;
+			
+		case TestBedReal:
+		case RealSystemSimulatedIO:
+		case RealSystem:
+			isSimulation = false;
+			break;
+		}
+		return isSimulation;
+	}
+	
+	/**
 	 * Returns the current TimeModelType.
 	 * @return the time model type
 	 */
@@ -291,64 +313,38 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	/**
+	 * In the context of simulations, sets the local system state to the environment model if configured in the simulation interface.
+	 * @param tsseLocal the current local system state 
 	 */
-	@Override
-	public void update(Observable observable, Object updateObject) {
-		if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-			// --- Are we in discrete simulations ? -------------------------------------
-			switch (this.getTimeModelType()) {
-			case TimeModelContinuous:
-				// ----------------------------------------------------------------------
-				// --- Leave the control of the behaviour by the agents internal --------
-				// --- Scheduler for behaviour's                                 --------
-				// ----------------------------------------------------------------------
-				this.restart();
-				break;
-			
-			case TimeModelDiscrete:
-				// ----------------------------------------------------------------------
-				// --- Invoke the action method to directly cause an reaction. ----------
-				// --- => Avoids to integrate a wait process within IO simulated! -------
-				// ----------------------------------------------------------------------
-				this.action();
-				break;
-			}
-		}
-	}
-	/* (non-Javadoc)
-	 * @see jade.core.behaviours.Behaviour#action()
-	 */
-	@Override
-	public void action() {
+	private void sendControlBehaviourRTStateUpdateToEnvironmentModel(TechnicalSystemStateEvaluation tsseLocal) {
 		
-		// --- Get the current time ---------------------------------
-		this.currentTime = this.agentIOBehaviour.getTime();
-		try {
-			// --- Case separation for single or multiple systems ---
-			if (this.typeOfControlledSystem!=null) {
-				switch (this.typeOfControlledSystem) {
-				case TechnicalSystem:
-					this.actionForTechnicalSystem();
-					break;
-				case TechnicalSystemGroup:
-					this.actionForTechnicalSystemGroup();
-					break;
-				default:
-					break;
+		if (this.isSimulation()==true) {
+			EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
+			if (eaIO instanceof AbstractIOSimulated) {
+				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
+				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+					ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 				}
 			}
-			
-		} catch (Exception ex) {
-			DisplayHelper.systemOutPrintlnGlobalTime(this.currentTime, "[" + this.getClass().getSimpleName() + "]", "Error during execution of real time control behaviour:");
-			ex.printStackTrace();
 		}
-		
-		// --- Block this behaviour ---------------------------------
-		this.block();
 	}
 	
+	/**
+	 * Sends a discrete simulations step to simulation manager.
+	 */
+	private void sendDiscreteSimulationsStepToSimulationManager() {
+		
+		if (this.isSimulation()==false || this.getTimeModelType()==TimeModelType.TimeModelContinuous) return;
+		
+		// --- Get the discrete simulation step ---------------------
+		DiscreteSimulationStep dsStep = this.getDiscreteSimulationStep();
+		EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
+		if (eaIO instanceof AbstractIOSimulated) {
+			AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
+			ioSimulated.sendManagerNotification(dsStep);
+		}
+	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
 	 * important {@link SystemStateType} for the iteration between agent and environment 
@@ -382,6 +378,77 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return new DiscreteSimulationStep(tsse, systemStateType);
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable observable, Object updateObject) {
+		
+		if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
+			
+			// --- Set marker that new measurements arrived -----------------------------
+			this.receivedNewMeasurements = true;
+			
+			// --- Are we in discrete simulations ? -------------------------------------
+			switch (this.getTimeModelType()) {
+			case TimeModelContinuous:
+				// ----------------------------------------------------------------------
+				// --- Leave the control of the behaviour by the agents internal --------
+				// --- Scheduler for behaviour's                                 --------
+				// ----------------------------------------------------------------------
+				this.restart();
+				break;
+			
+			case TimeModelDiscrete:
+				// ----------------------------------------------------------------------
+				// --- Invoke the action method to directly cause an reaction. ----------
+				// --- => Avoids to integrate a wait process within IO simulated! -------
+				// ----------------------------------------------------------------------
+				this.action();
+				break;
+			}
+		}
+	}
+	/* (non-Javadoc)
+	 * @see jade.core.behaviours.Behaviour#action()
+	 */
+	@Override
+	public void action() {
+		
+		// --- Only act if new measurements arrived ---------------------------
+		if (this.receivedNewMeasurements==true) {
+			
+			// --- Get the current time ---------------------------------------
+			this.currentTime = this.agentIOBehaviour.getTime();
+			try {
+				// --- Case separation for single or multiple systems ---------
+				if (this.typeOfControlledSystem!=null) {
+					switch (this.typeOfControlledSystem) {
+					case TechnicalSystem:
+						this.actionForTechnicalSystem();
+						break;
+					case TechnicalSystemGroup:
+						this.actionForTechnicalSystemGroup();
+						break;
+					default:
+						break;
+					}
+				}
+				
+			} catch (Exception ex) {
+				DisplayHelper.systemOutPrintlnGlobalTime(this.currentTime, "[" + this.getClass().getSimpleName() + "]", "Error during execution of real time control behaviour:");
+				ex.printStackTrace();
+				
+			} finally {
+				this.receivedNewMeasurements = false;
+			}
+		}
+		
+		// --- Block this behaviour -------------------------------------------
+		this.block();
+	}
+	
 	/**
 	 * This is the actual action for a {@link TechnicalSystem}.
 	 */
@@ -409,7 +476,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			}
 
 			// --- If configured, set TSSE to environment model -----
-			this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
+			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
+			this.sendDiscreteSimulationsStepToSimulationManager();
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {
@@ -421,33 +489,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.agentIOBehaviour.setSetPointsToSystem(setPointList);
 			}
 		}
-	}
-	
-	/**
-	 * In the context of simulations, sets the local system state to the environment model if configured in the simulation interface.
-	 * @param tsseLocal the new local system state to environment model
-	 */
-	private void setLocalSystemStateToEnvironmentModelInSimulations(TechnicalSystemStateEvaluation tsseLocal) {
-		
-		switch (this.energyAgent.getAgentOperatingMode()) {
-		case Simulation:
-		case TestBedSimulation:
-			EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
-			if (eaIO instanceof AbstractIOSimulated) {
-				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) this.energyAgent.getEnergyAgentIO();
-				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
-					ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
-				}
-			}
-			break;
-			
-		case TestBedReal:
-		case RealSystemSimulatedIO:
-		case RealSystem:
-			// --- Nothing to do here yet -------------------
-			break;
-		}
-		
 	}
 	
 	/**
@@ -516,7 +557,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			}
 
 			// --- If configured, set TSSE to environment model -----
-			this.setLocalSystemStateToEnvironmentModelInSimulations(tsseLocal);
+			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
+			this.sendDiscreteSimulationsStepToSimulationManager();
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {

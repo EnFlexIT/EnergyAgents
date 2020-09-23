@@ -94,16 +94,22 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 			public void run() {
 
 				try {
-					// --- Wait for the environment model ---------------------
+					// --- Wait for a simulation manager to be found ----------
 					SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
+					while (simHelper.getManagerAgent()==null) {
+						Thread.sleep(100);
+					}
+					
+					// --- Wait for the environment model ---------------------
 					while (simHelper.getEnvironmentModel()==null) {
 						Thread.sleep(100);
 					}
-
-					// --- Get the actual environment model -------------------
-					EnvironmentModel envModel = simHelper.getEnvironmentModel();
 					// --- Inform manager about initialization ----------------
 					SimulationConnectorLocal.this.sendManagerNotification(STATE_CONFIRMATION.Initialized);
+					
+					
+					// --- Get the actual environment model -------------------
+					EnvironmentModel envModel = simHelper.getEnvironmentModel();
 					
 					// --- Check if this simulated agent has to die -----------
 					HyGridAbstractEnvironmentModel hygridModel = (HyGridAbstractEnvironmentModel) envModel.getAbstractEnvironment();

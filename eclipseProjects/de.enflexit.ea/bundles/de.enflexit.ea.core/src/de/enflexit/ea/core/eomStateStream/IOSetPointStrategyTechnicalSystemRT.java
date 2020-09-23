@@ -88,7 +88,6 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 				fvListSetPoint = this.createSetPointListFromSystemState(lastTSSE);
 			}
 		}
-		
 		return fvListSetPoint;
 	}
 	
@@ -114,7 +113,6 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 			}
 			
 			// --- Get or create the current set point list ----------------------------- 
-			System.out.println("[" + this.getClass().getSimpleName() + "] To Do ... ");
 			FixedVariableList fvListSetPoint = this.getSetPointsToSystemDuringEvaluation(tsse.getGlobalTime());			
 			if (fvListSetPoint==null) {
 				DisplayHelper.systemOutPrintlnGlobalTime(tsse.getGlobalTime(), "=> ", this.getClass().getSimpleName() + ": No system set points are available for " + systemDescription + ". Try to stay in the current system state.");
