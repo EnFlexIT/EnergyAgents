@@ -46,6 +46,7 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 @XmlType(name = "HyGridAbstractEnvironmentModel", propOrder = {
     "simulationIntervalLength",
     "simulationIntervalUnitIndex",
+    "isDiscreteSnapshotSimulation",
     "networkCalculationIntervalLength",
     "networkCalculationIntervalUnitIndex",
     "executionDataBase",
@@ -77,6 +78,8 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	
 	private long simulationIntervalLength = 5;
 	private int simulationIntervalUnitIndex = 1;
+	
+	private boolean isDiscreteSnapshotSimulation;
 	
 	private long networkCalculationIntervalLength = 5;
 	private int networkCalculationIntervalUnitIndex = 1;
@@ -196,6 +199,22 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	 */
 	public void setSimulationIntervalUnitIndex(int simulationIntervalUnitIndex) {
 		this.simulationIntervalUnitIndex = simulationIntervalUnitIndex;
+	}
+
+	
+	/**
+	 * Returns if the current discrete simulation is a snapshot simulation.
+	 * @return true, if is snapshot simulation
+	 */
+	public boolean isDiscreteSnapshotSimulation() {
+		return isDiscreteSnapshotSimulation;
+	}
+	/**
+	 * Sets the discrete snapshot simulation.
+	 * @param isDiscreteSnapshotSimulation the new discrete snapshot simulation
+	 */
+	public void setDiscreteSnapshotSimulation(boolean isDiscreteSnapshotSimulation) {
+		this.isDiscreteSnapshotSimulation = isDiscreteSnapshotSimulation;
 	}
 
 	

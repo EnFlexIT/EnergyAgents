@@ -3,7 +3,7 @@ package de.enflexit.ea.core;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.SystemStateType;
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
@@ -415,12 +415,12 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 				DiscreteSimulationStep dsStep = null;
 				if (isRTControlledSystem==false) {
 					// --- Not RT controlled - (data source is ScheduleList) --
-					dsStep = new DiscreteSimulationStep(tsseAnswer, SystemStateType.Final);					
+					dsStep = new DiscreteSimulationStep(tsseAnswer, DiscreteSystemStateType.Final);					
 				} else {
 					// --- RT controlled !!! ----------------------------------
 					if (isRequiresEnvModelInformation==true) {
 						// --- Take the current state as initial system state - 
-						dsStep = new DiscreteSimulationStep(tsseAnswer, SystemStateType.Iteration);
+						dsStep = new DiscreteSimulationStep(tsseAnswer, DiscreteSystemStateType.Iteration);
 					} else {
 						// -- Get system state from RT behaviour --------------
 						dsStep = this.getEnergyAgent().getControlBehaviourRT().getDiscreteSimulationStep();
@@ -454,7 +454,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 * @param tsse the new technical system state to be set to the environment model
 	 * @param systemStateType the system state type
 	 */
-	public void setDiscreteSimulationStepToEnvironment(TechnicalSystemStateEvaluation tsse, SystemStateType systemStateType) {
+	public void setDiscreteSimulationStepToEnvironment(TechnicalSystemStateEvaluation tsse, DiscreteSystemStateType systemStateType) {
 		if (tsse!=null) {
 			DiscreteSimulationStep dsStep = new DiscreteSimulationStep(tsse, systemStateType);
 			this.sendManagerNotification(dsStep);
