@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dashboard
+Bundle-SymbolicName: de.enflexit.ea.core.dashboard
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: de.enflexit.ea.core.dashboard
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
