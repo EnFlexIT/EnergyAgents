@@ -6,7 +6,7 @@ import java.util.Vector;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.monitoring.MonitoringEvent;
 import de.enflexit.ea.core.monitoring.MonitoringListener;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
@@ -58,7 +58,7 @@ public class LiveMonitoringSubscriptionResponder extends SubscriptionResponder i
 			if (newTSSE!=null) {
 				
 				// --- Get a copy without history -------------------
-				TechnicalSystemStateEvaluation tsseForUpdateMessage = TechnicalSystemStateHelper.getTsseCloneWithoutParent(newTSSE);
+				TechnicalSystemStateEvaluation tsseForUpdateMessage = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(newTSSE);
 				
 				if (this.debug==true) {
 					System.out.println("Sending new TSSE: Agent " + myAgent.getLocalName() + ", timestamp " + tsseForUpdateMessage.getGlobalTime());

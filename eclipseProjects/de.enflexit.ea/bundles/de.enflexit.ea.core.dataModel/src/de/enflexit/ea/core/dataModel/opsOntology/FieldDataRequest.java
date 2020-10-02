@@ -9,20 +9,9 @@ import jade.core.*;
    * Specifies a request for field data (=schedules) from deployed agents
 * Protege name: FieldDataRequest
 * @author ontology bean generator
-* @version 2018/11/20, 12:59:18
+* @version 2020/09/18, 14:36:59
 */
 public class FieldDataRequest implements AgentAction {
-
-   /**
-* Protege name: scheduleRangeDefinition
-   */
-   private ScheduleRangeDefinition scheduleRangeDefinition;
-   public void setScheduleRangeDefinition(ScheduleRangeDefinition value) { 
-    this.scheduleRangeDefinition=value;
-   }
-   public ScheduleRangeDefinition getScheduleRangeDefinition() {
-     return this.scheduleRangeDefinition;
-   }
 
    /**
 * Protege name: setup
@@ -55,5 +44,16 @@ public class FieldDataRequest implements AgentAction {
    public Iterator getAllAgentIDs() {return agentIDs.iterator(); }
    public List getAgentIDs() {return agentIDs; }
    public void setAgentIDs(List l) {agentIDs = l; }
+
+   /**
+* Protege name: scheduleRangeDefinition
+   */
+   private ScheduleRangeDefinition scheduleRangeDefinition;
+   public void setScheduleRangeDefinition(ScheduleRangeDefinition value) { 
+    this.scheduleRangeDefinition=value;
+   }
+   public ScheduleRangeDefinition getScheduleRangeDefinition() {
+     return this.scheduleRangeDefinition;
+   }
 
 }

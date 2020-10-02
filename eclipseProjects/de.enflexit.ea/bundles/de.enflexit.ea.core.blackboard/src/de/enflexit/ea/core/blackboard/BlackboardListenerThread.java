@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
 
 import java.util.List;
 

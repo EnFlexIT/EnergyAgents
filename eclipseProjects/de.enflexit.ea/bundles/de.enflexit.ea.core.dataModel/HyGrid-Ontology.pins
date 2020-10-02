@@ -1,0 +1,331 @@
+; Fri Sep 18 14:33:52 CEST 2020
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([ActivePower] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([AmberTrafficLight] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Cable] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CableProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CableState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CableWithBreaker] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CableWithBreakerProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CEARegistrationResponse] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([CircuitBreaker] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([DoubleValue] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n    * Gets the double value.\n    * @return the double value\n    */\n   public Double getDoubleValue() {\n	   try {\n		   return Double.parseDouble(this.getStringDoubleValue());\n	   }catch(NumberFormatException ex) {\n		   return null;\n	   }\n   }\n   \n   /**\n    * Sets the double value.\n    * @param value the new double value\n    */\n   public void setDoubleValue(double value) {\n	   this.setStringDoubleValue(\"\"+value);\n   }\n   \n   /**\n    * Instantiates a new double value.\n    */\n   public DoubleValue() {};\n   \n   /**\n    * Instantiates a new double value.\n    * @param value the value\n    */\n   public DoubleValue(double value) {\n	   this.setDoubleValue(value);\n   };"))
+
+([DynamicComponentState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([EdgeComponentProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([EdgeComponentState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ElectricalGridState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ElectricalGridStateUpdate] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ElectricalMeasurement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public TriPhaseElectricalNodeState getElectricalNodeStateNotNull() {\n	if (this.electricalNodeState== null) this.electricalNodeState = new TriPhaseElectricalNodeState(); \n	return this.electricalNodeState;\n}"))
+
+([ElectricalNodeProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ElectricalNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ElectricalPower] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([FlexibilityOffer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([FluidNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GasMeasurement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public GasNodeState getGasNodeStateNotNull() {\n	if (this.gasNodeState == null) this.gasNodeState = new GasNodeState(); \n	return this.gasNodeState;\n}"))
+
+([GasNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GreenTrafficLight] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GridStateAgentManagement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GridStateAssessment] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GridStateAssessmentInformation] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public GridStateAssessment getGridStateAssessmentNotNull() {\n	if (this.gridStateAssessment == null) this.gridStateAssessment = new GridStateAssessment(); \n	return this.gridStateAssessment;\n}"))
+
+([GridStateControl] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([GridStateViolation] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([HeatNodeProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([HeatNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([HeatPipeProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([HeatPipeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([LongValue] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Long getLongValue(){\n try{\n  return Long.parseLong(getStringLongValue());\n }catch(NumberFormatException ex){\n  return null;\n }\n}\npublic void setLongValue(long value){\n setStringLongValue(\"\"+value);\n}\npublic void setLongValue(Long value){\n setStringLongValue(value.toString());\n}"))
+
+([Measurement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ModbusAdapterAction] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ModbusSetpoint] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([NetworkStateInformation] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([NodeComponentProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([NodeComponentState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PipeProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PipeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PipeSurrounding] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PipeSurroundingAir] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([PipeSurroundingEarth] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Power] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\20_GIT\\04_EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
+	(%3AONTOLOGYNAME "HyGrid")
+	(%3APACKAGE "de.enflexit.ea.core.dataModel.ontology")
+	(%3ASUPPORT "j2se"))
+
+([ProxyAgentRegistrationRequest] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ReactivePower] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RedTrafficLight] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ReferencePVMeasurementUpdate] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RemoteAgentInformation] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n    * Checks if both AIDs (proxy and remote) have been set\n    * @return Are both AIDs available?\n    */\n   public boolean isComplete(){\n	   return (this.proxyAgentAID != null && this.remoteAgentAID != null);\n   }"))
+
+([RemoteAgentRegistrationRequest] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([RequestValues] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Sensor] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([SensorProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([SetModbusSetpoints] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([SlackNodeSetVoltageLevelNotification] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([StaticComponentProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TestbedAgentManagement] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TrafficLight] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TransformerNodeProperties] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TriPhaseCableState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n	 * Gets the first phase, creates it if necessary. Due to code generation,\n	 * this behaviour cannot be implemented within the regular getter.\n	 * @return the first phase\n	 */\n	private UniPhaseCableState getFirstPhase() {\n		if (this.phase1==null) {\n			this.phase1 = new UniPhaseCableState();\n		}\n		return this.phase1;\n	}\n	\n	/**\n	 * Gets the second phase, creates it if necessary. Due to code generation,\n	 * this behaviour cannot be implemented within the regular getter.\n	 * @return the second phase\n	 */\n	private UniPhaseCableState getSecondPhase() {\n		if (this.phase2==null) {\n			this.phase2 = new UniPhaseCableState();\n		}\n		return this.phase2;\n	}\n	\n	/**\n	 * Gets the third phase, creates it if necessary. Due to code generation,\n	 * this behaviour cannot be implemented within the regular getter.\n	 * @return the third phase\n	 */\n	private UniPhaseCableState getThirdPhase() {\n		if (this.phase3==null) {\n			this.phase3 = new UniPhaseCableState();\n		}\n		return this.phase3;\n	}\n\n// --- Old style getters and setters for backwards compatibility - L1 ------\n	public void setCurrent_L1(float value) { \n		this.getFirstPhase().setCurrent(new UnitValue(value, \"A\"));\n	}\n	public float getCurrent_L1() {\n		return this.getFirstPhase().getCurrent().getValue();\n	}\n	public void setUtil_L1(float value) { \n		this.getFirstPhase().setUtilization(value);\n	}\n	public float getUtil_L1() {\n		return this.getFirstPhase().getUtilization();\n	}\n	public void setP_L1(float value) { \n		this.getFirstPhase().setP(new UnitValue(value, \"W\"));\n	}\n	public float getP_L1() {\n		return this.getFirstPhase().getP().getValue();\n	}\n	public void setQ_L1(float value) { \n		this.getFirstPhase().setQ(new UnitValue(value, \"var\"));\n	}\n	public float getQ_L1() {\n		return this.getFirstPhase().getQ().getValue();\n	}\n	public void setCosPhi_L1(float value) { \n		this.getFirstPhase().setCosPhi(value);\n	}\n	public float getCosPhi_L1() {\n		return this.getFirstPhase().getCosPhi();\n	}\n	\n	// --- Old style getters and setters for backwards compatibility - L2 ------\n	public void setCurrent_L2(float value) { \n		this.getSecondPhase().setCurrent(new UnitValue(value, \"A\"));\n	}\n	public float getCurrent_L2() {\n		return this.getSecondPhase().getCurrent().getValue();\n	}\n	public void setUtil_L2(float value) { \n		this.getSecondPhase().setUtilization(value);\n	}\n	public float getUtil_L2() {\n		return this.getSecondPhase().getUtilization();\n	}\n	public void setP_L2(float value) { \n		this.getSecondPhase().setP(new UnitValue(value, \"W\"));\n	}\n	public float getP_L2() {\n		return this.getSecondPhase().getP().getValue();\n	}\n	public void setQ_L2(float value) { \n		this.getSecondPhase().setQ(new UnitValue(value, \"var\"));\n	}\n	public float getQ_L2() {\n		return this.getSecondPhase().getQ().getValue();\n	}\n	public void setCosPhi_L2(float value) { \n		this.getSecondPhase().setCosPhi(value);\n	}\n	public float getCosPhi_L2() {\n		return this.getSecondPhase().getCosPhi();\n	}\n	\n	// --- Old style getters and setters for backwards compatibility - L3 ------\n	public void setCurrent_L3(float value) { \n		this.getThirdPhase().setCurrent(new UnitValue(value, \"A\"));\n	}\n	public float getCurrent_L3() {\n		return this.getThirdPhase().getCurrent().getValue();\n	}\n	public void setUtil_L3(float value) { \n		this.getThirdPhase().setUtilization(value);\n	}\n	public float getUtil_L3() {\n		return this.getThirdPhase().getUtilization();\n	}\n	public void setP_L3(float value) { \n		this.getThirdPhase().setP(new UnitValue(value, \"W\"));\n	}\n	public float getP_L3() {\n		return this.getThirdPhase().getP().getValue();\n	}\n	public void setQ_L3(float value) { \n		this.getThirdPhase().setQ(new UnitValue(value, \"var\"));\n	}\n	public float getQ_L3() {\n		return this.getThirdPhase().getQ().getValue();\n	}\n	public void setCosPhi_L3(float value) { \n		this.getThirdPhase().setCosPhi(value);\n	}\n	public float getCosPhi_L3() {\n		return this.getThirdPhase().getCosPhi();\n	}"))
+
+([TriPhaseElectricalNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public UniPhaseElectricalNodeState getL1NodeStateNotNull() {\n	if (this.l1 == null) this.l1 = new UniPhaseElectricalNodeState();\n	return this.l1;\n}\n\npublic UniPhaseElectricalNodeState getL2NodeStateNotNull() {\n	if (this.l2 == null) this.l2 = new UniPhaseElectricalNodeState();\n	return this.l2;\n}\n\npublic UniPhaseElectricalNodeState getL3NodeStateNotNull() {\n	if (this.l3 == null) this.l3 = new UniPhaseElectricalNodeState();\n	return this.l3;\n}"))
+
+([TriPhaseElectricalTransformerState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TriPhaseSensorState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "// --- Old style getters and setters for backwards compatibility -----------\n   public void setVoltage_L1(float value) { \n	   this.setMeasuredVoltageL1(new UnitValue(value, \"V\"));\n   }\n   public float getVoltage_L1() {\n	   return this.getMeasuredVoltageL1().getValue();\n   }\n   public void setVoltage_L2(float value) { \n	   this.setMeasuredVoltageL2(new UnitValue(value, \"V\"));\n   }\n   public float getVoltage_L2() {\n	   return this.getMeasuredVoltageL2().getValue();\n   }\n   public void setVoltage_L3(float value) { \n	   this.setMeasuredVoltageL3(new UnitValue(value, \"V\"));\n   }\n   public float getVoltage_L3() {\n	   return this.getMeasuredVoltageL3().getValue();\n   }"))
+
+([TwinHeatNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TwinPipeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([UniPhaseCableState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([UniPhaseCableWithBreaker] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([UniPhaseElectricalNodeState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n * Gets the current. If null, it is initialized with a new UnitValue instance to prevent NullPointers\n * @return the current\n */\npublic UnitValue getCurrentNotNull() {\n	if (this.current==null) {\n		this.current = new UnitValue();\n	}\n	return this.current;\n}\n\n/**\n * Gets the p. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the p\n */\npublic UnitValue getPNotNull() {\n	if (this.p==null) {\n		this.p = new UnitValue();\n	}\n	return this.p;\n}\n\n/**\n * Gets the q. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the q\n */\npublic UnitValue getQNotNull() {\n	if (this.q==null) {\n		this.q = new UnitValue();\n	}\n	return this.q;\n}\n\n/**\n * Gets the s. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the s\n */\npublic UnitValue getSNotNull() {\n	if (this.s==null) {\n		this.s = new UnitValue();\n	}\n	return this.s;\n}\n\n/**\n * Gets the voltage abs. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the voltage abs\n */\npublic UnitValue getVoltageAbsNotNull() {\n	if (this.voltageAbs==null) {\n		this.voltageAbs = new UnitValue();\n	}\n	return this.voltageAbs;\n}\n\n/**\n * Gets the voltage imag. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the voltage imag\n */\npublic UnitValue getVoltageImagNotNull() {\n	if (this.voltageImag==null) {\n		this.voltageImag = new UnitValue();\n	}\n	return this.voltageImag;\n}\n\n/**\n * Gets the voltage real. If null, it is initialized with a new UnitValue instance to prevent NullPointers.\n * @return the voltage real\n */\npublic UnitValue getVoltageRealNotNull() {\n	if (this.voltageReal==null) {\n		this.voltageReal = new UnitValue();\n	}\n	return this.voltageReal;\n}\n\n/**\n * Calculates p\n * @return the calculated p\n */\npublic double getPCalculated() {\n return getSNotNull().getValue() * this.getCosPhi();\n}\n\n/**\n * Calculates q\n * @return the calculated q\n */\npublic double getQCalculated() {\n return Math.sqrt(Math.pow(this.getSNotNull().getValue(), 2) - Math.pow(this.getPNotNull().getValue(), 2));  \n}\n\n/**\n * Calculates s\n * @return the calculated s\n */\npublic double getSCalculated() {\n return this.getVoltageAbsNotNull().getValue() * this.getCurrentNotNull().getValue(); \n}"))
+
+([UniPhaseElectricalTransformerState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([UniPhaseSensorState] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([UnitValue] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "/**\n * Instantiates a new unit value.\n */\n public UnitValue() { }\n /**\n * Instantiates a new unit value.\n *\n * @param value the value\n * @param unit the unit\n */\n public UnitValue(float value, String unit) {\n  this.setValue(value);\n  this.setUnit(unit);\n }"))
+
+([VoltageBand] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([VoltageBandInformation] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public VoltageBand getVoltageBandNotNull() {\n	if (this.voltageBand == null) this.voltageBand = new VoltageBand(); \n	return this.voltageBand;\n}"))
+
+([WeatherData] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([WeatherDataUpdate] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

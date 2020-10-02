@@ -7,13 +7,13 @@ import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.ea.core.AbstractIOSimulated;
-import energy.DisplayHelper;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
 import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.evaluation.AbstractEvaluationStrategyRT.InitialStateAdaption;
+import energy.helper.DisplayHelper;
 import energy.optionModel.AbstractFlow;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;

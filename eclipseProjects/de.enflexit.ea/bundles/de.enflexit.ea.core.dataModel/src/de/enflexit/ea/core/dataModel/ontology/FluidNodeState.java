@@ -8,20 +8,9 @@ import jade.core.*;
    * This class describes the dynamic properties of a node component in a heat network
 * Protege name: FluidNodeState
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class FluidNodeState extends NodeComponentState{ 
-
-   /**
-* Protege name: pressure
-   */
-   private float pressure;
-   public void setPressure(float value) { 
-    this.pressure=value;
-   }
-   public float getPressure() {
-     return this.pressure;
-   }
 
    /**
 * Protege name: temperature
@@ -32,6 +21,17 @@ public class FluidNodeState extends NodeComponentState{
    }
    public float getTemperature() {
      return this.temperature;
+   }
+
+   /**
+* Protege name: pressure
+   */
+   private float pressure;
+   public void setPressure(float value) { 
+    this.pressure=value;
+   }
+   public float getPressure() {
+     return this.pressure;
    }
 
 }

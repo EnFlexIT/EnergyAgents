@@ -2,20 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Core Bundle
 Bundle-SymbolicName: de.enflexit.ea.core
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  de.enflexit.db.hibernate,
  de.enflexit.oidc,
- de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
+ de.enflexit.eom.awbAdapter,
  de.enflexit.eom.database,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
  org.eclipse.core.runtime,
- de.enflexit.ea.core.dataModel
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.blackboard
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

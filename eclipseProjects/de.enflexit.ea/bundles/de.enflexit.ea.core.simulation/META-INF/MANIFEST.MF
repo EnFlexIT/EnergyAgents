@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Simulations Core
 Bundle-SymbolicName: de.enflexit.ea.core.simulation
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.simulation
@@ -18,9 +18,9 @@ Require-Bundle: de.enflexit.common,
  org.awb.env.networkModel,
  de.enflexit.ea.core,
  de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.blackboard,
  de.enflexit.ea.core.aggregation,
- de.enflexit.ea.core.validation,
- de.enflexit.ea.electricity
+ de.enflexit.ea.core.validation
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/simulationManagerValidationService.xml

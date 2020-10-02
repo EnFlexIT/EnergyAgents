@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class CableProperties extends EdgeComponentProperties{ 
 
@@ -23,14 +23,14 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: din
+* Protege name: linearReactance
    */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
+   private UnitValue linearReactance;
+   public void setLinearReactance(UnitValue value) { 
+    this.linearReactance=value;
    }
-   public String getDin() {
-     return this.din;
+   public UnitValue getLinearReactance() {
+     return this.linearReactance;
    }
 
    /**
@@ -56,18 +56,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-   * The linear conductance of this medium voltage cable.
-* Protege name: linearConductance
-   */
-   private UnitValue linearConductance;
-   public void setLinearConductance(UnitValue value) { 
-    this.linearConductance=value;
-   }
-   public UnitValue getLinearConductance() {
-     return this.linearConductance;
-   }
-
-   /**
    * The linear capacitance of this medium voltage cable.
 * Protege name: linearCapacitance
    */
@@ -80,17 +68,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: linearReactance
-   */
-   private UnitValue linearReactance;
-   public void setLinearReactance(UnitValue value) { 
-    this.linearReactance=value;
-   }
-   public UnitValue getLinearReactance() {
-     return this.linearReactance;
-   }
-
-   /**
 * Protege name: linearResistance
    */
    private UnitValue linearResistance;
@@ -99,6 +76,29 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public UnitValue getLinearResistance() {
      return this.linearResistance;
+   }
+
+   /**
+* Protege name: din
+   */
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
+   }
+   public String getDin() {
+     return this.din;
+   }
+
+   /**
+   * The linear conductance of this medium voltage cable.
+* Protege name: linearConductance
+   */
+   private UnitValue linearConductance;
+   public void setLinearConductance(UnitValue value) { 
+    this.linearConductance=value;
+   }
+   public UnitValue getLinearConductance() {
+     return this.linearConductance;
    }
 
 }

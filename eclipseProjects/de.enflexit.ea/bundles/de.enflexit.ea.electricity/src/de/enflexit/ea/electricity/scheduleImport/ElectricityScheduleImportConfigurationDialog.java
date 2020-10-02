@@ -21,7 +21,7 @@ import java.util.Date;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import energy.UnitConverter;
+import energy.helper.UnitConverter;
 import energy.optionModel.gui.components.DateTimeWidget;
 import energy.optionModel.gui.components.TimeUnitComboBox;
 import javax.swing.JSpinner;

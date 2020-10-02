@@ -3,13 +3,12 @@ package de.enflexit.ea.core.simulation.manager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
@@ -31,31 +30,29 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
+import de.enflexit.ea.core.blackboard.Blackboard;
+import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
-import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
-import de.enflexit.ea.core.dataModel.blackboard.Blackboard;
-import de.enflexit.ea.core.dataModel.blackboard.BlackboardAgent;
-import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
-import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
-import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
-import energy.domain.DefaultDomainModelElectricity.Phase;
+import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
+import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
+import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
-import energy.evaluation.TechnicalSystemStateHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.schedule.ScheduleController;
 import energy.schedule.ScheduleNotification;
 import energy.schedule.ScheduleNotification.Reason;
-import energygroup.GroupController;
 import jade.core.AID;
 import jade.core.ServiceException;
 import jade.wrapper.StaleProxyException;
@@ -83,8 +80,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
-	private Vector<EnvironmentNotification> agentsNotifications;
+	private HashSet<String> agentsInitialized;
+	private HashSet<String> agentsSuccessfulStarted;
 
+	private Vector<EnvironmentNotification> agentsNotifications;
+	
 	private long endTimeNextSimulationStep;
 	
 	private AbstractAggregationHandler aggregationHandler;
@@ -93,6 +93,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private Hashtable<AID, Object> environmentNotificationReminder;
 	private NetworkCalculationExecuter networkCalculationExecuter;
 	private Object networkCalculationTrigger;
+	
+	private HashSet<String> controlBehaviourRTStateUpdateSources;
+	private HashSet<String> controlBehaviourRTStateUpdateAnswered;
 	
 	
 	
@@ -135,7 +138,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		
 		// --- Prepare the aggregation handler --------------------------------
-		this.getAggregationHandler();
+		this.getBlackboard().setAggregationHandler(this.getAggregationHandler());
 		// --- If measurements are activated, configure aggregation handler ---
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
@@ -277,37 +280,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			this.print("Re-Execute Simulation!", false);
 			if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
 				// --- Restart discrete simulation ------------------
-				this.doSingleSimulationSequennce();
+				this.doSingleSimulationSequence();
 			} else if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
 				// --- Restart the continuous simulation ------------
 				this.getTimeModelContinuous().setExecuted(true);
 			}
-		}
-	}
-	
-	/**
-	 * Returns the blackboard that contains the current state of the simulation.
-	 * @return the blackboard
-	 */
-	public Blackboard getBlackboard() {
-		if (blackboard==null) {
-			blackboard = Blackboard.getInstance();
-			blackboard.startBlackboardListenerServiceThread();
-		}
-		return blackboard;
-	}
-	/**
-	 * Starts the {@link BlackboardAgent}.
-	 */
-	private void startBlackBoardAgent() {
-
-		try {
-			Object[] startArgument = new Object[1];
-			startArgument[0] = this.getBlackboard();
-			this.getContainerController().createNewAgent(GlobalHyGridConstants.BLACKBOARD_AGENT_NAME, BlackboardAgent.class.getName(), startArgument).start();
-
-		} catch (StaleProxyException spe) {
-			spe.printStackTrace();
 		}
 	}
 	
@@ -318,9 +295,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	public void print(String messageText, boolean isError) {
 		if (isError) {
-			System.err.println(this.getLocalName() + ": " + messageText);
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + messageText);
 		} else {
-			System.out.println(this.getLocalName() + ": " + messageText);
+			System.out.println("[" + this.getClass().getSimpleName() + "] " + messageText);
 		}
 	}
 	/**
@@ -437,6 +414,359 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		return timeFormat;
 	}
 	
+	// --------------------------------------------------------------------------------------------
+	// --- For discrete simulations to realize constant time steps of the simulator ---------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Resets the time for the end of the next simulation step to 0.
+	 */
+	private void resetEndTimeNextSimulationStep() {
+		this.endTimeNextSimulationStep = 0;
+	}
+	/**
+	 * Sets the desired time for the end of the next simulation step. The idea is that even in a discrete
+	 * simulation, a single simulation step should not exceed this time limit. For this, the configured 
+	 * simulation interval will be added to the current time and used as such end time.
+	 */
+	private void setEndTimeNextSimulationStep() {
+		this.endTimeNextSimulationStep = System.currentTimeMillis() + this.hygridSettings.getSimulationIntervalLength();
+	}
+	/**
+	 * Returns the current end time next simulation step.
+	 * @return the end time next simulation step
+	 */
+	public long getEndTimeNextSimulationStep() {
+		return endTimeNextSimulationStep;
+	}
+	/**
+	 * Waits until the end of the current simulation step that was defined by {@link #setEndTimeNextSimulationStep()}.
+	 * 
+	 * @see #setEndTimeNextSimulationStep()
+	 * @see #getEndTimeNextSimulationStep()
+	 */
+	private void waitUntilTheEndOfCurrentSimulationStep() {
+		if (this.getEndTimeNextSimulationStep()>0) {
+			while (System.currentTimeMillis() < this.getEndTimeNextSimulationStep()) {
+				try {
+					long sleepTime = this.getEndTimeNextSimulationStep() - System.currentTimeMillis();
+					if (sleepTime>0) {
+						Thread.sleep(sleepTime);
+					} else {
+						break;
+					}
+					
+				} catch (InterruptedException ie) {
+					//ie.printStackTrace();
+				}
+			}	
+		}
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// --- Blackboard handling --------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Returns the blackboard that contains the current state of the simulation.
+	 * @return the blackboard
+	 */
+	public Blackboard getBlackboard() {
+		if (blackboard==null) {
+			blackboard = Blackboard.getInstance();
+			blackboard.startBlackboardListenerServiceThread();
+		}
+		return blackboard;
+	}
+	/**
+	 * Starts the {@link BlackboardAgent}.
+	 */
+	private void startBlackBoardAgent() {
+
+		try {
+			Object[] startArgument = new Object[1];
+			startArgument[0] = this.getBlackboard();
+			this.getContainerController().createNewAgent(GlobalHyGridConstants.BLACKBOARD_AGENT_NAME, BlackboardAgent.class.getName(), startArgument).start();
+
+		} catch (StaleProxyException spe) {
+			spe.printStackTrace();
+		}
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// --- Aggregation handling & simulation schedule ---------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Returns the aggregation display behaviour.
+	 * @return the display behaviour
+	 */
+	protected AbstractAggregationHandler getAggregationHandler() {
+		if (aggregationHandler==null) {
+			aggregationHandler = new AggregationHandler(this.getBlackboard().getNetworkModel(), this.isHeadlessOperation, this.getClass().getSimpleName());
+			aggregationHandler.setOwnerInstance(this);
+			aggregationHandler.addAggregationListener(this);
+		}
+		return aggregationHandler;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AggregationListener#networkCalculationDone()
+	 */
+	@Override
+	public void networkCalculationDone() {
+
+		// --------------------------------------------------------------------
+		// --- Blackboard-Jobs ------------------------------------------------
+		// --------------------------------------------------------------------
+		// --- Update the aggregation-specific blackboard models --------------
+		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
+		for (int i = 0; i < subnetConfigList.size(); i++) {
+			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
+			if (subnetConfig!=null) {
+				AbstractNetworkCalculationStrategy calculationStrategy = subnetConfig.getNetworkCalculationStrategy();
+				if (calculationStrategy!=null) {
+					calculationStrategy.updateSubBlackboardModel();
+				}
+			}
+		}
+		// --- Set state time to the blackboard -------------------------------
+		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
+		// --- Notify blackboard listeners about the new results --------------
+		synchronized (this.getBlackboard().getNotificationTrigger()) {
+			this.getBlackboard().getNotificationTrigger().notifyAll();
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// --- Handling of ControlBehaviourRTStateUpdate's --------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Returns the currently known sources of ControlBehaviourRTStateUpdate's.
+	 * @return the control behaviour RT state updates sources
+	 */
+	public HashSet<String> getControlBehaviourRTStateUpdateSources() {
+		if (controlBehaviourRTStateUpdateSources==null) {
+			controlBehaviourRTStateUpdateSources = new HashSet<String>();
+		}
+		return controlBehaviourRTStateUpdateSources;
+	}
+	/**
+	 * Returns the system ID's of the systems that have provided an ControlBehaviourRTStateUpdate per discrete simulation step.
+	 * @return the control behaviour RT state updates answered
+	 */
+	public HashSet<String> getControlBehaviourRTStateUpdateAnswered() {
+		if (controlBehaviourRTStateUpdateAnswered==null) {
+			controlBehaviourRTStateUpdateAnswered = new HashSet<String>();
+		}
+		return controlBehaviourRTStateUpdateAnswered;
+	}
+	/**
+	 * Checks if there is a pending ControlBehaviourRTStateUpdate.
+	 * @return true, if is pending control behaviour RT state update
+	 */
+	private boolean isPendingControlBehaviourRTStateUpdate() {
+		return this.getControlBehaviourRTStateUpdateAnswered().size()!=this.getControlBehaviourRTStateUpdateSources().size();
+	}	
+	
+	
+	// --------------------------------------------------------------------------------------------
+	// --- Simulation sequence handling (discrete and continuous) ---------------------------------
+	// --------------------------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerAgent#doSingleSimulationSequence()
+	 */
+	@Override
+	public void doSingleSimulationSequence() {
+		
+		try {
+			// --- Get the current simulation state -----------------------------------------------
+			SimulationStatus simState = this.hygridSettings.getSimulationStatus();
+			if (simState.getState()==null) {
+				// --------------------------------------------------------------------------------
+				// --- Initially distribute EnvironmentModel --------------------------------------
+				// --------------------------------------------------------------------------------
+				simState.setState(STATE.A_DistributeEnvironmentModel);
+				this.print("Initially distribute Environment Model!", false);
+				this.distributeEnvironmentModel(false);
+				
+			} else if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
+				// --------------------------------------------------------------------------------
+				// --- Do the first simulation step -----------------------------------------------
+				// --------------------------------------------------------------------------------
+				if (this.isPaused==false) {
+					simState.setState(STATE.B_ExecuteSimuation);
+					this.print("Execute Simulation!", false);
+					// --- Case separation Time Model --------------------------------------------
+					switch (this.hygridSettings.getTimeModelType()) {
+					case TimeModelDiscrete: // ---------------------------------------------------
+						this.getControlBehaviourRTStateUpdateAnswered().clear();
+						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.setEndTimeNextSimulationStep();
+						// --- Disable NetworkModel updates within GUI ----------------------------
+						this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
+						break;
+
+					case TimeModelContinuous: // --------------------------------------------------
+						this.getNetworkCalculationExecuter();
+						this.getTimeModelContinuous().setExecuted(true);
+						this.distributeEnvironmentModel(true);
+						break;
+					}
+				}
+			
+			} else if (simState.getState()==STATE.B_ExecuteSimuation) {
+				// --------------------------------------------------------------------------------
+				// --- Do simulation steps until the end time -------------------------------------
+				// --------------------------------------------------------------------------------
+				if (this.isPaused==false) {
+					
+					switch (this.hygridSettings.getTimeModelType()) {
+					case TimeModelDiscrete:
+						// --- Check if discrete simulation step is done --------------------------
+						this.discreteSimulationCheckEndOfSimulationStep();
+						break;
+						
+					case TimeModelContinuous:
+						simState.setState(STATE.C_StopSimulation);
+						this.print("Finalise Simulation!", false);
+						this.getTimeModelContinuous().setExecuted(false);
+						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						break;
+					}
+				}
+				
+			} else if (simState.getState()==STATE.C_StopSimulation) {
+				// --------------------------------------------------------------------------------
+				// --- Finalize simulation --------------------------------------------------------
+				// --------------------------------------------------------------------------------
+				this.resetEndTimeNextSimulationStep();
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Distributes the specified {@link EnvironmentModel}.
+	 * @param notifyAgents the notify agents
+	 */
+	private void distributeEnvironmentModel(boolean notifyAgents) {
+		try {
+			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
+			simHelper.setEnvironmentModel(this.getEnvironmentModel(), notifyAgents);
+		} catch (ServiceException se) {
+			this.print("Errror while distributing the EnvironmentModel:", true);
+			se.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Check if the end of a discrete simulation step is reached. If so, the next 
+	 * discrete simulation step will be initialized.
+	 */
+	private void discreteSimulationCheckEndOfSimulationStep() {
+		
+		// --- To avoid reaction in continuous time simulations -------------------------
+		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
+
+		// ------------------------------------------------------------------------------
+		// --- Do we expect further instances of ControlBehaviourRTStateUpdate? ---------
+		// ------------------------------------------------------------------------------
+		if (this.isPendingControlBehaviourRTStateUpdate()==true) return;
+		
+		// ------------------------------------------------------------------------------
+		// --- Do we expect further discrete simulation steps ---------------------------
+		// ------------------------------------------------------------------------------
+		if (this.getAggregationHandler().getPendingSystemsInDiscreteSimulationStep().size()>0) return;
+		
+		// --- Start next simulation step -----------------------------------------------
+		this.discreteSimulationStartNextSimulationStep();
+	}
+	/**
+	 * Start the next simulation step in discrete simulations.
+	 */
+	private void discreteSimulationStartNextSimulationStep() {
+
+		try {
+			// --- Wait until the end of configured time between simulations steps ------
+			this.waitUntilTheEndOfCurrentSimulationStep();
+
+			// --- Prepare next simulation step -----------------------------------------
+			TimeModelDiscrete tmd = this.getTimeModelDiscrete();
+			if (tmd.getTime()<tmd.getTimeStop()) {
+				tmd.step();
+			} else {
+				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
+				this.print("Finalize Simulation!", false);
+				this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
+			}
+			this.getControlBehaviourRTStateUpdateAnswered().clear();
+			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+			this.setEndTimeNextSimulationStep();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.agents.SimulationManagerAgent#proceedAgentAnswers(java.util.Hashtable)
+	 */
+	@Override
+	protected void proceedAgentAnswers(Hashtable<AID, Object> agentAnswers) {
+		// --------------------------------------------------------------------
+		// --- Applies basically for a discrete time model !!! ----------------
+		// --------------------------------------------------------------------
+		// --- The above simulation step is done and every agent involved -----
+		// --- should have send a kind of 'OK'-message or a new system state --
+		// --------------------------------------------------------------------
+		if (agentAnswers!=null && agentAnswers.size()>0) {
+			
+			try {
+				// --- Get current time ---------------------------------------
+				long currTime = this.getTime();
+
+				// --- Set new states to the Schedules of the aggregation -----
+				STATE simState = this.hygridSettings.getSimulationStatus().getState();
+				if (simState==STATE.B_ExecuteSimuation) {
+					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states.");
+					this.getAggregationHandler().setAgentAnswers(agentAnswers);
+				}
+				
+				// --- Distinguish the time model type ------------------------ 
+				switch (this.hygridSettings.getTimeModelType()) {
+				case TimeModelDiscrete:
+					// --- (Re)Execute the network calculation ----------------
+					if (simState==STATE.B_ExecuteSimuation) {
+						this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
+						this.getAggregationHandler().runEvaluationUntil(currTime);
+						this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
+					}
+					break;
+
+				case TimeModelContinuous:
+					// --- Start network calculation thread -------------------					
+					this.getNetworkCalculationExecuter().start();
+					break;
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		// --- Finally: do the next simulation step by executing ----
+		// --- the method 'doSingleSimulationSequennce()' again  ----
+		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous && this.hygridSettings.getSimulationStatus().getState()==STATE.B_ExecuteSimuation) {
+			this.resetNetworkCalculationExecuterWaitTime();
+		} else {
+			this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
+			this.doNextSimulationStep();
+			this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
+		}
+	}
+	
 	/**
 	 * Gets the number of executed agents from the simulation setup.
 	 * @return the number of executed agents from the simulation setup
@@ -491,251 +821,38 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					}
 				}
 			}
-			this.debugPrintLine(this.getTime(), "Number of device Agents = " + this.numberOfExecutedDeviceAgents);
+			this.debugPrintLine(this.getTime(), "Number of Energy Agents = " + this.numberOfExecutedDeviceAgents);
 		}
 		return this.numberOfExecutedDeviceAgents;
 	}
+
+	// --------------------------------------------------------------------------------------------
+	// --- Handling / counting of involved agents during start ------------------------------------
+	// --------------------------------------------------------------------------------------------
 	/**
-	 * Distributes the specified {@link EnvironmentModel}.
-	 * @param notifyAgents the notify agents
+	 * Returns the agents that were initialized for the simulation.
+	 * @return the agents initialized
 	 */
-	private void distributeEnvironmentModel(boolean notifyAgents) {
-		try {
-			SimulationServiceHelper simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.setEnvironmentModel(this.getEnvironmentModel(), notifyAgents);
-		} catch (ServiceException se) {
-			this.print("Errror while distributing the EnvironmentModel:", true);
-			se.printStackTrace();
+	private HashSet<String> getAgentsInitialized() {
+		if (agentsInitialized==null) {
+			agentsInitialized = new HashSet<String>();
 		}
+		return agentsInitialized;
+	}
+	/**
+	 * Return the agents that were successfully started for the simulation.
+	 * @return the agents successful started
+	 */
+	private HashSet<String> getAgentsSuccessfulStarted() {
+		if (agentsSuccessfulStarted==null) {
+			agentsSuccessfulStarted = new HashSet<String>();
+		}
+		return agentsSuccessfulStarted;
 	}
 	
-	/**
-	 * Resets the time for the end of the next simulation step to 0.
-	 */
-	private void resetEndTimeNextSimulationStep() {
-		this.endTimeNextSimulationStep = 0;
-	}
-	/**
-	 * Sets the desired time for the end of the next simulation step. The idea is that even in a discrete
-	 * simulation, a single simulation step should not exceed this time limit. For this, the configured 
-	 * simulation interval will be added to the current time and used as such end time.
-	 */
-	private void setEndTimeNextSimulationStep() {
-		this.endTimeNextSimulationStep = System.currentTimeMillis() + this.hygridSettings.getSimulationIntervalLength();
-	}
-	/**
-	 * Returns the current end time next simulation step.
-	 * @return the end time next simulation step
-	 */
-	public long getEndTimeNextSimulationStep() {
-		return endTimeNextSimulationStep;
-	}
-	/**
-	 * Waits until the end of the current simulation step that was defined by {@link #setEndTimeNextSimulationStep()}.
-	 * 
-	 * @see #setEndTimeNextSimulationStep()
-	 * @see #getEndTimeNextSimulationStep()
-	 */
-	private void waitUntilTheEndOfCurrentSimulationStep() {
-		if (this.getEndTimeNextSimulationStep()>0) {
-			while (System.currentTimeMillis() < this.getEndTimeNextSimulationStep()) {
-				try {
-					long sleepTime = this.getEndTimeNextSimulationStep() - System.currentTimeMillis();
-					if (sleepTime>0) {
-						Thread.sleep(sleepTime);
-					} else {
-						break;
-					}
-					
-				} catch (InterruptedException ie) {
-					//ie.printStackTrace();
-				}
-			}	
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerAgent#doSingleSimulationSequennce()
-	 */
-	@Override
-	public void doSingleSimulationSequennce() {
-		
-		try {
-			// --- Get the current simulation state -----------------------------------------------
-			SimulationStatus simState = this.hygridSettings.getSimulationStatus();
-			if (simState.getState()==null) {
-				// --------------------------------------------------------------------------------
-				// --- Initially distribute EnvironmentModel --------------------------------------
-				// --------------------------------------------------------------------------------
-				simState.setState(STATE.A_DistributeEnvironmentModel);
-				this.print("Initially distribute Environment Model!", false);
-				this.distributeEnvironmentModel(false);
-				
-			} else if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
-				// --------------------------------------------------------------------------------
-				// --- Do the first simulation step -----------------------------------------------
-				// --------------------------------------------------------------------------------
-				if (this.isPaused==false) {
-					simState.setState(STATE.B_ExecuteSimuation);
-					this.print("Execute Simulation!", false);
-					// --- Case separation Time Model --------------------------------------------
-					switch (this.hygridSettings.getTimeModelType()) {
-					case TimeModelDiscrete: // ---------------------------------------------------
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
-						this.setEndTimeNextSimulationStep();
-						// --- Disable NetworkModel updates within GUI ----------------------------
-						this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
-						break;
-
-					case TimeModelContinuous: // --------------------------------------------------
-						this.getNetworkCalculationExecuter();
-						this.getTimeModelContinuous().setExecuted(true);
-						this.distributeEnvironmentModel(true);
-						break;
-					}
-				}
-			
-			} else if (simState.getState()==STATE.B_ExecuteSimuation) {
-				// --------------------------------------------------------------------------------
-				// --- Do simulation steps until the end time -------------------------------------
-				// --------------------------------------------------------------------------------
-				if (this.isPaused==false) {
-					
-					switch (this.hygridSettings.getTimeModelType()) {
-					case TimeModelDiscrete:
-						this.waitUntilTheEndOfCurrentSimulationStep();
-						TimeModelDiscrete tmd = this.getTimeModelDiscrete();
-						if (tmd.getTime()<tmd.getTimeStop()) {
-							tmd.step();
-						} else {
-							simState.setState(STATE.C_StopSimulation);
-							this.print("Finalize Simulation!", false);
-							this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
-						}
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
-						this.setEndTimeNextSimulationStep();
-						break;
-						
-					case TimeModelContinuous:
-						simState.setState(STATE.C_StopSimulation);
-						this.print("Finalise Simulation!", false);
-						this.getTimeModelContinuous().setExecuted(false);
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
-						break;
-					}
-				}
-				
-			} else if (simState.getState()==STATE.C_StopSimulation) {
-				// --------------------------------------------------------------------------------
-				// --- Finalise simulation --------------------------------------------------------
-				// --------------------------------------------------------------------------------
-				this.resetEndTimeNextSimulationStep();
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.agents.SimulationManagerAgent#proceedAgentAnswers(java.util.Hashtable)
-	 */
-	@Override
-	protected void proceedAgentAnswers(Hashtable<AID, Object> agentAnswers) {
-		// --------------------------------------------------------------------
-		// --- Applies basically for a discrete time model !!! ----------------
-		// --------------------------------------------------------------------
-		// --- The above simulation step is done and every agent involved -----
-		// --- should have send a kind of 'OK'-message or a new system state --
-		// --------------------------------------------------------------------
-		if (agentAnswers!=null && agentAnswers.size()>0) {
-			
-			try {
-				// --- Get current time ---------------------------------------
-				long currTime = this.getTime();
-				// --- Set new states to the Schedules of the aggregation -----
-				this.getAggregationHandler().setAgentAnswers(agentAnswers);
-				this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states.");
-				// --- Distinguish the time model type ------------------------ 
-				switch (this.hygridSettings.getTimeModelType()) {
-				case TimeModelDiscrete:
-					// --- (Re)Execute the network calculation ----------------
-					this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
-					this.getAggregationHandler().runEvaluationUntil(currTime);
-					this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
-					break;
-
-				case TimeModelContinuous:
-					// --- Start network calculation thread -------------------					
-					this.getNetworkCalculationExecuter().start();
-					break;
-				}
-				
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		// --- Finally: do the next simulation step by executing ----
-		// --- the method 'doSingleSimulationSequennce()' again  ----
-		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous && this.hygridSettings.getSimulationStatus().getState()==STATE.B_ExecuteSimuation) {
-			this.resetNetworkCalculationExecuterWaitTime();
-		} else {
-			this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
-			this.doNextSimulationStep();
-			this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP);
-		}
-	}
-	
-	/**
-	 * Returns the aggregation display behaviour.
-	 * @return the display behaviour
-	 */
-	protected AbstractAggregationHandler getAggregationHandler() {
-		if (aggregationHandler==null) {
-			aggregationHandler = new AggregationHandler(this.getBlackboard().getNetworkModel(), this.isHeadlessOperation, this.getClass().getSimpleName());
-			aggregationHandler.setOwnerInstance(this);
-			aggregationHandler.addAggregationListener(this);
-		}
-		return aggregationHandler;
-	}
-	/* (non-Javadoc)
-	 * @see hygrid.electricalNetwork.NetworkCalculationListener#networkCalculationDone()
-	 */
-	@Override
-	public void networkCalculationDone() {
-
-		// --------------------------------------------------------------------
-		// --- Get all electrical distribution grid aggregations --------------
-		// --------------------------------------------------------------------
-		
-		//TODO implement domain-independent, remove dependency to electricity bundle
-		String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
-		for (int i = 0; i < subnetConfigList.size(); i++) {
-			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-			if (subnetConfig!=null) {
-				AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-				if (netClacStrategy!=null) {
-					// --- Put the calculation results on the blackboard ------
-					this.getBlackboard().getGraphNodeStates().putAll(netClacStrategy.getGraphNodeStates());
-					this.getBlackboard().getNetworkComponentStates().putAll(netClacStrategy.getNetworkComponentStates());
-					this.getBlackboard().getTransformerStates().putAll(netClacStrategy.getTransformerStates());
-				}
-
-			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Could not find subnetwork configuration with the ID '" + subnetworkDescription + "'.");
-			}
-		}
-
-		// --- Set stte time to the blackboard --------------------------------
-		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
-		
-		// --- Notify blackboard listeners about the new results --------------
-		synchronized (this.getBlackboard().getNotificationTrigger()) {
-			this.getBlackboard().getNotificationTrigger().notifyAll();
-		}
-	}
-	
+	// --------------------------------------------------------------------------------------------
+	// --- Handling of EnvironmentNotification's --------------------------------------------------
+	// --------------------------------------------------------------------------------------------
 	/**
 	 * Returns the agents that registered for this simulation.
 	 * @return the agents registered
@@ -757,78 +874,103 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#onManagerNotification(agentgui.simulationService.transaction.EnvironmentNotification)
 	 */
 	@Override
-	protected void onManagerNotification(EnvironmentNotification notification) {
+	protected void onManagerNotification(EnvironmentNotification envNote) {
 		
-		if (notification==null | notification.getNotification()==null) return;
+		if (envNote==null || envNote.getNotification()==null) return;
 		
-		if (notification.getNotification() instanceof NetworkModel) {
+		if (envNote.getNotification() instanceof NetworkModel) {
 			// --- Got an alternative NetworkModel ------------------------------------------------
-			NetworkModel networkModelAlternative = (NetworkModel) notification.getNotification();
-			String senderName = notification.getSender().getLocalName();
+			NetworkModel networkModelAlternative = (NetworkModel) envNote.getNotification();
+			String senderName = envNote.getSender().getLocalName();
 			NetworkModel networkModelLocal = (NetworkModel) this.getDisplayEnvironment();
 			networkModelLocal.getAlternativeNetworkModel().put(senderName, networkModelAlternative);
 			this.sendDisplayAgentNotification(new EnvironmentModelUpdateNotification(this.getEnvironmentModel()));
 			return;
+			
+		} else if (envNote.getNotification() instanceof DiscreteSimulationStep) {
+			this.getAggregationHandler().setAgentAnswer(envNote);
+			this.discreteSimulationCheckEndOfSimulationStep();
 		}
 		
+		// ----------------------------------------------------------------------------------------
+		// --- Notification handling depending on simulation status--------------------------------
+		// ----------------------------------------------------------------------------------------
 		SimulationStatus simState = this.hygridSettings.getSimulationStatus();
 		if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
-			if (notification.getNotification().equals(STATE_CONFIRMATION.Done) || notification.getNotification() instanceof Schedule) {
+			
+			// --- Get the notification content / object ------------------------------------------
+			Object noteContent = envNote.getNotification();
+			String agentName = envNote.getSender().getLocalName();
+			
+			// --- Receiving register notification from agents in this simulation -----------------
+			this.getAgentNotifications().add(envNote);
+			if (noteContent instanceof Schedule) {
+				// --- Receiving the Schedule for the energy transmission from agents -------------
+				Schedule schedule = (Schedule) envNote.getNotification();
+				ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(agentName);
+				this.print("Received Schedule from " + agentName, false);
+				sc.getScheduleList().getSchedules().add(schedule);
+				sc.notifyObservers(new ScheduleNotification(Reason.ScheduleListLoaded, null));
 				
-				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION.Done from agent " + notification.getSender().getLocalName());
+			} else if (envNote.getNotification() instanceof ControlBehaviourRTStateUpdate) {
+				// --- Got an initial ControlBehaviourRTStateUpdate from a system -----------------
+				this.getControlBehaviourRTStateUpdateSources().add(envNote.getSender().getLocalName());
+					
+			} else if (noteContent instanceof STATE_CONFIRMATION) {
+				// --- Check state confirmation type ----------------------------------------------
+				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION from agent " + agentName);
+				STATE_CONFIRMATION stateConformation = (STATE_CONFIRMATION) noteContent;
+				switch (stateConformation) {
+				case Initialized:
+					this.getAgentsInitialized().add(agentName);
+					break;
+
+				case Done:
+					this.getAgentsSuccessfulStarted().add(agentName);
+					// ----------------------------------------------------------------------------
+					// --- In distribute environments some agents may be slower in response !!----- 
+					// --- => At least have 95 % of expected agents started ----------------------- 
+					// ----------------------------------------------------------------------------
+					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()) * 0.95);
+					if (this.getAgentsSuccessfulStarted().size()>=minStarted &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
+						this.print("Initialization of agents completed (Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!", false);
+						this.resetAgentNotifications();
+						this.doNextSimulationStep();	
+					}
+					break;
+					
+				case Error:
+					// --- Nothing to do here yet -----
+					break;
+				}
 				
-				// --- Receiving register notification from agents in this simulation -------------
-				this.getAgentNotifications().add(notification);
-				if (notification.getNotification() instanceof Schedule) {
-					// --- Receiving the Schedule for the energy transmission from agents ---------
-					Schedule schedule = (Schedule) notification.getNotification();
-					String agentName = notification.getSender().getLocalName();
-					ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(agentName);
-					System.out.println("Received Schedule from " + agentName);
-					sc.getScheduleList().getSchedules().add(schedule);
-					sc.notifyObservers(new ScheduleNotification(Reason.ScheduleListLoaded, null));
-				}
-				if (this.getAgentNotifications().size()==this.getNumberOfExpectedDeviceAgents()) {
-					this.print("Initialization of simulation agents completed!", false);
-					this.resetAgentNotifications();
-					this.doNextSimulationStep();
-				}
 			}
 			
 		} else if (simState.getState()==STATE.B_ExecuteSimuation) {
 			
 			// --------------------------------------------------------------------------
-			// --- Received a notification for the 'SlackNodeSetVoltageLevel' ? ---------
+			// --- Received a notification of the type NetworkStateInformation ? --------
 			// --------------------------------------------------------------------------
-			if (notification.getNotification() instanceof SlackNodeSetVoltageLevelNotification) {
-				// --- Cast to SlackNodeSetVoltageLevel and set new voltage level -------
-				SlackNodeSetVoltageLevelNotification snvl = (SlackNodeSetVoltageLevelNotification) notification.getNotification();
-				AID senderAID = notification.getSender();
+			if (envNote.getNotification() instanceof NetworkStateInformation) {
+
+				NetworkStateInformation nsInf = (NetworkStateInformation) envNote.getNotification();
+				AID senderAID = envNote.getSender();
 				
-				// --- Find the corresponding calculation strategy ---------------------- 
-				String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-				List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
+				// --- Find the corresponding sub aggregation --------------------------- 
+				List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
 				for (int i = 0; i < subnetConfigList.size(); i++) {
-					
-					AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-					
-					// --- Check if the aggregator contains the sender system -----------
-					GroupController groupController = subnetConfig.getSubAggregationBuilder().getGroupController();
-					DefaultMutableTreeNode treeNode = groupController.getGroupTreeModel().getGroupTreeNodeByNetworkID(senderAID.getLocalName());
-					if (treeNode==null) continue;
-					
-					// --- Put slack node voltage level to network calculation strategy - 
-					AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) subnetConfig.getNetworkCalculationStrategy();
-					if (netClacStrategy!=null) {
-						HashMap<Phase, Double> slackNodeVoltageLevel = new HashMap<>();
-						slackNodeVoltageLevel.put(Phase.L1, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L2, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L3, (double) snvl.getVoltageAbs().getValue());
-						netClacStrategy.setSlackNodeVoltageLevel(slackNodeVoltageLevel);
+					if (subnetConfigList.get(i).onNetworkStateInformation(senderAID, nsInf)==true) {
+						//TODO Check if multiple aggregations can depend on the same
 						break;
 					}
 				}
 				return;
+				
+			} else if (envNote.getNotification() instanceof ControlBehaviourRTStateUpdate) {
+				// --- Got a ControlBehaviourRTStateUpdate from a system ------------------------------
+				this.getControlBehaviourRTStateUpdateAnswered().add(envNote.getSender().getLocalName());
+				this.getAggregationHandler().setAgentAnswer(envNote);
+				this.discreteSimulationCheckEndOfSimulationStep();
 			}
 			
 			// --------------------------------------------------------------------------------
@@ -836,18 +978,18 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --------------------------------------------------------------------------------
 			if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
 				
-				if (notification.getNotification() instanceof TechnicalSystemStateEvaluation) {
+				if (envNote.getNotification() instanceof TechnicalSystemStateEvaluation) {
 					// --- For a continuous time model: Change of a system state received -----
-					this.getAggregationHandler().setAgentAnswer(notification);
-					this.debugPrintLine(this.getTime(), "Received new TSSE for " + notification.getSender().getLocalName() + " !");
+					this.getAggregationHandler().setAgentAnswer(envNote);
+					this.debugPrintLine(this.getTime(), "Received new TSSE for " + envNote.getSender().getLocalName() + " !");
 					// --- Remind changes for the visualization -------------------------------
-					this.getEnvironmentNotificationReminder().put(notification.getSender(), notification.getNotification());
+					this.getEnvironmentNotificationReminder().put(envNote.getSender(), envNote.getNotification());
 					// --- (Re)Wait for further notifications ---------------------------------
 					this.resetNetworkCalculationExecuterWaitTime();
 					
-				} else if (notification.getNotification().equals(STATE_CONFIRMATION.Done)) {
+				} else if (envNote.getNotification().equals(STATE_CONFIRMATION.Done)) {
 					// --- Finalize the simulation, since no further input can be expected ----
-					this.getAgentNotifications().add(notification);
+					this.getAgentNotifications().add(envNote);
 					if (this.getAgentNotifications().size()==this.getNumberOfExpectedDeviceAgents()) {
 						this.print("Continuous time simulation completed!", false);
 						this.resetAgentNotifications();
@@ -856,9 +998,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				}
 			}
 			
-		} else if (simState.getState()==STATE.C_StopSimulation & notification.getNotification().equals(STATE_CONFIRMATION.Done)) {
+		} else if (simState.getState()==STATE.C_StopSimulation & envNote.getNotification().equals(STATE_CONFIRMATION.Done)) {
 			// --- Receiving done notification from agents in this simulation ---------------------
-			this.getAgentNotifications().add(notification);
+			this.getAgentNotifications().add(envNote);
 			if (this.getAgentNotifications().size()==this.getNumberOfExpectedDeviceAgents()) {
 				this.print("Finalisation of simulation completed!", false);
 				this.resetAgentNotifications();
@@ -867,6 +1009,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 	}
 	
+	
+	// ----------------------------------------------------------------------------------
+	// --- The following is used in the context of continuous time simulations ----------
+	// ----------------------------------------------------------------------------------
 	/**
 	 * Gets the environment notification reminder.
 	 * @return the environment notification reminder
@@ -877,7 +1023,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return environmentNotificationReminder;
 	}
-	
 	/**
 	 * As a debug method, this allows to find system state in the the environmentNotificationReminder.
 	 *
@@ -904,7 +1049,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			this.debugPrintLine(this.getTime(), "Could not find system state for " + componentID2Search4 + " - " + additionalMessage);
 		}
 	}
-	
+
 	/**
 	 * Returns the {@link NetworkCalculationExecuter} of this simulation manager.
 	 * @return the network calculation executer

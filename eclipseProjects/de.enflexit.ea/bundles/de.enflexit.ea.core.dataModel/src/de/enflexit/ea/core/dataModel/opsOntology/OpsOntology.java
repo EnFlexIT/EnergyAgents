@@ -9,7 +9,7 @@ import jade.core.CaseInsensitiveString;
 
 /** file: OpsOntology.java
  * @author ontology bean generator
- * @version 2018/11/20, 12:59:18
+ * @version 2020/09/18, 14:36:59
  */
 public class OpsOntology extends jade.content.onto.Ontology  {
   //NAME
@@ -23,25 +23,25 @@ public class OpsOntology extends jade.content.onto.Ontology  {
 
 
    // VOCABULARY
-    public static final String FIELDDATAREQUEST_AGENTIDS="agentIDs";
-    public static final String FIELDDATAREQUEST_SETUP="setup";
-    public static final String FIELDDATAREQUEST_SCHEDULERANGEDEFINITION="scheduleRangeDefinition";
-    public static final String FIELDDATAREQUEST="FieldDataRequest";
-    public static final String LIVEMONITORINGUPDATE_AGENTID="agentID";
     public static final String LIVEMONITORINGUPDATE_NEWTSSEBASE64="newTsseBase64";
+    public static final String LIVEMONITORINGUPDATE_AGENTID="agentID";
     public static final String LIVEMONITORINGUPDATE="LiveMonitoringUpdate";
     public static final String FIELDDATAREPLY_SCHEDULELISTXML="scheduleListXML";
     public static final String FIELDDATAREPLY_TOTALTSSES="totalTSSEs";
-    public static final String FIELDDATAREPLY_AGENTID="agentID";
     public static final String FIELDDATAREPLY_MORECOMMING="moreComming";
+    public static final String FIELDDATAREPLY_AGENTID="agentID";
     public static final String FIELDDATAREPLY="FieldDataReply";
+    public static final String FIELDDATAREQUEST_SCHEDULERANGEDEFINITION="scheduleRangeDefinition";
+    public static final String FIELDDATAREQUEST_AGENTIDS="agentIDs";
+    public static final String FIELDDATAREQUEST_SETUP="setup";
+    public static final String FIELDDATAREQUEST="FieldDataRequest";
+    public static final String LONGVALUE_STRINGLONGVALUE="stringLongValue";
+    public static final String LONGVALUE="LongValue";
+    public static final String SCHEDULERANGEDEFINITION_TIMESTAMPFROM="timestampFrom";
     public static final String SCHEDULERANGEDEFINITION_INCLUDEALLSTATES="includeAllStates";
     public static final String SCHEDULERANGEDEFINITION_TIMESTAMPTO="timestampTo";
     public static final String SCHEDULERANGEDEFINITION_NUMBEROFSTATES="numberOfStates";
-    public static final String SCHEDULERANGEDEFINITION_TIMESTAMPFROM="timestampFrom";
     public static final String SCHEDULERANGEDEFINITION="ScheduleRangeDefinition";
-    public static final String LONGVALUE_STRINGLONGVALUE="stringLongValue";
-    public static final String LONGVALUE="LongValue";
 
   /**
    * Constructor
@@ -51,18 +51,18 @@ public class OpsOntology extends jade.content.onto.Ontology  {
     try { 
 
     // adding Concept(s)
-    ConceptSchema longValueSchema = new ConceptSchema(LONGVALUE);
-    add(longValueSchema, de.enflexit.ea.core.dataModel.opsOntology.LongValue.class);
     ConceptSchema scheduleRangeDefinitionSchema = new ConceptSchema(SCHEDULERANGEDEFINITION);
     add(scheduleRangeDefinitionSchema, de.enflexit.ea.core.dataModel.opsOntology.ScheduleRangeDefinition.class);
+    ConceptSchema longValueSchema = new ConceptSchema(LONGVALUE);
+    add(longValueSchema, de.enflexit.ea.core.dataModel.opsOntology.LongValue.class);
 
     // adding AgentAction(s)
+    AgentActionSchema fieldDataRequestSchema = new AgentActionSchema(FIELDDATAREQUEST);
+    add(fieldDataRequestSchema, de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest.class);
     AgentActionSchema fieldDataReplySchema = new AgentActionSchema(FIELDDATAREPLY);
     add(fieldDataReplySchema, de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply.class);
     AgentActionSchema liveMonitoringUpdateSchema = new AgentActionSchema(LIVEMONITORINGUPDATE);
     add(liveMonitoringUpdateSchema, de.enflexit.ea.core.dataModel.opsOntology.LiveMonitoringUpdate.class);
-    AgentActionSchema fieldDataRequestSchema = new AgentActionSchema(FIELDDATAREQUEST);
-    add(fieldDataRequestSchema, de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest.class);
 
     // adding AID(s)
 
@@ -70,20 +70,20 @@ public class OpsOntology extends jade.content.onto.Ontology  {
 
 
     // adding fields
-    longValueSchema.add(LONGVALUE_STRINGLONGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    scheduleRangeDefinitionSchema.add(SCHEDULERANGEDEFINITION_TIMESTAMPFROM, longValueSchema, ObjectSchema.OPTIONAL);
     scheduleRangeDefinitionSchema.add(SCHEDULERANGEDEFINITION_NUMBEROFSTATES, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
     scheduleRangeDefinitionSchema.add(SCHEDULERANGEDEFINITION_TIMESTAMPTO, longValueSchema, ObjectSchema.OPTIONAL);
     scheduleRangeDefinitionSchema.add(SCHEDULERANGEDEFINITION_INCLUDEALLSTATES, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
-    fieldDataReplySchema.add(FIELDDATAREPLY_MORECOMMING, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
-    fieldDataReplySchema.add(FIELDDATAREPLY_AGENTID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    fieldDataReplySchema.add(FIELDDATAREPLY_TOTALTSSES, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
-    fieldDataReplySchema.add(FIELDDATAREPLY_SCHEDULELISTXML, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    liveMonitoringUpdateSchema.add(LIVEMONITORINGUPDATE_NEWTSSEBASE64, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    liveMonitoringUpdateSchema.add(LIVEMONITORINGUPDATE_AGENTID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-    fieldDataRequestSchema.add(FIELDDATAREQUEST_SCHEDULERANGEDEFINITION, scheduleRangeDefinitionSchema, ObjectSchema.OPTIONAL);
+    scheduleRangeDefinitionSchema.add(SCHEDULERANGEDEFINITION_TIMESTAMPFROM, longValueSchema, ObjectSchema.OPTIONAL);
+    longValueSchema.add(LONGVALUE_STRINGLONGVALUE, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     fieldDataRequestSchema.add(FIELDDATAREQUEST_SETUP, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
     fieldDataRequestSchema.add(FIELDDATAREQUEST_AGENTIDS, (TermSchema)getSchema(BasicOntology.STRING), 0, ObjectSchema.UNLIMITED);
+    fieldDataRequestSchema.add(FIELDDATAREQUEST_SCHEDULERANGEDEFINITION, scheduleRangeDefinitionSchema, ObjectSchema.OPTIONAL);
+    fieldDataReplySchema.add(FIELDDATAREPLY_AGENTID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    fieldDataReplySchema.add(FIELDDATAREPLY_MORECOMMING, (TermSchema)getSchema(BasicOntology.BOOLEAN), ObjectSchema.OPTIONAL);
+    fieldDataReplySchema.add(FIELDDATAREPLY_TOTALTSSES, (TermSchema)getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
+    fieldDataReplySchema.add(FIELDDATAREPLY_SCHEDULELISTXML, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    liveMonitoringUpdateSchema.add(LIVEMONITORINGUPDATE_AGENTID, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+    liveMonitoringUpdateSchema.add(LIVEMONITORINGUPDATE_NEWTSSEBASE64, (TermSchema)getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
 
     // adding name mappings
 

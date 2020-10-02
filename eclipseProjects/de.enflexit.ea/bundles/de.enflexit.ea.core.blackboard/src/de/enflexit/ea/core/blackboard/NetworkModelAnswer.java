@@ -1,13 +1,16 @@
-package de.enflexit.ea.core.dataModel.blackboard;
+package de.enflexit.ea.core.blackboard;
 
 import org.awb.env.networkModel.NetworkModel;
 
+import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
+
 /**
- * The Class NetworkModelAnswer represents an extended {@link AbstractBlackoardAnswer}.
+ * The Class NetworkModelAnswer represents an extended {@link AbstractBlackboardAnswer}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class NetworkModelAnswer extends AbstractBlackoardAnswer {
+public class NetworkModelAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -679778118583726548L;
 

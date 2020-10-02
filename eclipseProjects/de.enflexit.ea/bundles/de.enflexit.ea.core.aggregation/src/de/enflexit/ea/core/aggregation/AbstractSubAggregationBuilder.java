@@ -13,8 +13,6 @@ import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-import org.awb.env.networkModel.settings.ComponentTypeSettings;
-
 import agentgui.core.application.Application;
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDateBased;
@@ -299,32 +297,10 @@ public abstract class AbstractSubAggregationBuilder {
 	 */
 	protected NetworkModel getNetworkModel() {
 		if (networkModel==null) {
-			
-			// --- Create a copy of the original network model ----------------
-			networkModel = this.getAggregationHandler().getNetworkModel().getCopy();
-			
-			ArrayList<NetworkComponent> networkComponents = new ArrayList<>(networkModel.getNetworkComponents().values());
-			for (int i=0; i<networkComponents.size(); i++) {
-				NetworkComponent networkComponent = networkComponents.get(i);
-
-				// --- Check if the component belongs to the sub aggregation --
-				if (this.getSubAggregationConfiguration().isPartOfSubnetwork(networkComponent)==false && this.checkComponentTypeDomain(networkComponent)==false) {
-					// --- Remove from the model copy if not ------------------
-					networkModel.removeNetworkComponent(networkComponent);
-				}
-			}
+			networkModel = this.getAggregationHandler().getNetworkModel();
+			// TODO Extract the sub network model 
 		}
 		return networkModel;
-	}
-	
-	/**
-	 * Checks if the domain definition in a network component's component type settings matches the current sub aggregation's domain
-	 * @param networkComponent the network component
-	 * @return true, if successful
-	 */
-	private boolean checkComponentTypeDomain(NetworkComponent networkComponent) {
-		ComponentTypeSettings cts = this.aggregationHandler.getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS().get(networkComponent.getType());
-		return cts.getDomain().equals(this.getSubAggregationConfiguration().getDomain());
 	}
 	
 	/**

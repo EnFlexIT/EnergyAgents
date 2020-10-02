@@ -7,9 +7,20 @@ import jade.core.*;
 /**
 * Protege name: Sensor
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class Sensor extends Cable{ 
+
+   /**
+* Protege name: voltage L3
+   */
+   private float voltage_L3;
+   public void setVoltage_L3(float value) { 
+    this.voltage_L3=value;
+   }
+   public float getVoltage_L3() {
+     return this.voltage_L3;
+   }
 
    /**
 * Protege name: voltage L2
@@ -31,17 +42,6 @@ public class Sensor extends Cable{
    }
    public String getMeasureLocation() {
      return this.measureLocation;
-   }
-
-   /**
-* Protege name: voltage L3
-   */
-   private float voltage_L3;
-   public void setVoltage_L3(float value) { 
-    this.voltage_L3=value;
-   }
-   public float getVoltage_L3() {
-     return this.voltage_L3;
    }
 
    /**

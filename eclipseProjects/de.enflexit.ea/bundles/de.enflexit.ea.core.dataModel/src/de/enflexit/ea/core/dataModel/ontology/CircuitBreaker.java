@@ -8,9 +8,31 @@ import jade.core.*;
 /**
 * Protege name: CircuitBreaker
 * @author ontology bean generator
-* @version 2020/01/29, 12:06:04
+* @version 2020/09/18, 14:32:58
 */
 public class CircuitBreaker implements Concept {
+
+   /**
+* Protege name: isClosed
+   */
+   private boolean isClosed;
+   public void setIsClosed(boolean value) { 
+    this.isClosed=value;
+   }
+   public boolean getIsClosed() {
+     return this.isClosed;
+   }
+
+   /**
+* Protege name: isControllable
+   */
+   private boolean isControllable;
+   public void setIsControllable(boolean value) { 
+    this.isControllable=value;
+   }
+   public boolean getIsControllable() {
+     return this.isControllable;
+   }
 
    /**
    * The ID of the component next to which the breaker is located
@@ -25,17 +47,6 @@ public class CircuitBreaker implements Concept {
    }
 
    /**
-* Protege name: isClosed
-   */
-   private boolean isClosed;
-   public void setIsClosed(boolean value) { 
-    this.isClosed=value;
-   }
-   public boolean getIsClosed() {
-     return this.isClosed;
-   }
-
-   /**
 * Protege name: breakerID
    */
    private String breakerID;
@@ -44,17 +55,6 @@ public class CircuitBreaker implements Concept {
    }
    public String getBreakerID() {
      return this.breakerID;
-   }
-
-   /**
-* Protege name: isControllable
-   */
-   private boolean isControllable;
-   public void setIsControllable(boolean value) { 
-    this.isControllable=value;
-   }
-   public boolean getIsControllable() {
-     return this.isControllable;
    }
 
 }

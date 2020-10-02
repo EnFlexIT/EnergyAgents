@@ -28,7 +28,7 @@ import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
 import energy.GlobalInfo;
-import energy.UnitConverter;
+import energy.helper.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyUnitFactorPrefixSI;
 import jade.util.leap.Iterator;

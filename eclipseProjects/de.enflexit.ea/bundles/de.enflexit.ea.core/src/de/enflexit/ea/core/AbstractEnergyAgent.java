@@ -499,14 +499,12 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Gets the real time control behaviour.
 	 * @return the ControlBehaviourRT
 	 */
-	protected ControlBehaviourRT getControlBehaviourRT() {
+	public ControlBehaviourRT getControlBehaviourRT() {
 		if (controlBehaviourRT==null) {
 			controlBehaviourRT = new ControlBehaviourRT(this);
 		}
 		return controlBehaviourRT;
 	}
-
-
 	/**
 	 * Start real time control behaviour ControlBehaviourRT, if not already done.
 	 */
@@ -526,22 +524,16 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		}
 		this.controlBehaviourRT = null;
 	}
-	
-	
 	/**
-	 * Starts the default message receive behaviour.
+	 * Checks if the real time control behaviour is executed by the current Energy Agent.
+	 * @return true, if is executed control behaviour RT
 	 */
-	protected void startDefaultMessageReceiveBehaviour() {
-		if (this.getDefaultMessageReceiveBehaviour().getAgent()==null) {
-			this.addBehaviour(this.getDefaultMessageReceiveBehaviour());
-			
-			// --- If running in testbed or real mode, add a template to ignore CEA messages ------
-			if (this.getAgentOperatingMode() != AgentOperatingMode.Simulation) {
-				MessageTemplate proxyRegistration = MessageTemplate.MatchConversationId(ConversationID.PROXY_REGISTRATION.toString());
-				this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(proxyRegistration);
-			}
-		}
+	public boolean isExecutedControlBehaviourRT() {
+		if (this.controlBehaviourRT==null || this.controlBehaviourRT.getAgent()==null) return false;
+		return true;
 	}
+	
+	
 	/**
 	 * Gets the message receive behaviour.
 	 * @return the message receive behaviour
@@ -553,6 +545,19 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		return defaultMessageReceiveBehaviour;
 	}
 	/**
+	 * Starts the default message receive behaviour.
+	 */
+	protected void startDefaultMessageReceiveBehaviour() {
+		if (this.getDefaultMessageReceiveBehaviour().getAgent()==null) {
+			this.addBehaviour(this.getDefaultMessageReceiveBehaviour());
+			// --- If running in testbed or real mode, add a template to ignore CEA messages ------
+			if (this.getAgentOperatingMode() != AgentOperatingMode.Simulation) {
+				MessageTemplate proxyRegistration = MessageTemplate.MatchConversationId(ConversationID.PROXY_REGISTRATION.toString());
+				this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(proxyRegistration);
+			}
+		}
+	}
+	/**
 	 * Stops the default message receive behaviour.
 	 */
 	protected void stopDefaultMessageReceiveBehaviour() {
@@ -562,6 +567,14 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			}
 			this.defaultMessageReceiveBehaviour = null;
 		}
+	}
+	/**
+	 * Checks if the default message receive behaviour is executed by the current Energy Agent.
+	 * @return true, if is executed default message receive behaviour
+	 */
+	protected boolean isExecutedDefaultMessageReceiveBehaviour() {
+		if (this.defaultMessageReceiveBehaviour==null || this.defaultMessageReceiveBehaviour.getAgent()==null) return false;
+		return true;
 	}
 	/**
 	 * Handle incoming ACL messages from the {@link DefaultMessageReceiveBehaviour}.
@@ -603,7 +616,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		// --- Will be invoked if the internal data model has changed ---------
 		if (observable instanceof AbstractInternalDataModel) {
 			if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_MODEL) {
-
+				// +++++++++++++++++++++++++++++++++++
+				// +++ Nothing ToDo here - remove? +++
+				// +++++++++++++++++++++++++++++++++++
+				
 			} else if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_COMPONENT) {
 				// --- Get the actual data model of the NetworkComponent ------ 
 				NetworkComponent netComp = this.getInternalDataModel().getNetworkComponent();
@@ -644,7 +660,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 				}
 				
 			} else if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-
+				// +++++++++++++++++++++++++++++++++++
+				// +++ Nothing ToDo here - remove? +++
+				// +++++++++++++++++++++++++++++++++++
+				
 			}
 		}
 		

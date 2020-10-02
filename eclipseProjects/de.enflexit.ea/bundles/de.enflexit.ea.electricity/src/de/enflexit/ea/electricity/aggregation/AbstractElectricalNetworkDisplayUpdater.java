@@ -24,7 +24,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration.Upda
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.StaticComponentProperties;
-import energy.DisplayHelper;
+import energy.helper.DisplayHelper;
 import energy.optionModel.AbstractUsageOfInterface;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.TechnicalSystemStateEvaluation;

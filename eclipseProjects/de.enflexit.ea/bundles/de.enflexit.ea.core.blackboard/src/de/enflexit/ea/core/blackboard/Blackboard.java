@@ -1,12 +1,9 @@
-package de.enflexit.ea.core.dataModel.blackboard;
-
-import java.util.HashMap;
+package de.enflexit.ea.core.blackboard;
 
 import org.awb.env.networkModel.NetworkModel;
 
-import de.enflexit.ea.core.dataModel.ontology.CableState;
-import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
-import energy.optionModel.TechnicalSystemState;
+import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 
 /**
  * The Class Blackboard contains the currents data representations of the SimulationManager.<p>
@@ -27,10 +24,7 @@ public class Blackboard {
 	
 	private long stateTime;
 	private NetworkModel networkModel;
-	
-	private HashMap<String, ElectricalNodeState> graphNodeStates;
-	private HashMap<String, CableState> networkComponentStates;
-	private HashMap<String, TechnicalSystemState> transformerStates;	
+	private AbstractAggregationHandler aggregationHandler;
 	
 	// --- The listener thread for OSGI services ---------- 
 	private BlackboardListenerThread listenerServiceThread;
@@ -112,7 +106,6 @@ public class Blackboard {
 		return doTerminate;
 	}
 	
-	
 	// ------------------------------------------------------------------------
 	// --- From here, blackboard content and management -----------------------
 	// ------------------------------------------------------------------------
@@ -121,9 +114,7 @@ public class Blackboard {
 	 */
 	private void resetBlackboardDataModel() {
 		this.setNetworkModel(null);
-		this.graphNodeStates = null;
-		this.networkComponentStates = null;
-		this.transformerStates = null;	
+		this.setAggregationHandler(null);
 	}
 	
 	/**
@@ -156,37 +147,19 @@ public class Blackboard {
 		this.networkModel = networkModel;
 	}
 	
-	
 	/**
-	 * Gets the graph node states as HashMap.
-	 * @return the graph node states
+	 * Sets the aggregation handler.
+	 * @param aggregationHandler the new aggregation handler
 	 */
-	public HashMap<String, ElectricalNodeState> getGraphNodeStates() {
-		if (graphNodeStates==null) {
-			graphNodeStates = new HashMap<String, ElectricalNodeState>();
-		}
-		return graphNodeStates;
+	public void setAggregationHandler(AbstractAggregationHandler aggregationHandler) {
+		this.aggregationHandler = aggregationHandler;
 	}
 	/**
-	 * Gets the network component states as HashMap.
-	 * @return the network component states
+	 * Gets the aggregation handler.
+	 * @return the aggregation handler
 	 */
-	public HashMap<String, CableState> getNetworkComponentStates() {
-		if (networkComponentStates==null) {
-			networkComponentStates = new HashMap<String, CableState>();
-		}
-		return networkComponentStates;
+	public AbstractAggregationHandler getAggregationHandler() {
+		return aggregationHandler;
 	}
-	/**
-	 * Returns the transformer states of the current network.
-	 * @return the transformer states
-	 */
-	public HashMap<String, TechnicalSystemState> getTransformerStates() {
-		if (transformerStates==null) {
-			transformerStates = new HashMap<String, TechnicalSystemState>();
-		}
-		return transformerStates;
-	}
-	
 	
 }

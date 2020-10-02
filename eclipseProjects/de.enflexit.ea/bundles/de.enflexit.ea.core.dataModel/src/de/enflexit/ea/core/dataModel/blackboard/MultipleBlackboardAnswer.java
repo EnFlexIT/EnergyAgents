@@ -7,18 +7,18 @@ import java.util.Vector;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class MultipleBlackboardAnswer extends AbstractBlackoardAnswer {
+public class MultipleBlackboardAnswer extends AbstractBlackboardAnswer {
 
 	private static final long serialVersionUID = -5055204723904200895L;
 
-	private Vector<AbstractBlackoardAnswer> answerVector;
+	private Vector<AbstractBlackboardAnswer> answerVector;
 
 	
 	/**
 	 * Instantiates a new multiple blackboard answer.
 	 * @param answerVector the answer vector
 	 */
-	public MultipleBlackboardAnswer(Vector<AbstractBlackoardAnswer> answerVector) {
+	public MultipleBlackboardAnswer(Vector<AbstractBlackboardAnswer> answerVector) {
 		this.setAnswerVector(answerVector);
 	}
 	
@@ -26,7 +26,7 @@ public class MultipleBlackboardAnswer extends AbstractBlackoardAnswer {
 	 * Returns the answer vector.
 	 * @return the answer vector
 	 */
-	public Vector<AbstractBlackoardAnswer> getAnswerVector() {
+	public Vector<AbstractBlackboardAnswer> getAnswerVector() {
 		if (answerVector==null) {
 			answerVector = new Vector<>();
 		}
@@ -36,7 +36,7 @@ public class MultipleBlackboardAnswer extends AbstractBlackoardAnswer {
 	 * Sets the answer vector.
 	 * @param answerVector the new answer vector
 	 */
-	public void setAnswerVector(Vector<AbstractBlackoardAnswer> answerVector) {
+	public void setAnswerVector(Vector<AbstractBlackboardAnswer> answerVector) {
 		this.answerVector = answerVector;
 	}
 	

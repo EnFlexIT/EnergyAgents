@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Data And Communication Models
 Bundle-SymbolicName: de.enflexit.ea.core.dataModel
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.dataCommunication
@@ -21,6 +21,7 @@ Export-Package: de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.dataModel.ontology,
  de.enflexit.ea.core.dataModel.opsOntology,
  de.enflexit.ea.core.dataModel.phonebook,
+ de.enflexit.ea.core.dataModel.simulation,
  de.enflexit.ea.core.dataModel.visualizationMessaging,
  hygrid.globalDataModel.cea
 Require-Bundle: de.enflexit.api,

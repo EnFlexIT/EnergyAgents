@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Vector;
 
 import de.enflexit.ea.core.AbstractIOSimulated;
-import energy.DisplayHelper;
+import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import energy.FixedVariableList;
 import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
+import energy.helper.DisplayHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -63,6 +64,33 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 	public InitialStateAdaption getInitialStateAdaption() {
 		return this.initialStateAdaption;
 	}
+	
+	/**
+	 * Returns the sets the points to system during evaluation.
+	 * @return the sets the points to system during evaluation
+	 */
+	private FixedVariableList getSetPointsToSystemDuringEvaluation(long timeStep) {
+		
+		// --- Default set point list: last set points to IO interface --------
+		FixedVariableList fvListSetPoint = this.ioSimulated.getSetPointsToSystem();
+		
+		// --- Try accessing ControlBehaviourRT -------------------------------
+		if (this.ioSimulated.getEnergyAgent().isExecutedControlBehaviourRT()==true) {
+			ControlBehaviourRT cbRT = this.ioSimulated.getEnergyAgent().getControlBehaviourRT();
+			TechnicalSystemStateEvaluation lastTSSE = cbRT.getRealTimeEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			while (lastTSSE.getGlobalTime()>timeStep) {
+				if (lastTSSE.getParent()==null) break;
+				lastTSSE = lastTSSE.getParent();
+			}
+			
+			if (lastTSSE.getGlobalTime()==timeStep) {
+				// --- Extract set points -------------------------------------
+				fvListSetPoint = this.createSetPointListFromSystemState(lastTSSE);
+			}
+		}
+		return fvListSetPoint;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see energy.evaluation.AbstractEvaluationStrategy#runEvaluation()
@@ -72,7 +100,7 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 		
 		String systemDescription = this.networkComponentID + " - '" + this.optionModelController.getTechnicalSystem().getSystemID() + "'";
 		
-		// --- Initialise search --------------------------------------------------------
+		// --- Initialize search --------------------------------------------------------
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		// --- Search by walking through time -------------------------------------------
 		while (tsse.getGlobalTime() < this.evaluationStepEndTime ) {
@@ -85,7 +113,7 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 			}
 			
 			// --- Get or create the current set point list ----------------------------- 
-			FixedVariableList fvListSetPoint = this.ioSimulated.getSetPointsToSystem();			
+			FixedVariableList fvListSetPoint = this.getSetPointsToSystemDuringEvaluation(tsse.getGlobalTime());			
 			if (fvListSetPoint==null) {
 				DisplayHelper.systemOutPrintlnGlobalTime(tsse.getGlobalTime(), "=> ", this.getClass().getSimpleName() + ": No system set points are available for " + systemDescription + ". Try to stay in the current system state.");
 				fvListSetPoint = this.createSetPointListFromSystemState(tsse);

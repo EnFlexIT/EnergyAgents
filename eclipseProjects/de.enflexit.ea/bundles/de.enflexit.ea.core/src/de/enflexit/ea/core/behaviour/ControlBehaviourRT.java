@@ -8,16 +8,22 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.eom.awb.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategyRT;
+import energy.helper.DisplayHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -50,6 +56,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 
 	private static final long serialVersionUID = -1460453061132067175L;
 
+	private AbstractEnergyAgent energyAgent;
 	private AbstractInternalDataModel internalDataModel;
 	private EnergyAgentIO agentIOBehaviour;
 	
@@ -64,7 +71,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private AbstractGroupEvaluationStrategyRT rtGroupEvaluationStrategy;
 	
 	private long currentTime;
-	
+	private boolean receivedNewMeasurements;
 	
 	/**
 	 * Instantiates a new control behaviour that is used during real time.
@@ -73,6 +80,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 * @param ioBehaviour the IO behaviour of the current agent
 	 */
 	public ControlBehaviourRT(AbstractEnergyAgent agent) {
+		this.energyAgent = agent;
 		this.internalDataModel = agent.getInternalDataModel();
 		this.agentIOBehaviour = agent.getEnergyAgentIO();
 		this.initialize();
@@ -275,16 +283,138 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return variableIDsForSetPoints;
 	}
 	
+	/**
+	 * Returns if the current execution environment is a simulation.
+	 * @return true, if is simulation
+	 */
+	private boolean isSimulation() {
+		boolean isSimulation = true;
+		switch (this.energyAgent.getAgentOperatingMode()) {
+		case Simulation:
+		case TestBedSimulation:
+			isSimulation = true;
+			break;
+			
+		case TestBedReal:
+		case RealSystemSimulatedIO:
+		case RealSystem:
+			isSimulation = false;
+			break;
+		}
+		return isSimulation;
+	}
+	
+	/**
+	 * Returns the current TimeModelType.
+	 * @return the time model type
+	 */
+	private TimeModelType getTimeModelType() {
+		return this.internalDataModel.getHyGridAbstractEnvironmentModel().getTimeModelType();
+	}
+	
+	
+	/**
+	 * In the context of simulations, sets the local system state to the environment model if configured in the simulation interface.
+	 * @param tsseLocal the current local system state 
+	 */
+	private void sendControlBehaviourRTStateUpdateToEnvironmentModel(TechnicalSystemStateEvaluation tsseLocal) {
+		
+		if (this.isSimulation()==true) {
+			EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
+			if (eaIO instanceof AbstractIOSimulated) {
+				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
+				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+					ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Sends a discrete simulations step to simulation manager.
+	 */
+	private void sendDiscreteSimulationsStepToSimulationManager() {
+		
+		if (this.isSimulation()==false || this.getTimeModelType()==TimeModelType.TimeModelContinuous) return;
+		
+		// --- Get the discrete simulation step ---------------------
+		DiscreteSimulationStep dsStep = this.getDiscreteSimulationStep();
+		EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
+		if (eaIO instanceof AbstractIOSimulated) {
+			AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
+			ioSimulated.sendManagerNotification(dsStep);
+		}
+	}
+	/**
+	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
+	 * important {@link DiscreteSystemStateType} for the iteration between agent and environment 
+	 * in the current discrete simulation step.
+	 *
+	 * @return the discrete simulation step
+	 */
+	public DiscreteSimulationStep getDiscreteSimulationStep() {
 
+		TechnicalSystemStateEvaluation tsse = null;
+		DiscreteSystemStateType dsTypeIndividual = null;
+		
+		// --- Try to get individual system state types -------------
+		switch (this.typeOfControlledSystem) {
+		case TechnicalSystem:
+			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.rtEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType();
+			}
+			break;
+			
+		case TechnicalSystemGroup:
+			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.rtGroupEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType();
+			}
+			break;
+			
+		default:
+			break;
+		}
+		
+		// --- Use an individual system state? ----------------------
+		DiscreteSystemStateType dsStateType = DiscreteSystemStateType.Final;
+		if (dsTypeIndividual!=null) {
+			dsStateType = dsTypeIndividual;
+		}
+		return new DiscreteSimulationStep(tsse, dsStateType);
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable observable, Object updateObject) {
+		
 		if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-			this.restart(); // --- Cause the invocation of the action method -- 
-		} else if (updateObject==AbstractInternalDataModel.CHANGED.TECHNICAL_SYSTEM_STATE_EVALUATION){
-			this.restart(); // call the action()
+			
+			// --- Set marker that new measurements arrived -----------------------------
+			this.receivedNewMeasurements = true;
+			
+			// --- Are we in discrete simulations ? -------------------------------------
+			switch (this.getTimeModelType()) {
+			case TimeModelContinuous:
+				// ----------------------------------------------------------------------
+				// --- Leave the control of the behaviour by the agents internal --------
+				// --- Scheduler for behaviour's                                 --------
+				// ----------------------------------------------------------------------
+				this.restart();
+				break;
+			
+			case TimeModelDiscrete:
+				// ----------------------------------------------------------------------
+				// --- Invoke the action method to directly cause an reaction. ----------
+				// --- => Avoids to integrate a wait process within IO simulated! -------
+				// ----------------------------------------------------------------------
+				this.action();
+				break;
+			}
 		}
 	}
 	/* (non-Javadoc)
@@ -293,22 +423,36 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	@Override
 	public void action() {
 		
-		// --- Get the current time ---------------------------------
-		this.currentTime = this.agentIOBehaviour.getTime();
-		
-		// --- Case separation for single or multiple systems -------
-		if (this.typeOfControlledSystem!=null) {
-			switch (this.typeOfControlledSystem) {
-			case TechnicalSystem:
-				this.actionForTechnicalSystem();
-				break;
-			case TechnicalSystemGroup:
-				this.actionForTechnicalSystemGroup();
-				break;
-			default:
-				break;
+		// --- Only act if new measurements arrived ---------------------------
+		if (this.receivedNewMeasurements==true) {
+			
+			// --- Get the current time ---------------------------------------
+			this.currentTime = this.agentIOBehaviour.getTime();
+			try {
+				// --- Case separation for single or multiple systems ---------
+				if (this.typeOfControlledSystem!=null) {
+					switch (this.typeOfControlledSystem) {
+					case TechnicalSystem:
+						this.actionForTechnicalSystem();
+						break;
+					case TechnicalSystemGroup:
+						this.actionForTechnicalSystemGroup();
+						break;
+					default:
+						break;
+					}
+				}
+				
+			} catch (Exception ex) {
+				DisplayHelper.systemOutPrintlnGlobalTime(this.currentTime, "[" + this.getClass().getSimpleName() + "]", "Error during execution of real time control behaviour:");
+				ex.printStackTrace();
+				
+			} finally {
+				this.receivedNewMeasurements = false;
 			}
 		}
+		
+		// --- Block this behaviour -------------------------------------------
 		this.block();
 	}
 	
@@ -333,10 +477,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtEvaluationStrategy.runEvaluationUntil(this.currentTime);
 				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
-				
+					
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			// --- If configured, set TSSE to environment model -----
+			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
+			this.sendDiscreteSimulationsStepToSimulationManager();
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {
@@ -410,9 +558,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(this.currentTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			// --- If configured, set TSSE to environment model -----
+			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
+			this.sendDiscreteSimulationsStepToSimulationManager();
 
 			// --- Get the selected set points ----------------------
 			if (tsseLocal!=null) {
