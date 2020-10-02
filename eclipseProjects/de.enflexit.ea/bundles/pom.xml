@@ -16,6 +16,7 @@
 		<module>de.enflexit.ea.core</module>
 		<module>de.enflexit.ea.core.aggregation</module>
 		<module>de.enflexit.ea.core.awbIntegration</module>
+		<module>de.enflexit.ea.core.blackboard</module>
 		<module>de.enflexit.ea.core.centralExecutiveAgent</module>
 		<module>de.enflexit.ea.core.dataModel</module>
 		<module>de.enflexit.ea.core.simulation</module>
