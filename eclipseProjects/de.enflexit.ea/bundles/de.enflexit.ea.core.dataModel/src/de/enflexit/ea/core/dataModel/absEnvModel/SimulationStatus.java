@@ -22,7 +22,7 @@ public class SimulationStatus implements Serializable {
 	
 	/**
 	 * The enumeration STATE_CONFIRMATION can be used as response type 
-	 * for the finalisation of a simulation state.
+	 * for the finalization of a simulation state.
 	 */
 	public static enum STATE_CONFIRMATION {
 		Initialized,
@@ -32,13 +32,6 @@ public class SimulationStatus implements Serializable {
 	
 	private STATE currentState = null;
 	
-	
-	/**
-	 * Instantiates a new simulation status.
-	 */
-	public SimulationStatus() {
-		
-	}
 	
 	/**
 	 * Sets the new state.

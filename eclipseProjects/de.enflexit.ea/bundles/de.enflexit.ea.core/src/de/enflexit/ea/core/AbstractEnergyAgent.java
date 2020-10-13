@@ -638,7 +638,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 								
 								// --- Add a real time control, if configured ---------
 								// --- For testbed agents, it is to early to do this -- 
-								if (this.getAgentOperatingMode() != AgentOperatingMode.TestBedReal) {
+								if (this.getAgentOperatingMode()!=AgentOperatingMode.TestBedReal) {
 									if (this.agentIOBehaviour!=null) {
 										this.startControlBehaviourRT();
 									}
@@ -652,8 +652,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 						if (this.getInternalDataModel().getGroupController().getGroupOptionModelController().getEvaluationStrategyRT()!=null) {
 							// --- Add a real time control, if configured ---------
 							// --- For testbed agents, it is to early to do this -- 
-							if (this.getAgentOperatingMode() != AgentOperatingMode.TestBedReal) {
-								this.startControlBehaviourRT();
+							if (this.getAgentOperatingMode()!=AgentOperatingMode.TestBedReal) {
+								if (this.agentIOBehaviour!=null) {
+									this.startControlBehaviourRT();
+								}
 							}
 						}
 					} 					
