@@ -7,9 +7,11 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
+import agentgui.core.project.Project;
 import agentgui.core.update.MirrorTool;
 import agentgui.core.update.MirrorTool.MirrorToolsJob;
 import agentgui.core.update.MirrorTool.P2DownloadType;
+import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import agentgui.core.update.MirrorToolListener;
@@ -82,7 +84,12 @@ public class RepositoryMirrorBehaviour extends WakerBehaviour implements MirrorT
 				}
 				// --- Start the mirror process ---------------------
 				if (this.isAccessibleSourceURL(projectSourceLocation) && this.isAccessibleDestinationDirectory(projectDestinLocation)==true) {
-					MirrorTool.mirrorProjectRepository(projectSourceLocation, projectDestinLocation, this);
+					WebResourcesAuthorization auth = null;
+					Project project = this.cea.getInternalDataModel().getProject();
+					if (project!=null) {
+						auth = project.getUpdateAuthorization();
+					}
+					MirrorTool.mirrorProjectRepository(projectSourceLocation, projectDestinLocation, auth, this);
 				}
 			}
 			

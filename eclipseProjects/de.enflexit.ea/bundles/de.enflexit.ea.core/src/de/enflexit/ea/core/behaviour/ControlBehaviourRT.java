@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.SystemStateType;
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
@@ -347,7 +347,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
-	 * important {@link SystemStateType} for the iteration between agent and environment 
+	 * important {@link DiscreteSystemStateType} for the iteration between agent and environment 
 	 * in the current discrete simulation step.
 	 *
 	 * @return the discrete simulation step
@@ -355,27 +355,34 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	public DiscreteSimulationStep getDiscreteSimulationStep() {
 
 		TechnicalSystemStateEvaluation tsse = null;
-		SystemStateType systemStateType = SystemStateType.Final; 
+		DiscreteSystemStateType dsTypeIndividual = null;
 		
+		// --- Try to get individual system state types -------------
 		switch (this.typeOfControlledSystem) {
 		case TechnicalSystem:
 			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 			if (this.rtEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				systemStateType = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getSystemStateType();
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType();
 			}
 			break;
 			
 		case TechnicalSystemGroup:
 			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 			if (this.rtGroupEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				systemStateType = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getSystemStateType();
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType();
 			}
 			break;
 			
 		default:
 			break;
 		}
-		return new DiscreteSimulationStep(tsse, systemStateType);
+		
+		// --- Use an individual system state? ----------------------
+		DiscreteSystemStateType dsStateType = DiscreteSystemStateType.Final;
+		if (dsTypeIndividual!=null) {
+			dsStateType = dsTypeIndividual;
+		}
+		return new DiscreteSimulationStep(tsse, dsStateType);
 	}
 	
 	

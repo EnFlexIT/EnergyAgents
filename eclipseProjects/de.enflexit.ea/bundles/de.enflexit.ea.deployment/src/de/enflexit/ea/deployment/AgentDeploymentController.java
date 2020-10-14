@@ -118,6 +118,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 	 */
 	@Override
 	protected boolean beforeZip() {
+		Boolean success = super.beforeZip();
 		
 		// --- Determine the path for the config folder and create it --------------
 		Path projectFolderPath = this.getTempFolderPath();
@@ -146,7 +147,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		File componentsFile = setupEnvironmentPath.resolve(componentsFileName).toFile();
 		networkModelForDeployment.saveComponentsFile(componentsFile);
 		
-		return true;
+		return success;
 	}
 	
 
