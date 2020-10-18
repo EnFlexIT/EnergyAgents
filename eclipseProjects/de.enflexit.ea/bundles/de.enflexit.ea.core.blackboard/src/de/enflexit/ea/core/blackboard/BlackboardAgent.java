@@ -133,10 +133,11 @@ public class BlackboardAgent extends Agent {
 		@Override
 		public void action() {
 			
+			Blackboard bBoard = BlackboardAgent.this.getBlackboard();
 			try {
 				// --- Wait for the next restart call -------------------------
-				synchronized (BlackboardAgent.this.getBlackboard().getNotificationTrigger()) {
-					BlackboardAgent.this.getBlackboard().getNotificationTrigger().wait();	
+				synchronized (bBoard.getNotificationTrigger()) {
+					bBoard.getNotificationTrigger().wait();	
 				}
 				
 			} catch (IllegalMonitorStateException imse) {
@@ -145,7 +146,7 @@ public class BlackboardAgent extends Agent {
 				// ie.printStackTrace();
 			}
 			
-			if (this.isExit()==false && BlackboardAgent.this.getBlackboard().isDoTerminate()==false) {
+			if (this.isExit()==false && bBoard.isDoTerminate()==false && bBoard.isAgentNotificationsEnabled()==true) {
 				// --- Execute to answer the BlackboardRequestVector ----------
 				this.answerBlackboardRequestVector();
 				// --- Restart this behaviour --------------------------------- 
@@ -185,8 +186,8 @@ public class BlackboardAgent extends Agent {
 			// --- Make a copy of the current vector in order -----------
 			// --- to avoid concurrent exceptions ----------------------- 
 			Vector<BlackboardRequest> bbRequestVectorCopy = new Vector<BlackboardRequest>(this.getBlackboardRequestVector());
-			for (BlackboardRequest bbRequest : bbRequestVectorCopy) {
-				this.answerBlackboardRequest(bbRequest);
+			for (int i = 0; i < bbRequestVectorCopy.size(); i++) {
+				this.answerBlackboardRequest(bbRequestVectorCopy.get(i));
 			}
 		}
 		
@@ -197,7 +198,11 @@ public class BlackboardAgent extends Agent {
 		private void answerBlackboardRequest(BlackboardRequest bbRequest) {
 
 			try {
-				
+				// ----------------------------------------------------------------------
+				// --- Empty or Null request? -------------------------------------------
+				// ----------------------------------------------------------------------
+				if (bbRequest==null) return;
+
 				// ----------------------------------------------------------------------
 				// --- Check if we're at the begin or the end of a simulation ----------- 
 				// ----------------------------------------------------------------------

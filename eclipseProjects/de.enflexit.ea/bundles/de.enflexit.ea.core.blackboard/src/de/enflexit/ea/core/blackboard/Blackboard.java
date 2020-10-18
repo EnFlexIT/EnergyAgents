@@ -19,12 +19,22 @@ import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
  */
 public class Blackboard {
 
-	private Object notificationTrigger;
-	private boolean doTerminate;
+	public enum BlackboardState {
+		Final,
+		NotFinal
+	}
 	
 	private long stateTime;
 	private NetworkModel networkModel;
 	private AbstractAggregationHandler aggregationHandler;
+	
+	
+	private boolean agentNotificationsEnabled = true;
+	private BlackboardState blackboardState;
+	
+	
+	private Object notificationTrigger;
+	private boolean doTerminate;
 	
 	// --- The listener thread for OSGI services ---------- 
 	private BlackboardListenerThread listenerServiceThread;
@@ -160,6 +170,46 @@ public class Blackboard {
 	 */
 	public AbstractAggregationHandler getAggregationHandler() {
 		return aggregationHandler;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, blackboard state (especially for discrete simulations) --
+	// ------------------------------------------------------------------------
+	/**
+	 * Sets the agent notifications enabled or disabled.
+	 * @param isEnabled the new agent notifications enabled
+	 */
+	public void setAgentNotificationsEnabled(boolean isEnabled) {
+		this.agentNotificationsEnabled = isEnabled;
+	}
+	/**
+	 * Returns if agent notifications are enabled.
+	 * @return true, if is agent notifications enabled
+	 */
+	public boolean isAgentNotificationsEnabled() {
+		return agentNotificationsEnabled;
+	}
+	
+	/**
+	 * Sets the blackboard state.
+	 * @param blackboardState the new blackboard state
+	 */
+	public void setBlackboardState(BlackboardState blackboardState) {
+		this.blackboardState = blackboardState;
+	}
+	/**
+	 * Returns the blackboard state. This especially is used in discrete simulations and for cases where 
+	 * the simulation is still in a discrete iterating state. In case that blackboard listener like to use 
+	 * (e.g. save) the blackboard data, this state helps to decide when exactly the data can be used.  
+	 *    
+	 * @return the blackboard state
+	 */
+	public BlackboardState getBlackboardState() {
+		if (blackboardState==null) {
+			blackboardState = BlackboardState.Final;
+		}
+		return blackboardState;
 	}
 	
 }

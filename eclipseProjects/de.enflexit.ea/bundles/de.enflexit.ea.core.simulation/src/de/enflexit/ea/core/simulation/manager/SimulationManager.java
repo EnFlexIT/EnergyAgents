@@ -35,6 +35,7 @@ import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.blackboard.Blackboard;
+import de.enflexit.ea.core.blackboard.Blackboard.BlackboardState;
 import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -73,6 +74,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private static final String dateFormat = "hh:mm:ss-SSS";
 	private SimpleDateFormat sdf;
 
+	private boolean isDebugDiscreteSimulationSchedule = false;
+	
 	private boolean isDoPerformanceMeasurements;
 	private static final String SIMA_MEASUREMENT_DISCRETE_ROUND_TRIP  = "1 SimMa: Discrete-Round-Trip-Complete";
 	private static final String SIMA_MEASUREMENT_NETWORK_CALCULATIONS = "2 SimMa: - Aggregation-Execution     ";
@@ -92,7 +95,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	
 	private AggregationHandler aggregationHandler;
 	private Blackboard blackboard;
-	private boolean blackboardNotificationsEnabled = true;
 	
 	private Hashtable<AID, Object> environmentNotificationReminder;
 	private NetworkCalculationExecuter networkCalculationExecuter;
@@ -540,26 +542,22 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		// --- Set state time to the blackboard -------------------------------
 		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
-		// --- Notify blackboard listeners about the new results --------------
-		if (this.isEnabledBlackboardNotifications()==true) {
-			synchronized (this.getBlackboard().getNotificationTrigger()) {
-				this.getBlackboard().getNotificationTrigger().notifyAll();
-			}
+		
+		// --- Set the blackboard state ---------------------------------------
+		BlackboardState bBoardSate = null;
+		boolean isDiscreteSimulation = this.getHyGridAbstractEnvironmentModel().getTimeModelType()==TimeModelType.TimeModelDiscrete;
+		boolean isPendingSysteminSimulationStep = this.getAggregationHandler().isPendingIteratingSystemInSimulationStep();
+		if (isDiscreteSimulation==true && isPendingSysteminSimulationStep==true) {
+			bBoardSate = BlackboardState.NotFinal;
+		} else {
+			bBoardSate = BlackboardState.Final;
 		}
-	}
-	/**
-	 * Returns if the blackboard notifications are enabled.
-	 * @return true, if the blackboard notifications are enabled
-	 */
-	private boolean isEnabledBlackboardNotifications() {
-		return blackboardNotificationsEnabled;
-	}
-	/**
-	 * Sets blackboard notifications enabled or disabled.
-	 * @param enable the new enabled blackboard notifications
-	 */
-	private void setEnabledBlackboardNotifications(boolean enable) {
-		this.blackboardNotificationsEnabled = enable;
+		this.getBlackboard().setBlackboardState(bBoardSate);
+		
+		// --- Notify blackboard listeners about the new results --------------
+		synchronized (this.getBlackboard().getNotificationTrigger()) {
+			this.getBlackboard().getNotificationTrigger().notifyAll();
+		}
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -716,12 +714,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --- Disable Blackboard notifications? ------------------------------------
 			if (isPendingSysteminSimulationStep==false) {
 				// --- No further Blackboard notifications are required for this (time) step
-				this.setEnabledBlackboardNotifications(false);
+				this.getBlackboard().setAgentNotificationsEnabled(false);
 			}
 			// --- Execute Network calculation ------------------------------------------
-			this.getAggregationHandler().runEvaluationUntil(this.getTime(), true);
+			this.getAggregationHandler().runEvaluationUntil(this.getTime(), true, this.isDebugDiscreteSimulationSchedule);
 			// --- Reset Blackboard notifications! --------------------------------------
-			this.setEnabledBlackboardNotifications(true);
+			this.getBlackboard().setAgentNotificationsEnabled(true);
 		}
 
 		// ------------------------------------------------------------------------------
@@ -745,8 +743,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			TimeModelDiscrete tmd = this.getTimeModelDiscrete();
 			if (tmd.getTime()<tmd.getTimeStop()) {
 				tmd.step();
-				System.out.println("");
-				DisplayHelper.systemOutPrintlnGlobalTime(tmd.getTime(), "=> [" + this.getClass().getSimpleName() + "]", "Execute next simulation step ...");
+				if (this.isDebugDiscreteSimulationSchedule==true) {
+					System.out.println("");
+					DisplayHelper.systemOutPrintlnGlobalTime(tmd.getTime(), "=> [" + this.getClass().getSimpleName() + "]", "Execute next simulation step ...");
+				}
 			} else {
 				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
 				this.print("Finalize Simulation!", false);
@@ -796,9 +796,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				case TimeModelDiscrete:
 					// --- (Re)Execute the network calculation ----------------
 					if (simState==STATE.B_ExecuteSimuation) {
+						if (this.isDebugDiscreteSimulationSchedule==true) {
+							DisplayHelper.systemOutPrintlnGlobalTime(currTime, "=> [" + this.getClass().getSimpleName() + "]", "Proceed Agent Answers ...");
+						}
 						this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
-						DisplayHelper.systemOutPrintlnGlobalTime(currTime, "=> [" + this.getClass().getSimpleName() + "]", "Proceed Agent Answers ...");
-						this.getAggregationHandler().runEvaluationUntil(currTime);
+						this.getAggregationHandler().runEvaluationUntil(currTime, false, this.isDebugDiscreteSimulationSchedule);
 						this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
 					}
 					break;

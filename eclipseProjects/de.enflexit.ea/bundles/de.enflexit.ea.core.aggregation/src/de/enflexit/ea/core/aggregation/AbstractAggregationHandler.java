@@ -1126,10 +1126,9 @@ public abstract class AbstractAggregationHandler {
 	 * The method will return when the calculation is done.
 	 * @param timeUntil the time until the evaluation should be executed
 	 */
-	public void runEvaluationUntil(final long timeUntil) {
-		this.runEvaluationUntil(timeUntil, false);
+	public void runEvaluationUntil(long timeUntil) {
+		this.runEvaluationUntil(timeUntil, false, false);
 	}
-	
 	/**
 	 * Runs the aggregators evaluations or network calculation until the specified time.
 	 * The method will return when the calculation is done.
@@ -1137,12 +1136,25 @@ public abstract class AbstractAggregationHandler {
 	 * @param rebuildDecisionGraph If true, the decision graph will be rebuilt
 	 */
 	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph) {
+		this.runEvaluationUntil(timeUntil, rebuildDecisionGraph, false);
+	}
+	/**
+	 * Runs the aggregators evaluations or network calculation until the specified time.
+	 * The method will return when the calculation is done.
+	 *
+	 * @param timeUntil the time until the evaluation should be executed
+	 * @param rebuildDecisionGraph If true, the decision graph will be rebuilt
+	 * @param isDebugPrintEvaluationEndTime the indicator to print the evaluation end time for the execution
+	 */
+	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph, boolean isDebugPrintEvaluationEndTime) {
 
 		// --- Remind the current evaluation end time ---------------
 		this.setEvaluationEndTime(timeUntil);
-		DisplayHelper.systemOutPrintlnGlobalTime(timeUntil, "=> [" + this.getClass().getSimpleName() + "]", "Execute Network Calculation");
+		if (isDebugPrintEvaluationEndTime==true) {
+			DisplayHelper.systemOutPrintlnGlobalTime(timeUntil, "=> [" + this.getClass().getSimpleName() + "]", "Execute Network Calculation");
+		}
 		
-		// --- Assign actual job to task thread ---------------------
+		// --- Assign actual job to task threads --------------------
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			// --- Get corresponding NetworkCalculationStrategy -----
 			AbstractSubNetworkConfiguration subNetConfig = getSubNetworkConfigurations().get(i);
