@@ -58,9 +58,9 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	}
 	
 	/**
-	 * Possible logging modes.
-	 * ON_NEW_MEASUREMENT: Every new measurement will be logged
-	 * ON_ANY_CHANGE: New measurements with unchanged values will be ignored
+	 * Possible logging modes.<br>
+	 * ON_NEW_MEASUREMENT: Every new measurement will be logged<br>
+	 * ON_ANY_CHANGE: New measurements with unchanged values will be ignored<br>
 	 * ON_SIGNIFICANT_CHANGE: Changes below a certain threshold will be ignored. Thresholds can be configured using 
 	 * the {@link IOListFilterForLogging}'s setGeneralThreshold() and addSpecificThresholdForVariable() methods
 	 */
