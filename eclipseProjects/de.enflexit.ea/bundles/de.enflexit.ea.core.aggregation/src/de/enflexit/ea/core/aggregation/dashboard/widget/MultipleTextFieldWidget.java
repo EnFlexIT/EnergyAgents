@@ -54,20 +54,23 @@ public class MultipleTextFieldWidget extends JPanel implements DashboardWidget {
 	private void initialize() {
 		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.add(this.getWidgetLabel());
-		
+
+		// --- Create the sub-widgets -------------------------------
 		for (int i=0; i<subWidgetIDs.size(); i++) {
 			
+			// --- Compose a unique ID for the sub-widget -----------
 			String subWidgetID = this.id + "." + this.subWidgetIDs.get(i);
 			String subWidgetUnit = this.subWidgetUnits.get(i);
 			
+			// --- Create a text field for the value ----------------
 			JTextField subWidgetTextField = this.createNewSubWidgetValueTextField();
 			this.add(subWidgetTextField);
 			this.getSubWidgetTextfields().put(subWidgetID, subWidgetTextField);
 			
+			// --- Create a label for the unit ----------------------
 			JLabel subWidgetUnitLabel = this.createNewSubWidgetUnitLabel(subWidgetUnit);
 			this.add(subWidgetUnitLabel);
 			this.getSubWidgetUnitLabels().put(subWidgetID, subWidgetUnitLabel);
-			
 			
 		}
 	}

@@ -33,6 +33,7 @@ import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
+import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscriptionResponder;
 import de.enflexit.ea.core.blackboard.Blackboard;
 import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
@@ -97,6 +98,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HashSet<String> controlBehaviourRTStateUpdateSources;
 	private HashSet<String> controlBehaviourRTStateUpdateAnswered;
 	
+	private DashboardSubscriptionResponder dashboardSubscriptionResponder;
 	
 	
 	/* (non-Javadoc)
@@ -143,6 +145,21 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
 		this.addSimulationBehaviour();
+		
+		// --- Start the dashboard subscription responder -------
+		this.addBehaviour(this.getDashboardSubscriptionResponder());
+	}
+	
+	
+	/**
+	 * Gets the dashboard subscription responder.
+	 * @return the dashboard subscription responder
+	 */
+	private DashboardSubscriptionResponder getDashboardSubscriptionResponder() {
+		if (dashboardSubscriptionResponder==null) {
+			dashboardSubscriptionResponder = new DashboardSubscriptionResponder(this);
+		}
+		return dashboardSubscriptionResponder;
 	}
 
 	/* (non-Javadoc)
@@ -533,6 +550,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		synchronized (this.getBlackboard().getNotificationTrigger()) {
 			this.getBlackboard().getNotificationTrigger().notifyAll();
 		}
+		
+		// --- Notify dashboard subscribers -----------------------------------
+		this.getDashboardSubscriptionResponder().notifySubscribers(subnetConfigList);
 	}
 
 	// --------------------------------------------------------------------------------------------
