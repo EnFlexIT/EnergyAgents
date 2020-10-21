@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
-import de.enflexit.ea.core.aggregation.dashboard.NetworkComponentStateSubscription.SubscriptionMode;
+import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionBy;
+import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionFor;
 import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -78,12 +78,10 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	 * @return the notification message
 	 * @throws IOException Signals that setting the message's content object failed.
 	 */
-	private ACLMessage prepareNotificationMessage(AbstractDashboardSubscription subscriptionSpecifier, AbstractSubNetworkConfiguration subNetworkConfiguration) throws IOException {
+	private ACLMessage prepareNotificationMessage(DashboardSubscription subscriptionSpecifier, AbstractSubNetworkConfiguration subNetworkConfiguration) throws IOException {
 		ACLMessage notificationMessage = new ACLMessage(ACLMessage.INFORM);
 		
-		if (subscriptionSpecifier instanceof NetworkComponentStateSubscription) {
-			
-			NetworkComponentStateSubscription compStateSubscription = (NetworkComponentStateSubscription) subscriptionSpecifier;
+		if (subscriptionSpecifier.getSubscriptionFor() == SubscriptionFor.DOMAIN_DATAMODEL_STATE) {
 			
 			Vector<NetworkComponent> clusterComponents = subNetworkConfiguration.getDomainCluster().getNetworkComponents();
 			NetworkComponentStateUpdate stateUpdate = new NetworkComponentStateUpdate();
@@ -93,7 +91,7 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 			for (int i=0; i<clusterComponents.size(); i++) {
 				NetworkComponent netComp = clusterComponents.get(i);
 				
-				if (this.isComponentRelevant(netComp, compStateSubscription)) {
+				if (this.isComponentRelevant(netComp, subscriptionSpecifier)) {
 					DynamicComponentState componentState = this.getStateObjectFromNetworkComponent(netComp, aggregationModel, subscriptionSpecifier.getDomain());
 					if (componentState!=null) {
 						stateUpdate.getComponentStates().put(netComp.getId(), componentState);
@@ -155,11 +153,11 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	 * @param compStateSubscription the subscription
 	 * @return true, if the component is relevant
 	 */
-	private boolean isComponentRelevant(NetworkComponent networkComponent, NetworkComponentStateSubscription compStateSubscription) {
+	private boolean isComponentRelevant(NetworkComponent networkComponent, DashboardSubscription compStateSubscription) {
 		// --- Subscription based on component types ----------------
-		if (compStateSubscription.getSubscriptionMode()==SubscriptionMode.BY_TYPE && compStateSubscription.getSubscriptionSpecifiers().contains(networkComponent.getType())) {
+		if (compStateSubscription.getSubscriptionBy()==SubscriptionBy.COMPONENT_TYPE && compStateSubscription.getSubscriptionSpecifiers().contains(networkComponent.getType())) {
 			return true;
-		} else if (compStateSubscription.getSubscriptionMode()==SubscriptionMode.BY_ID && compStateSubscription.getSubscriptionSpecifiers().contains(networkComponent.getId())){
+		} else if (compStateSubscription.getSubscriptionBy()==SubscriptionBy.COMPONENT_ID && compStateSubscription.getSubscriptionSpecifiers().contains(networkComponent.getId())){
 			return true;
 		}
 		return false;
@@ -177,7 +175,7 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		// --- Remember the resulting subscription object -----------
 		
 		try {
-			AbstractDashboardSubscription subscriptionSpecifier = (AbstractDashboardSubscription) subscriptionMessage.getContentObject();
+			DashboardSubscription subscriptionSpecifier = (DashboardSubscription) subscriptionMessage.getContentObject();
 			Subscription subscription = this.getSubscription(subscriptionMessage);
 			
 			SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
@@ -211,14 +209,14 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
 	 */
 	private class SubscriptionDetails {
-		private AbstractDashboardSubscription subscriptionSpecifier;
+		private DashboardSubscription subscriptionSpecifier;
 		private Subscription subscription;
 		
 		/**
 		 * Gets the subscription specifier.
 		 * @return the subscription specifier
 		 */
-		public AbstractDashboardSubscription getSubscriptionSpecifier() {
+		public DashboardSubscription getSubscriptionSpecifier() {
 			return subscriptionSpecifier;
 		}
 		
@@ -226,7 +224,7 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		 * Sets the subscription specifier.
 		 * @param subscriptionSpecifier the new subscription specifier
 		 */
-		public void setSubscriptionSpecifier(AbstractDashboardSubscription subscriptionSpecifier) {
+		public void setSubscriptionSpecifier(DashboardSubscription subscriptionSpecifier) {
 			this.subscriptionSpecifier = subscriptionSpecifier;
 		}
 		

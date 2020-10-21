@@ -72,9 +72,8 @@ public class DashboardAgent extends Agent {
 		
 		this.addDashboardPanel(dashboardService.getDashboardController().getDashboardPanel());
 		
-		//TODO prepare subscription
 		try {
-			ACLMessage subscriptionMessage = this.createSubscriptionMessage(dashboardController.getDashboardRequests().get(0));
+			ACLMessage subscriptionMessage = this.createSubscriptionMessage(dashboardController.getDashboardSubscriptions().get(0));
 			this.addBehaviour(new DashboardSubscriptionInitiator(this, subscriptionMessage));
 		} catch (IOException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Unable to create subscripption message, setting the content object failed!");
@@ -88,7 +87,7 @@ public class DashboardAgent extends Agent {
 	 * @return the ACL message
 	 * @throws IOException Setting the content object failed
 	 */
-	private ACLMessage createSubscriptionMessage(AbstractDashboardSubscription dashboardSubscription) throws IOException {
+	private ACLMessage createSubscriptionMessage(DashboardSubscription dashboardSubscription) throws IOException {
 		ACLMessage initialMessage = new ACLMessage(ACLMessage.SUBSCRIBE);
 		initialMessage.addReceiver(this.getResponderAID());
 		initialMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);

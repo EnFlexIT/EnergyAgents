@@ -43,7 +43,11 @@ public abstract class DashboardController {
 	 * Gets the dashboard requests.
 	 * @return the dashboard requests
 	 */
-	public abstract List<AbstractDashboardSubscription> getDashboardRequests();
+	public abstract List<DashboardSubscription> getDashboardSubscriptions();
 	
+	/**
+	 * Gets the domain.
+	 * @return the domain
+	 */
 	public abstract String getDomain();
 }
