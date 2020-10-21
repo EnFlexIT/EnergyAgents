@@ -17,6 +17,12 @@ public class EnergyAgentProjectExportController extends DefaultProjectExportCont
 	public static final String RESSOURCES_SUBFOLDER = "ressources";
 	public static final String SUBMODELS_SUBFOLDER = "subModels";
 	
+	
+	@Override
+	protected boolean beforeZip() {
+		return super.beforeZip();
+	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.core.project.transfer.DefaultProjectExportController#getDefaultExcludeList()
 	 */
