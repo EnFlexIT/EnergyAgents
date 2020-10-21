@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.aggregation.dashboard;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -10,11 +11,14 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.helper.DomainCluster;
 
+import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionBy;
 import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionFor;
 import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
+import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
@@ -31,7 +35,7 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 
 	private static final long serialVersionUID = -2349228912000862029L;
 	
-	private HashMap<String, SubscriptionDetails> subscriptionsByDomain;
+	private HashMap<DashboardSubscription, Subscription> subscriptionsHashMap;
 	
 	/**
 	 * Instantiates a new DashboardSubscriptionResponder.
@@ -56,19 +60,26 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	 * @param aggregations the aggregations
 	 */
 	public void notifySubscribers(List<AbstractSubNetworkConfiguration> aggregations) {
+		
+		List<DashboardSubscription> subscriptions = new ArrayList<DashboardSubscription>(this.getSubscriptionsHashMap().keySet());
 		for (int i=0; i<aggregations.size(); i++) {
-			SubscriptionDetails subscriptionDetails = this.getSubscriptionsByDomain().get(aggregations.get(i).getDomain());
-			if  (subscriptionDetails!=null) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Subscription found for " + aggregations.get(i).getDomain());
-				
-				try {
-					ACLMessage notificationMessage = this.prepareNotificationMessage(subscriptionDetails.getSubscriptionSpecifier(), aggregations.get(i));
-					subscriptionDetails.getSubscription().notify(notificationMessage);
-				} catch (IOException e) {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Error creating notification essage for domain " + aggregations.get(i).getDomain());
-					e.printStackTrace();
+			AbstractSubNetworkConfiguration aggregation = aggregations.get(i);  
+
+			for (int j=0; j<subscriptions.size(); j++) {
+				DashboardSubscription subscription = subscriptions.get(j);
+				if (subscription.getDomain().equals(aggregation.getDomain())) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] Subscription found for " + aggregation.getDomain());
+					try {
+						ACLMessage notificationMessage = this.prepareNotificationMessage(subscription, aggregation);
+						this.getSubscriptionsHashMap().get(subscription).notify(notificationMessage);
+						
+					} catch (IOException e) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Error creating notification essage for domain " + aggregations.get(i).getDomain());
+						e.printStackTrace();
+					}
 				}
 			}
+			
 		}
 	}
 	
@@ -80,27 +91,28 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	 */
 	private ACLMessage prepareNotificationMessage(DashboardSubscription subscriptionSpecifier, AbstractSubNetworkConfiguration subNetworkConfiguration) throws IOException {
 		ACLMessage notificationMessage = new ACLMessage(ACLMessage.INFORM);
+			
+		Vector<NetworkComponent> aggregationComponents = subNetworkConfiguration.getDomainCluster().getNetworkComponents();
+		DashboardSubscriptionUpdate dashboardUpdate = new DashboardSubscriptionUpdate();
+		dashboardUpdate.setSubscriptionFor(subscriptionSpecifier.getSubscriptionFor());
 		
-		if (subscriptionSpecifier.getSubscriptionFor() == SubscriptionFor.DOMAIN_DATAMODEL_STATE) {
+		
+		for (int i=0; i<aggregationComponents.size(); i++) {
+			NetworkComponent netComp = aggregationComponents.get(i);
 			
-			Vector<NetworkComponent> clusterComponents = subNetworkConfiguration.getDomainCluster().getNetworkComponents();
-			NetworkComponentStateUpdate stateUpdate = new NetworkComponentStateUpdate();
-			
-			NetworkModel aggregationModel = subNetworkConfiguration.getSubNetworkModel();
-			
-			for (int i=0; i<clusterComponents.size(); i++) {
-				NetworkComponent netComp = clusterComponents.get(i);
-				
-				if (this.isComponentRelevant(netComp, subscriptionSpecifier)) {
+			if (this.isComponentRelevant(netComp, subscriptionSpecifier)) {
+				if (subscriptionSpecifier.getSubscriptionFor() == SubscriptionFor.DOMAIN_DATAMODEL_STATE) {
+					NetworkModel aggregationModel = subNetworkConfiguration.getSubNetworkModel();
 					DynamicComponentState componentState = this.getStateObjectFromNetworkComponent(netComp, aggregationModel, subscriptionSpecifier.getDomain());
 					if (componentState!=null) {
-						stateUpdate.getComponentStates().put(netComp.getId(), componentState);
+						dashboardUpdate.getUpdateObjects().put(netComp.getId(), componentState);
 					}
+				} else if (subscriptionSpecifier.getSubscriptionFor() == SubscriptionFor.CURRENT_TSSE) {
+					//TODO extract TSSEs
 				}
-				
-			}
+			} 
 			
-			notificationMessage.setContentObject(stateUpdate);
+			notificationMessage.setContentObject(dashboardUpdate);
 		}
 		return notificationMessage;
 	}
@@ -147,6 +159,14 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		return componentState;
 	}
 	
+	private TechnicalSystemStateEvaluation getTsseFromAggregation(String componentID, AbstractSubNetworkConfiguration aggregation) {
+		TechnicalSystemStateEvaluation tsse = null;
+		AbstractAggregationHandler agh = aggregation.getAggregationHandler();
+		DomainCluster dc = aggregation.getDomainCluster();
+		System.out.println("[" + this.getClass().getSimpleName() + "] Here is a breakpoint for debugging!");
+		return tsse;
+	}
+	
 	/**
 	 * Checks if the given component is relevant for the subscription.
 	 * @param networkComponent the network component
@@ -178,11 +198,7 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 			DashboardSubscription subscriptionSpecifier = (DashboardSubscription) subscriptionMessage.getContentObject();
 			Subscription subscription = this.getSubscription(subscriptionMessage);
 			
-			SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
-			subscriptionDetails.setSubscriptionSpecifier(subscriptionSpecifier);
-			subscriptionDetails.setSubscription(subscription);
-			
-			this.getSubscriptionsByDomain().put(subscriptionSpecifier.getDomain(), subscriptionDetails);
+			this.getSubscriptionsHashMap().put(subscriptionSpecifier, subscription);
 			
 		} catch (UnreadableException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error extracting content object!");
@@ -192,57 +208,15 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		return response;
 	}
 	
-	
 	/**
 	 * Gets the subscriptions by domain.
 	 * @return the subscriptions by domain
 	 */
-	private HashMap<String, SubscriptionDetails> getSubscriptionsByDomain() {
-		if (subscriptionsByDomain==null) {
-			subscriptionsByDomain = new HashMap<String, SubscriptionDetails>();
+	private HashMap<DashboardSubscription, Subscription> getSubscriptionsHashMap() {
+		if (subscriptionsHashMap==null) {
+			subscriptionsHashMap = new HashMap<DashboardSubscription, Subscription>();
 		}
-		return subscriptionsByDomain;
-	}
-	
-	/**
-	 * Internal class for managing subscription details
-	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
-	 */
-	private class SubscriptionDetails {
-		private DashboardSubscription subscriptionSpecifier;
-		private Subscription subscription;
-		
-		/**
-		 * Gets the subscription specifier.
-		 * @return the subscription specifier
-		 */
-		public DashboardSubscription getSubscriptionSpecifier() {
-			return subscriptionSpecifier;
-		}
-		
-		/**
-		 * Sets the subscription specifier.
-		 * @param subscriptionSpecifier the new subscription specifier
-		 */
-		public void setSubscriptionSpecifier(DashboardSubscription subscriptionSpecifier) {
-			this.subscriptionSpecifier = subscriptionSpecifier;
-		}
-		
-		/**
-		 * Gets the subscription.
-		 * @return the subscription
-		 */
-		public Subscription getSubscription() {
-			return subscription;
-		}
-		
-		/**
-		 * Sets the subscription.
-		 * @param subscription the new subscription
-		 */
-		public void setSubscription(Subscription subscription) {
-			this.subscription = subscription;
-		}
+		return subscriptionsHashMap;
 	}
 
 }
