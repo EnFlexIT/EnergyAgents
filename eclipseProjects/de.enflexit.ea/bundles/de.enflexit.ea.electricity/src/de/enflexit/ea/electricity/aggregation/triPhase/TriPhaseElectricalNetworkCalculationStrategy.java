@@ -40,8 +40,8 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
 
 /**
  * Network calculation strategy implementation for low voltage distribution grids.
+ * 
  * @author mehlich
- *
  */
 public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	

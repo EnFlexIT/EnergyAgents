@@ -615,22 +615,22 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		
 		// --- Will be invoked if the internal data model has changed ---------
 		if (observable instanceof AbstractInternalDataModel) {
-			if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_MODEL) {
-				// +++++++++++++++++++++++++++++++++++
-				// +++ Nothing ToDo here - remove? +++
-				// +++++++++++++++++++++++++++++++++++
-				
-			} else if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_COMPONENT) {
+			
+			if (updateObject==AbstractInternalDataModel.CHANGED.NETWORK_COMPONENT) {
+				// ------------------------------------------------------------
 				// --- Get the actual data model of the NetworkComponent ------ 
 				NetworkComponent netComp = this.getInternalDataModel().getNetworkComponent();
 				if (netComp!=null) {
+					// --------------------------------------------------------
 					// --- Check the data model of the network component ------
 					Object dm = netComp.getDataModel();
 					if (dm instanceof ScheduleList) {
+						// ----------------------------------------------------
 						// --- ScheduleList -----------------------------------
 						this.getInternalDataModel().getScheduleController().setScheduleList((ScheduleList) dm);
 
 					} else if (dm instanceof TechnicalSystem){
+						// ----------------------------------------------------
 						// --- TechnicalSystems -------------------------------
 						if (this.getInternalDataModel().getBundleModelForTechnicalSystem()==null) {
 							this.getInternalDataModel().getOptionModelController().setTechnicalSystem((TechnicalSystem) dm);
@@ -638,7 +638,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 								
 								// --- Add a real time control, if configured ---------
 								// --- For testbed agents, it is to early to do this -- 
-								if (this.getAgentOperatingMode() != AgentOperatingMode.TestBedReal) {
+								if (this.getAgentOperatingMode()!=AgentOperatingMode.TestBedReal) {
 									if (this.agentIOBehaviour!=null) {
 										this.startControlBehaviourRT();
 									}
@@ -647,25 +647,24 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 						}
 						
 					} else if (dm instanceof TechnicalSystemGroup){
-						// --- TechnicalSystemGroup -------------------------------
+						// ----------------------------------------------------
+						// --- TechnicalSystemGroup ---------------------------
 						this.getInternalDataModel().getGroupController().setTechnicalSystemGroup((TechnicalSystemGroup) dm);
 						if (this.getInternalDataModel().getGroupController().getGroupOptionModelController().getEvaluationStrategyRT()!=null) {
-							// --- Add a real time control, if configured ---------
-							// --- For testbed agents, it is to early to do this -- 
-							if (this.getAgentOperatingMode() != AgentOperatingMode.TestBedReal) {
-								this.startControlBehaviourRT();
+							// --- Add a real time control, if configured -----
+							// --- => For testbed agents, this is to early ! -- 
+							if (this.getAgentOperatingMode()!=AgentOperatingMode.TestBedReal) {
+								if (this.agentIOBehaviour!=null) {
+									this.startControlBehaviourRT();
+								}
 							}
 						}
-					} 					
-				}
+					} // end data model object
+				} // end NetworkComponent
 				
-			} else if (updateObject==AbstractInternalDataModel.CHANGED.MEASUREMENTS_FROM_SYSTEM) {
-				// +++++++++++++++++++++++++++++++++++
-				// +++ Nothing ToDo here - remove? +++
-				// +++++++++++++++++++++++++++++++++++
-				
-			}
-		}
+			} // end updateObject
+			
+		} // end internal data model
 		
 		// --- Callback method for subclass-specific handling of observer updates
 		this.onObserverUpdate(observable, updateObject);

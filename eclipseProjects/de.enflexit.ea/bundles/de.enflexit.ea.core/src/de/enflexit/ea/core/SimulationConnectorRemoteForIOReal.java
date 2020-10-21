@@ -53,7 +53,7 @@ public class SimulationConnectorRemoteForIOReal extends SimulationConnectorRemot
 		}
 		
 		// --- Ready to start, send notification to the ProxyAgent
-		if(this.environmentModel != null){
+		if (this.environmentModel!=null) {
 			this.setEnvironmentModel(environmentModel, false);
 			this.sendManagerNotification(STATE_CONFIRMATION.Done);
 		} else {

@@ -104,22 +104,26 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		this.setProject(project);
 	}
 	
+	/**
+	 * Gets the deployment settings.
+	 * @return the deployment settings
+	 */
 	private DeploymentSettings getDeploymentSettings() {
 		return this.deploymentGroup.getDeploymentSettings();
 	}
 	
+	/* (non-Javadoc)
+	 * @see agentgui.core.project.transfer.DefaultProjectExportController#getExportSettings()
+	 */
 	protected ProjectExportSettings getExportSettings() {
 		return this.exportSettings;
 	}
-	
 
 	/* (non-Javadoc)
-	 * @see agentgui.core.project.transfer.ProjectExportController#beforeZip()
+	 * @see agentgui.core.project.transfer.DefaultProjectExportController#modifyProjectForExport(agentgui.core.project.Project)
 	 */
 	@Override
-	protected boolean beforeZip() {
-		Boolean success = super.beforeZip();
-		
+	protected Project modifyProjectForExport(Project projectForExport) {
 		// --- Determine the path for the config folder and create it --------------
 		Path projectFolderPath = this.getTempFolderPath();
 		Path setupFolderPath = projectFolderPath.resolve(SETUPS_SUBFOLDER);
@@ -132,7 +136,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		}
 
 		// --- Adjust the project-specific settings -----------------
-		this.modifyProjectSettings(projectFolderPath.toFile());
+		this.modifyProjectSettings(projectForExport);
 		this.modifySimulationSetup(setupFolderPath);
 		
 		// --- Remove unnecessary agent classes ---------------------
@@ -147,15 +151,14 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		File componentsFile = setupEnvironmentPath.resolve(componentsFileName).toFile();
 		networkModelForDeployment.saveComponentsFile(componentsFile);
 		
-		return success;
+		return projectForExport;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.project.transfer.ProjectExportController#afterZip(boolean)
 	 */
 	@Override
-	protected void afterZip(boolean success) {
+	protected void showResultMessage(boolean success) {
 		// --- Show a feedback message to the user ------------------
 		
 		if (success == true) {
@@ -678,24 +681,23 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 	 * Perform some necessary modifications of the project configuration
 	 * @param projectFolder the project folder
 	 */
-	private void modifyProjectSettings(File projectFolder) {
-		Project project = Project.load(projectFolder, false);
+	private void modifyProjectSettings(Project projectForExport) {
 		
 		// --- Configure jade communication settings ----------------
-		project.getJadeConfiguration().setLocalPort(this.getDeploymentSettings().getJadePort());
-		project.getJadeConfiguration().setLocalPortMTP(this.getDeploymentSettings().getMtpPort());
+		projectForExport.getJadeConfiguration().setLocalPort(this.getDeploymentSettings().getJadePort());
+		projectForExport.getJadeConfiguration().setLocalPortMTP(this.getDeploymentSettings().getMtpPort());
 		if (this.getDeploymentSettings().isTargetSystemAutoIp()==true) {
-			project.getJadeConfiguration().setMtpIpAddress(PlatformJadeConfig.MTP_IP_AUTO_Config);
+			projectForExport.getJadeConfiguration().setMtpIpAddress(PlatformJadeConfig.MTP_IP_AUTO_Config);
 		} else {
-			project.getJadeConfiguration().setMtpIpAddress(this.getDeploymentSettings().getTargetSystemIpAddress());
+			projectForExport.getJadeConfiguration().setMtpIpAddress(this.getDeploymentSettings().getTargetSystemIpAddress());
 		}
 		
 		// --- Adjust repository URLs -------------------------------
 		if (this.getDeploymentSettings().isP2RepositoryEnabled()==true) {
-			this.setProjectFeaturesRepositoryURL(project, this.getDeploymentSettings().getP2Repository());
+			this.setProjectFeaturesRepositoryURL(projectForExport, this.getDeploymentSettings().getP2Repository());
 		}
 		if (this.getDeploymentSettings().isProjectRepositoryEnabled()==true) {
-			project.setUpdateSite(this.getDeploymentSettings().getProjectRepository());
+			projectForExport.setUpdateSite(this.getDeploymentSettings().getProjectRepository());
 		}
 		
 		// --- Set the deployment settings --------------------------
@@ -703,14 +705,12 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 		SetupExtension setEx = this.getSetupExtension();
 		userDataModel.setSetupExtension(setEx);
 		userDataModel.setDeploymentSettings(this.getDeploymentSettings());
-		project.setUserRuntimeObject(userDataModel);
-		project.setVersionTag(this.getDeploymentSettings().getProjectTag());
-		project.setVersion(this.deploymentGroup.getProjectVersion());
+		projectForExport.setUserRuntimeObject(userDataModel);
+		projectForExport.setVersionTag(this.getDeploymentSettings().getProjectTag());
+		projectForExport.setVersion(this.deploymentGroup.getProjectVersion());
 		
 		// --- Remove unnecessary project plug-ins ------------------
-		this.reduceProjectPlugins(project);
-		
-		project.save(projectFolder, false, true);
+		this.reduceProjectPlugins(projectForExport);
 	}
 	
 	private void setProjectFeaturesRepositoryURL(Project project, String uriString) {

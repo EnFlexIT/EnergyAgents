@@ -16,7 +16,6 @@ import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
@@ -26,11 +25,10 @@ import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
-import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
+import energy.helper.DisplayHelper;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
@@ -59,14 +57,17 @@ public abstract class AbstractAggregationHandler {
 
 	private String ownerName;
 	private Object ownerInstance;
-	
+
+	private EnvironmentModel environmentModel;
+
+	private TimeModelDateBased timeModel;
 	private NetworkModel networkModel;
+	private HyGridAbstractEnvironmentModel hyGridAbstractEnvironmentModel;
+	
 	private long evaluationEndTime;
 	private String timeFormat;
 	private boolean headlessOperation;
 	private ExecutionDataBase executionDataBase;
-	
-	private HashMap<String, DiscreteSystemStateType> pendingSystemsInDiscreteSimulationStep;
 	
 	private int scheduleControllerFailuresMax = 5;
 	private HashMap<String, Integer> scheduleControllerFailureHashMap;
@@ -99,19 +100,32 @@ public abstract class AbstractAggregationHandler {
 	
 	
 	/**
-	 * Instantiates a new aggregation handler.
+	 * Instantiates a new aggregation handler based on the specified {@link EnvironmentModel}.
+	 *
+	 * @param envModel the EnvironmentModel to use with the aggregation
+	 * @param isheadlessOperation the indicator if is headless operation
+	 * @param ownerName the aggregators owner name
+	 */
+	public AbstractAggregationHandler(EnvironmentModel envModel, boolean isheadlessOperation, String ownerName) {
+		this.setEnvironmentModel(envModel);
+		this.headlessOperation = isheadlessOperation;
+		this.ownerName = ownerName;
+		this.initialize();
+	}
+	/**
+	 * Instantiates a new aggregation handler based on the specified {@link NetworkModel}.
 	 *
 	 * @param networkModel the network model to use for the aggregation
 	 * @param isheadlessOperation the indicator if is headless operation
 	 * @param ownerName the aggregators owner name
 	 */
 	public AbstractAggregationHandler(NetworkModel networkModel, boolean isheadlessOperation, String ownerName) {
-		this.networkModel = networkModel;
+		this.setNetworkModel(networkModel);
 		this.headlessOperation = isheadlessOperation;
 		this.ownerName = ownerName;
 		this.initialize();
 	}
-	
+
 	
 	/**
 	 * For debugging purposes: Can be set to true to to do performance measurements during aggregation handling.
@@ -337,35 +351,58 @@ public abstract class AbstractAggregationHandler {
 	// --- Access methods for the overall environment model can be found from here ------ 
 	// ----------------------------------------------------------------------------------
 	/**
-	 * Returns the current project.
-	 * @return the project
+	 * Sets the environment model.
+	 * @param environmentModel the new environment model
 	 */
-	public Project getProject() {
-		return Application.getProjectFocused();
+	private void setEnvironmentModel(EnvironmentModel environmentModel) {
+		this.environmentModel = environmentModel;
 	}
 	/**
 	 * Returns the environment model.
 	 * @return the environment model
 	 */
 	private EnvironmentModel getEnvironmentModel() {
-		if (this.getProject()!=null) {
-			EnvironmentController envController = this.getProject().getEnvironmentController();
-			if (envController!=null) {
-				return envController.getEnvironmentModel();
+		if (environmentModel==null) {
+			// -- Get environment model from project -----------
+			Project project = Application.getProjectFocused();
+			if (project!=null) {
+				EnvironmentController envController = project.getEnvironmentController();
+				if (envController!=null) {
+					environmentModel = envController.getEnvironmentModel();
+				}
 			}
 		}
-		return null;
+		return environmentModel;
+	}
+
+	/**
+	 * Sets the time model.
+	 * @param timeModel the new time model
+	 */
+	public void setTimeModel(TimeModelDateBased timeModel) {
+		this.timeModel = timeModel;
 	}
 	/**
 	 * Returns the currently configured date based time model.
 	 * @return the time model
 	 */
 	public TimeModelDateBased getTimeModel() {
-		EnvironmentModel environmentModel = this.getEnvironmentModel();
-		if (environmentModel!=null && environmentModel.getTimeModel()!=null && environmentModel.getTimeModel() instanceof TimeModelDateBased) {
-			return (TimeModelDateBased) environmentModel.getTimeModel();
+		if (timeModel==null) {
+			EnvironmentModel environmentModel = this.getEnvironmentModel();
+			if (environmentModel!=null && environmentModel.getTimeModel()!=null && environmentModel.getTimeModel() instanceof TimeModelDateBased) {
+				timeModel = (TimeModelDateBased) environmentModel.getTimeModel();
+			}
 		}
-		return null;
+		return timeModel;
+	}
+
+	/**
+	 * Sets the time format.
+	 * @param timeFormat the time format to be used for visualizations. If no date based time model is defined and 
+	 * the time format is <code>null</code>, the default of 'dd.MM.yy HH:mm:ss' will be used.
+	 */
+	public void setTimeFormat(String timeFormat) {
+		this.timeFormat = timeFormat;
 	}
 	/**
 	 * Return the time format that can be used by a {@link SimpleDateFormat} for example.
@@ -383,33 +420,47 @@ public abstract class AbstractAggregationHandler {
 		}
 		return timeFormat;
 	}
-	/**
-	 * Sets the time format.
-	 * @param timeFormat the time format to be used for visualizations. If no date based time model is defined and 
-	 * the time format is <code>null</code>, the default of 'dd.MM.yy HH:mm:ss' will be used.
-	 */
-	public void setTimeFormat(String timeFormat) {
-		this.timeFormat = timeFormat;
-	}
 	
+	/**
+	 * Sets the network model to be used.
+	 * @param networkModel the new network model
+	 */
+	private void setNetworkModel(NetworkModel networkModel) {
+		this.networkModel = networkModel;
+	}
 	/**
 	 * Returns the current overall NetworkModel.
 	 * @return the network model
 	 */
 	public NetworkModel getNetworkModel() {
-		return this.networkModel;
+		if (networkModel==null) {
+			EnvironmentModel envModel = this.getEnvironmentModel();
+			if (envModel!=null && envModel.getDisplayEnvironment()!=null && envModel.getDisplayEnvironment() instanceof NetworkModel) {
+				networkModel = (NetworkModel) envModel.getDisplayEnvironment();
+			}
+		}
+		return networkModel;
+	}
+	
+	/**
+	 * Sets the HyGrid abstract environment model.
+	 * @param hyGridAbstractEnvironmentModel the new hy grid abstract environment model
+	 */
+	public void setHyGridAbstractEnvironmentModel(HyGridAbstractEnvironmentModel hyGridAbstractEnvironmentModel) {
+		this.hyGridAbstractEnvironmentModel = hyGridAbstractEnvironmentModel;
 	}
 	/**
 	 * Returns the HyGridAbstractEnvironmentModel from the current EnvironmentModel.
 	 * @return the HyGridAbstractEnvironmentModel
 	 */
 	public HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
-		HyGridAbstractEnvironmentModel hyGridModel = null;
-		EnvironmentModel envModel = this.getEnvironmentModel();
-		if (envModel!=null && envModel.getAbstractEnvironment()!=null && envModel.getAbstractEnvironment() instanceof HyGridAbstractEnvironmentModel) {
-			hyGridModel = (HyGridAbstractEnvironmentModel) envModel.getAbstractEnvironment();
+		if (hyGridAbstractEnvironmentModel==null) {
+			EnvironmentModel envModel = this.getEnvironmentModel();
+			if (envModel!=null && envModel.getAbstractEnvironment()!=null && envModel.getAbstractEnvironment() instanceof HyGridAbstractEnvironmentModel) {
+				hyGridAbstractEnvironmentModel = (HyGridAbstractEnvironmentModel) envModel.getAbstractEnvironment();
+			}
 		}
-		return hyGridModel;
+		return hyGridAbstractEnvironmentModel;
 	}
 	
 	/**
@@ -480,19 +531,6 @@ public abstract class AbstractAggregationHandler {
 		return executionDataBase;
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// --- From here, methods for discrete simulations steps ----------------------------
-	// ----------------------------------------------------------------------------------	
-	/**
-	 * Returns the pending systems within a discrete simulation step.
-	 * @return the pending systems in discrete simulation step
-	 */
-	public HashMap<String, DiscreteSimulationStep.DiscreteSystemStateType> getPendingSystemsInDiscreteSimulationStep() {
-		if (pendingSystemsInDiscreteSimulationStep==null) {
-			pendingSystemsInDiscreteSimulationStep = new HashMap<String, DiscreteSimulationStep.DiscreteSystemStateType>();
-		}
-		return pendingSystemsInDiscreteSimulationStep;
-	}
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here on, access to the individual Schedules will be organized -----------  
@@ -514,12 +552,6 @@ public abstract class AbstractAggregationHandler {
 	 * @param agentAnswers the agent answers
 	 */
 	public void setAgentAnswers(Hashtable<AID, Object> agentAnswers) {
-
-		if (this.getHyGridAbstractEnvironmentModel().getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			// --- Clear list of pending systems for a discrete simulation ---- 
-			this.getPendingSystemsInDiscreteSimulationStep().clear();
-		}
-		
 		// --- Append or update system states to/in local ScheduleController -- 
 		if (agentAnswers!=null && agentAnswers.size()>0) {
 			ArrayList<AID> aidKeys = new ArrayList<AID>(agentAnswers.keySet());
@@ -560,21 +592,7 @@ public abstract class AbstractAggregationHandler {
 				// --- Got a state update from a part of the network ------------------------------
 				ControlBehaviourRTStateUpdate stateUpdate = (ControlBehaviourRTStateUpdate) updateObject;
 				this.appendToNetworkComponentsScheduleController(networkComponentID, stateUpdate.getTechnicalSystemStateEvaluation(), 1, "States of ControlBehaviourRT", true);
-				
-			} else if (updateObject instanceof DiscreteSimulationStep) {
-				// --- Discrete Simulation: Got DiscreteSimulationStep from NetworkComponent ------
-				DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject; 
-				switch (dsStep.getDiscreteSystemStateType()) {
-				case Iteration:
-					this.getPendingSystemsInDiscreteSimulationStep().put(networkComponentID, dsStep.getDiscreteSystemStateType());
-					break;
-				case Final:
-					this.getPendingSystemsInDiscreteSimulationStep().remove(networkComponentID);
-					break;
-				}
-				// --- Got a new system state from a part of the network --------------------------
-				this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getSystemState());
-			}
+			} 
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1108,10 +1126,9 @@ public abstract class AbstractAggregationHandler {
 	 * The method will return when the calculation is done.
 	 * @param timeUntil the time until the evaluation should be executed
 	 */
-	public void runEvaluationUntil(final long timeUntil) {
-		this.runEvaluationUntil(timeUntil, false);
+	public void runEvaluationUntil(long timeUntil) {
+		this.runEvaluationUntil(timeUntil, false, false);
 	}
-	
 	/**
 	 * Runs the aggregators evaluations or network calculation until the specified time.
 	 * The method will return when the calculation is done.
@@ -1119,11 +1136,25 @@ public abstract class AbstractAggregationHandler {
 	 * @param rebuildDecisionGraph If true, the decision graph will be rebuilt
 	 */
 	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph) {
+		this.runEvaluationUntil(timeUntil, rebuildDecisionGraph, false);
+	}
+	/**
+	 * Runs the aggregators evaluations or network calculation until the specified time.
+	 * The method will return when the calculation is done.
+	 *
+	 * @param timeUntil the time until the evaluation should be executed
+	 * @param rebuildDecisionGraph If true, the decision graph will be rebuilt
+	 * @param isDebugPrintEvaluationEndTime the indicator to print the evaluation end time for the execution
+	 */
+	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph, boolean isDebugPrintEvaluationEndTime) {
 
 		// --- Remind the current evaluation end time ---------------
 		this.setEvaluationEndTime(timeUntil);
+		if (isDebugPrintEvaluationEndTime==true) {
+			DisplayHelper.systemOutPrintlnGlobalTime(timeUntil, "=> [" + this.getClass().getSimpleName() + "]", "Execute Network Calculation");
+		}
 		
-		// --- Assign actual job to task thread ---------------------
+		// --- Assign actual job to task threads --------------------
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			// --- Get corresponding NetworkCalculationStrategy -----
 			AbstractSubNetworkConfiguration subNetConfig = getSubNetworkConfigurations().get(i);
@@ -1350,5 +1381,6 @@ public abstract class AbstractAggregationHandler {
 			listener.sendDisplayAgentNotification(displayNotification);
 		}
 	}
+
 	
 }

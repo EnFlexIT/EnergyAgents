@@ -12,6 +12,8 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.dataModel.blackboard.EmptyBlackboardAnswer;
@@ -131,10 +133,11 @@ public class BlackboardAgent extends Agent {
 		@Override
 		public void action() {
 			
+			Blackboard bBoard = BlackboardAgent.this.getBlackboard();
 			try {
 				// --- Wait for the next restart call -------------------------
-				synchronized (BlackboardAgent.this.getBlackboard().getNotificationTrigger()) {
-					BlackboardAgent.this.getBlackboard().getNotificationTrigger().wait();	
+				synchronized (bBoard.getNotificationTrigger()) {
+					bBoard.getNotificationTrigger().wait();	
 				}
 				
 			} catch (IllegalMonitorStateException imse) {
@@ -143,7 +146,7 @@ public class BlackboardAgent extends Agent {
 				// ie.printStackTrace();
 			}
 			
-			if (this.isExit()==false && BlackboardAgent.this.getBlackboard().isDoTerminate()==false) {
+			if (this.isExit()==false && bBoard.isDoTerminate()==false && bBoard.isAgentNotificationsEnabled()==true) {
 				// --- Execute to answer the BlackboardRequestVector ----------
 				this.answerBlackboardRequestVector();
 				// --- Restart this behaviour --------------------------------- 
@@ -183,8 +186,8 @@ public class BlackboardAgent extends Agent {
 			// --- Make a copy of the current vector in order -----------
 			// --- to avoid concurrent exceptions ----------------------- 
 			Vector<BlackboardRequest> bbRequestVectorCopy = new Vector<BlackboardRequest>(this.getBlackboardRequestVector());
-			for (BlackboardRequest bbRequest : bbRequestVectorCopy) {
-				this.answerBlackboardRequest(bbRequest);
+			for (int i = 0; i < bbRequestVectorCopy.size(); i++) {
+				this.answerBlackboardRequest(bbRequestVectorCopy.get(i));
 			}
 		}
 		
@@ -195,12 +198,28 @@ public class BlackboardAgent extends Agent {
 		private void answerBlackboardRequest(BlackboardRequest bbRequest) {
 
 			try {
-				
+				// ----------------------------------------------------------------------
+				// --- Empty or Null request? -------------------------------------------
+				// ----------------------------------------------------------------------
+				if (bbRequest==null) return;
+
+				// ----------------------------------------------------------------------
+				// --- Check if we're at the begin or the end of a simulation ----------- 
+				// ----------------------------------------------------------------------
 				AbstractAggregationHandler agHandler = BlackboardAgent.this.getBlackboard().getAggregationHandler();
-				Vector<SingleRequestSpecifier> requestVector = bbRequest.getRequestSpecifierVector();
+				HyGridAbstractEnvironmentModel hyGridAbsModel = agHandler.getHyGridAbstractEnvironmentModel();
+				if (hyGridAbsModel!=null) {
+					STATE simState = hyGridAbsModel.getSimulationStatus().getState();
+					if (simState!=null) {
+						if (simState!=STATE.B_ExecuteSimuation) return;
+					}
+				}
 				
-				// --- Iterate over the request specifiers ------------------------------
+				// ----------------------------------------------------------------------
+				// --- Define result vector and answer the requests ---------------------
+				// ----------------------------------------------------------------------
 				Vector<AbstractBlackboardAnswer> answerVector = new Vector<AbstractBlackboardAnswer>();
+				Vector<SingleRequestSpecifier> requestVector = bbRequest.getRequestSpecifierVector();
 				for (int i=0; i<requestVector.size(); i++) {
 					
 					AbstractBlackboardAnswer requestAnswer = null;
@@ -228,7 +247,9 @@ public class BlackboardAgent extends Agent {
 					}
 				}
 				
+				// ----------------------------------------------------------------------
 				// --- Prepare answer type ----------------------------------------------
+				// ----------------------------------------------------------------------
 				AbstractBlackboardAnswer finalAnswer = null;
 				if (answerVector.size()==0) {
 					finalAnswer = new EmptyBlackboardAnswer();
@@ -238,7 +259,9 @@ public class BlackboardAgent extends Agent {
 					finalAnswer = new MultipleBlackboardAnswer(answerVector); 
 				}
 				
+				// ----------------------------------------------------------------------
 				// --- Finally, send notification that can be used as I/O-input ---------
+				// ----------------------------------------------------------------------
 				if (finalAnswer!=null) {
 					this.sendAgentNotification(bbRequest.getRequester(), finalAnswer);
 				}

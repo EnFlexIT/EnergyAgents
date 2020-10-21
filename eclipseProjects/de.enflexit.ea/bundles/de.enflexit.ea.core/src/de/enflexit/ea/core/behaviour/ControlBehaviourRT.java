@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
@@ -16,8 +17,8 @@ import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
-import de.enflexit.eom.awb.simulation.DiscreteRTStrategyInterface;
-import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
@@ -311,6 +312,17 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private TimeModelType getTimeModelType() {
 		return this.internalDataModel.getHyGridAbstractEnvironmentModel().getTimeModelType();
 	}
+	/**
+	 * Return the current discrete time model if available.
+	 * @return the time model discrete
+	 */
+	private TimeModelDiscrete getTimeModelDiscrete() {
+		if (this.agentIOBehaviour instanceof AbstractIOSimulated) {
+			AbstractIOSimulated ioSimulated = (AbstractIOSimulated) this.agentIOBehaviour;
+			return ioSimulated.getTimeModelDiscrete();
+		}
+		return null;
+	}
 	
 	
 	/**
@@ -331,7 +343,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	
 	/**
-	 * Sends a discrete simulations step to simulation manager.
+	 * Sends a discrete simulations step to simulation manager (but only in simulations and if a discrete time model is used).
 	 */
 	private void sendDiscreteSimulationsStepToSimulationManager() {
 		
@@ -362,14 +374,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		case TechnicalSystem:
 			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 			if (this.rtEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType();
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType(tsse);
 			}
 			break;
 			
 		case TechnicalSystemGroup:
 			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 			if (this.rtGroupEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType();
+				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType(tsse);
 			}
 			break;
 			
@@ -377,12 +389,23 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			break;
 		}
 		
-		// --- Use an individual system state? ----------------------
+		// --- Use an individual discrete system state type? --------
 		DiscreteSystemStateType dsStateType = DiscreteSystemStateType.Final;
 		if (dsTypeIndividual!=null) {
 			dsStateType = dsTypeIndividual;
 		}
 		return new DiscreteSimulationStep(tsse, dsStateType);
+	}
+	/**
+	 * Answers the question, if the current execution is part of an iteration.
+	 * @return true, if is iteration step
+	 */
+	private boolean isDiscreteIterationStep() {
+		if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+			DiscreteSimulationStep dsStep = this.getDiscreteSimulationStep();
+			return dsStep.getDiscreteSystemStateType()==DiscreteSystemStateType.Iteration; 
+		}
+		return false;
 	}
 	
 	
@@ -473,9 +496,25 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Execute individual evaluation strategy -----------
 			TechnicalSystemStateEvaluation tsseLocal = null;
 			try {
+				// --- Get evaluation start and end time ------------
+				long evalStartTime = this.currentTime;
+				long evalEndTime = this.currentTime;
+				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
+				if (tmd!=null) {
+					evalStartTime = evalEndTime -tmd.getStep();
+				}
+				this.rtEvaluationStrategy.setEvaluationStartTime(evalStartTime);
+				this.rtEvaluationStrategy.setEvaluationEndTime(evalEndTime);
+				
+				// --- Check if we're in a running iteration --------
+				if (this.isDiscreteIterationStep()==true) {
+					// -- Revert evaluation to start time of step ---
+					this.rtEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
+				}
+				
 				// --- Things to do for TechnicalSystems ------------
 				this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
-				this.rtEvaluationStrategy.runEvaluationUntil(this.currentTime);
+				this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
 				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 					
 			} catch (Exception ex) {
@@ -553,11 +592,26 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Execute individual evaluation strategy -----------
 			TechnicalSystemStateEvaluation tsseLocal = null;
 			try {
+				// --- Get evaluation start and end time ------------
+				long evalStartTime = this.currentTime;
+				long evalEndTime = this.currentTime;
+				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
+				if (tmd!=null) {
+					evalStartTime = evalEndTime -tmd.getStep();
+				}
+				this.rtGroupEvaluationStrategy.setEvaluationStartTime(evalStartTime);
+				this.rtGroupEvaluationStrategy.setEvaluationEndTime(evalEndTime);
+				
+				// --- Check if we're in a running iteration --------
+				if (this.isDiscreteIterationStep()==true) {
+					// -- Revert evaluation to start time of step ---
+					this.rtGroupEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
+				}
+
 				// --- Things to do for TechnicalSystemGroupss ------
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(this.currentTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
-				
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

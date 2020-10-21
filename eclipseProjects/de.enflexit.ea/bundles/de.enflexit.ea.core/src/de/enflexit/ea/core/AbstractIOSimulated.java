@@ -9,6 +9,7 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
@@ -18,9 +19,12 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
-import de.enflexit.eom.awb.simulation.DiscreteSimulationStep;
 import energy.FixedVariableList;
+import energy.evaluation.AbstractEvaluationStrategy;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
@@ -96,6 +100,11 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Send null TSSE as registration for states from control behaviour? ----
 			if (this.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
 				this.sendControlBehaviourRTStateUpdateToEnvironmentModel(null);
+			}
+			
+			// --- Register an iterating strategy at the simulation manager? ------------
+			if (this.isDiscreteIteratingRTStrategy()==true) {
+				this.getSimulationConnector().sendManagerNotification(new DiscreteIteratorRegistration());
 			}
 			
 			// --- Send notification to simulation manager that this agent is ready -----
@@ -214,7 +223,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 * @return the time model continuous
 	 */
 	public TimeModelDiscrete getTimeModelDiscrete() {
-		if (this.myEnvironmentModel.getTimeModel() instanceof TimeModelDiscrete ) {
+		if (this.myEnvironmentModel.getTimeModel() instanceof TimeModelDiscrete) {
 			return (TimeModelDiscrete) this.myEnvironmentModel.getTimeModel();
 		}
 		return null;
@@ -448,6 +457,28 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	// ------------------------------------------------------------------------
 	// --- From here specific methods for discrete simulations can be found --- 
 	// ------------------------------------------------------------------------
+	/**
+	 * Checks if the configured evaluation strategy is a discrete iterating RT strategy. For this, a real time strategy class 
+	 * needs to implement the {@link DiscreteRTStrategyInterface}. For a continuous time model used in a simulation, this
+	 * method always return <code>false</code>.
+	 * 
+	 * @return true, if the configured evaluation strategy is able (in principle) to iterate within a single evaluation time step
+	 */
+	public boolean isDiscreteIteratingRTStrategy() {
+		
+		AbstractEvaluationStrategy strategy = null; 
+		ControlledSystemType csType = this.getInternalDataModel().getTypeOfControlledSystem();
+		
+		if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+			if (csType==ControlledSystemType.TechnicalSystem || csType==ControlledSystemType.TechnicalSystemGroup) {
+				strategy = this.getInternalDataModel().getOptionModelController().getEvaluationStrategyRT();
+				if (strategy!=null && strategy instanceof DiscreteRTStrategyInterface) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	/**
 	 * Sets the DiscreteSimulationStep (a system state and a type marker) to environment model that is managed by the Simulation Manager.
 	 *

@@ -58,9 +58,9 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	}
 	
 	/**
-	 * Possible logging modes.
-	 * ON_NEW_MEASUREMENT: Every new measurement will be logged
-	 * ON_ANY_CHANGE: New measurements with unchanged values will be ignored
+	 * Possible logging modes.<br>
+	 * ON_NEW_MEASUREMENT: Every new measurement will be logged<br>
+	 * ON_ANY_CHANGE: New measurements with unchanged values will be ignored<br>
 	 * ON_SIGNIFICANT_CHANGE: Changes below a certain threshold will be ignored. Thresholds can be configured using 
 	 * the {@link IOListFilterForLogging}'s setGeneralThreshold() and addSpecificThresholdForVariable() methods
 	 */
@@ -69,7 +69,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 		ON_VALUE_CHANGE
 	}
 	
-	protected transient AbstractEnergyAgent myAgent;
+	protected transient AbstractEnergyAgent energyAgent;
 
 	private HyGridAbstractEnvironmentModel hyGridAbstractEnvironmentModel;
 	private NetworkModel networkModel;
@@ -95,10 +95,10 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	
 	/**
 	 * Instantiates the internal data model for an AbstractEnergyAgent.
-	 * @param myAgent the actual AbstractEnergyAgent
+	 * @param energyAgent the actual instance of the owning Energy Agent
 	 */
-	public AbstractInternalDataModel(AbstractEnergyAgent myAgent) {
-		this.myAgent = myAgent;
+	public AbstractInternalDataModel(AbstractEnergyAgent energyAgent) {
+		this.energyAgent = energyAgent;
 	}
 	/**
 	 * Sets this object changed and notifies observer.
@@ -143,7 +143,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 		this.networkModel = networkModel;
 		this.setChangedAndNotify(CHANGED.NETWORK_MODEL);
 		if (isDetermineNetworkComponent==true && this.networkModel!=null) {
-			this.setNetworkComponent(this.networkModel.getNetworkComponent(this.myAgent.getLocalName()));
+			this.setNetworkComponent(this.networkModel.getNetworkComponent(this.energyAgent.getLocalName()));
 		}
 	}
 	/**
@@ -170,7 +170,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 */
 	public NetworkComponent getNetworkComponent() {
 		if (this.networkComponent==null && this.networkModel!=null) {
-			this.setNetworkComponent(this.networkModel.getNetworkComponent(this.myAgent.getLocalName()));
+			this.setNetworkComponent(this.networkModel.getNetworkComponent(this.energyAgent.getLocalName()));
 		}
 		return this.networkComponent;
 	}
@@ -193,7 +193,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	public OptionModelController getOptionModelController() {
 		if (optionModelController == null) {
 			optionModelController = new OptionModelController();
-			optionModelController.setControllingAgent(this.myAgent);
+			optionModelController.setControllingAgent(this.energyAgent);
 			if (this.getBundleModelForTechnicalSystem()!=null) {
 				this.loadTechnicalSystemFromBundle(optionModelController, this.getBundleModelForTechnicalSystem());
 			}
@@ -229,7 +229,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	public GroupController getGroupController() {
 		if (groupController == null) {
 			groupController = new GroupController();
-			groupController.getGroupOptionModelController().setControllingAgent(this.myAgent);
+			groupController.getGroupOptionModelController().setControllingAgent(this.energyAgent);
 			this.controlledSystemType = ControlledSystemType.TechnicalSystemGroup;
 		}
 		return groupController;
@@ -254,7 +254,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * @return the file or directory
 	 */
 	public File getFileOrDirectory(DirectoryType type) {
-		return DirectoryHelper.getFileOrDirectory(type, this.myAgent.getAID());
+		return DirectoryHelper.getFileOrDirectory(type, this.energyAgent.getAID());
 	}
 	
 	
@@ -283,15 +283,15 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	public PhoneBook getPhoneBook() {
 		if (phoneBook==null) {
 			// --- For the real application of the energy agent -----
-			if (this.myAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
+			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
 				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile));
 			}
 			// --- Backup solution, or in all other modes -----------
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
 				phoneBook = new PhoneBook();
-				if (this.myAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-					System.out.println("[" + this.myAgent.getLocalName() + "] Created temporary phonebook!");
+				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
+					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
 				}
 			}
 		}
@@ -349,7 +349,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 */
 	public PhoneBookEntry getMyPhoneBookEntry() {
 		PhoneBookEntry ownPhoneBookEntry = new PhoneBookEntry();
-		ownPhoneBookEntry.setAID(myAgent.getAID());
+		ownPhoneBookEntry.setAID(energyAgent.getAID());
 		ownPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
 		ownPhoneBookEntry.setControllable(false);
 		return ownPhoneBookEntry;
@@ -376,10 +376,10 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 			PlatformUpdater.getInstance().setUpdateSites(this.ceaConfigModel);
 			if (PlatformUpdater.DEBUG_PLATFORM_UPDATE==true) {
 				// --- Start the regular update behaviour ---------------
-				this.myAgent.startPlatformUpdateBehaviourNow();
+				this.energyAgent.startPlatformUpdateBehaviourNow();
 			} else {
 				// --- Start the regular update behaviour ---------------
-				this.myAgent.startNewPlatformUpdateBehaviour();
+				this.energyAgent.startNewPlatformUpdateBehaviour();
 			}
 		}
 	}
@@ -416,7 +416,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 			if (setEx!=null) {
 				DeploymentGroupsHelper dgh = setEx.getDeploymentGroupsHelper();
 				boolean isDeployedCea = dgh.isAgentDeployed(agentIdOfCEA) && dgh.isDeploymentActivated(agentIdOfCEA);
-				boolean isDeployedEnergyAgent = this.myAgent.getAgentOperatingMode()!=AgentOperatingMode.Simulation;
+				boolean isDeployedEnergyAgent = this.energyAgent.getAgentOperatingMode()!=AgentOperatingMode.Simulation;
 				boolean isAgentIdOfCeaNull = agentIdOfCEA==null; 
 				if (isDeployedCea==false & isDeployedEnergyAgent==false & isAgentIdOfCeaNull==false) {
 					// --- CEA and local agent were NOT deployed --------
