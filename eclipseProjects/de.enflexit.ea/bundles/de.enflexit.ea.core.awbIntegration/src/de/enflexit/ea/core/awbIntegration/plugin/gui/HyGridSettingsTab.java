@@ -14,18 +14,24 @@ import java.util.Observer;
 import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModelContinuous;
@@ -34,21 +40,23 @@ import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeUnit;
 import agentgui.simulationService.time.TimeUnitVector;
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration;
-import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration.UpdateMechanism;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
+import de.enflexit.ea.core.dataModel.simulation.AbstractCentralDecisionProcess;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration.DeltaMechanism;
 import energy.schedule.gui.ScheduleLengthRestrictionListener;
 import energy.schedule.gui.ScheduleLengthRestrictionPanel;
-import javax.swing.JCheckBox;
 
 /**
  * The Class HyGridSettingsTab represents a tab that is a {@link JScrollPane} and that is 
@@ -94,14 +102,26 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JTextField jTextFieldNetCalcInterval;
 	private JComboBox<TimeUnit> jComboBoxNetCalcIntervalWidthUnit;
 	
-	private JLabel jLabelScheduleLenghtRestriction;
+	private JLabel jLabelDateHandling;
 	private ScheduleLengthRestrictionPanel jPanelScheduleLengthRestriction;
 	private JLabel jLabelSimulationType;
 	private JRadioButton jRadioButtonExecutionBasedOnPowerFlow;
 	private JRadioButton jRadioButtonExecutionBasedOnSensorData;
 	
-	private JTabbedPane graphElementLayoutSettingsConfigurationPanels;
+	private JTabbedPane jTabbedPaneColorSettings;
 	private JCheckBox jCheckBoxSnapshotSimulation;
+	private JPanel jPanelDiscreteSettings;
+	private JPanel jPanelContinousSettings;
+	private JSeparator jSeparatorAfterTimeModelSelection;
+	private JPanel jPanelDataHandling;
+	private JSeparator jSeparatorAfterDataHandling;
+	private JPanel jPanelVisualizationSettings;
+	private JLabel jLabelHeaderColorAtRuntime;
+	private JLabel jLabelHeaderVisualizationSettings;
+	private JRadioButton jRadioButtonSnapshotDecentral;
+	private JRadioButton jRadioButtonSnapshotCentral;
+	private JTextField jTextFieldCentralDecisionClass;
+	private JButton jButtonCentralDecisionClass;
 
 	
 	/**
@@ -158,8 +178,23 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		if (this.currProject.getTimeModelClass()!=null && this.currProject.getTimeModelClass().equals(TimeModelDiscrete.class.getName())==true) {
 			this.getJCheckBoxSnapshotSimulation().setSelected(hyGridDM.isDiscreteSnapshotSimulation());
+			if (hyGridDM.getSnapshotDecisionLocation()==null || hyGridDM.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Decentral) {
+				this.getJRadioButtonSnapshotDecentral().setSelected(true);
+				this.getJRadioButtonSnapshotCentral().setSelected(false);
+				this.getJTextFieldCentralDecisionClass().setText(hyGridDM.getSnapshotCentralDecisionClass());
+				this.getJTextFieldCentralDecisionClass().setToolTipText(hyGridDM.getSnapshotCentralDecisionClass());
+			} else {
+				this.getJRadioButtonSnapshotDecentral().setSelected(false);
+				this.getJRadioButtonSnapshotCentral().setSelected(true);
+				this.getJTextFieldCentralDecisionClass().setText(hyGridDM.getSnapshotCentralDecisionClass());
+				this.getJTextFieldCentralDecisionClass().setToolTipText(hyGridDM.getSnapshotCentralDecisionClass());
+			}
 		} else {
 			this.getJCheckBoxSnapshotSimulation().setSelected(false);
+			this.getJRadioButtonSnapshotDecentral().setSelected(true);
+			this.getJRadioButtonSnapshotCentral().setSelected(false);
+			this.getJTextFieldCentralDecisionClass().setText(null);
+			this.getJTextFieldCentralDecisionClass().setToolTipText(null);
 		}
 		
 		// --- Set the simulation data base -----
@@ -203,7 +238,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			break;
 		}
 
-		this.setTimeExplanation(this.getJTextFieldTransLiveBit(), jLabelTransLiveBit);
+		this.setTimeExplanation(this.getJTextFieldTransLiveBit(), getJLabelTransLiveBit());
 		
 		// --- Set ScheduleLenghtDescription ----
 		this.getJPanelScheduleLengthRestriction().setScheduleLengthRestriction(hyGridDM.getScheduleLengthRestriction());
@@ -221,8 +256,20 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		// --- Save Simulation Interval length ------------
 		this.saveSimulationIntervalLength(hyGridDM);
-		hyGridDM.setDiscreteSnapshotSimulation(this.getJCheckBoxSnapshotSimulation().isSelected());
 		this.saveNetworkCalculationIntervalLength(hyGridDM);
+
+		// --- Values for snapshot simulations ------------
+		String centralDecisionClass = this.getJTextFieldCentralDecisionClass().getText();
+		if (centralDecisionClass.isEmpty()==true) centralDecisionClass = null;
+		
+		hyGridDM.setDiscreteSnapshotSimulation(this.getJCheckBoxSnapshotSimulation().isSelected());
+		if (this.getJRadioButtonSnapshotDecentral().isSelected()) {
+			hyGridDM.setSnapshotDecisionLocation(SnapshotDecisionLocation.Decentral);
+			hyGridDM.setSnapshotCentralDecisionClass(null);
+		} else if (this.getJRadioButtonSnapshotCentral().isSelected()) {
+			hyGridDM.setSnapshotDecisionLocation(SnapshotDecisionLocation.Central);
+			hyGridDM.setSnapshotCentralDecisionClass(centralDecisionClass);
+		}
 		
 		// --- Save the simulation execution base --------
 		if (this.getJRadioButtonExecutionBasedOnPowerFlow().isSelected()) {
@@ -317,9 +364,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	 */
 	private void setTranslation() {
 		
-		jLabelTimeModelSelection.setText("Simulation Time Model");
-		jRadioButtonTimeModelDiscrete.setText(Language.translate(jRadioButtonTimeModelDiscrete.getText(), Language.EN));
-		jRadioButtonTimeModelContinuous.setText("Continuous Time Model");
+		jLabelTimeModelSelection.setText(Language.translate(this.getJLabelTimeModelSelection().getText(), Language.EN));
+		jRadioButtonTimeModelDiscrete.setText(Language.translate(this.getJRadioButtonTimeModelDiscrete().getText(), Language.EN));
+		jRadioButtonTimeModelContinuous.setText(Language.translate(this.getJRadioButtonTimeModelContinuous().getText(), Language.EN));
 		
 		jLabelInterval.setText(Language.translate(jLabelInterval.getText(), Language.EN));
 		jLabelNetCalcInterval.setText(Language.translate(jLabelNetCalcInterval.getText(), Language.EN));
@@ -341,9 +388,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(650, 796);
-		this.setViewportView(this.getJPanelMain());
+		this.setSize(980, 750);
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
+		this.setViewportView(this.getJPanelMain());
 	}
 
 	/**
@@ -357,6 +404,10 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			ButtonGroup bgTimeModel = new ButtonGroup();
 			bgTimeModel.add(this.getJRadioButtonTimeModelDiscrete());
 			bgTimeModel.add(this.getJRadioButtonTimeModelContinuous());
+			
+			ButtonGroup bgDiscreteSnapshot = new ButtonGroup();
+			bgDiscreteSnapshot.add(this.getJRadioButtonSnapshotDecentral());
+			bgDiscreteSnapshot.add(this.getJRadioButtonSnapshotCentral());
 			
 			ButtonGroup bgSimBaseOn = new ButtonGroup();
 			bgSimBaseOn.add(this.getJRadioButtonExecutionBasedOnPowerFlow());
@@ -372,312 +423,190 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			
 			
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{133, 0, 250, 0};
-			gridBagLayout.rowHeights = new int[]{16, 25, 0, 0, 0, 0, 0, 0, 16, 26, 26, 26, 16, 26, 0, 0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.columnWidths = new int[]{133, 0, 0};
+			gridBagLayout.rowHeights = new int[]{16, 25, 0, 0, 26, 26, 0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelMain.setLayout(gridBagLayout);
 			jPanelMain.setSize(550, 893);
 			
 			GridBagConstraints gbc_jLabelTimeModelSelection = new GridBagConstraints();
-			gbc_jLabelTimeModelSelection.gridwidth = 3;
 			gbc_jLabelTimeModelSelection.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTimeModelSelection.insets = new Insets(10, 10, 2, 0);
 			gbc_jLabelTimeModelSelection.gridx = 0;
 			gbc_jLabelTimeModelSelection.gridy = 0;
 			jPanelMain.add(getJLabelTimeModelSelection(), gbc_jLabelTimeModelSelection);
-			
-			GridBagConstraints gbc_jRadioButtonTimeModelDiscrete = new GridBagConstraints();
-			gbc_jRadioButtonTimeModelDiscrete.gridwidth = 2;
-			gbc_jRadioButtonTimeModelDiscrete.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonTimeModelDiscrete.insets = new Insets(0, 10, 5, 5);
-			gbc_jRadioButtonTimeModelDiscrete.gridx = 0;
-			gbc_jRadioButtonTimeModelDiscrete.gridy = 1;
-			jPanelMain.add(getJRadioButtonTimeModelDiscrete(), gbc_jRadioButtonTimeModelDiscrete);
-			GridBagConstraints gbc_jLabelInterval = new GridBagConstraints();
-			gbc_jLabelInterval.anchor = GridBagConstraints.WEST;
-			gbc_jLabelInterval.insets = new Insets(0, 32, 5, 5);
-			gbc_jLabelInterval.gridx = 0;
-			gbc_jLabelInterval.gridy = 2;
-			jPanelMain.add(getJLabelInterval(), gbc_jLabelInterval);
-			
-			GridBagConstraints gbc_jTextFieldWidthValue = new GridBagConstraints();
-			gbc_jTextFieldWidthValue.anchor = GridBagConstraints.WEST;
-			gbc_jTextFieldWidthValue.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldWidthValue.gridx = 1;
-			gbc_jTextFieldWidthValue.gridy = 2;
-			jPanelMain.add(getJTextFieldIntervalWidthValue(), gbc_jTextFieldWidthValue);
-			GridBagConstraints gbc_jComboBoxWidthUnit = new GridBagConstraints();
-			gbc_jComboBoxWidthUnit.anchor = GridBagConstraints.WEST;
-			gbc_jComboBoxWidthUnit.insets = new Insets(0, 0, 5, 0);
-			gbc_jComboBoxWidthUnit.gridx = 2;
-			gbc_jComboBoxWidthUnit.gridy = 2;
-			jPanelMain.add(getJComboBoxIntervalWidthUnit(), gbc_jComboBoxWidthUnit);
-			GridBagConstraints gbc_jCheckBoxSnapshotSimulation = new GridBagConstraints();
-			gbc_jCheckBoxSnapshotSimulation.anchor = GridBagConstraints.WEST;
-			gbc_jCheckBoxSnapshotSimulation.insets = new Insets(0, 30, 5, 5);
-			gbc_jCheckBoxSnapshotSimulation.gridx = 0;
-			gbc_jCheckBoxSnapshotSimulation.gridy = 3;
-			jPanelMain.add(getJCheckBoxSnapshotSimulation(), gbc_jCheckBoxSnapshotSimulation);
-			GridBagConstraints gbc_jRadioButtonTimeModelContinous = new GridBagConstraints();
-			gbc_jRadioButtonTimeModelContinous.gridwidth = 2;
-			gbc_jRadioButtonTimeModelContinous.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonTimeModelContinous.insets = new Insets(5, 10, 5, 5);
-			gbc_jRadioButtonTimeModelContinous.gridx = 0;
-			gbc_jRadioButtonTimeModelContinous.gridy = 4;
-			jPanelMain.add(getJRadioButtonTimeModelContinuous(), gbc_jRadioButtonTimeModelContinous);
-			GridBagConstraints gbc_jLabelNetCalcInterval = new GridBagConstraints();
-			gbc_jLabelNetCalcInterval.anchor = GridBagConstraints.WEST;
-			gbc_jLabelNetCalcInterval.insets = new Insets(0, 32, 5, 5);
-			gbc_jLabelNetCalcInterval.gridx = 0;
-			gbc_jLabelNetCalcInterval.gridy = 5;
-			jPanelMain.add(getJLabelNetCalcInterval(), gbc_jLabelNetCalcInterval);
-			GridBagConstraints gbc_jTextFieldNetCalcInterval = new GridBagConstraints();
-			gbc_jTextFieldNetCalcInterval.anchor = GridBagConstraints.WEST;
-			gbc_jTextFieldNetCalcInterval.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldNetCalcInterval.gridx = 1;
-			gbc_jTextFieldNetCalcInterval.gridy = 5;
-			jPanelMain.add(getJTextFieldNetCalcInterval(), gbc_jTextFieldNetCalcInterval);
-			GridBagConstraints gbc_jComboBoxNetCalcIntervalWidthUnit = new GridBagConstraints();
-			gbc_jComboBoxNetCalcIntervalWidthUnit.anchor = GridBagConstraints.WEST;
-			gbc_jComboBoxNetCalcIntervalWidthUnit.insets = new Insets(0, 0, 5, 0);
-			gbc_jComboBoxNetCalcIntervalWidthUnit.gridx = 2;
-			gbc_jComboBoxNetCalcIntervalWidthUnit.gridy = 5;
-			jPanelMain.add(getJComboBoxNetCalcIntervalWidthUnit(), gbc_jComboBoxNetCalcIntervalWidthUnit);
-
-			GridBagConstraints gbc_jLabelSimulationType = new GridBagConstraints();
-			gbc_jLabelSimulationType.gridwidth = 2;
-			gbc_jLabelSimulationType.insets = new Insets(10, 10, 2, 0);
-			gbc_jLabelSimulationType.anchor = GridBagConstraints.WEST;
-			gbc_jLabelSimulationType.gridx = 0;
-			gbc_jLabelSimulationType.gridy = 6;
-			jPanelMain.add(getJLabelSimulationType(), gbc_jLabelSimulationType);
-			GridBagConstraints gbc_jRadioButtonSimulationBasedOnPowerFlow = new GridBagConstraints();
-			gbc_jRadioButtonSimulationBasedOnPowerFlow.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonSimulationBasedOnPowerFlow.insets = new Insets(0, 10, 0, 0);
-			gbc_jRadioButtonSimulationBasedOnPowerFlow.gridx = 0;
-			gbc_jRadioButtonSimulationBasedOnPowerFlow.gridy = 7;
-			jPanelMain.add(getJRadioButtonExecutionBasedOnPowerFlow(), gbc_jRadioButtonSimulationBasedOnPowerFlow);
-			GridBagConstraints gbc_jRadioButtonSimulationBasedOnSensorData = new GridBagConstraints();
-			gbc_jRadioButtonSimulationBasedOnSensorData.gridwidth = 2;
-			gbc_jRadioButtonSimulationBasedOnSensorData.insets = new Insets(0, 10, 0, 0);
-			gbc_jRadioButtonSimulationBasedOnSensorData.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonSimulationBasedOnSensorData.gridx = 1;
-			gbc_jRadioButtonSimulationBasedOnSensorData.gridy = 7;
-			jPanelMain.add(getJRadioButtonExecutionBasedOnSensorData(), gbc_jRadioButtonSimulationBasedOnSensorData);
-
-			jLabelHeaderPowerTransmission = new JLabel();
-			jLabelHeaderPowerTransmission.setText("Transmission of power signals");
-			jLabelHeaderPowerTransmission.setFont(new Font("Dialog", Font.BOLD, 13));
-			GridBagConstraints gbc_jLabelHeaderPowerTransmission = new GridBagConstraints();
-			gbc_jLabelHeaderPowerTransmission.gridwidth = 3;
-			gbc_jLabelHeaderPowerTransmission.anchor = GridBagConstraints.WEST;
-			gbc_jLabelHeaderPowerTransmission.insets = new Insets(10, 10, 2, 0);
-			gbc_jLabelHeaderPowerTransmission.gridx = 0;
-			gbc_jLabelHeaderPowerTransmission.gridy = 8;
-			jPanelMain.add(jLabelHeaderPowerTransmission, gbc_jLabelHeaderPowerTransmission);
-			
-			GridBagConstraints gbc_jRadioButtonTransByAbsolute = new GridBagConstraints();
-			gbc_jRadioButtonTransByAbsolute.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonTransByAbsolute.insets = new Insets(0, 10, 5, 5);
-			gbc_jRadioButtonTransByAbsolute.gridx = 0;
-			gbc_jRadioButtonTransByAbsolute.gridy = 9;
-			jPanelMain.add(getJRadioButtonTransByAbsolute(), gbc_jRadioButtonTransByAbsolute);
-			
-			GridBagConstraints gbc_jTextFieldTransWatt = new GridBagConstraints();
-			gbc_jTextFieldTransWatt.anchor = GridBagConstraints.WEST;
-			gbc_jTextFieldTransWatt.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldTransWatt.gridx = 1;
-			gbc_jTextFieldTransWatt.gridy = 9;
-			jPanelMain.add(getJTextFieldTransWatt(), gbc_jTextFieldTransWatt);
-			
-			jLabelTransWatt = new JLabel();
-			jLabelTransWatt.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelTransWatt.setText(" Watt");
-			GridBagConstraints gbc_jLabelTransWatt = new GridBagConstraints();
-			gbc_jLabelTransWatt.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTransWatt.insets = new Insets(0, 0, 5, 0);
-			gbc_jLabelTransWatt.gridx = 2;
-			gbc_jLabelTransWatt.gridy = 9;
-			jPanelMain.add(jLabelTransWatt, gbc_jLabelTransWatt);
-			
-			GridBagConstraints gbc_jRadioButtonTransByPercent = new GridBagConstraints();
-			gbc_jRadioButtonTransByPercent.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonTransByPercent.insets = new Insets(0, 10, 5, 5);
-			gbc_jRadioButtonTransByPercent.gridx = 0;
-			gbc_jRadioButtonTransByPercent.gridy = 10;
-			jPanelMain.add(getJRadioButtonTransByPercent(), gbc_jRadioButtonTransByPercent);
-			
-			GridBagConstraints gbc_jTextFieldTransPercent = new GridBagConstraints();
-			gbc_jTextFieldTransPercent.anchor = GridBagConstraints.WEST;
-			gbc_jTextFieldTransPercent.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldTransPercent.gridx = 1;
-			gbc_jTextFieldTransPercent.gridy = 10;
-			jPanelMain.add(getJTextFieldTransPercent(), gbc_jTextFieldTransPercent);
-			
-			jLabelTransPercent = new JLabel();
-			jLabelTransPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelTransPercent.setText(" % ");
-			GridBagConstraints gbc_jLabelTransPercent = new GridBagConstraints();
-			gbc_jLabelTransPercent.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTransPercent.insets = new Insets(0, 0, 5, 0);
-			gbc_jLabelTransPercent.gridx = 2;
-			gbc_jLabelTransPercent.gridy = 10;
-			jPanelMain.add(jLabelTransPercent, gbc_jLabelTransPercent);
-			
-			jLabelTransHeaderLiveBit = new JLabel();
-			jLabelTransHeaderLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelTransHeaderLiveBit.setText("Time after a signal must be sent at least");
-			GridBagConstraints gbc_jLabelTransHeaderLiveBit = new GridBagConstraints();
-			gbc_jLabelTransHeaderLiveBit.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTransHeaderLiveBit.insets = new Insets(0, 10, 5, 5);
-			gbc_jLabelTransHeaderLiveBit.gridx = 0;
-			gbc_jLabelTransHeaderLiveBit.gridy = 11;
-			jPanelMain.add(jLabelTransHeaderLiveBit, gbc_jLabelTransHeaderLiveBit);
-			
-			GridBagConstraints gbc_jTextFieldTransLiveBit = new GridBagConstraints();
-			gbc_jTextFieldTransLiveBit.anchor = GridBagConstraints.WEST;
-			gbc_jTextFieldTransLiveBit.insets = new Insets(0, 0, 5, 5);
-			gbc_jTextFieldTransLiveBit.gridx = 1;
-			gbc_jTextFieldTransLiveBit.gridy = 11;
-			jPanelMain.add(getJTextFieldTransLiveBit(), gbc_jTextFieldTransLiveBit);
-			
-			jLabelTransLiveBit = new JLabel();
-			jLabelTransLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelTransLiveBit.setText("Milliseconds");
-			GridBagConstraints gbc_jLabelTransLiveBit = new GridBagConstraints();
-			gbc_jLabelTransLiveBit.anchor = GridBagConstraints.WEST;
-			gbc_jLabelTransLiveBit.insets = new Insets(0, 0, 5, 0);
-			gbc_jLabelTransLiveBit.gridx = 2;
-			gbc_jLabelTransLiveBit.gridy = 11;
-			jPanelMain.add(jLabelTransLiveBit, gbc_jLabelTransLiveBit);
-			
-			jLabelHeaderVisualization = new JLabel();
-			jLabelHeaderVisualization.setText("Visualisation Updates");
-			jLabelHeaderVisualization.setFont(new Font("Dialog", Font.BOLD, 13));
-			GridBagConstraints gbc_jLabelHeaderVisualization = new GridBagConstraints();
-			gbc_jLabelHeaderVisualization.gridwidth = 3;
-			gbc_jLabelHeaderVisualization.anchor = GridBagConstraints.WEST;
-			gbc_jLabelHeaderVisualization.insets = new Insets(10, 10, 2, 0);
-			gbc_jLabelHeaderVisualization.gridx = 0;
-			gbc_jLabelHeaderVisualization.gridy = 12;
-			jPanelMain.add(jLabelHeaderVisualization, gbc_jLabelHeaderVisualization);
-			
-			GridBagConstraints gbc_jRadioButtonDisplayChanges = new GridBagConstraints();
-			gbc_jRadioButtonDisplayChanges.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonDisplayChanges.insets = new Insets(0, 10, 5, 5);
-			gbc_jRadioButtonDisplayChanges.gridx = 0;
-			gbc_jRadioButtonDisplayChanges.gridy = 13;
-			jPanelMain.add(getJRadioButtonDisplayEnabled(), gbc_jRadioButtonDisplayChanges);
-			
-			GridBagConstraints gbc_jRadioButtonDisplayDisable = new GridBagConstraints();
-			gbc_jRadioButtonDisplayDisable.anchor = GridBagConstraints.WEST;
-			gbc_jRadioButtonDisplayDisable.insets = new Insets(0, 0, 5, 5);
-			gbc_jRadioButtonDisplayDisable.gridx = 1;
-			gbc_jRadioButtonDisplayDisable.gridy = 13;
-			jPanelMain.add(getJRadioButtonDisplayDisable(), gbc_jRadioButtonDisplayDisable);
-			GridBagConstraints gbc_jPanelColorSettings = new GridBagConstraints();
-			gbc_jPanelColorSettings.insets = new Insets(10, 10, 5, 0);
-			gbc_jPanelColorSettings.anchor = GridBagConstraints.NORTH;
-			gbc_jPanelColorSettings.gridwidth = 3;
-			gbc_jPanelColorSettings.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jPanelColorSettings.gridx = 0;
-			gbc_jPanelColorSettings.gridy = 14;
-//			jPanelMain.add(getJPanelColorSettings(), gbc_jPanelColorSettings);
-			jPanelMain.add(getGraphElementLayoutSettingsConfigurationPanels(), gbc_jPanelColorSettings);
-			GridBagConstraints gbc_jLabelScheduleLenghtRestriction = new GridBagConstraints();
-			gbc_jLabelScheduleLenghtRestriction.anchor = GridBagConstraints.WEST;
-			gbc_jLabelScheduleLenghtRestriction.insets = new Insets(0, 10, 0, 5);
-			gbc_jLabelScheduleLenghtRestriction.gridx = 0;
-			gbc_jLabelScheduleLenghtRestriction.gridy = 15;
-			jPanelMain.add(getJLabelScheduleLenghtRestriction(), gbc_jLabelScheduleLenghtRestriction);
+			GridBagConstraints gbc_jPanelContinousSettings = new GridBagConstraints();
+			gbc_jPanelContinousSettings.anchor = GridBagConstraints.WEST;
+			gbc_jPanelContinousSettings.insets = new Insets(5, 10, 0, 0);
+			gbc_jPanelContinousSettings.fill = GridBagConstraints.VERTICAL;
+			gbc_jPanelContinousSettings.gridx = 0;
+			gbc_jPanelContinousSettings.gridy = 1;
+			jPanelMain.add(getJPanelContinousSettings(), gbc_jPanelContinousSettings);
+			GridBagConstraints gbc_jPanelDiscreteSettings = new GridBagConstraints();
+			gbc_jPanelDiscreteSettings.insets = new Insets(5, 10, 0, 10);
+			gbc_jPanelDiscreteSettings.fill = GridBagConstraints.BOTH;
+			gbc_jPanelDiscreteSettings.gridx = 1;
+			gbc_jPanelDiscreteSettings.gridy = 1;
+			jPanelMain.add(getJPanelDiscreteSettings(), gbc_jPanelDiscreteSettings);
+			GridBagConstraints gbc_jSeparatorAfterTimeModelSelection = new GridBagConstraints();
+			gbc_jSeparatorAfterTimeModelSelection.insets = new Insets(15, 10, 10, 10);
+			gbc_jSeparatorAfterTimeModelSelection.gridwidth = 2;
+			gbc_jSeparatorAfterTimeModelSelection.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparatorAfterTimeModelSelection.gridx = 0;
+			gbc_jSeparatorAfterTimeModelSelection.gridy = 2;
+			jPanelMain.add(getJSeparatorAfterTimeModelSelection(), gbc_jSeparatorAfterTimeModelSelection);
+			GridBagConstraints gbc_jLabelDateHandling = new GridBagConstraints();
+			gbc_jLabelDateHandling.anchor = GridBagConstraints.WEST;
+			gbc_jLabelDateHandling.insets = new Insets(0, 10, 0, 5);
+			gbc_jLabelDateHandling.gridx = 0;
+			gbc_jLabelDateHandling.gridy = 3;
+			jPanelMain.add(getJLabelDateHandling(), gbc_jLabelDateHandling);
+			GridBagConstraints gbc_jPanelDataHandling = new GridBagConstraints();
+			gbc_jPanelDataHandling.insets = new Insets(5, 10, 0, 10);
+			gbc_jPanelDataHandling.fill = GridBagConstraints.BOTH;
+			gbc_jPanelDataHandling.gridx = 0;
+			gbc_jPanelDataHandling.gridy = 4;
+			jPanelMain.add(getJPanelDataHandling(), gbc_jPanelDataHandling);
 			GridBagConstraints gbc_jPanelScheduleLengthRestriction = new GridBagConstraints();
-			gbc_jPanelScheduleLengthRestriction.gridwidth = 2;
-			gbc_jPanelScheduleLengthRestriction.insets = new Insets(0, 10, 0, 5);
-			gbc_jPanelScheduleLengthRestriction.fill = GridBagConstraints.BOTH;
-			gbc_jPanelScheduleLengthRestriction.gridx = 0;
-			gbc_jPanelScheduleLengthRestriction.gridy = 16;
+			gbc_jPanelScheduleLengthRestriction.insets = new Insets(0, 10, 0, 10);
+			gbc_jPanelScheduleLengthRestriction.anchor = GridBagConstraints.NORTHWEST;
+			gbc_jPanelScheduleLengthRestriction.gridx = 1;
+			gbc_jPanelScheduleLengthRestriction.gridy = 4;
 			jPanelMain.add(getJPanelScheduleLengthRestriction(), gbc_jPanelScheduleLengthRestriction);
+			GridBagConstraints gbc_jSeparatorAfterDataHandling = new GridBagConstraints();
+			gbc_jSeparatorAfterDataHandling.gridwidth = 2;
+			gbc_jSeparatorAfterDataHandling.insets = new Insets(15, 10, 10, 10);
+			gbc_jSeparatorAfterDataHandling.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jSeparatorAfterDataHandling.gridx = 0;
+			gbc_jSeparatorAfterDataHandling.gridy = 5;
+			jPanelMain.add(getJSeparatorAfterDataHandling(), gbc_jSeparatorAfterDataHandling);
+			GridBagConstraints gbc_jLabelHeaderVisualizationSettings = new GridBagConstraints();
+			gbc_jLabelHeaderVisualizationSettings.insets = new Insets(0, 10, 0, 0);
+			gbc_jLabelHeaderVisualizationSettings.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeaderVisualizationSettings.gridx = 0;
+			gbc_jLabelHeaderVisualizationSettings.gridy = 6;
+			jPanelMain.add(getJLabelHeaderVisualizationSettings(), gbc_jLabelHeaderVisualizationSettings);
+			GridBagConstraints gbc_jPanelVisualizationSettings = new GridBagConstraints();
+			gbc_jPanelVisualizationSettings.gridwidth = 2;
+			gbc_jPanelVisualizationSettings.insets = new Insets(5, 10, 0, 10);
+			gbc_jPanelVisualizationSettings.fill = GridBagConstraints.BOTH;
+			gbc_jPanelVisualizationSettings.gridx = 0;
+			gbc_jPanelVisualizationSettings.gridy = 7;
+			jPanelMain.add(getJPanelVisualizationSettings(), gbc_jPanelVisualizationSettings);
 			
 		}
 		return jPanelMain;
 	}
-	
-	/**
-	 * Gets the j label time model selection.
-	 * @return the j label time model selection
-	 */
 	private JLabel getJLabelTimeModelSelection() {
 		if (jLabelTimeModelSelection == null) {
-			jLabelTimeModelSelection = new JLabel("Switch Simulation Time Model");
+			jLabelTimeModelSelection = new JLabel("Simulation Time Model");
 			jLabelTimeModelSelection.setFont(new Font("Dialog", Font.BOLD, 13));
 		}
 		return jLabelTimeModelSelection;
 	}
-	/**
-	 * Gets the JRadioButton time model discrete.
-	 * @return the JRadioButton time model discrete
-	 */
-	private JRadioButton getJRadioButtonTimeModelDiscrete() {
-		if (jRadioButtonTimeModelDiscrete == null) {
-			jRadioButtonTimeModelDiscrete = new JRadioButton("Discrete Time Model");
-			jRadioButtonTimeModelDiscrete.setFont(new Font("Dialog", Font.BOLD, 12));
-			jRadioButtonTimeModelDiscrete.addActionListener(this);
-		}
-		return jRadioButtonTimeModelDiscrete;
-	}
-	/**
-	 * Gets the JLabel interval.
-	 * @return the JLabel interval
-	 */
-	private JLabel getJLabelInterval() {
-		if (jLabelInterval == null) {
-			jLabelInterval = new JLabel("Time between two simulation steps");
-			jLabelInterval.setFont(new Font("Dialog", Font.PLAIN, 12));
-		}
-		return jLabelInterval;
-	}
-	/**
-	 * Gets the JTextField width value.
-	 * @return the JTextField width value
-	 */
-	private JTextField getJTextFieldIntervalWidthValue() {
-		if (jTextFieldIntervalWidthValue == null) {
-			jTextFieldIntervalWidthValue = new JTextField();
-			jTextFieldIntervalWidthValue.setPreferredSize(new Dimension(100, 26));
-			jTextFieldIntervalWidthValue.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldIntervalWidthValue.addKeyListener(new KeyAdapter4Numbers(false));
-			jTextFieldIntervalWidthValue.getDocument().addDocumentListener(this);
-		}
-		return jTextFieldIntervalWidthValue;
-	}
-	private JComboBox<TimeUnit> getJComboBoxIntervalWidthUnit() {
-		if (jComboBoxIntervalWidthUnit == null) {
-			jComboBoxIntervalWidthUnit = new JComboBox<TimeUnit>(new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector()));
-			jComboBoxIntervalWidthUnit.setPreferredSize(new Dimension(120, 26));
-			jComboBoxIntervalWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxIntervalWidthUnit.addActionListener(this); 
-		}
-		return jComboBoxIntervalWidthUnit;
-	}
-	private JCheckBox getJCheckBoxSnapshotSimulation() {
-		if (jCheckBoxSnapshotSimulation == null) {
-			jCheckBoxSnapshotSimulation = new JCheckBox("Do Snapshot Simulation");
-			jCheckBoxSnapshotSimulation.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxSnapshotSimulation.addActionListener(this);
-		}
-		return jCheckBoxSnapshotSimulation;
-	}
+	private JPanel getJPanelContinousSettings() {
+		if (jPanelContinousSettings == null) {
+			jPanelContinousSettings = new JPanel();
+			
+			GridBagLayout gbl_jPanelContinousSettings = new GridBagLayout();
+			gbl_jPanelContinousSettings.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelContinousSettings.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelContinousSettings.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelContinousSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 
+			GridBagConstraints gbc_jRadioButtonTimeModelContinuous = new GridBagConstraints();
+			gbc_jRadioButtonTimeModelContinuous.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTimeModelContinuous.gridx = 0;
+			gbc_jRadioButtonTimeModelContinuous.gridy = 0;
+			
+			GridBagConstraints gbc_jLabelNetCalcInterval = new GridBagConstraints();
+			gbc_jLabelNetCalcInterval.insets = new Insets(5, 0, 0, 0);
+			gbc_jLabelNetCalcInterval.anchor = GridBagConstraints.WEST;
+			gbc_jLabelNetCalcInterval.gridx = 0;
+			gbc_jLabelNetCalcInterval.gridy = 1;
+			GridBagConstraints gbc_jTextFieldNetCalcInterval = new GridBagConstraints();
+			gbc_jTextFieldNetCalcInterval.insets = new Insets(5, 5, 0, 0);
+			gbc_jTextFieldNetCalcInterval.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldNetCalcInterval.gridx = 1;
+			gbc_jTextFieldNetCalcInterval.gridy = 1;
+			
+			GridBagConstraints gbc_jComboBoxNetCalcIntervalWidthUnit = new GridBagConstraints();
+			gbc_jComboBoxNetCalcIntervalWidthUnit.insets = new Insets(5, 0, 0, 0);
+			gbc_jComboBoxNetCalcIntervalWidthUnit.anchor = GridBagConstraints.WEST;
+			gbc_jComboBoxNetCalcIntervalWidthUnit.gridx = 2;
+			gbc_jComboBoxNetCalcIntervalWidthUnit.gridy = 1;
+			GridBagConstraints gbc_jRadioButtonTransByAbsolute = new GridBagConstraints();
+			GridBagConstraints gbc_jLabelHeaderPowerTransmission = new GridBagConstraints();
+			gbc_jLabelHeaderPowerTransmission.insets = new Insets(5, 0, 0, 0);
+			gbc_jLabelHeaderPowerTransmission.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeaderPowerTransmission.gridx = 0;
+			gbc_jLabelHeaderPowerTransmission.gridy = 2;
 	
-	/**
-	 * Gets the JRadioButton time model continuous.
-	 * @return the JRadioButtonn time model continuous
-	 */
+			gbc_jRadioButtonTransByAbsolute.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTransByAbsolute.gridx = 0;
+			gbc_jRadioButtonTransByAbsolute.gridy = 3;
+			GridBagConstraints gbc_jTextFieldTransWatt = new GridBagConstraints();
+			gbc_jTextFieldTransWatt.insets = new Insets(0, 5, 0, 0);
+			gbc_jTextFieldTransWatt.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldTransWatt.gridx = 1;
+			gbc_jTextFieldTransWatt.gridy = 3;
+			GridBagConstraints gbc_jLabelTransWatt = new GridBagConstraints();
+			gbc_jLabelTransWatt.anchor = GridBagConstraints.WEST;
+			gbc_jLabelTransWatt.gridx = 2;
+			gbc_jLabelTransWatt.gridy = 3;
+
+			GridBagConstraints gbc_jRadioButtonTransByPercent = new GridBagConstraints();
+			gbc_jRadioButtonTransByPercent.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTransByPercent.gridx = 0;
+			gbc_jRadioButtonTransByPercent.gridy = 4;
+			GridBagConstraints gbc_jTextFieldTransPercent = new GridBagConstraints();
+			gbc_jTextFieldTransPercent.insets = new Insets(0, 5, 0, 0);
+			gbc_jTextFieldTransPercent.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldTransPercent.gridx = 1;
+			gbc_jTextFieldTransPercent.gridy = 4;
+			GridBagConstraints gbc_jLabelTransPercent = new GridBagConstraints();
+			gbc_jLabelTransPercent.anchor = GridBagConstraints.WEST;
+			gbc_jLabelTransPercent.gridx = 2;
+			gbc_jLabelTransPercent.gridy = 4;
+			
+			GridBagConstraints gbc_jLabelTransHeaderLiveBit = new GridBagConstraints();
+			gbc_jLabelTransHeaderLiveBit.anchor = GridBagConstraints.WEST;
+			gbc_jLabelTransHeaderLiveBit.gridx = 0;
+			gbc_jLabelTransHeaderLiveBit.gridy = 5;
+			GridBagConstraints gbc_jTextFieldTransLiveBit = new GridBagConstraints();
+			gbc_jTextFieldTransLiveBit.insets = new Insets(0, 5, 0, 0);
+			gbc_jTextFieldTransLiveBit.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldTransLiveBit.gridx = 1;
+			gbc_jTextFieldTransLiveBit.gridy = 5;
+			GridBagConstraints gbc_jLabelTransLiveBit = new GridBagConstraints();
+			gbc_jLabelTransLiveBit.anchor = GridBagConstraints.WEST;
+			gbc_jLabelTransLiveBit.gridx = 2;
+			gbc_jLabelTransLiveBit.gridy = 5;
+
+			jPanelContinousSettings.setLayout(gbl_jPanelContinousSettings);
+			jPanelContinousSettings.add(getJRadioButtonTimeModelContinuous(), gbc_jRadioButtonTimeModelContinuous);
+			jPanelContinousSettings.add(getJLabelNetCalcInterval(), gbc_jLabelNetCalcInterval);
+			jPanelContinousSettings.add(getJTextFieldNetCalcInterval(), gbc_jTextFieldNetCalcInterval);
+			jPanelContinousSettings.add(getJComboBoxNetCalcIntervalWidthUnit(), gbc_jComboBoxNetCalcIntervalWidthUnit);
+			jPanelContinousSettings.add(getJLabelHeaderPowerTransmission(), gbc_jLabelHeaderPowerTransmission);
+			jPanelContinousSettings.add(getJRadioButtonTransByAbsolute(), gbc_jRadioButtonTransByAbsolute);
+			jPanelContinousSettings.add(getJTextFieldTransWatt(), gbc_jTextFieldTransWatt);
+			jPanelContinousSettings.add(getJLabelLabelTransWatt(), gbc_jLabelTransWatt);
+			jPanelContinousSettings.add(getJRadioButtonTransByPercent(), gbc_jRadioButtonTransByPercent);
+			jPanelContinousSettings.add(getJTextFieldTransPercent(), gbc_jTextFieldTransPercent);
+			jPanelContinousSettings.add(getJLabelTransPercent(), gbc_jLabelTransPercent);
+			jPanelContinousSettings.add(getJLabelTransHeaderLiveBit(), gbc_jLabelTransHeaderLiveBit);
+			jPanelContinousSettings.add(getJTextFieldTransLiveBit(), gbc_jTextFieldTransLiveBit);
+			jPanelContinousSettings.add(getJLabelTransLiveBit(), gbc_jLabelTransLiveBit);
+			
+		}
+		return jPanelContinousSettings;
+	}	
 	private JRadioButton getJRadioButtonTimeModelContinuous() {
 		if (jRadioButtonTimeModelContinuous == null) {
-			jRadioButtonTimeModelContinuous = new JRadioButton("Continious Time Model");
-			jRadioButtonTimeModelContinuous.setFont(new Font("Dialog", Font.BOLD, 12));
+			jRadioButtonTimeModelContinuous = new JRadioButton("Continuous Time Model");
+			jRadioButtonTimeModelContinuous.setFont(new Font("Dialog", Font.BOLD, 13));
 			jRadioButtonTimeModelContinuous.addActionListener(this);
 		}
 		return jRadioButtonTimeModelContinuous;
@@ -685,7 +614,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JLabel getJLabelNetCalcInterval() {
 		if (jLabelNetCalcInterval == null) {
 			jLabelNetCalcInterval = new JLabel("Network Calculation Interval");
-			jLabelNetCalcInterval.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelNetCalcInterval.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelNetCalcInterval;
 	}
@@ -711,12 +640,305 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		}
 		return jComboBoxNetCalcIntervalWidthUnit;
 	}
+	private JLabel getJLabelHeaderPowerTransmission() {
+		if (jLabelHeaderPowerTransmission==null) {
+			jLabelHeaderPowerTransmission = new JLabel();
+			jLabelHeaderPowerTransmission.setText("Transmission of power signals");
+			jLabelHeaderPowerTransmission.setFont(new Font("Dialog", Font.BOLD, 13));
+		}
+		return jLabelHeaderPowerTransmission;
+	}
+	private JRadioButton getJRadioButtonTransByAbsolute() {
+		if (jRadioButtonTransByAbsolute == null) {
+			jRadioButtonTransByAbsolute = new JRadioButton();
+			jRadioButtonTransByAbsolute.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonTransByAbsolute.setText("Depending on watts (absolute)");
+			jRadioButtonTransByAbsolute.addActionListener(this);
+		}
+		return jRadioButtonTransByAbsolute;
+	}
+	private JTextField getJTextFieldTransWatt() {
+		if (jTextFieldTransWatt == null) {
+			jTextFieldTransWatt = new JTextField();
+			jTextFieldTransWatt.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldTransWatt.setPreferredSize(new Dimension(100, 26));
+			jTextFieldTransWatt.addKeyListener(this.getKeyAdapter4LongAndInteger());
+			jTextFieldTransWatt.getDocument().addDocumentListener(this);
+		}
+		return jTextFieldTransWatt;
+	}
+	private JLabel getJLabelLabelTransWatt() {
+		if (jLabelTransWatt==null) {
+			jLabelTransWatt = new JLabel();
+			jLabelTransWatt.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelTransWatt.setText(" Watt");
+		}
+		return jLabelTransWatt;
+	}
+	private JRadioButton getJRadioButtonTransByPercent() {
+		if (jRadioButtonTransByPercent == null) {
+			jRadioButtonTransByPercent = new JRadioButton();
+			jRadioButtonTransByPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonTransByPercent.setText("Depending on delta watts (percent)");
+			jRadioButtonTransByPercent.addActionListener(this);
+		}
+		return jRadioButtonTransByPercent;
+	}
+	private JTextField getJTextFieldTransPercent() {
+		if (jTextFieldTransPercent == null) {
+			jTextFieldTransPercent = new JTextField();
+			jTextFieldTransPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldTransPercent.setPreferredSize(new Dimension(100, 26));
+			jTextFieldTransPercent.addKeyListener(this.getKeyAdapter4Float());
+			jTextFieldTransPercent.getDocument().addDocumentListener(this);
+		}
+		return jTextFieldTransPercent;
+	}
+	private JLabel getJLabelTransPercent() {
+		if (jLabelTransPercent==null) {
+			jLabelTransPercent = new JLabel();
+			jLabelTransPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelTransPercent.setText(" % ");
+		}
+		return jLabelTransPercent;
+	}
+	private JLabel getJLabelTransHeaderLiveBit() {
+		if (jLabelTransHeaderLiveBit==null) {
+			jLabelTransHeaderLiveBit = new JLabel();
+			jLabelTransHeaderLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelTransHeaderLiveBit.setText("Time after a signal must be sent at least");
+		}
+		return jLabelTransHeaderLiveBit;
+	}
+	private JTextField getJTextFieldTransLiveBit() {
+		if (jTextFieldTransLiveBit == null) {
+			jTextFieldTransLiveBit = new JTextField();
+			jTextFieldTransLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldTransLiveBit.setPreferredSize(new Dimension(100, 26));
+			jTextFieldTransLiveBit.addKeyListener(this.getKeyAdapter4LongAndInteger());
+			jTextFieldTransLiveBit.getDocument().addDocumentListener(this);
+		}
+		return jTextFieldTransLiveBit;
+	}
+	private JLabel getJLabelTransLiveBit() {
+		if (jLabelTransLiveBit==null) {
+			jLabelTransLiveBit = new JLabel();
+			jLabelTransLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelTransLiveBit.setText("Milliseconds");
+		}
+		return jLabelTransLiveBit;
+	}
 	
+	
+	private JPanel getJPanelDiscreteSettings() {
+		if (jPanelDiscreteSettings == null) {
+			jPanelDiscreteSettings = new JPanel();
+			
+			GridBagLayout gbl_jPanelDiscreteSettings = new GridBagLayout();
+			gbl_jPanelDiscreteSettings.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelDiscreteSettings.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelDiscreteSettings.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelDiscreteSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbc_jRadioButtonTimeModelDiscrete = new GridBagConstraints();
+			gbc_jRadioButtonTimeModelDiscrete.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTimeModelDiscrete.gridx = 0;
+			gbc_jRadioButtonTimeModelDiscrete.gridy = 0;
+			
+			GridBagConstraints gbc_jLabelInterval = new GridBagConstraints();
+			gbc_jLabelInterval.insets = new Insets(5, 0, 0, 0);
+			gbc_jLabelInterval.anchor = GridBagConstraints.WEST;
+			gbc_jLabelInterval.gridx = 0;
+			gbc_jLabelInterval.gridy = 1;
+			
+			GridBagConstraints gbc_jTextFieldIntervalWidthValue = new GridBagConstraints();
+			gbc_jTextFieldIntervalWidthValue.insets = new Insets(5, 5, 0, 0);
+			gbc_jTextFieldIntervalWidthValue.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldIntervalWidthValue.gridx = 1;
+			gbc_jTextFieldIntervalWidthValue.gridy = 1;
+			
+			GridBagConstraints gbc_jComboBoxIntervalWidthUnit = new GridBagConstraints();
+			gbc_jComboBoxIntervalWidthUnit.insets = new Insets(5, 0, 0, 0);
+			gbc_jComboBoxIntervalWidthUnit.anchor = GridBagConstraints.WEST;
+			gbc_jComboBoxIntervalWidthUnit.gridx = 2;
+			gbc_jComboBoxIntervalWidthUnit.gridy = 1;
+			
+			GridBagConstraints gbc_jCheckBoxSnapshotSimulation = new GridBagConstraints();
+			gbc_jCheckBoxSnapshotSimulation.insets = new Insets(5, 0, 0, 0);
+			gbc_jCheckBoxSnapshotSimulation.anchor = GridBagConstraints.WEST;
+			gbc_jCheckBoxSnapshotSimulation.gridx = 0;
+			gbc_jCheckBoxSnapshotSimulation.gridy = 2;
+
+			GridBagConstraints gbc_jRadioButtonSnapshotDecentral = new GridBagConstraints();
+			gbc_jRadioButtonSnapshotDecentral.insets = new Insets(4, 0, 0, 0);
+			gbc_jRadioButtonSnapshotDecentral.anchor = GridBagConstraints.NORTHWEST;
+			gbc_jRadioButtonSnapshotDecentral.gridx = 0;
+			gbc_jRadioButtonSnapshotDecentral.gridy = 3;
+
+			GridBagConstraints gbc_jRadioButtonSnapshotCentral = new GridBagConstraints();
+			gbc_jRadioButtonSnapshotCentral.gridwidth = 2;
+			gbc_jRadioButtonSnapshotCentral.insets = new Insets(6, 0, 0, 0);
+			gbc_jRadioButtonSnapshotCentral.anchor = GridBagConstraints.NORTHWEST;
+			gbc_jRadioButtonSnapshotCentral.gridx = 0;
+			gbc_jRadioButtonSnapshotCentral.gridy = 4;
+
+			GridBagConstraints jTextFieldDecisionClass = new GridBagConstraints();
+			jTextFieldDecisionClass.insets = new Insets(4, 0, 0, 0);
+			jTextFieldDecisionClass.gridwidth = 2;
+			jTextFieldDecisionClass.fill = GridBagConstraints.HORIZONTAL;
+			jTextFieldDecisionClass.gridx = 0;
+			jTextFieldDecisionClass.gridy = 5;
+
+			GridBagConstraints gbc_jButtonSelectStaticClass = new GridBagConstraints();
+			gbc_jButtonSelectStaticClass.insets = new Insets(4, 0, 0, 0);
+			gbc_jButtonSelectStaticClass.anchor = GridBagConstraints.WEST;
+			gbc_jButtonSelectStaticClass.gridx = 2;
+			gbc_jButtonSelectStaticClass.gridy = 5;
+			
+			
+			jPanelDiscreteSettings.setLayout(gbl_jPanelDiscreteSettings);
+			jPanelDiscreteSettings.add(getJRadioButtonTimeModelDiscrete(), gbc_jRadioButtonTimeModelDiscrete);
+			jPanelDiscreteSettings.add(getJLabelInterval(), gbc_jLabelInterval);
+			jPanelDiscreteSettings.add(getJTextFieldIntervalWidthValue(), gbc_jTextFieldIntervalWidthValue);
+			jPanelDiscreteSettings.add(getJComboBoxIntervalWidthUnit(), gbc_jComboBoxIntervalWidthUnit);
+			jPanelDiscreteSettings.add(getJCheckBoxSnapshotSimulation(), gbc_jCheckBoxSnapshotSimulation);
+			jPanelDiscreteSettings.add(getJRadioButtonSnapshotDecentral(), gbc_jRadioButtonSnapshotDecentral);
+			jPanelDiscreteSettings.add(getJRadioButtonSnapshotCentral(), gbc_jRadioButtonSnapshotCentral);
+			jPanelDiscreteSettings.add(getJTextFieldCentralDecisionClass(), jTextFieldDecisionClass);
+			jPanelDiscreteSettings.add(getJButtonCentralDecisionClass(), gbc_jButtonSelectStaticClass);
+		}
+		return jPanelDiscreteSettings;
+	}
+	private JRadioButton getJRadioButtonTimeModelDiscrete() {
+		if (jRadioButtonTimeModelDiscrete == null) {
+			jRadioButtonTimeModelDiscrete = new JRadioButton("Discrete Time Model");
+			jRadioButtonTimeModelDiscrete.setFont(new Font("Dialog", Font.BOLD, 13));
+			jRadioButtonTimeModelDiscrete.addActionListener(this);
+		}
+		return jRadioButtonTimeModelDiscrete;
+	}
+	private JLabel getJLabelInterval() {
+		if (jLabelInterval == null) {
+			jLabelInterval = new JLabel("Time between two simulation steps");
+			jLabelInterval.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelInterval;
+	}
+	private JTextField getJTextFieldIntervalWidthValue() {
+		if (jTextFieldIntervalWidthValue == null) {
+			jTextFieldIntervalWidthValue = new JTextField();
+			jTextFieldIntervalWidthValue.setPreferredSize(new Dimension(100, 26));
+			jTextFieldIntervalWidthValue.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldIntervalWidthValue.addKeyListener(new KeyAdapter4Numbers(false));
+			jTextFieldIntervalWidthValue.getDocument().addDocumentListener(this);
+		}
+		return jTextFieldIntervalWidthValue;
+	}
+	private JComboBox<TimeUnit> getJComboBoxIntervalWidthUnit() {
+		if (jComboBoxIntervalWidthUnit == null) {
+			jComboBoxIntervalWidthUnit = new JComboBox<TimeUnit>(new DefaultComboBoxModel<TimeUnit>(new TimeUnitVector()));
+			jComboBoxIntervalWidthUnit.setPreferredSize(new Dimension(120, 26));
+			jComboBoxIntervalWidthUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxIntervalWidthUnit.addActionListener(this); 
+		}
+		return jComboBoxIntervalWidthUnit;
+	}
+	private JCheckBox getJCheckBoxSnapshotSimulation() {
+		if (jCheckBoxSnapshotSimulation == null) {
+			jCheckBoxSnapshotSimulation = new JCheckBox("Do Snapshot Simulation ...");
+			jCheckBoxSnapshotSimulation.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxSnapshotSimulation.addActionListener(this);
+		}
+		return jCheckBoxSnapshotSimulation;
+	}
+	private JRadioButton getJRadioButtonSnapshotDecentral() {
+		if (jRadioButtonSnapshotDecentral == null) {
+			jRadioButtonSnapshotDecentral = new JRadioButton("... with decentral decision processes");
+			jRadioButtonSnapshotDecentral.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonSnapshotDecentral.addActionListener(this);
+		}
+		return jRadioButtonSnapshotDecentral;
+	}
+	private JRadioButton getJRadioButtonSnapshotCentral() {
+		if (jRadioButtonSnapshotCentral == null) {
+			jRadioButtonSnapshotCentral = new JRadioButton("... with central decision processes using class:");
+			jRadioButtonSnapshotCentral.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonSnapshotCentral.addActionListener(this);
+		}
+		return jRadioButtonSnapshotCentral;
+	}
+	private JTextField getJTextFieldCentralDecisionClass() {
+		if (jTextFieldCentralDecisionClass == null) {
+			jTextFieldCentralDecisionClass = new JTextField();
+			jTextFieldCentralDecisionClass.setHorizontalAlignment(SwingConstants.RIGHT);
+			jTextFieldCentralDecisionClass.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldCentralDecisionClass.setEditable(false);
+		}
+		return jTextFieldCentralDecisionClass;
+	}
+	private JButton getJButtonCentralDecisionClass() {
+		if (jButtonCentralDecisionClass == null) {
+			jButtonCentralDecisionClass = new JButton();
+			jButtonCentralDecisionClass.setToolTipText("Klasse auswählen");
+			jButtonCentralDecisionClass.setPreferredSize(new Dimension(45, 26));
+			jButtonCentralDecisionClass.setIcon(GlobalInfo.getInternalImageIcon("Search.png"));
+			jButtonCentralDecisionClass.addActionListener(this);
+		}
+		return jButtonCentralDecisionClass;
+	}
+	
+	
+	private JSeparator getJSeparatorAfterTimeModelSelection() {
+		if (jSeparatorAfterTimeModelSelection == null) {
+			jSeparatorAfterTimeModelSelection = new JSeparator();
+		}
+		return jSeparatorAfterTimeModelSelection;
+	}
+	
+	
+	private JLabel getJLabelDateHandling() {
+		if (jLabelDateHandling == null) {
+			jLabelDateHandling = new JLabel("Data Handling");
+			jLabelDateHandling.setFont(new Font("Dialog", Font.BOLD, 13));
+		}
+		return jLabelDateHandling;
+	}
+	private JPanel getJPanelDataHandling() {
+		if (jPanelDataHandling == null) {
+			jPanelDataHandling = new JPanel();
+			
+			GridBagLayout gbl_jPanelDataHandling = new GridBagLayout();
+			gbl_jPanelDataHandling.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelDataHandling.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelDataHandling.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelDataHandling.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbc_jLabelSimulationType = new GridBagConstraints();
+			gbc_jLabelSimulationType.gridx = 0;
+			gbc_jLabelSimulationType.gridy = 0;
+			
+			GridBagConstraints gbc_jRadioButtonExecutionBasedOnPowerFlow = new GridBagConstraints();
+			gbc_jRadioButtonExecutionBasedOnPowerFlow.insets = new Insets(10, 0, 0, 0);
+			gbc_jRadioButtonExecutionBasedOnPowerFlow.gridx = 0;
+			gbc_jRadioButtonExecutionBasedOnPowerFlow.gridy = 1;
+			
+			GridBagConstraints gbc_jRadioButtonExecutionBasedOnSensorData = new GridBagConstraints();
+			gbc_jRadioButtonExecutionBasedOnSensorData.insets = new Insets(10, 10, 0, 0);
+			gbc_jRadioButtonExecutionBasedOnSensorData.gridx = 1;
+			gbc_jRadioButtonExecutionBasedOnSensorData.gridy = 1;
+
+			jPanelDataHandling.setLayout(gbl_jPanelDataHandling);
+			jPanelDataHandling.add(getJLabelSimulationType(), gbc_jLabelSimulationType);
+			jPanelDataHandling.add(getJRadioButtonExecutionBasedOnPowerFlow(), gbc_jRadioButtonExecutionBasedOnPowerFlow);
+			jPanelDataHandling.add(getJRadioButtonExecutionBasedOnSensorData(), gbc_jRadioButtonExecutionBasedOnSensorData);
+		}
+		return jPanelDataHandling;
+	}
 	private JLabel getJLabelSimulationType() {
 		if (jLabelSimulationType == null) {
 			jLabelSimulationType = new JLabel();
 			jLabelSimulationType.setText("Execute Simulation based on ...");
-			jLabelSimulationType.setFont(new Font("Dialog", Font.BOLD, 13));
+			jLabelSimulationType.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelSimulationType.setEnabled(true);
 		}
 		return jLabelSimulationType;
@@ -740,127 +962,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		return jRadioButtonExecutionBasedOnSensorData;
 	}
 	
-	/**
-	 * This method initializes jRadioButtonTransByTime	
-	 * @return javax.swing.JRadioButton	
-	 */
-	private JRadioButton getJRadioButtonTransByAbsolute() {
-		if (jRadioButtonTransByAbsolute == null) {
-			jRadioButtonTransByAbsolute = new JRadioButton();
-			jRadioButtonTransByAbsolute.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonTransByAbsolute.setText("Depending on watts (absolute)");
-			jRadioButtonTransByAbsolute.addActionListener(this);
-		}
-		return jRadioButtonTransByAbsolute;
-	}
-	/**
-	 * This method initializes jRadioButtonTransByPercent	
-	 * @return javax.swing.JRadioButton	
-	 */
-	private JRadioButton getJRadioButtonTransByPercent() {
-		if (jRadioButtonTransByPercent == null) {
-			jRadioButtonTransByPercent = new JRadioButton();
-			jRadioButtonTransByPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonTransByPercent.setText("Depending on delta watts (percent)");
-			jRadioButtonTransByPercent.addActionListener(this);
-		}
-		return jRadioButtonTransByPercent;
-	}
-	/**
-	 * This method initializes jTextFieldTransWatt	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldTransWatt() {
-		if (jTextFieldTransWatt == null) {
-			jTextFieldTransWatt = new JTextField();
-			jTextFieldTransWatt.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldTransWatt.setPreferredSize(new Dimension(100, 26));
-			jTextFieldTransWatt.addKeyListener(this.getKeyAdapter4LongAndInteger());
-			jTextFieldTransWatt.getDocument().addDocumentListener(this);
-		}
-		return jTextFieldTransWatt;
-	}
-	/**
-	 * This method initializes jTextFieldTransPercent	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldTransPercent() {
-		if (jTextFieldTransPercent == null) {
-			jTextFieldTransPercent = new JTextField();
-			jTextFieldTransPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldTransPercent.setPreferredSize(new Dimension(100, 26));
-			jTextFieldTransPercent.addKeyListener(this.getKeyAdapter4Float());
-			jTextFieldTransPercent.getDocument().addDocumentListener(this);
-		}
-		return jTextFieldTransPercent;
-	}
-	/**
-	 * This method initializes jTextFieldTransLiveBit	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getJTextFieldTransLiveBit() {
-		if (jTextFieldTransLiveBit == null) {
-			jTextFieldTransLiveBit = new JTextField();
-			jTextFieldTransLiveBit.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldTransLiveBit.setPreferredSize(new Dimension(100, 26));
-			jTextFieldTransLiveBit.addKeyListener(this.getKeyAdapter4LongAndInteger());
-			jTextFieldTransLiveBit.getDocument().addDocumentListener(this);
-		}
-		return jTextFieldTransLiveBit;
-	}
-	/**
-	 * This method initializes jRadioButtonDisplayChanges	
-	 * @return javax.swing.JRadioButton	
-	 */
-	private JRadioButton getJRadioButtonDisplayEnabled() {
-		if (jRadioButtonDisplayEnabled == null) {
-			jRadioButtonDisplayEnabled = new JRadioButton();
-			jRadioButtonDisplayEnabled.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonDisplayEnabled.setText("Enable");
-			jRadioButtonDisplayEnabled.addActionListener(this);
-		}
-		return jRadioButtonDisplayEnabled;
-	}
-	/**
-	 * This method initializes jRadioButtonDisplayDisable	
-	 * @return javax.swing.JRadioButton	
-	 */
-	private JRadioButton getJRadioButtonDisplayDisable() {
-		if (jRadioButtonDisplayDisable == null) {
-			jRadioButtonDisplayDisable = new JRadioButton();
-			jRadioButtonDisplayDisable.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonDisplayDisable.setText("Disable");
-			jRadioButtonDisplayDisable.addActionListener(this);
-		}
-		return jRadioButtonDisplayDisable;
-	}
 	
-	/**
-	 * Gets the graph element layout settings configuration panels.
-	 * @return the graph element layout settings configuration panels
-	 */
-	private JTabbedPane getGraphElementLayoutSettingsConfigurationPanels() {
-		if (graphElementLayoutSettingsConfigurationPanels==null) {
-			graphElementLayoutSettingsConfigurationPanels = new JTabbedPane();
-			graphElementLayoutSettingsConfigurationPanels.setUI(new AwbBasicTabbedPaneUI());
-			List<GraphElementLayoutService> layoutServices = ServiceFinder.findServices(GraphElementLayoutService.class);
-			for (GraphElementLayoutService layoutService : layoutServices) {
-				AbstractGraphElementLayoutSettingsPanel layoutSettingsPanel = layoutService.getGraphElementLayoutSettingPanel(this.currProject, layoutService.getDomain());
-				layoutSettingsPanel.setGraphElementLayoutSettingsToVisualization();
-				graphElementLayoutSettingsConfigurationPanels.addTab(" " + layoutService.getDomain() + " ", layoutSettingsPanel);
-			}
-			
-		}
-		return graphElementLayoutSettingsConfigurationPanels;
-	}
-	
-	private JLabel getJLabelScheduleLenghtRestriction() {
-		if (jLabelScheduleLenghtRestriction == null) {
-			jLabelScheduleLenghtRestriction = new JLabel("Real Time Settings");
-			jLabelScheduleLenghtRestriction.setFont(new Font("Dialog", Font.BOLD, 13));
-		}
-		return jLabelScheduleLenghtRestriction;
-	}
 	private ScheduleLengthRestrictionPanel getJPanelScheduleLengthRestriction() {
 		if (jPanelScheduleLengthRestriction == null) {
 			jPanelScheduleLengthRestriction = new ScheduleLengthRestrictionPanel();
@@ -873,6 +975,118 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		}
 		return jPanelScheduleLengthRestriction;
 	}
+	
+	
+	private JSeparator getJSeparatorAfterDataHandling() {
+		if (jSeparatorAfterDataHandling == null) {
+			jSeparatorAfterDataHandling = new JSeparator();
+		}
+		return jSeparatorAfterDataHandling;
+	}
+	
+	
+	private JLabel getJLabelHeaderVisualizationSettings() {
+		if (jLabelHeaderVisualizationSettings == null) {
+			jLabelHeaderVisualizationSettings = new JLabel("Visualization Settings");
+			jLabelHeaderVisualizationSettings.setFont(new Font("Dialog", Font.BOLD, 13));
+		}
+		return jLabelHeaderVisualizationSettings;
+	}
+	private JPanel getJPanelVisualizationSettings() {
+		if (jPanelVisualizationSettings == null) {
+			jPanelVisualizationSettings = new JPanel();
+			
+			GridBagLayout gbl_jPanelVisualizationSettings = new GridBagLayout();
+			gbl_jPanelVisualizationSettings.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelVisualizationSettings.rowHeights = new int[]{0, 0, 0, 200, 0};
+			gbl_jPanelVisualizationSettings.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelVisualizationSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbc_jLabelHeaderVisualization = new GridBagConstraints();
+			gbc_jLabelHeaderVisualization.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeaderVisualization.gridx = 0;
+			gbc_jLabelHeaderVisualization.gridy = 0;
+
+			GridBagConstraints gbc_jRadioButtonDisplayEnabled = new GridBagConstraints();
+			gbc_jRadioButtonDisplayEnabled.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonDisplayEnabled.gridx = 0;
+			gbc_jRadioButtonDisplayEnabled.gridy = 1;
+			
+			GridBagConstraints gbc_jRadioButtonDisplayDisable = new GridBagConstraints();
+			gbc_jRadioButtonDisplayDisable.gridx = 1;
+			gbc_jRadioButtonDisplayDisable.gridy = 1;
+			
+			GridBagConstraints gbc_jLabelHeaderColorAtRuntime = new GridBagConstraints();
+			gbc_jLabelHeaderColorAtRuntime.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeaderColorAtRuntime.insets = new Insets(10, 0, 0, 0);
+			gbc_jLabelHeaderColorAtRuntime.gridx = 0;
+			gbc_jLabelHeaderColorAtRuntime.gridy = 2;
+			
+			GridBagConstraints gbc_jTabbedPaneColorSettings = new GridBagConstraints();
+			gbc_jTabbedPaneColorSettings.anchor = GridBagConstraints.NORTH;
+			gbc_jTabbedPaneColorSettings.insets = new Insets(5, 0, 0, 0);
+			gbc_jTabbedPaneColorSettings.gridwidth = 3;
+			gbc_jTabbedPaneColorSettings.gridx = 0;
+			gbc_jTabbedPaneColorSettings.gridy = 3;
+			
+			jPanelVisualizationSettings.setLayout(gbl_jPanelVisualizationSettings);
+			jPanelVisualizationSettings.add(getJLabelHeaderVisualization(), gbc_jLabelHeaderVisualization);
+			jPanelVisualizationSettings.add(getJRadioButtonDisplayEnabled(), gbc_jRadioButtonDisplayEnabled);
+			jPanelVisualizationSettings.add(getJRadioButtonDisplayDisable(), gbc_jRadioButtonDisplayDisable);
+			jPanelVisualizationSettings.add(getJLabelHeaderColorAtRuntime(), gbc_jLabelHeaderColorAtRuntime);
+			jPanelVisualizationSettings.add(getJTabbedPaneColorSettings(), gbc_jTabbedPaneColorSettings);
+		}
+		return jPanelVisualizationSettings;
+	}
+	private JLabel getJLabelHeaderVisualization() {
+		if (jLabelHeaderVisualization==null) {
+			jLabelHeaderVisualization = new JLabel();
+			jLabelHeaderVisualization.setText("Runtime Visualization Updates");
+			jLabelHeaderVisualization.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelHeaderVisualization;
+	}
+	private JRadioButton getJRadioButtonDisplayEnabled() {
+		if (jRadioButtonDisplayEnabled == null) {
+			jRadioButtonDisplayEnabled = new JRadioButton();
+			jRadioButtonDisplayEnabled.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonDisplayEnabled.setText("Enable");
+			jRadioButtonDisplayEnabled.addActionListener(this);
+		}
+		return jRadioButtonDisplayEnabled;
+	}
+	private JRadioButton getJRadioButtonDisplayDisable() {
+		if (jRadioButtonDisplayDisable == null) {
+			jRadioButtonDisplayDisable = new JRadioButton();
+			jRadioButtonDisplayDisable.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jRadioButtonDisplayDisable.setText("Disable");
+			jRadioButtonDisplayDisable.addActionListener(this);
+		}
+		return jRadioButtonDisplayDisable;
+	}
+	private JLabel getJLabelHeaderColorAtRuntime() {
+		if (jLabelHeaderColorAtRuntime == null) {
+			jLabelHeaderColorAtRuntime = new JLabel();
+			jLabelHeaderColorAtRuntime.setText("Runtime Color Settings");
+			jLabelHeaderColorAtRuntime.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelHeaderColorAtRuntime;
+	}
+	private JTabbedPane getJTabbedPaneColorSettings() {
+		if (jTabbedPaneColorSettings==null) {
+			jTabbedPaneColorSettings = new JTabbedPane();
+			jTabbedPaneColorSettings.setUI(new AwbBasicTabbedPaneUI());
+			List<GraphElementLayoutService> layoutServiceList = ServiceFinder.findServices(GraphElementLayoutService.class);
+			for (int i = 0; i < layoutServiceList.size(); i++) {
+				GraphElementLayoutService layoutService = layoutServiceList.get(i);
+				AbstractGraphElementLayoutSettingsPanel layoutSettingsPanel = layoutService.getGraphElementLayoutSettingPanel(this.currProject, layoutService.getDomain());
+				layoutSettingsPanel.setGraphElementLayoutSettingsToVisualization();
+				jTabbedPaneColorSettings.addTab(" " + layoutService.getDomain() + " ", layoutSettingsPanel);
+			}
+		}
+		return jTabbedPaneColorSettings;
+	}
+	
 	
 	/**
 	 * Returns a key adapter that just allows numbers.
@@ -935,7 +1149,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		if (this.actOnActionsOrDocumentChanges==true) {
 			this.loadFormToDataModel();	
 			if (de.getDocument()==this.getJTextFieldTransLiveBit().getDocument()) {
-				this.setTimeExplanation(this.getJTextFieldTransLiveBit(), jLabelTransLiveBit);
+				this.setTimeExplanation(this.getJTextFieldTransLiveBit(), getJLabelTransLiveBit());
 			}
 		}
 	}
@@ -1070,34 +1284,68 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private void enableControls() {
 		
 		boolean isTimeModelDiscrete = this.getJRadioButtonTimeModelDiscrete().isSelected();
-
+		boolean isSnapshotSimulation = this.getJCheckBoxSnapshotSimulation().isSelected();
+		boolean isSnapshotSimulationCentralDecision = this.getJRadioButtonSnapshotCentral().isSelected();
+		
 		this.getJLabelInterval().setEnabled(isTimeModelDiscrete);
 		this.getJTextFieldIntervalWidthValue().setEnabled(isTimeModelDiscrete);
 		this.getJComboBoxIntervalWidthUnit().setEnabled(isTimeModelDiscrete);
 		
 		this.getJCheckBoxSnapshotSimulation().setEnabled(isTimeModelDiscrete);
 		if (isTimeModelDiscrete==false) this.getJCheckBoxSnapshotSimulation().setSelected(false);
+		this.getJRadioButtonSnapshotDecentral().setEnabled(isTimeModelDiscrete & isSnapshotSimulation);
+		this.getJRadioButtonSnapshotCentral().setEnabled(isTimeModelDiscrete & isSnapshotSimulation);
+		this.getJTextFieldCentralDecisionClass().setEnabled(isTimeModelDiscrete & isSnapshotSimulation & isSnapshotSimulationCentralDecision);
+		this.getJButtonCentralDecisionClass().setEnabled(isTimeModelDiscrete & isSnapshotSimulation & isSnapshotSimulationCentralDecision);
 		
 		this.getJLabelNetCalcInterval().setEnabled(! isTimeModelDiscrete);
 		this.getJTextFieldNetCalcInterval().setEnabled(! isTimeModelDiscrete);
 		this.getJComboBoxNetCalcIntervalWidthUnit().setEnabled(! isTimeModelDiscrete);
 		
-		this.jLabelHeaderPowerTransmission.setEnabled(! isTimeModelDiscrete);
+		this.getJLabelHeaderPowerTransmission().setEnabled(! isTimeModelDiscrete);
 		this.getJRadioButtonTransByAbsolute().setEnabled(! isTimeModelDiscrete);
 		this.getJRadioButtonTransByPercent().setEnabled(! isTimeModelDiscrete);
 		
-		this.jLabelTransWatt.setEnabled(! isTimeModelDiscrete);
+		this.getJLabelLabelTransWatt().setEnabled(! isTimeModelDiscrete);
 		this.getJTextFieldTransWatt().setEnabled(! isTimeModelDiscrete);
-		this.jLabelTransWatt.setEnabled(! isTimeModelDiscrete);
 		
-		this.jLabelTransPercent.setEnabled(! isTimeModelDiscrete);
+		this.getJLabelTransPercent().setEnabled(! isTimeModelDiscrete);
 		this.getJTextFieldTransPercent().setEnabled(! isTimeModelDiscrete);
-		this.jLabelTransPercent.setEnabled(! isTimeModelDiscrete);
 		
-		this.jLabelTransHeaderLiveBit.setEnabled(! isTimeModelDiscrete);
+		this.getJLabelTransHeaderLiveBit().setEnabled(! isTimeModelDiscrete);
 		this.getJTextFieldTransLiveBit().setEnabled(! isTimeModelDiscrete);
-		this.jLabelTransLiveBit.setEnabled(! isTimeModelDiscrete);
+		this.getJLabelTransLiveBit().setEnabled(! isTimeModelDiscrete);
 	}
+	
+	/**
+	 * Sets the central decision class for snapshot simulations.
+	 */
+	private void setSnapshotCentralDecisionClass() {
+		
+		Class<?> search4Class = AbstractCentralDecisionProcess.class;
+		String   search4CurrentValue = this.getJTextFieldCentralDecisionClass().getText();
+		String   search4DefaultValue = null;
+		String   search4Description = "Select the central decision process class to apply.";
+		
+		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+		cs.setVisible(true);
+		// --- act in the dialog ... --------------------
+		if (cs.isCanceled()==true) return;
+		
+		// ----------------------------------------------
+		// --- Class was selected. Proceed it -----------
+		String classSelected = cs.getClassSelected();
+		if (classSelected.isEmpty()==true) classSelected =null;
+
+		cs.dispose();
+		cs = null;
+		// ----------------------------------------------
+		
+		this.getJTextFieldCentralDecisionClass().setText(classSelected);
+		this.getJTextFieldCentralDecisionClass().setToolTipText(classSelected);
+		this.loadFormToDataModel();
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -1110,13 +1358,21 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			if (ae.getSource()==this.getJRadioButtonTimeModelDiscrete()) {
 				this.switchTimeModel(TimeModelDiscrete.class.getName());
 				this.enableControls();
-				
 			} else if (ae.getSource()==this.getJRadioButtonTimeModelContinuous()) {
 				this.switchTimeModel(TimeModelContinuous.class.getName());
 				this.enableControls();
 				
 			} else if (ae.getSource()==this.getJCheckBoxSnapshotSimulation()) {
 				this.loadFormToDataModel();
+				this.enableControls();
+			} else if (ae.getSource()==this.getJRadioButtonSnapshotDecentral()) {
+				this.loadFormToDataModel();
+				this.enableControls();
+			} else if (ae.getSource()==this.getJRadioButtonSnapshotCentral()) {
+				this.loadFormToDataModel();
+				this.enableControls();
+			} else if (ae.getSource()==this.getJButtonCentralDecisionClass()) {
+				this.setSnapshotCentralDecisionClass();
 				
 			} else if (ae.getSource()==this.getJRadioButtonExecutionBasedOnPowerFlow()) {
 				this.loadFormToDataModel();
@@ -1138,11 +1394,10 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			} else if (ae.getSource()==this.getJRadioButtonDisplayDisable()) {
 				this.loadFormToDataModel();
 				
-			} else if (ae.getSource()==this.getGraphElementLayoutSettingsConfigurationPanels()) {
+			} else if (ae.getSource()==this.getJTabbedPaneColorSettings()) {
 				this.loadFormToDataModel();
 			}
 			
 		}
 	}
-	
 }  

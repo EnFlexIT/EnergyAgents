@@ -47,6 +47,8 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
     "simulationIntervalLength",
     "simulationIntervalUnitIndex",
     "isDiscreteSnapshotSimulation",
+    "snapshotDecisionLocation",
+    "snapshotCentralDecisionClass",
     "networkCalculationIntervalLength",
     "networkCalculationIntervalUnitIndex",
     "executionDataBase",
@@ -66,6 +68,12 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		TimeModelContinuous
 	}
 	
+	/** The location for control decisions in snapshot simulations that is either within agents or in a specific class */
+	public static enum SnapshotDecisionLocation {
+		Decentral,
+		Central
+	}
+	
 	public enum ExecutionDataBase {
 		NodePowerFlows,
 		SensorData
@@ -79,10 +87,12 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	private long simulationIntervalLength = 5;
 	private int simulationIntervalUnitIndex = 1;
 	
-	private boolean isDiscreteSnapshotSimulation;
-	
 	private long networkCalculationIntervalLength = 5;
 	private int networkCalculationIntervalUnitIndex = 1;
+	
+	private boolean isDiscreteSnapshotSimulation;
+	private SnapshotDecisionLocation snapshotDecisionLocation;
+	private String snapshotCentralDecisionClass;
 	
 	private ExecutionDataBase executionDataBase;
 	
@@ -94,7 +104,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	
 	private ArrayList<GraphElementLayoutSettingsPersistenceTreeMap> graphElementLayoutSettingsPersisted;
 	
-	private ScheduleLengthRestriction  scheduleLengthRestriction;
+	private ScheduleLengthRestriction scheduleLengthRestriction;
 	
 	private DeploymentSettings deploymentSettings;
 	
@@ -203,22 +213,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 
 	
 	/**
-	 * Returns if the current discrete simulation is a snapshot simulation.
-	 * @return true, if is snapshot simulation
-	 */
-	public boolean isDiscreteSnapshotSimulation() {
-		return isDiscreteSnapshotSimulation;
-	}
-	/**
-	 * Sets the discrete snapshot simulation.
-	 * @param isDiscreteSnapshotSimulation the new discrete snapshot simulation
-	 */
-	public void setDiscreteSnapshotSimulation(boolean isDiscreteSnapshotSimulation) {
-		this.isDiscreteSnapshotSimulation = isDiscreteSnapshotSimulation;
-	}
-
-	
-	/**
 	 * Gets the network calculation interval length.
 	 * @return the network calculation interval length
 	 */
@@ -248,6 +242,51 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.networkCalculationIntervalUnitIndex = networkCalculationIntervalUnitIndex;
 	}
 	
+	
+	/**
+	 * Returns if the current discrete simulation is a snapshot simulation.
+	 * @return true, if is snapshot simulation
+	 */
+	public boolean isDiscreteSnapshotSimulation() {
+		return isDiscreteSnapshotSimulation;
+	}
+	/**
+	 * Sets the discrete snapshot simulation.
+	 * @param isDiscreteSnapshotSimulation the new discrete snapshot simulation
+	 */
+	public void setDiscreteSnapshotSimulation(boolean isDiscreteSnapshotSimulation) {
+		this.isDiscreteSnapshotSimulation = isDiscreteSnapshotSimulation;
+	}
+	
+	/**
+	 * Returns the decision location for snapshot simulations.
+	 * @return the snapshot decision location
+	 */
+	public SnapshotDecisionLocation getSnapshotDecisionLocation() {
+		return snapshotDecisionLocation;
+	}
+	/**
+	 * Sets the decision location for snapshot simulations.
+	 * @param snapshotDecisionLocation the new snapshot decision location
+	 */
+	public void setSnapshotDecisionLocation(SnapshotDecisionLocation snapshotDecisionLocation) {
+		this.snapshotDecisionLocation = snapshotDecisionLocation;
+	}
+	
+	/**
+	 * Returns the snapshot central decision class.
+	 * @return the snapshot central decision class
+	 */
+	public String getSnapshotCentralDecisionClass() {
+		return snapshotCentralDecisionClass;
+	}
+	/**
+	 * Sets the snapshot central decision class.
+	 * @param snapshotCentralDecisionClass the new snapshot central decision class
+	 */
+	public void setSnapshotCentralDecisionClass(String snapshotCentralDecisionClass) {
+		this.snapshotCentralDecisionClass = snapshotCentralDecisionClass;
+	}
 	
 	/**
 	 * Returns the configured data base for the execution of the simulation.
