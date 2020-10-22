@@ -163,7 +163,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 */
 	private DashboardSubscriptionResponder getDashboardSubscriptionResponder() {
 		if (dashboardSubscriptionResponder==null) {
-			dashboardSubscriptionResponder = new DashboardSubscriptionResponder(this);
+			dashboardSubscriptionResponder = new DashboardSubscriptionResponder(this, this.getAggregationHandler());
 		}
 		return dashboardSubscriptionResponder;
 	}
@@ -577,7 +577,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		
 		// --- Notify dashboard subscribers -----------------------------------
-		this.getDashboardSubscriptionResponder().notifySubscribers(subnetConfigList);
+		this.getDashboardSubscriptionResponder().notifySubscribers();
 	}
 	
 	// --------------------------------------------------------------------------------------------
