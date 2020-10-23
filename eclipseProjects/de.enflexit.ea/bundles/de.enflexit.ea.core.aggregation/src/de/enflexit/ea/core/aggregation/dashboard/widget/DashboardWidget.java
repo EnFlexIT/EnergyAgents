@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.aggregation.dashboard.widget;
 
 import de.enflexit.ea.core.aggregation.dashboard.DashboardController;
-import de.enflexit.ea.core.aggregation.dashboard.DashboardUpdate;
+import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
 /**
  * Abstract superclass for dashboard widgets
@@ -23,7 +23,7 @@ public interface DashboardWidget {
 	 * Process update.
 	 * @param update the update
 	 */
-	public abstract void processUpdate(DashboardUpdate update);
+	public abstract void processUpdate(DashboardWidgetUpdate update);
 	
 	/**
 	 * Register this widget at the specified dashboard controller.

@@ -67,7 +67,6 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 
 			for (DashboardSubscription subscription : subscriptions) {
 				if (subscription.getDomain().equals(aggregation.getDomain())) {
-					System.out.println("[" + this.getClass().getSimpleName() + "] Subscription found for " + aggregation.getDomain());
 					try {
 						ACLMessage notificationMessage = this.prepareNotificationMessage(subscription, aggregation);
 						this.getSubscriptionsHashMap().get(subscription).notify(notificationMessage);
@@ -90,13 +89,13 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	private ACLMessage prepareNotificationMessage(DashboardSubscription dashboardSubscription, AbstractSubNetworkConfiguration subNetworkConfiguration) throws IOException {
 		ACLMessage notificationMessage = new ACLMessage(ACLMessage.INFORM);
 			
-		DashboardSubscriptionUpdate dashboardUpdate = new DashboardSubscriptionUpdate();
+		DashboardUpdate dashboardUpdate = new DashboardUpdate();
 		dashboardUpdate.setSubscriptionFor(dashboardSubscription.getSubscriptionFor());
+		dashboardUpdate.setTimestamp(this.getAggregationHandler().getEvaluationEndTime());
 		
 		if (dashboardSubscription.getSubscriptionFor()==SubscriptionFor.CURRENT_TSSE) {
 			for (String componentID : dashboardSubscription.getSubscriptionSpecifiers()) {
 				HashMap<String, TechnicalSystemStateEvaluation> lastTSSEs = subNetworkConfiguration.getAggregationHandler().getLastTechnicalSystemStatesFromScheduleController();
-				AbstractAggregationHandler agh = subNetworkConfiguration.getAggregationHandler();
 				TechnicalSystemStateEvaluation tsse = lastTSSEs.get(componentID);
 				if (tsse!=null) {
 					dashboardUpdate.getUpdateObjects().put(componentID, TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse));

@@ -46,6 +46,12 @@ public abstract class DashboardController {
 	public abstract List<DashboardSubscription> getDashboardSubscriptions();
 	
 	/**
+	 * Processes a new dashoard update.
+	 * @param dashboardUpdate the dashboard update
+	 */
+	public abstract void processDashoardUpdate(DashboardUpdate dashboardUpdate);
+	
+	/**
 	 * Gets the domain.
 	 * @return the domain
 	 */

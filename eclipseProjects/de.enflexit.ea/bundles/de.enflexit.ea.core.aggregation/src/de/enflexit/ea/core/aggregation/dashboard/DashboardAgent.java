@@ -26,6 +26,8 @@ public class DashboardAgent extends Agent {
 	private boolean opsMode = false;
 	
 	private HashMap<String, DashboardController> dashboardControllers;
+	
+	private int subscriptionCounter = 0;
 
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -73,8 +75,11 @@ public class DashboardAgent extends Agent {
 		this.addDashboardPanel(dashboardService.getDashboardController().getDashboardPanel());
 		
 		try {
-			ACLMessage subscriptionMessage = this.createSubscriptionMessage(dashboardController.getDashboardSubscriptions().get(0));
-			this.addBehaviour(new DashboardSubscriptionInitiator(this, subscriptionMessage));
+			for (DashboardSubscription subscription : dashboardController.getDashboardSubscriptions()) {
+				ACLMessage subscriptionMessage = this.createSubscriptionMessage(subscription);
+				this.addBehaviour(new DashboardSubscriptionInitiator(this, subscriptionMessage, dashboardController));
+				subscriptionCounter++;
+			}
 		} catch (IOException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Unable to create subscripption message, setting the content object failed!");
 			e.printStackTrace();
@@ -91,10 +96,10 @@ public class DashboardAgent extends Agent {
 		ACLMessage initialMessage = new ACLMessage(ACLMessage.SUBSCRIBE);
 		initialMessage.addReceiver(this.getResponderAID());
 		initialMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-		
 		initialMessage.setContentObject(dashboardSubscription);
 		
-		initialMessage.setConversationId(CONVERSATION_ID_BASE + "." + dashboardSubscription.getDomain());
+		// --- Create unique conversation ID to allow multiple subscriptions ------------
+		initialMessage.setConversationId(CONVERSATION_ID_BASE + "." + (this.subscriptionCounter+1));
 		
 		return initialMessage;
 	}

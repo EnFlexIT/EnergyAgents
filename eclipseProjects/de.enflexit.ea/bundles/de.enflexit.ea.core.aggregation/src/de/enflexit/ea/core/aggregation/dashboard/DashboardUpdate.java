@@ -1,40 +1,71 @@
 package de.enflexit.ea.core.aggregation.dashboard;
 
-// TODO: Auto-generated Javadoc
+import java.io.Serializable;
+import java.util.HashMap;
+
+import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionFor;
+import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
+
 /**
- * A simple dashboard update
+ * The Class NetworkComponentStateUpdate.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DashboardUpdate {
-	private String id;
-	private double value;
-	
+public class DashboardUpdate implements Serializable {
+
+	private static final long serialVersionUID = -9019095968310911981L;
+	private long timestamp;
+	private SubscriptionFor subscriptionFor;
+	private HashMap<String, Object> updateObjects;
+
 	/**
-	 * Gets the ID.
-	 * @return the ID
+	 * Gets the timestamp.
+	 * @return the timestamp
 	 */
-	public String getID() {
-		return id;
+	public long getTimestamp() {
+		return timestamp;
 	}
+
 	/**
-	 * Sets the ID.
-	 * @param id the new ID
+	 * Sets the timestamp.
+	 * @param timestamp the new timestamp
 	 */
-	public void setID(String id) {
-		this.id = id;
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
+
 	/**
-	 * Gets the value.
-	 * @return the value
+	 * Gets the subscription for.
+	 * @return the subscription for
 	 */
-	public double getValue() {
-		return value;
+	public SubscriptionFor getSubscriptionFor() {
+		return subscriptionFor;
 	}
+
 	/**
-	 * Sets the value.
-	 * @param value the new value
+	 * Sets the subscription for.
+	 * @param subscriptionFor the new subscription for
 	 */
-	public void setValue(double value) {
-		this.value = value;
+	public void setSubscriptionFor(SubscriptionFor subscriptionFor) {
+		this.subscriptionFor = subscriptionFor;
 	}
+
+	/**
+	 * Gets the update objects, which can be either TSSEs or DynamicComponentStates, depending on the subscriptionFr setting 
+	 * @return the update objects
+	 */
+	public HashMap<String, Object> getUpdateObjects() {
+		if (updateObjects==null) {
+			updateObjects = new HashMap<String, Object>();
+		}
+		return updateObjects;
+	}
+
+	/**
+	 * Sets the update objects, which can be either TSSEs or DynamicComponentStates, depending on the subscriptionFr setting
+	 * @param updateObjects the update objects
+	 */
+	public void setUpdateObjects(HashMap<String, Object> updateObjects) {
+		this.updateObjects = updateObjects;
+	}
+
 }

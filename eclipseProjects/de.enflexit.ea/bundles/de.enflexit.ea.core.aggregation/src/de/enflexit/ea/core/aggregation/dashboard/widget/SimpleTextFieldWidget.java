@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import de.enflexit.ea.core.aggregation.dashboard.DashboardController;
-import de.enflexit.ea.core.aggregation.dashboard.DashboardUpdate;
+import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
 public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	
@@ -55,7 +55,7 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	 * @see de.enflexit.ea.core.aggregation.dashboard.widget.DashboardWidget#processUpdate(de.enflexit.ea.core.aggregation.dashboard.DashboardUpdate)
 	 */
 	@Override
-	public void processUpdate(DashboardUpdate update) {
+	public void processUpdate(DashboardWidgetUpdate update) {
 		if (update.getID().equals(this.getID())) {
 			this.setValue(update.getValue());
 		}

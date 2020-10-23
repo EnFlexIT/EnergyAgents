@@ -1,5 +1,9 @@
 package de.enflexit.ea.core.aggregation.dashboard;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -14,16 +18,19 @@ public class DashboardSubscriptionInitiator extends SubscriptionInitiator {
 
 	private static final long serialVersionUID = -3362886788353990119L;
 	
+	private DateFormat dateFormat;
+	
+	private DashboardController dashboardController;
+	
 	/**
 	 * Instantiates a new DashboardSubscriptionInitiator.
 	 *
 	 * @param agent the agent
 	 * @param aclMessage the initial ACL message
 	 */
-	public DashboardSubscriptionInitiator(Agent agent, ACLMessage aclMessage) {
+	public DashboardSubscriptionInitiator(Agent agent, ACLMessage aclMessage, DashboardController dashboardController) {
 		super(agent, aclMessage);
-		AID receiver = (AID) aclMessage.getAllReceiver().next();
-		System.out.println("[" + myAgent.getLocalName() + "] Subscribing to " + receiver.getName());
+		this.dashboardController = dashboardController;
 	}
 
 	/* (non-Javadoc)
@@ -33,12 +40,25 @@ public class DashboardSubscriptionInitiator extends SubscriptionInitiator {
 	protected void handleInform(ACLMessage notificationMessage) {
 		try {
 			Object contentObject = notificationMessage.getContentObject();
-			System.out.println("[" + this.getClass().getSimpleName() + "] Received state update, processing...");
-			//TODO Update dasboard widgets
+			if (contentObject!=null && contentObject instanceof DashboardUpdate) {
+				// --- Pass the update to the domain-specific dashboard controller ------
+				DashboardUpdate dashboardUpdate = (DashboardUpdate) contentObject;
+				this.dashboardController.processDashoardUpdate(dashboardUpdate);
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Wrong content object in dashboard update message!");
+			}
+			//TODO Update dashboard widgets
 		} catch (UnreadableException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error extracting content object!");
 			e.printStackTrace();
 		}
+	}
+	
+	public DateFormat getDateFormat() {
+		if (dateFormat==null) {
+			dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		}
+		return dateFormat;
 	}
 	
 	
