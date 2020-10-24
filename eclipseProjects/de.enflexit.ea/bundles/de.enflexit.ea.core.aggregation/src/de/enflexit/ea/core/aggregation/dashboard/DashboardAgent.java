@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import de.enflexit.common.ServiceFinder;
 import jade.core.AID;
@@ -23,9 +25,10 @@ public class DashboardAgent extends Agent {
 	
 	public static final String CONVERSATION_ID_BASE = "DashboardSubscription";
 	
-	private boolean opsMode = false;
-	
 	private HashMap<String, DashboardController> dashboardControllers;
+	
+	private JFrame dashboardVisualizationFrame;
+	private JTabbedPane dashboardsTabbedPane;
 	
 	private int subscriptionCounter = 0;
 
@@ -43,8 +46,8 @@ public class DashboardAgent extends Agent {
 		
 		List<DashboardService> serviceImplementations = ServiceFinder.findServices(DashboardService.class);
 		
-		// --- Terminate if no DashboardService is found ------------
 		if (serviceImplementations.size()==0) {
+			// --- No dashboars service implementations found, terminate ------
 			System.out.println("[" + this.getClass().getSimpleName() + "] No DashboardService-implementations found, terminating...");
 			this.addBehaviour(new OneShotBehaviour() {
 				
@@ -55,15 +58,41 @@ public class DashboardAgent extends Agent {
 					this.myAgent.doDelete();
 				}
 			});
+			
 		} else {
+			
+			// --- Prepare the aggregation-specific dashboards ----------------
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + serviceImplementations.size() + " DashboardService-implementations found");
 			
 			for (int i=0; i<serviceImplementations.size(); i++) {
 				this.prepareAggregationDashboard(serviceImplementations.get(i));
 			}
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					DashboardAgent.this.getDashboardVisualizationFrame().setVisible(true);
+				}
+			});
 		}
 	}
 	
+	
+	
+	@Override
+	protected void takeDown() {
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				DashboardAgent.this.getDashboardVisualizationFrame().dispose();
+			}
+		});
+	}
+
+
+
 	/**
 	 * Prepare aggregation dashboard.
 	 * @param dashboardService the dashboard service
@@ -71,8 +100,8 @@ public class DashboardAgent extends Agent {
 	private void prepareAggregationDashboard(DashboardService dashboardService) {
 		DashboardController dashboardController = dashboardService.getDashboardController();
 		this.getDashboardControllers().put(dashboardController.getDomain(), dashboardController);
-		
-		this.addDashboardPanel(dashboardService.getDashboardController().getDashboardPanel());
+
+		this.getDashboardsTabbedPane().add(dashboardController.getDomain(), dashboardController.getDashboardPanel());
 		
 		try {
 			for (DashboardSubscription subscription : dashboardController.getDashboardSubscriptions()) {
@@ -125,17 +154,32 @@ public class DashboardAgent extends Agent {
 		}
 		return dashboardControllers;
 	}
-	
+
 	/**
-	 * Adds the dashboard panel.
-	 * @param dashboardPanel the dashboard panel
+	 * Gets the dashboard visualization frame.
+	 * @return the dashboard visualization frame
 	 */
-	private void addDashboardPanel(JPanel dashboardPanel) {
-		if (this.opsMode==false) {
-			//TODO add to main window
-		} else {
-			//TODO add to OPS window
+	private JFrame getDashboardVisualizationFrame() {
+		if (dashboardVisualizationFrame==null) {
+			dashboardVisualizationFrame = new JFrame("AWB Dashboard");
+			dashboardVisualizationFrame.setContentPane(this.getDashboardsTabbedPane());
+			dashboardVisualizationFrame.setSize(400, 300);
+			dashboardVisualizationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		}
+		return dashboardVisualizationFrame;
 	}
+
+	/**
+	 * Gets the dashboards tabbed pane.
+	 * @return the dashboards tabbed pane
+	 */
+	private JTabbedPane getDashboardsTabbedPane() {
+		if (dashboardsTabbedPane==null) {
+			dashboardsTabbedPane = new JTabbedPane();
+		}
+		return dashboardsTabbedPane;
+	}
+	
+	
 
 }
