@@ -51,7 +51,7 @@ public abstract class DashboardController {
 	 * Gets the pending updates.
 	 * @return the pending updates
 	 */
-	public Vector<DashboardWidgetUpdate> getPendingUpdates() {
+	public synchronized Vector<DashboardWidgetUpdate> getPendingUpdates() {
 		if (pendingUpdates==null) {
 			pendingUpdates = new Vector<DashboardWidgetUpdate>();
 		}

@@ -7,7 +7,7 @@ package de.enflexit.ea.core.aggregation.dashboard;
  */
 public class DashboardWidgetUpdate {
 	private String id;
-	private double value;
+	private Object value;
 	
 	/**
 	 * Gets the ID.
@@ -27,14 +27,14 @@ public class DashboardWidgetUpdate {
 	 * Gets the value.
 	 * @return the value
 	 */
-	public double getValue() {
+	public Object getValue() {
 		return value;
 	}
 	/**
 	 * Sets the value.
 	 * @param value the new value
 	 */
-	public void setValue(double value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 }

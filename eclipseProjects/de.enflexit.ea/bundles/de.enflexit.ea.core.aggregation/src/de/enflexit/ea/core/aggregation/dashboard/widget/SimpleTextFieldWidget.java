@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.aggregation.dashboard.widget;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -18,6 +19,9 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	
 	private String id; 
 	private String unit;
+	
+	private int numberOfDecimals = 1;
+	private int defaultTextFieldWidth = 3;
 	
 	public SimpleTextFieldWidget(String id, String unit) {
 		this.id = id;
@@ -39,13 +43,42 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	public String getID() {
 		return this.id;
 	}
+	
+	/**
+	 * Sets the number of decimals.
+	 * @param numberOfDecimals the new number of decimals
+	 */
+	public void setNumberOfDecimals(int numberOfDecimals) {
+		this.numberOfDecimals = numberOfDecimals;
+	}
+	
+	/**
+	 * Gets the number of decimals.
+	 * @return the number of decimals
+	 */
+	public int getNumberOfDecimals() {
+		return numberOfDecimals;
+	}
+	
+	/**
+	 * Sets the text field width.
+	 * @param textFieldWidth the new text field width
+	 */
+	public void setTextFieldWidth(int textFieldWidth) {
+		this.getJTextfieldValue().setColumns(textFieldWidth);
+	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.aggregation.dashboard.widget.DashboardWidget#processUpdate(de.enflexit.ea.core.aggregation.dashboard.DashboardUpdate)
 	 */
 	@Override
 	public void processUpdate(DashboardWidgetUpdate update) {
 		if (update.getID().equals(this.getID())) {
-			this.setValue(update.getValue());
+			if (update.getValue() instanceof Number) {
+				double roundedValue = this.roundValue(((Number)update.getValue()).doubleValue(), this.numberOfDecimals);
+				this.setValue(roundedValue);
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Wrong data type in update object: " + update.getValue().getClass().getName());
+			}
 		}
 	}
 	
@@ -53,9 +86,11 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	 * Gets the JTextField to visualize the widget's value.
 	 * @return the JTextField
 	 */
-	private JTextField getJTextfieldValue() {
+	protected JTextField getJTextfieldValue() {
 		if (jTextfieldValue==null) {
-			jTextfieldValue = new JTextField("0.0");
+			jTextfieldValue = new JTextField();
+			jTextfieldValue.setColumns(defaultTextFieldWidth);
+			this.setValue(0);
 		}
 		return jTextfieldValue;
 	}
@@ -66,6 +101,7 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	private JLabel getUnitLabel() {
 		if (jLabelUnit==null) {
 			jLabelUnit = new JLabel(this.unit);
+			jLabelUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelUnit;
 	}
@@ -77,6 +113,18 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	public void setValue(double value) {
 		this.getJTextfieldValue().setText(""+value);
 	}
+	
+	/**
+	 * Round a value according to the numberOfDecimals property.
+	 * @param value the value
+	 * @return the rounded double
+	 */
+	private double roundValue(double value, int numberOfDecimals) {
+		double scale = Math.pow(10, numberOfDecimals);
+		
+		return Math.round(value*scale)/scale;
+	}
+	
 	/**
 	 * Sets the unit for this widget
 	 * @param unit the new unit
