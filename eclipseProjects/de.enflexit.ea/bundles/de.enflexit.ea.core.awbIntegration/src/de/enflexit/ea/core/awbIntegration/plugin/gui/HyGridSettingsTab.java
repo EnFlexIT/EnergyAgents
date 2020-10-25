@@ -122,6 +122,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JRadioButton jRadioButtonSnapshotCentral;
 	private JTextField jTextFieldCentralDecisionClass;
 	private JButton jButtonCentralDecisionClass;
+	private JPanel jPanelSnapshotCentralDecision;
 
 	
 	/**
@@ -388,7 +389,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(980, 750);
+		this.setSize(1050, 750);
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.setViewportView(this.getJPanelMain());
 	}
@@ -423,9 +424,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			
 			
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{133, 0, 0};
+			gridBagLayout.columnWidths = new int[]{133, 20, 0, 0};
 			gridBagLayout.rowHeights = new int[]{16, 25, 0, 0, 26, 26, 0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelMain.setLayout(gridBagLayout);
 			jPanelMain.setSize(550, 893);
@@ -446,12 +447,12 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			GridBagConstraints gbc_jPanelDiscreteSettings = new GridBagConstraints();
 			gbc_jPanelDiscreteSettings.insets = new Insets(5, 10, 0, 10);
 			gbc_jPanelDiscreteSettings.fill = GridBagConstraints.BOTH;
-			gbc_jPanelDiscreteSettings.gridx = 1;
+			gbc_jPanelDiscreteSettings.gridx = 2;
 			gbc_jPanelDiscreteSettings.gridy = 1;
 			jPanelMain.add(getJPanelDiscreteSettings(), gbc_jPanelDiscreteSettings);
 			GridBagConstraints gbc_jSeparatorAfterTimeModelSelection = new GridBagConstraints();
 			gbc_jSeparatorAfterTimeModelSelection.insets = new Insets(15, 10, 10, 10);
-			gbc_jSeparatorAfterTimeModelSelection.gridwidth = 2;
+			gbc_jSeparatorAfterTimeModelSelection.gridwidth = 3;
 			gbc_jSeparatorAfterTimeModelSelection.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparatorAfterTimeModelSelection.gridx = 0;
 			gbc_jSeparatorAfterTimeModelSelection.gridy = 2;
@@ -471,11 +472,11 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			GridBagConstraints gbc_jPanelScheduleLengthRestriction = new GridBagConstraints();
 			gbc_jPanelScheduleLengthRestriction.insets = new Insets(0, 10, 0, 10);
 			gbc_jPanelScheduleLengthRestriction.anchor = GridBagConstraints.NORTHWEST;
-			gbc_jPanelScheduleLengthRestriction.gridx = 1;
+			gbc_jPanelScheduleLengthRestriction.gridx = 2;
 			gbc_jPanelScheduleLengthRestriction.gridy = 4;
 			jPanelMain.add(getJPanelScheduleLengthRestriction(), gbc_jPanelScheduleLengthRestriction);
 			GridBagConstraints gbc_jSeparatorAfterDataHandling = new GridBagConstraints();
-			gbc_jSeparatorAfterDataHandling.gridwidth = 2;
+			gbc_jSeparatorAfterDataHandling.gridwidth = 3;
 			gbc_jSeparatorAfterDataHandling.insets = new Insets(15, 10, 10, 10);
 			gbc_jSeparatorAfterDataHandling.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparatorAfterDataHandling.gridx = 0;
@@ -488,7 +489,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jLabelHeaderVisualizationSettings.gridy = 6;
 			jPanelMain.add(getJLabelHeaderVisualizationSettings(), gbc_jLabelHeaderVisualizationSettings);
 			GridBagConstraints gbc_jPanelVisualizationSettings = new GridBagConstraints();
-			gbc_jPanelVisualizationSettings.gridwidth = 2;
+			gbc_jPanelVisualizationSettings.gridwidth = 3;
 			gbc_jPanelVisualizationSettings.insets = new Insets(5, 10, 0, 10);
 			gbc_jPanelVisualizationSettings.fill = GridBagConstraints.BOTH;
 			gbc_jPanelVisualizationSettings.gridx = 0;
@@ -781,20 +782,14 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jRadioButtonSnapshotCentral.anchor = GridBagConstraints.NORTHWEST;
 			gbc_jRadioButtonSnapshotCentral.gridx = 0;
 			gbc_jRadioButtonSnapshotCentral.gridy = 4;
-
-			GridBagConstraints jTextFieldDecisionClass = new GridBagConstraints();
-			jTextFieldDecisionClass.insets = new Insets(4, 0, 0, 0);
-			jTextFieldDecisionClass.gridwidth = 2;
-			jTextFieldDecisionClass.fill = GridBagConstraints.HORIZONTAL;
-			jTextFieldDecisionClass.gridx = 0;
-			jTextFieldDecisionClass.gridy = 5;
-
-			GridBagConstraints gbc_jButtonSelectStaticClass = new GridBagConstraints();
-			gbc_jButtonSelectStaticClass.insets = new Insets(4, 0, 0, 0);
-			gbc_jButtonSelectStaticClass.anchor = GridBagConstraints.WEST;
-			gbc_jButtonSelectStaticClass.gridx = 2;
-			gbc_jButtonSelectStaticClass.gridy = 5;
 			
+			GridBagConstraints gbc_jPanelSnapshotCentralDecision = new GridBagConstraints();
+			gbc_jPanelSnapshotCentralDecision.gridwidth = 3;
+			gbc_jPanelSnapshotCentralDecision.insets = new Insets(4, 0, 0, 0);
+			gbc_jPanelSnapshotCentralDecision.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jPanelSnapshotCentralDecision.gridx = 0;
+			gbc_jPanelSnapshotCentralDecision.gridy = 5;
+
 			
 			jPanelDiscreteSettings.setLayout(gbl_jPanelDiscreteSettings);
 			jPanelDiscreteSettings.add(getJRadioButtonTimeModelDiscrete(), gbc_jRadioButtonTimeModelDiscrete);
@@ -804,8 +799,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			jPanelDiscreteSettings.add(getJCheckBoxSnapshotSimulation(), gbc_jCheckBoxSnapshotSimulation);
 			jPanelDiscreteSettings.add(getJRadioButtonSnapshotDecentral(), gbc_jRadioButtonSnapshotDecentral);
 			jPanelDiscreteSettings.add(getJRadioButtonSnapshotCentral(), gbc_jRadioButtonSnapshotCentral);
-			jPanelDiscreteSettings.add(getJTextFieldCentralDecisionClass(), jTextFieldDecisionClass);
-			jPanelDiscreteSettings.add(getJButtonCentralDecisionClass(), gbc_jButtonSelectStaticClass);
+			jPanelDiscreteSettings.add(getJPanelSnapshotCentralDecision(), gbc_jPanelSnapshotCentralDecision);
 		}
 		return jPanelDiscreteSettings;
 	}
@@ -866,6 +860,32 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			jRadioButtonSnapshotCentral.addActionListener(this);
 		}
 		return jRadioButtonSnapshotCentral;
+	}
+	
+	private JPanel getJPanelSnapshotCentralDecision() {
+		if (jPanelSnapshotCentralDecision == null) {
+			jPanelSnapshotCentralDecision = new JPanel();
+
+			GridBagLayout gbl_jPanelSnapshotCentralDecision = new GridBagLayout();
+			gbl_jPanelSnapshotCentralDecision.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelSnapshotCentralDecision.rowHeights = new int[]{0, 0};
+			gbl_jPanelSnapshotCentralDecision.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelSnapshotCentralDecision.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbc_jTextFieldCentralDecisionClass = new GridBagConstraints();
+			gbc_jTextFieldCentralDecisionClass.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextFieldCentralDecisionClass.gridx = 0;
+			gbc_jTextFieldCentralDecisionClass.gridy = 0;
+			
+			GridBagConstraints gbc_jButtonCentralDecisionClass = new GridBagConstraints();
+			gbc_jButtonCentralDecisionClass.gridx = 1;
+			gbc_jButtonCentralDecisionClass.gridy = 0;
+			
+			jPanelSnapshotCentralDecision.setLayout(gbl_jPanelSnapshotCentralDecision);
+			jPanelSnapshotCentralDecision.add(getJTextFieldCentralDecisionClass(), gbc_jTextFieldCentralDecisionClass);
+			jPanelSnapshotCentralDecision.add(getJButtonCentralDecisionClass(), gbc_jButtonCentralDecisionClass);
+		}
+		return jPanelSnapshotCentralDecision;
 	}
 	private JTextField getJTextFieldCentralDecisionClass() {
 		if (jTextFieldCentralDecisionClass == null) {
@@ -1327,7 +1347,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		String   search4DefaultValue = null;
 		String   search4Description = "Select the central decision process class to apply.";
 		
-		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, false);
+		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, true);
 		cs.setVisible(true);
 		// --- act in the dialog ... --------------------
 		if (cs.isCanceled()==true) return;
@@ -1400,4 +1420,5 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			
 		}
 	}
+	
 }  
