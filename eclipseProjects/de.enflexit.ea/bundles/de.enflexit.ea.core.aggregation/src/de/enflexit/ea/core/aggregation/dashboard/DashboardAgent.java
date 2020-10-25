@@ -1,5 +1,9 @@
 package de.enflexit.ea.core.aggregation.dashboard;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -163,7 +167,7 @@ public class DashboardAgent extends Agent {
 		if (dashboardVisualizationFrame==null) {
 			dashboardVisualizationFrame = new JFrame("AWB Dashboard");
 			dashboardVisualizationFrame.setContentPane(this.getDashboardsTabbedPane());
-			dashboardVisualizationFrame.setSize(400, 300);
+			dashboardVisualizationFrame.setSize(1024, 550);
 			dashboardVisualizationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		}
 		return dashboardVisualizationFrame;

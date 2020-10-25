@@ -21,7 +21,7 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	private String unit;
 	
 	private int numberOfDecimals = 1;
-	private int defaultTextFieldWidth = 3;
+	private int defaultTextFieldWidth = 5;
 	
 	public SimpleTextFieldWidget(String id, String unit) {
 		this.id = id;
