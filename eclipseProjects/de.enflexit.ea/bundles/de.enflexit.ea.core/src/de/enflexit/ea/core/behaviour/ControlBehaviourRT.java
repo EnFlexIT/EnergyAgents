@@ -17,7 +17,7 @@ import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
-import de.enflexit.ea.core.dataModel.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import energy.EomController;
 import energy.FixedVariableList;
@@ -373,15 +373,15 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		switch (this.typeOfControlledSystem) {
 		case TechnicalSystem:
 			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
-			if (this.rtEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType(tsse);
+			if (this.rtEvaluationStrategy instanceof DiscreteIteratorInterface) {
+				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType(tsse);
 			}
 			break;
 			
 		case TechnicalSystemGroup:
 			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
-			if (this.rtGroupEvaluationStrategy instanceof DiscreteRTStrategyInterface) {
-				dsTypeIndividual = ((DiscreteRTStrategyInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType(tsse);
+			if (this.rtGroupEvaluationStrategy instanceof DiscreteIteratorInterface) {
+				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType(tsse);
 			}
 			break;
 			

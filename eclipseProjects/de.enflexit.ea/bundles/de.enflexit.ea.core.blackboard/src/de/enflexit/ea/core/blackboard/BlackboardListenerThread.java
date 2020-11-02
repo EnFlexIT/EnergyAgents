@@ -3,6 +3,7 @@ package de.enflexit.ea.core.blackboard;
 import java.util.List;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.ea.core.blackboard.Blackboard.BlackboardWorkingThread;
 
 /**
  * The Class BlackboardListenerThread manages the registered {@link BlackboardListenerService}s
@@ -47,8 +48,8 @@ public class BlackboardListenerThread extends Thread {
 			
 			// --- Wait for the next restart call -------------------
 			try {
-				synchronized (this.getBlackboard().getNotificationTrigger()) {
-					this.getBlackboard().getNotificationTrigger().wait();	
+				synchronized (this.getBlackboard().getWakeUpTrigger()) {
+					this.getBlackboard().getWakeUpTrigger().wait();	
 				}
 				
 			} catch (IllegalMonitorStateException | InterruptedException imse) {
@@ -62,6 +63,8 @@ public class BlackboardListenerThread extends Thread {
 			
 			// --- Notify about new Blackboard state ----------------
 			this.notifyServices(Job.DoneNetworkCalculation);
+			// --- Set this working thread to be finalized ---------- 
+			this.getBlackboard().setBlackboardWorkingThreadFinalized(BlackboardWorkingThread.BlackboardListenerThread);
 			
 			// --- Terminate thread? --------------------------------
 			if (this.getBlackboard().isDoTerminate()==true) {

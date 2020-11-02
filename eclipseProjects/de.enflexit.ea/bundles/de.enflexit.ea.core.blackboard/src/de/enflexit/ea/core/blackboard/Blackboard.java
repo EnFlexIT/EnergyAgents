@@ -19,6 +19,11 @@ import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
  */
 public class Blackboard {
 
+	public enum BlackboardWorkingThread {
+		BlackboardAgent,
+		BlackboardListenerThread
+	}
+	
 	public enum BlackboardState {
 		Final,
 		NotFinal
@@ -28,12 +33,12 @@ public class Blackboard {
 	private NetworkModel networkModel;
 	private AbstractAggregationHandler aggregationHandler;
 	
-	
 	private boolean agentNotificationsEnabled = true;
 	private BlackboardState blackboardState;
 	
-	
-	private Object notificationTrigger;
+	private Object wakeUpTrigger;
+	private FinalizationTrigger finalizationTriggerBlackboardAgent;
+	private FinalizationTrigger finalizationTriggerBlackboardListenerThread;
 	private boolean doTerminate;
 	
 	// --- The listener thread for OSGI services ---------- 
@@ -53,6 +58,9 @@ public class Blackboard {
 		return thisInstance;
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- Methods for the BlackboardListenerThread ---------------------------
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the OSGI service listener thread.
 	 * @return the listener service thread
@@ -69,7 +77,6 @@ public class Blackboard {
 	private void resetListenerServiceThread() {
 		this.listenerServiceThread = null;
 	}
-	
 	/**
 	 * Starts the blackboard listener service thread that provides the registered OSGI services
 	 * with updates of the Blackboard.
@@ -88,23 +95,114 @@ public class Blackboard {
 	}
 
 	
+	// ------------------------------------------------------------------------
+	// --- Methods for synchronized thread control ----------------------------
+	// ------------------------------------------------------------------------
 	/**
-	 * Returns the notification trigger.
+	 * Returns the wake-up trigger that can be used to wait for a wake-up notification or to restart waiting threads and agents.
 	 * @return the notification trigger
 	 */
-	public Object getNotificationTrigger() {
-		if (notificationTrigger==null) {
-			notificationTrigger = new Object();
+	protected Object getWakeUpTrigger() {
+		if (wakeUpTrigger==null) {
+			wakeUpTrigger = new Object();
 		}
-		return notificationTrigger;
+		return wakeUpTrigger;
 	}
+	/**
+	 * Returns the finalization trigger that can be used to wait for the finalization of the {@link BlackboardAgent}.
+	 * @return the finalize trigger
+	 */
+	private FinalizationTrigger getFinalizationTriggerBlackboardAgent() {
+		if (finalizationTriggerBlackboardAgent==null) {
+			finalizationTriggerBlackboardAgent = new FinalizationTrigger();
+		}
+		return finalizationTriggerBlackboardAgent;
+	}
+	/**
+	 * Returns the finalization trigger that can be used to wait for the finalization of the {@link BlackboardListenerThread}.
+	 * @return the finalize trigger
+	 */
+	private FinalizationTrigger getFinalizationTriggerBlackboardListenerThread() {
+		if (finalizationTriggerBlackboardListenerThread==null) {
+			finalizationTriggerBlackboardListenerThread = new FinalizationTrigger();
+		}
+		return finalizationTriggerBlackboardListenerThread;
+	}
+	
+	/**
+	 * Wakes up the working threads of the blackboard (agent and listern thread) to do their jobs.
+	 */
+	public void wakeUpWorkingThreads() {
+		
+		this.getFinalizationTriggerBlackboardAgent().setFinalized(false);
+		this.getFinalizationTriggerBlackboardListenerThread().setFinalized(false);
+		synchronized (this.getWakeUpTrigger()) {
+			this.getWakeUpTrigger().notifyAll();
+		}
+	}
+	/**
+	 * Waits for the specified blackboard working thread. Should be invoked by external threads only!
+	 * @param workingThreadToWaitFor the working thread to wait for. Set <code>null</code> to wait for both threads.
+	 */
+	public void waitForBlackboardWorkingThread(BlackboardWorkingThread workingThreadToWaitFor) {
+
+		boolean isWaitForBlackboardAgent = (workingThreadToWaitFor==null || workingThreadToWaitFor==BlackboardWorkingThread.BlackboardAgent); 
+		boolean isWaitForBlackboardListenerThread = (workingThreadToWaitFor==null || workingThreadToWaitFor==BlackboardWorkingThread.BlackboardListenerThread);
+		
+		if (isWaitForBlackboardAgent==true) {
+			FinalizationTrigger ftAgent = this.getFinalizationTriggerBlackboardAgent();
+			synchronized (ftAgent) {
+				if (ftAgent.isFinalized()==false) {
+					try {
+						ftAgent.wait();
+					} catch (InterruptedException iEx) {
+					}
+				}
+			}
+		}
+		
+		if (isWaitForBlackboardListenerThread==true) {
+			FinalizationTrigger ftThread4Listener = this.getFinalizationTriggerBlackboardListenerThread();
+			synchronized (ftThread4Listener) {
+				if (ftThread4Listener.isFinalized()==false) {
+					try {
+						ftThread4Listener.wait();
+					} catch (InterruptedException iExe) {
+					}
+				}
+			}	
+		}
+	}
+	/**
+	 * Sets the specified blackboard working thread finalized.
+	 * @param workingThreadFinalized the new blackboard working thread finalized
+	 */
+	protected void setBlackboardWorkingThreadFinalized(BlackboardWorkingThread workingThreadFinalized) {
+		
+		FinalizationTrigger ft = null;
+		switch (workingThreadFinalized) {
+		case BlackboardAgent:
+			ft = this.getFinalizationTriggerBlackboardAgent();
+			break;
+		case BlackboardListenerThread:
+			ft = this.getFinalizationTriggerBlackboardListenerThread();
+			break;
+		}
+		
+		synchronized (ft) {
+			ft.setFinalized(true);
+			ft.notifyAll();
+		}
+	}
+
+	
 	/**
 	 * Sets this thread to terminate.
 	 */
 	public void setDoTerminate() {
 		this.doTerminate = true;
-		synchronized (this.getNotificationTrigger()) {
-			this.getNotificationTrigger().notifyAll();
+		synchronized (this.getWakeUpTrigger()) {
+			this.getWakeUpTrigger().notifyAll();
 		}
 		this.resetBlackboardDataModel();
 	}
@@ -212,4 +310,19 @@ public class Blackboard {
 		return blackboardState;
 	}
 	
+	/**
+	 * Serves as trigger object for waiting threads 
+	 * @author Christian Derksen - SOFTEC - University Duisburg-Essen
+	 */
+	private class FinalizationTrigger {
+		
+		boolean finalized = true;
+		
+		public boolean isFinalized() {
+			return finalized;
+		}
+		public void setFinalized(boolean finalized) {
+			this.finalized = finalized;
+		}
+	}
 }

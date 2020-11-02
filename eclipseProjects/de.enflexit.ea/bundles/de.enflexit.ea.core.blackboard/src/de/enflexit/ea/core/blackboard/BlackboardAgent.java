@@ -12,6 +12,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.blackboard.Blackboard.BlackboardWorkingThread;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
@@ -136,8 +137,8 @@ public class BlackboardAgent extends Agent {
 			Blackboard bBoard = BlackboardAgent.this.getBlackboard();
 			try {
 				// --- Wait for the next restart call -------------------------
-				synchronized (bBoard.getNotificationTrigger()) {
-					bBoard.getNotificationTrigger().wait();	
+				synchronized (bBoard.getWakeUpTrigger()) {
+					bBoard.getWakeUpTrigger().wait();	
 				}
 				
 			} catch (IllegalMonitorStateException imse) {
@@ -152,6 +153,9 @@ public class BlackboardAgent extends Agent {
 				// --- Restart this behaviour --------------------------------- 
 				super.reset();
 			}
+
+			// --- Set this working thread to be finalized -------------------- 
+			bBoard.setBlackboardWorkingThreadFinalized(BlackboardWorkingThread.BlackboardAgent);
 		}
 		
 		/**

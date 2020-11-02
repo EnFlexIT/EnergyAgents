@@ -20,7 +20,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMA
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
-import de.enflexit.ea.core.dataModel.simulation.DiscreteRTStrategyInterface;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
 import energy.FixedVariableList;
@@ -459,8 +459,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	// ------------------------------------------------------------------------
 	/**
 	 * Checks if the configured evaluation strategy is a discrete iterating RT strategy. For this, a real time strategy class 
-	 * needs to implement the {@link DiscreteRTStrategyInterface}. For a continuous time model used in a simulation, this
-	 * method always return <code>false</code>.
+	 * needs to implement the {@link DiscreteIteratorInterface}. For a continuous time model used in a simulation, this
+	 * method always returns <code>false</code>.
 	 * 
 	 * @return true, if the configured evaluation strategy is able (in principle) to iterate within a single evaluation time step
 	 */
@@ -470,11 +470,13 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 		ControlledSystemType csType = this.getInternalDataModel().getTypeOfControlledSystem();
 		
 		if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			if (csType==ControlledSystemType.TechnicalSystem || csType==ControlledSystemType.TechnicalSystemGroup) {
+			if (csType==ControlledSystemType.TechnicalSystem) {
 				strategy = this.getInternalDataModel().getOptionModelController().getEvaluationStrategyRT();
-				if (strategy!=null && strategy instanceof DiscreteRTStrategyInterface) {
-					return true;
-				}
+			} else if (csType==ControlledSystemType.TechnicalSystemGroup) {
+				strategy = this.getInternalDataModel().getGroupController().getGroupOptionModelController().getEvaluationStrategyRT();
+			}
+			if (strategy!=null && strategy instanceof DiscreteIteratorInterface) {
+				return true;
 			}
 		}
 		return false;

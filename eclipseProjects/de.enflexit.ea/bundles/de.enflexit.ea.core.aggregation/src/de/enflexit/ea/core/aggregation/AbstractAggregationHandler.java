@@ -730,27 +730,54 @@ public abstract class AbstractAggregationHandler {
 			this.notifyScheduleListObserver(sc, ScheduleNotification.Reason.ScheduleListLoaded, null);
 		}
 
-		// --- Get the schedule ---------------------------------
+		// --- Get the schedule -------------------------------------
 		schedule = sl.getSchedules().get(destinScheduleIndex);
 		
 		// --- Check the required real time attribute --------------- 
 		if (schedule.isRealTimeSchedule()!=isRealTimeSchedule) {
 			schedule.setRealTimeSchedule(isRealTimeSchedule);
 		}
+
+		
+		// ----------------------------------------------------------
+		// --- Some debug output configuration ---------------------- 
+		// ----------------------------------------------------------
+		boolean isDebugStateIntegration = false;
+		if (isDebugStateIntegration==true) {
+			// --- Debug the current system? ------------------------ 
+			String debugNetCompID = "MV1.101-LV1.101-Trafo 1";
+			if (debugNetCompID!=null && debugNetCompID.isEmpty()==false) {
+				if (sl.getNetworkID()!=null && sl.getNetworkID().equals(debugNetCompID)==false) {
+					isDebugStateIntegration = false;
+				}
+			}
+		}
+		// ----------------------------------------------------------
 		
 		// --- Set the parent of the new state ----------------------
 		TechnicalSystemStateEvaluation tssePrev = schedule.getTechnicalSystemStateEvaluation();
 		if (tssePrev!=null) {
 			if (tssePrev.getGlobalTime()<tsseNew.getGlobalTime()) {
 				// --- Later time stamp -> append -------------------
+				if (isDebugStateIntegration==true) {
+					System.out.println();
+					DisplayHelper.systemOutPrintlnGlobalTime(tsseNew.getGlobalTime(), "[" + this.getClass().getSimpleName() + "]", "Adding new system state");
+				}
 				tsseNew.setParent(tssePrev);
 				
 			} else if (tssePrev.getGlobalTime()==tsseNew.getGlobalTime()) {
 				// --- Same time stamp -> replace -------------------
+				if (isDebugStateIntegration==true) {
+					DisplayHelper.systemOutPrintlnGlobalTime(tsseNew.getGlobalTime(), "[" + this.getClass().getSimpleName() + "]", "Replace system state!");
+				}
 				tsseNew.setParent(tssePrev.getParent());
 				
 			} else if (tssePrev.getGlobalTime()>tsseNew.getGlobalTime()) {
 				// --- Place in queue -------------------------------
+				if (isDebugStateIntegration==true) {
+					DisplayHelper.systemOutPrintlnGlobalTime(tsseNew.getGlobalTime(), "[" + this.getClass().getSimpleName() + "]", "Replace system state in state queue!");
+				}
+				
 				TechnicalSystemStateEvaluation tsseQueue = tssePrev;
 				List<TechnicalSystemStateEvaluation> tsseListTmp = new ArrayList<TechnicalSystemStateEvaluation>();
 				while (tsseQueue.getGlobalTime() >= tsseNew.getGlobalTime()) {

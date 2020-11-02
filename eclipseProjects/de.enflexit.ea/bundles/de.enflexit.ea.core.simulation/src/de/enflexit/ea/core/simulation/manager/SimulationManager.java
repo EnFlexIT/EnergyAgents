@@ -529,6 +529,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --------------------------------------------------------------------
 		// --- Blackboard-Jobs ------------------------------------------------
 		// --------------------------------------------------------------------
+		// --- Set state time to the blackboard -------------------------------
+		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
+
 		// --- Update the aggregation-specific blackboard models --------------
 		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
 		for (int i = 0; i < subnetConfigList.size(); i++) {
@@ -540,8 +543,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				}
 			}
 		}
-		// --- Set state time to the blackboard -------------------------------
-		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
 		
 		// --- Set the blackboard state ---------------------------------------
 		BlackboardState bBoardSate = null;
@@ -555,9 +556,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getBlackboard().setBlackboardState(bBoardSate);
 		
 		// --- Notify blackboard listeners about the new results --------------
-		synchronized (this.getBlackboard().getNotificationTrigger()) {
-			this.getBlackboard().getNotificationTrigger().notifyAll();
-		}
+		this.getBlackboard().wakeUpWorkingThreads();
+		
+		// --- Wait for the Blackboard jobs to be done ------------------------
+		this.getBlackboard().waitForBlackboardWorkingThread(null);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -688,7 +690,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Check if the end of a discrete simulation step is reached. If so, the next 
 	 * discrete simulation step will be initialized.
 	 *
-	 * @param isUpdatedDiscreteSimulationStep the indicator if new new or updated discrete simulation step was delivered
+	 * @param isUpdatedDiscreteSimulationStep the indicator if a new or updated discrete simulation step was delivered
 	 */
 	private void discreteSimulationCheckEndOfSimulationStep(boolean isUpdatedDiscreteSimulationStep) {
 		

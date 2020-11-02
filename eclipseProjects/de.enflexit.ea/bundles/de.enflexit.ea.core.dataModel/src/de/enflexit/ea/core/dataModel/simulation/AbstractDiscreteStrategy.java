@@ -8,7 +8,7 @@ import energy.evaluation.AbstractEvaluationStrategyRT;
  * 
  * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public abstract class AbstractDiscreteStrategy extends AbstractEvaluationStrategyRT implements DiscreteRTStrategyInterface {
+public abstract class AbstractDiscreteStrategy extends AbstractEvaluationStrategyRT implements DiscreteIteratorInterface {
 
 	/**
 	 * Instantiates a new abstract discrete strategy.

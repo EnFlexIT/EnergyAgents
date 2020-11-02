@@ -2,17 +2,19 @@ package de.enflexit.ea.core.dataModel.simulation;
 
 import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import energy.evaluation.AbstractEvaluationStrategyRT;
+import energy.evaluation.AbstractSnapshotStrategy;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
+import energygroup.evaluation.AbstractGroupSnapshotStrategy;
 
 /**
- * The Interface DiscreteRTStrategyInterface provides the required method extensions for an 
- * {@link AbstractEvaluationStrategyRT} or an {@link AbstractGroupEvaluationStrategyRT} to be
- * used in the context of discrete iterable simulation step.
+ * The Interface DiscreteIteratorInterface provides the required method extensions for extended classes that are based on 
+ * an {@link AbstractEvaluationStrategyRT}, an {@link AbstractGroupEvaluationStrategyRT}, {@link AbstractSnapshotStrategy}
+ * or an {@link AbstractGroupSnapshotStrategy} to be used in the context of discrete iterable simulations.
  * 
  * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public interface DiscreteRTStrategyInterface {
+public interface DiscreteIteratorInterface {
 
 	/**
 	 * Has to answer the question, if the currently reached and specified system state (a {@link TechnicalSystemStateEvaluation}) 
