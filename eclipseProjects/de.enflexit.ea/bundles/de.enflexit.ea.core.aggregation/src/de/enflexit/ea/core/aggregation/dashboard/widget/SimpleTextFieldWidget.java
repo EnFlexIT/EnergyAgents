@@ -10,6 +10,12 @@ import javax.swing.JTextField;
 
 import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
+/**
+ * A simple widget for numeric values, consisting of a JTextField for the value and a JLabel for the unit (optional).
+ * Can be used for any kind of numeric value, i.e. any subclass of jaba.lang.Number (or the corresponding primitive data types) 
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ *
+ */
 public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	
 	private static final long serialVersionUID = 7354301824279022068L;
@@ -23,6 +29,11 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	private int numberOfDecimals = 1;
 	private int defaultTextFieldWidth = 5;
 	
+	/**
+	 * Instantiates a new simple text field widget.
+	 * @param id the id
+	 * @param unit the unit
+	 */
 	public SimpleTextFieldWidget(String id, String unit) {
 		this.id = id;
 		this.unit = unit;
@@ -32,7 +43,7 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	 * Initialize the GUI components.
 	 */
 	private void initialize() {
-		this.setLayout(new FlowLayout());
+		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.add(this.getJTextfieldValue());
 		this.add(this.getUnitLabel());
 	}
