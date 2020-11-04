@@ -56,7 +56,7 @@ public class MonitoringStrategyRT extends AbstractEvaluationStrategyRT {
 	 * @return true, if evaluation is necessary
 	 */
 	boolean evaluationNecessary(TechnicalSystemState tss) {
-		this.remainingEvaluationStepPeriod = this.evaluationStepEndTime - tss.getGlobalTime();
+		this.remainingEvaluationStepPeriod = this.evaluationEndTime - tss.getGlobalTime();
 		return remainingEvaluationStepPeriod > 0;
 	}
 	/*

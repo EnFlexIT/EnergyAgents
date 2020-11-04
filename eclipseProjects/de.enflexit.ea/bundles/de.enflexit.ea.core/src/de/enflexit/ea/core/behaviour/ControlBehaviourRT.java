@@ -522,7 +522,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				long evalEndTime = this.currentTime;
 				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
 				if (tmd!=null) {
-					evalStartTime = evalEndTime -tmd.getStep();
+					evalStartTime = evalEndTime - tmd.getStep();
 				}
 				this.rtEvaluationStrategy.setEvaluationStartTime(evalStartTime);
 				this.rtEvaluationStrategy.setEvaluationEndTime(evalEndTime);
@@ -618,7 +618,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				long evalEndTime = this.currentTime;
 				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
 				if (tmd!=null) {
-					evalStartTime = evalEndTime -tmd.getStep();
+					evalStartTime = evalEndTime - tmd.getStep();
 				}
 				this.rtGroupEvaluationStrategy.setEvaluationStartTime(evalStartTime);
 				this.rtGroupEvaluationStrategy.setEvaluationEndTime(evalEndTime);
@@ -631,7 +631,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 
 				// --- Things to do for TechnicalSystemGroupss ------
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
-				this.rtGroupEvaluationStrategy.runEvaluationUntil(this.currentTime); 
+				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
 			} catch (Exception ex) {

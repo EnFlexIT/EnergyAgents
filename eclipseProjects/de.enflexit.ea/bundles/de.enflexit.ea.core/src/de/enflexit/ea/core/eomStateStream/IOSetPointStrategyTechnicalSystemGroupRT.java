@@ -90,7 +90,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 		// --- Initialise search --------------------------------------------------------
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		// --- Search by walking through time -------------------------------------------
-		while (tsse.getGlobalTime() < this.evaluationStepEndTime ) {
+		while (tsse.getGlobalTime() < this.evaluationEndTime ) {
 			
 			// --- Get all possible subsequent steps and states -------------------------
 			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse);
