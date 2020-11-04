@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.aggregation.dashboard.widget;
+package de.enflexit.ea.core.dashboard.widget;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -7,8 +7,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
 /**
  * A simple widget for numeric values, consisting of a JTextField for the value and a JLabel for the unit (optional).
@@ -31,11 +29,11 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 	
 	/**
 	 * Instantiates a new simple text field widget.
-	 * @param id the id
+	 * @param widgetID the widget ID
 	 * @param unit the unit
 	 */
-	public SimpleTextFieldWidget(String id, String unit) {
-		this.id = id;
+	public SimpleTextFieldWidget(String widgetID, String unit) {
+		this.id = widgetID;
 		this.unit = unit;
 		this.initialize();
 	}
@@ -101,7 +99,7 @@ public class SimpleTextFieldWidget extends JPanel implements DashboardWidget {
 		if (jTextfieldValue==null) {
 			jTextfieldValue = new JTextField();
 			jTextfieldValue.setColumns(defaultTextFieldWidth);
-			this.setValue(0);
+			jTextfieldValue.setText("-");
 		}
 		return jTextfieldValue;
 	}

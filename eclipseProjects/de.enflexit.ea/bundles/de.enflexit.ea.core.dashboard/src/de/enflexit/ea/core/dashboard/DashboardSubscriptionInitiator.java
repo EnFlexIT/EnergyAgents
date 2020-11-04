@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.aggregation.dashboard;
+package de.enflexit.ea.core.dashboard;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

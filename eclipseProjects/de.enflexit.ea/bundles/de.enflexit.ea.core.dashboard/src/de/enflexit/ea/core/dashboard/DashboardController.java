@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.aggregation.dashboard;
+package de.enflexit.ea.core.dashboard;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,15 +7,16 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import de.enflexit.ea.core.aggregation.dashboard.widget.DashboardWidget;
+import de.enflexit.ea.core.dashboard.widget.DashboardWidget;
+import de.enflexit.ea.core.dashboard.widget.DashboardWidgetUpdate;
+
 
 /**
- * The Class DashboardController.
+ * Abstract superclass for dashboard controller implementations
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public abstract class DashboardController {
 	private HashMap<String, DashboardWidget> widgets;
-	
 	private Vector<DashboardWidgetUpdate> pendingUpdates;
 	
 	/**
@@ -64,9 +65,13 @@ public abstract class DashboardController {
 	public void applyPendingUpdates() {
 		SwingUtilities.invokeLater(new Runnable() {
 			
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
 			@Override
 			public void run() {
-				for (DashboardWidgetUpdate update : DashboardController.this.getPendingUpdates()) {
+				for (int i=0; i<DashboardController.this.getPendingUpdates().size(); i++) {
+					DashboardWidgetUpdate update = DashboardController.this.getPendingUpdates().get(i);
 					DashboardWidget widget = DashboardController.this.getWidgets().get(update.getID());
 					if (widget!=null) {
 						widget.processUpdate(update);
@@ -75,7 +80,6 @@ public abstract class DashboardController {
 					}
 				}
 				DashboardController.this.getPendingUpdates().clear();
-				
 			}
 		});
 	}

@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.aggregation.dashboard;
+package de.enflexit.ea.core.dashboard;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
-import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionBy;
-import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionFor;
+import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionBy;
+import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionFor;
 import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
@@ -63,9 +63,12 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		
 		this.getAggregationHandler().getSubNetworkConfigurations();
 		List<DashboardSubscription> subscriptions = new ArrayList<DashboardSubscription>(this.getSubscriptionsHashMap().keySet());
-		for (AbstractSubNetworkConfiguration aggregation : this.getAggregationHandler().getSubNetworkConfigurations()) {
+		for (int i=0; i<this.getAggregationHandler().getSubNetworkConfigurations().size(); i++) {
+			
+			AbstractSubNetworkConfiguration aggregation = this.getAggregationHandler().getSubNetworkConfigurations().get(i);
 
-			for (DashboardSubscription subscription : subscriptions) {
+			for (int j=0; j<subscriptions.size(); j++) {
+				DashboardSubscription subscription = subscriptions.get(j);
 				if (subscription.getDomain().equals(aggregation.getDomain())) {
 					try {
 						ACLMessage notificationMessage = this.prepareNotificationMessage(subscription, aggregation);
@@ -94,7 +97,8 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		dashboardUpdate.setTimestamp(this.getAggregationHandler().getEvaluationEndTime());
 		
 		if (dashboardSubscription.getSubscriptionFor()==SubscriptionFor.CURRENT_TSSE) {
-			for (String componentID : dashboardSubscription.getSubscriptionSpecifiers()) {
+			for (int i=0; i<dashboardSubscription.getSubscriptionSpecifiers().size(); i++) {
+				String componentID = dashboardSubscription.getSubscriptionSpecifiers().get(i);
 				HashMap<String, TechnicalSystemStateEvaluation> lastTSSEs = subNetworkConfiguration.getAggregationHandler().getLastTechnicalSystemStatesFromScheduleController();
 				TechnicalSystemStateEvaluation tsse = lastTSSEs.get(componentID);
 				if (tsse!=null) {
@@ -105,7 +109,8 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 			}
 		} else if (dashboardSubscription.getSubscriptionFor() == SubscriptionFor.DOMAIN_DATAMODEL_STATE) {
 			NetworkModel aggregationModel = subNetworkConfiguration.getSubNetworkModel();
-			for (String componentID : dashboardSubscription.getSubscriptionSpecifiers()) {
+			for (int i=0; i<dashboardSubscription.getSubscriptionSpecifiers().size(); i++) {
+				String componentID = dashboardSubscription.getSubscriptionSpecifiers().get(i);
 				DynamicComponentState componentState = this.getStateObjectFromNetworkComponent(componentID, aggregationModel, dashboardSubscription.getDomain());
 				if (componentState!=null) {
 					dashboardUpdate.getUpdateObjects().put(componentID, componentState);
@@ -176,7 +181,8 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 			// --- Convert type-based subscriptions to IDs ----------
 			if (dashboardSubscription.getSubscriptionBy()==SubscriptionBy.COMPONENT_TYPE) {
 				ArrayList<String> componentIDs = new ArrayList<>();
-				for (String componentType : dashboardSubscription.getSubscriptionSpecifiers()) {
+				for (int i=0; i<dashboardSubscription.getSubscriptionSpecifiers().size(); i++) {
+					String componentType = dashboardSubscription.getSubscriptionSpecifiers().get(i);
 					componentIDs.addAll(this.getComponentIDsByType(componentType));
 				}
 				dashboardSubscription.setSubscriptionBy(SubscriptionBy.COMPONENT_ID);
@@ -204,7 +210,8 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		List<String> componentIDs = new ArrayList<String>();
 		NetworkModel networkModel = this.getAggregationHandler().getNetworkModel();
 		List<NetworkComponent> networkComponents = new ArrayList<>(networkModel.getNetworkComponents().values());
-		for (NetworkComponent networkComponent : networkComponents) {
+		for (int i=0; i<networkComponents.size(); i++) {
+			NetworkComponent networkComponent = networkComponents.get(i);
 			if (networkComponent.getType().equals(componentType)) {
 				componentIDs.add(networkComponent.getId());
 			}

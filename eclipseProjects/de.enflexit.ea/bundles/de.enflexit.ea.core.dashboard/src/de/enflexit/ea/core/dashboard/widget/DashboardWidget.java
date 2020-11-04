@@ -1,8 +1,6 @@
-package de.enflexit.ea.core.aggregation.dashboard.widget;
+package de.enflexit.ea.core.dashboard.widget;
 
 import javax.swing.JComponent;
-
-import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
 /**
  * Common interface for dashboard widgets

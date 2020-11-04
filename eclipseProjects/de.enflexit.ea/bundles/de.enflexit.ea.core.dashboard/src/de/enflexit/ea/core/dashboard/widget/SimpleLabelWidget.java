@@ -1,14 +1,12 @@
-package de.enflexit.ea.core.aggregation.dashboard.widget;
+package de.enflexit.ea.core.dashboard.widget;
 
 import java.awt.Font;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
-
 /**
- * Simple {@link JLabel}-based widget implementation for displaying textual information
+ * Simple {@link JLabel}-based widget for displaying textual information
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  *
  */
@@ -19,11 +17,11 @@ public class SimpleLabelWidget extends JLabel implements DashboardWidget{
 
 	/**
 	 * Instantiates a new simple label widget.
-	 * @param id the id
+	 * @param widgetID the widget ID
 	 */
-	public SimpleLabelWidget(String id) {
+	public SimpleLabelWidget(String widgetID) {
 		super();
-		this.id = id;
+		this.id = widgetID;
 		this.setFont(new Font("Dialog", Font.PLAIN, 12));
 	}
 

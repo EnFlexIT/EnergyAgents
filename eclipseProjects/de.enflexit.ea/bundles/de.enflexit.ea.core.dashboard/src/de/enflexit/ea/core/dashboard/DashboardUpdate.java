@@ -1,9 +1,9 @@
-package de.enflexit.ea.core.aggregation.dashboard;
+package de.enflexit.ea.core.dashboard;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-import de.enflexit.ea.core.aggregation.dashboard.DashboardSubscription.SubscriptionFor;
+import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionFor;
 import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
 
 /**

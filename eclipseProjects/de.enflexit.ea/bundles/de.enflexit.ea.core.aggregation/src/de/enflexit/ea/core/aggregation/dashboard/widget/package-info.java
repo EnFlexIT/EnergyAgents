@@ -1,1 +1,0 @@
-package de.enflexit.ea.core.aggregation.dashboard.widget;

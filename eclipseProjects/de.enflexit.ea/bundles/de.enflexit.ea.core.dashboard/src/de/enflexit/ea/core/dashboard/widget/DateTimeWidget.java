@@ -1,9 +1,7 @@
-package de.enflexit.ea.core.aggregation.dashboard.widget;
+package de.enflexit.ea.core.dashboard.widget;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import de.enflexit.ea.core.aggregation.dashboard.DashboardWidgetUpdate;
 
 /**
  * A JTextfield-based widget for displaying date and/or time data.  
