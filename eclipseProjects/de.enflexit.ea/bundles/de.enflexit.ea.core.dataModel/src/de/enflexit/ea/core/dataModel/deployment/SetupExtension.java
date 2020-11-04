@@ -118,9 +118,52 @@ public class SetupExtension extends AbstractUserObject {
 	public SetupExtension getCopy() {
 		return SerialClone.clone(this);
 	}
-	
-	
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof SetupExtension)) return false;
+
+		// ------------------------------------------------
+		// --- Compare object type ------------------------
+		SetupExtension seComp = (SetupExtension) compObj;
+		
+		// --- Compare deployment groups ------------------
+		TreeMap<String, DeploymentGroup> dgTreeMapComp = seComp.getDeploymentGroups();
+		TreeMap<String, DeploymentGroup> dgTreeMapThis = this.getDeploymentGroups(); 
+		if (dgTreeMapComp.size()!=dgTreeMapThis.size()) return false;
+		
+		List<String> groupIDList = new ArrayList<String>(dgTreeMapComp.keySet());
+		for (int i = 0; i < groupIDList.size(); i++) {
+			String groupID = groupIDList.get(i);
+			DeploymentGroup dgComp = dgTreeMapComp.get(groupID);
+			DeploymentGroup dgThis = dgTreeMapThis.get(groupID);
+			if (dgComp==null && dgThis==null) {
+				// --- equal, will not happen
+			} else if ((dgComp!=null && dgThis==null) || (dgComp==null && dgThis!=null)) {
+				return false;
+			} else {
+				if (dgComp.equals(dgThis)==false) return false;
+			}
+		}
+		
+		// --- Compare ScheduleTimeRange ------------------ 
+		ScheduleTimeRange strComp = seComp.getScheduleTimeRange();
+		ScheduleTimeRange strThis = this.getScheduleTimeRange();
+		if (strComp==null && strThis==null) {
+			// --- equal, will not happen
+		} else if ((strComp!=null && strThis==null) || (strComp==null && strThis!=null)) {
+			return false;
+		} else {
+			if (strComp.equals(strThis)==false) return false;
+		}
+		
+		return true;
+	}
 	
 	
 	// --------------------------------------------------------------

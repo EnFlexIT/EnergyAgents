@@ -162,4 +162,78 @@ public class DeploymentGroup implements Serializable{
 		return new ArrayList<>(agentClassNames);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof DeploymentGroup)) return false;
+
+		// ------------------------------------------------
+		// --- Compare object type ------------------------
+		DeploymentGroup dgComp = (DeploymentGroup) compObj;
+		
+		// --- Group-ID -----------------------------------
+		String groupIDComp = dgComp.getGroupID();
+		String groupIDThis = this.getGroupID();
+		if (groupIDComp==null && groupIDThis==null) {
+			// - equal -
+		} else if ((groupIDComp!=null && groupIDThis==null) || (groupIDComp==null && groupIDThis!=null)) {
+			return false;
+		} else {
+			if (groupIDComp.equals(groupIDThis)==false) return false;
+		}
+		
+		// --- Active? ------------------------------------
+		if (dgComp.isActive()==this.isActive()==false) return false;
+		
+		// --- Project version ----------------------------
+		String pVersionComp = dgComp.getProjectVersion();
+		String pVersionThis = this.getProjectVersion();
+		if (pVersionComp==null && pVersionThis==null) {
+			// - equal -
+		} else if ((pVersionComp!=null && pVersionThis==null) || (pVersionComp==null && pVersionThis!=null)) {
+			return false;
+		} else {
+			if (pVersionComp.equals(pVersionThis)==false) return false;
+		}
+
+		// --- DeploymentSettings -------------------------
+		DeploymentSettings dsComp = dgComp.getDeploymentSettings();
+		DeploymentSettings dsThis = this.getDeploymentSettings();
+		if (dsComp==null && dsThis==null) {
+			// - equal -
+		} else if ((dsComp!=null && dsThis==null) || (dsComp==null && dsThis!=null)) {
+			return false;
+		} else {
+			if (dsComp.equals(dsThis)==false) return false;
+		}
+		
+		// --- TreeMap for AgentDeploymentInformation -----
+		TreeMap<String, AgentDeploymentInformation> adInfComp = dgComp.getAgentsHashMap();
+		TreeMap<String, AgentDeploymentInformation> adInfThis = this.getAgentsHashMap();
+		if (adInfComp.size()!=adInfThis.size()) return false;
+		
+		List<String> agentIDList = new ArrayList<String>(adInfComp.keySet());
+		for (int i = 0; i < agentIDList.size(); i++) {
+			String agentID = agentIDList.get(i);
+			AgentDeploymentInformation adiComp = adInfComp.get(agentID);
+			AgentDeploymentInformation adiThis = adInfThis.get(agentID);
+			if (adiComp==null && adiThis==null) {
+				// --- equal, will not happen
+			} else if ((adiComp!=null && adiThis==null) || (adiComp==null && adiThis!=null)) {
+				return false;
+			} else {
+				if (adiComp.equals(adiThis)==false) return false;
+			}
+		}
+
+		// --- No differences found -------------
+		return true;
+	}
+	
+	
 }

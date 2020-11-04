@@ -17,18 +17,17 @@ import energygroup.evaluation.AbstractGroupSnapshotStrategy;
 public interface DiscreteIteratorInterface {
 
 	/**
-	 * Has to answer the question, if the currently reached and specified system state (a {@link TechnicalSystemStateEvaluation}) 
+	 * Has to answer the question, if the currently reached local system state (the current {@link TechnicalSystemStateEvaluation} in the evaluation strategy) 
 	 * requires further iterations or if this is the final system state for the current discrete simulation step.
 	 * For the handling, a local variable should be introduced to handle the {@link DiscreteSystemStateType}
 	 *
-	 * @param tsse the current TechnicalSystemStateEvaluation
 	 * @return the DiscreteSystemStateType for the current / last evaluation step
 	 * @see #setDiscreteSystemStateType(DiscreteSystemStateType)
 	 */
-	public DiscreteSystemStateType getDiscreteSystemStateType(TechnicalSystemStateEvaluation tsse);
+	public DiscreteSystemStateType getDiscreteSystemStateType();
 
 	/**
-	 * Here, the discrete system state type should be set with the end of the method-call of {@link AbstractEvaluationStrategyRT#runEvaluationUntil(long)}.
+	 * Here, the discrete system state type should be set with the end of the method-call of {e.g. @link AbstractEvaluationStrategyRT#runEvaluationUntil(long)}.
 	 * For this, a local variable should be introduced to handle the {@link DiscreteSystemStateType} 
 	 *
 	 * @param systemState the new discrete system state type

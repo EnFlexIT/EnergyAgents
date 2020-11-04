@@ -742,7 +742,7 @@ public abstract class AbstractAggregationHandler {
 		// ----------------------------------------------------------
 		// --- Some debug output configuration ---------------------- 
 		// ----------------------------------------------------------
-		boolean isDebugStateIntegration = false;
+		boolean isDebugStateIntegration = true;
 		if (isDebugStateIntegration==true) {
 			// --- Debug the current system? ------------------------ 
 			String debugNetCompID = "MV1.101-LV1.101-Trafo 1";

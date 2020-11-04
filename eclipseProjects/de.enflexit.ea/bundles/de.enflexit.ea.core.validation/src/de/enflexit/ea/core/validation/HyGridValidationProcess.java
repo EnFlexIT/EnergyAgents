@@ -453,16 +453,24 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 * @return the HyGridAbstractEnvironmentModel
 	 */
 	private HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
-		HyGridAbstractEnvironmentModel hygAbsEnvModel=null;
-		GraphEnvironmentController graphController = this.getGraphController();
-		if (graphController!=null) {
-			AbstractEnvironmentModel absEnvModel = graphController.getAbstractEnvironmentModel();
-			if (absEnvModel instanceof HyGridAbstractEnvironmentModel) {
-				hygAbsEnvModel = (HyGridAbstractEnvironmentModel)absEnvModel;	
-			} else {
-				if (absEnvModel!=null) {
-					this.addMessage("The current abstract environment model is not of type '" + HyGridAbstractEnvironmentModel.class.getSimpleName() + "'!", MessageType.Error);
-				}
+		
+		HyGridAbstractEnvironmentModel hygAbsEnvModel = null;
+		if (this.getProject().getUserRuntimeObject() instanceof HyGridAbstractEnvironmentModel) {
+			// --- Get HyGrid model from project --------------------
+			hygAbsEnvModel = (HyGridAbstractEnvironmentModel) this.getProject().getUserRuntimeObject(); 
+			
+		} else {
+			// --- HyGrid model from GraphController ----------------
+			GraphEnvironmentController graphController = this.getGraphController();
+			if (graphController!=null) {
+				AbstractEnvironmentModel absEnvModel = graphController.getAbstractEnvironmentModel();
+				if (absEnvModel instanceof HyGridAbstractEnvironmentModel) {
+					hygAbsEnvModel = (HyGridAbstractEnvironmentModel)absEnvModel;	
+				} else {
+					if (absEnvModel!=null) {
+						this.addMessage("The current abstract environment model is not of type '" + HyGridAbstractEnvironmentModel.class.getSimpleName() + "'!", MessageType.Error);
+					}
+				}	
 			}	
 		}
 		return hygAbsEnvModel;
@@ -815,6 +823,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			// --- Changes in the project -----------------			
 			String projectNotification = (String) updateObject;
 			switch (projectNotification) {
+			case Project.CHANGED_TimeModelClass:
+			case Project.CHANGED_UserRuntimeObject:
 			case Project.PREPARE_FOR_SAVING:
 				this.validateCurrentSetupInThread();
 				break;
@@ -825,8 +835,11 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			SimulationSetupNotification setupNotification = (SimulationSetupNotification) updateObject;
 			switch (setupNotification.getUpdateReason()) {
 			case SIMULATION_SETUP_LOAD:
-				// Exchange with the call below ----------- 
+				// ------------------------------------------------------------------------------------------
+				// --- Exchanged with the call below (see NETWORK_MODEL_NetworkElementDataModelReLoaded) ----
+				// --- => Left as an example for possible extension or adjustment ---------------------------  
 				//this.validateCurrentSetupInThread();
+				// ------------------------------------------------------------------------------------------
 				break;
 			default:
 				break;

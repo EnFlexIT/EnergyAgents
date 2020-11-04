@@ -11,7 +11,7 @@ import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSetti
  * General GraphElmentLayoutSettings implementation for all networks in the HyGrid-context
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayoutSettings implements Serializable{
+public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayoutSettings implements Serializable {
 
 	private static final long serialVersionUID = 8229652613983914843L;
 
@@ -61,11 +61,10 @@ public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayout
 	 */
 	@Override
 	public TreeMap<String, String> getSettingsAsTreeMap() {
+		
 		TreeMap<String, String> settingsTreeMap = new TreeMap<>();
-
 		settingsTreeMap.putAll(this.convertSettingsToTreeMap("nodes", this.getColorSettingsForNodes()));
 		settingsTreeMap.putAll(this.convertSettingsToTreeMap("edges", this.getColorSettingsForEdges()));
-		
 		return settingsTreeMap;
 	}
 	
@@ -76,15 +75,13 @@ public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayout
 	 * @return the tree map
 	 */
 	private TreeMap<String, String> convertSettingsToTreeMap(String prefix, ColorSettingsCollection settings) {
+		
 		TreeMap<String, String> settingsTreeMap = new TreeMap<>();
-		
 		settingsTreeMap.put(prefix + ".isEnabled", "" + settings.isEnabled());
-		
 		for (int i=0; i<settings.getColorSettingsVector().size(); i++) {
 			ColorSettingsIntervalBased colorSeting4Component = settings.getColorSettingsVector().get(i);
 			settingsTreeMap.put(prefix + ".settings"+i, colorSeting4Component.getLowerBound() + ";" + colorSeting4Component.getUpperBound() + ";" + colorSeting4Component.getValueColorString()); 
 		}
-		
 		return settingsTreeMap;
 	}
 
@@ -131,6 +128,27 @@ public class HyGridGraphElementLayoutSettings extends AbstractGraphElementLayout
 			errorMessage = this.getColorSettingsForEdges().getErrorMessage();
 		}
 		return errorMessage;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings#isEqual(de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings)
+	 */
+	@Override
+	protected boolean isEqualGraphElementLayoutSettings(AbstractGraphElementLayoutSettings gelsComp) {
+
+		// --- Quick exit? --------------------------------
+		if (gelsComp==null) return false;
+		if (gelsComp==this) return true;
+		if (!(gelsComp instanceof HyGridGraphElementLayoutSettings)) return false;
+		
+		// ------------------------------------------------
+		// --- Compare object type ------------------------
+		HyGridGraphElementLayoutSettings hsComp = (HyGridGraphElementLayoutSettings) gelsComp;
+		
+		if (hsComp.getColorSettingsForNodes().equals(this.getColorSettingsForNodes())==false) return false;
+		if (hsComp.getColorSettingsForEdges().equals(this.getColorSettingsForEdges())==false) return false;
+		
+		return true;
 	}
 	
 }

@@ -114,6 +114,54 @@ public class AgentDeploymentInformation implements Serializable, Comparable<Agen
 	}
 	
 	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+	
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof AgentDeploymentInformation)) return false;
+
+		// ------------------------------------------------
+		// --- Compare object type ------------------------
+		AgentDeploymentInformation adiComp = (AgentDeploymentInformation) compObj;
+		
+		if (this.isEqualString(adiComp.getAgentID(), this.getAgentID())==false) return false;
+		if (this.isEqualString(adiComp.getAgentClassName(), this.getAgentClassName())==false) return false;
+		if (this.isEqualString(adiComp.getComponentType(), this.getComponentType())==false) return false;
+		
+		AgentOperatingMode aomComp = adiComp.getAgentOperatingMode();
+		AgentOperatingMode aomThis = this.getAgentOperatingMode();
+		if (aomComp==null && aomThis==null) {
+			// - equal -
+		} else if ((aomComp!=null && aomThis==null) || (aomComp==null && aomThis!=null)) {
+			return false;
+		} else {
+			if (aomComp!=aomThis) return false;
+		}
+		
+		return true;
+	}
+	/**
+	 * Checks for equal strings where also <code>null</code> will be considered. If both
+	 * parameters with null, the method return true.
+	 *
+	 * @param s1 the s 1
+	 * @param s2 the s 2
+	 * @return true, if is equal string
+	 */
+	private boolean isEqualString(String s1, String s2) {
+		if (s1==null && s2==null) {
+			return true;
+		} else if ((s1!=null && s2==null) || (s1==null && s2!=null)) {
+			return false;
+		} 
+		return s1.equals(s2);
+	}
+	
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override

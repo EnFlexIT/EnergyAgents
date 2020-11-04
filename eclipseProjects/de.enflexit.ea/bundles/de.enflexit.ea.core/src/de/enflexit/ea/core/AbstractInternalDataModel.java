@@ -411,7 +411,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 		
 			String agentIdOfCEA = this.getAgentIdOfCea();
 			SetupExtension setEx = this.getHyGridAbstractEnvironmentModel().getSetupExtension();
-			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettingsModel().getCentralAgentSpecifier();
+			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettings().getCentralAgentSpecifier();
 			
 			if (setEx!=null) {
 				DeploymentGroupsHelper dgh = setEx.getDeploymentGroupsHelper();

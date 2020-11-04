@@ -254,7 +254,8 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private void loadFormToDataModel() {
 		
 		HyGridAbstractEnvironmentModel hyGridDM = this.getHyGridAbstractEnvironmentModel();
-		
+		HyGridAbstractEnvironmentModel hyGridDMOld = hyGridDM.getCopy(); 
+				
 		// --- Save Simulation Interval length ------------
 		this.saveSimulationIntervalLength(hyGridDM);
 		this.saveNetworkCalculationIntervalLength(hyGridDM);
@@ -321,11 +322,13 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			duc.setUpdateMechanism(UpdateMechanism.DisableUpdates);
 		}
 		
-		// --- Set ScheduleLenghtDescription ----
+		// --- Set ScheduleLenghtDescription --------------
 		hyGridDM.setScheduleLengthRestriction(this.getJPanelScheduleLengthRestriction().getScheduleLengthRestriction());
 		
-		// --- Set the current project to be unsaved ------
-		this.currProject.setUnsaved(true);
+		// --- Check if we have changes -------------------
+		if (hyGridDM.equals(hyGridDMOld)==false) {
+			this.currProject.setUserRuntimeObject(hyGridDM);
+		}
 	}
 	
 
@@ -1198,10 +1201,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			timModelNew.setTimeStart(timeModelOld.getTimeStart());
 			timModelNew.setTimeStop(timeModelOld.getTimeStop());
 			timModelNew.setTimeFormat(timeModelOld.getTimeFormat());
-			// --- Save the new time model settings -----------
+			// --- Save the new time model settings -------
 			tmc.saveTimeModelToSimulationSetup();
 		}
-		
 	}
 	
 	/**
@@ -1378,9 +1380,11 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			if (ae.getSource()==this.getJRadioButtonTimeModelDiscrete()) {
 				this.switchTimeModel(TimeModelDiscrete.class.getName());
 				this.enableControls();
+				this.loadFormToDataModel();
 			} else if (ae.getSource()==this.getJRadioButtonTimeModelContinuous()) {
 				this.switchTimeModel(TimeModelContinuous.class.getName());
 				this.enableControls();
+				this.loadFormToDataModel();
 				
 			} else if (ae.getSource()==this.getJCheckBoxSnapshotSimulation()) {
 				this.loadFormToDataModel();

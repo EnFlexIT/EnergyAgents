@@ -54,6 +54,7 @@ public class DeploymentSettings implements Serializable {
 	
 	private DeploymentMode deploymentMode;
 	
+	
 	/**
 	 * Gets the AgentSpecifier.
 	 * @return the agentSpecifier
@@ -71,6 +72,7 @@ public class DeploymentSettings implements Serializable {
 	public void setCentralAgentSpecifier(AgentSpecifier agentSpecifier) {
 		this.centralAgentSpecifier = agentSpecifier;
 	}
+	
 	/**
 	 * Gets the KeyStore.
 	 * @return the certificate
@@ -88,6 +90,7 @@ public class DeploymentSettings implements Serializable {
 	public void setKeyStore(KeyStore keyStore) {
 		this.keyStore = keyStore;
 	}
+	
 	/**
 	 * Gets the TrustStore.
 	 * @return the key store
@@ -105,6 +108,7 @@ public class DeploymentSettings implements Serializable {
 	public void setTrustStore(TrustStore trustStore) {
 		this.trustStore = trustStore;
 	}
+	
 	/**
 	 * Gets the certificate.
 	 * @return the certificate
@@ -130,7 +134,6 @@ public class DeploymentSettings implements Serializable {
 	public AgentOperatingMode getDefaultAgentOperatingMode() {
 		return defaultAgentOperatingMode;
 	}
-	
 	/**
 	 * Sets the default agent operating mode.
 	 * @param defaultAgentOperatingMode the new default agent operating mode
@@ -146,7 +149,6 @@ public class DeploymentSettings implements Serializable {
 	public boolean isTargetSystemAutoIp() {
 		return targetSystemAutoIp;
 	}
-	
 	/**
 	 * Sets the target system auto ip.
 	 * @param targetSystemAutoIp the new target system auto ip
@@ -162,7 +164,6 @@ public class DeploymentSettings implements Serializable {
 	public String getTargetSystemIpAddress() {
 		return targetSystemIpAddress;
 	}
-	
 	/**
 	 * Sets the target system ip address.
 	 * @param targetSystemIpAddress the new target system ip address
@@ -178,7 +179,6 @@ public class DeploymentSettings implements Serializable {
 	public int getJadePort() {
 		return jadePort;
 	}
-
 	/**
 	 * Sets the jade port.
 	 * @param jadePort the new jade port
@@ -194,7 +194,6 @@ public class DeploymentSettings implements Serializable {
 	public int getMtpPort() {
 		return mtpPort;
 	}
-
 	/**
 	 * Sets the mtp port.
 	 * @param mtpPort the new mtp port
@@ -210,7 +209,6 @@ public class DeploymentSettings implements Serializable {
 	public String getTargetOperatingSystem() {
 		return targetOperatingSystem;
 	}
-
 	/**
 	 * Sets the installation package description.
 	 * @param targetOperatingSystem the new installation package description
@@ -235,6 +233,7 @@ public class DeploymentSettings implements Serializable {
 	public void setP2RepositoryEnabled(boolean p2RepositoryEnabled) {
 		this.p2RepositoryEnabled = p2RepositoryEnabled;
 	}
+	
 	/**
 	 * Gets the p2 repository.
 	 * @return the p2 repository
@@ -242,7 +241,6 @@ public class DeploymentSettings implements Serializable {
 	public String getP2Repository() {
 		return p2Repository;
 	}
-	
 	/**
 	 * Sets the p2 repository.
 	 * @param p2Repository the new p2 repository
@@ -267,6 +265,7 @@ public class DeploymentSettings implements Serializable {
 	public void setProjectRepositoryEnabled(boolean projectRepositoryEnabled) {
 		this.projectRepositoryEnabled = projectRepositoryEnabled;
 	}
+	
 	/**
 	 * Gets the project repository.
 	 * @return the project repository
@@ -274,7 +273,6 @@ public class DeploymentSettings implements Serializable {
 	public String getProjectRepository() {
 		return projectRepository;
 	}
-	
 	/**
 	 * Sets the project repository.
 	 * @param projectRepository the new project repository
@@ -290,7 +288,6 @@ public class DeploymentSettings implements Serializable {
 	public String getProjectTag() {
 		return projectTag;
 	}
-	
 	/**
 	 * Sets the project tag.
 	 * @param projectTag the new project tag
@@ -321,7 +318,6 @@ public class DeploymentSettings implements Serializable {
 	public DeploymentMode getDeploymentMode() {
 		return deploymentMode;
 	}
-	
 	/**
 	 * Sets the deployment target.
 	 * @param deploymentMode the new deployment target
@@ -329,6 +325,7 @@ public class DeploymentSettings implements Serializable {
 	public void setDeploymentMode(DeploymentMode deploymentMode) {
 		this.deploymentMode = deploymentMode;
 	}
+	
 	/**
 	 * Returns a copy of the current instance.
 	 * @return the copy
@@ -359,6 +356,10 @@ public class DeploymentSettings implements Serializable {
 		
 		return copy;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DeploymentSettings) {
@@ -373,20 +374,49 @@ public class DeploymentSettings implements Serializable {
 			return (specifierEquals
 					&& this.getJadePort()==otherInstance.getJadePort()
 					&& this.getMtpPort()==otherInstance.getMtpPort()
-					&& this.getTargetOperatingSystem().equals(otherInstance.getTargetOperatingSystem())
+					&& this.isEqualString(this.getTargetOperatingSystem(), otherInstance.getTargetOperatingSystem())
 					&& this.isTargetSystemAutoIp()==otherInstance.isTargetSystemAutoIp()
-					&& this.targetSystemIpAddress.equals(otherInstance.getTargetSystemIpAddress())
+					&& this.isEqualString(this.getTargetSystemIpAddress(), otherInstance.getTargetSystemIpAddress())
 					&& this.isP2RepositoryEnabled()==otherInstance.isP2RepositoryEnabled()
-					&& this.getP2Repository().equals(otherInstance.getP2Repository())
+					&& this.isEqualString(this.getP2Repository(), otherInstance.getP2Repository())
 					&& this.isProjectRepositoryEnabled()==otherInstance.isProjectRepositoryEnabled()
-					&& this.getProjectRepository().equals(otherInstance.getProjectRepository())
-					&& this.getProjectTag().equals(otherInstance.getProjectTag())
-					&& this.getDatabaseSettings().equals(otherInstance.getDatabaseSettings())
+					&& this.isEqualString(this.getProjectRepository(), otherInstance.getProjectRepository())
+					&& this.isEqualString(this.getProjectTag(), otherInstance.getProjectTag())
+					&& this.isEqualObject(this.getDatabaseSettings(), otherInstance.getDatabaseSettings())
 					&& this.getDeploymentMode()==otherInstance.getDeploymentMode()
 			);
 		} else {
 			return false;
 		}
 	}
-	
+	/**
+	 * Checks if the specified string are equal. In case that both strings are <code>null</code>, the method return true.
+	 *
+	 * @param s1 the s 1
+	 * @param s2 the s 2
+	 * @return true, if is equal string
+	 */
+	private boolean isEqualString(String s1, String s2) {
+		if (s1==null && s2==null) {
+			return true;
+		} else if ((s1!=null && s2==null) || (s1==null && s2!=null)) {
+			return false;
+		}
+		return s1.equals(s2);
+	}
+	/**
+	 * Checks if the specified objects are equal. In case that both objects are <code>null</code>, the method return true.
+	 *
+	 * @param o1 the first object
+	 * @param o2 the second object
+	 * @return true, if is equal string
+	 */
+	private boolean isEqualObject(Object o1, Object o2) {
+		if (o1==null && o2==null) {
+			return true;
+		} else if ((o1!=null && o2==null) || (o1==null && o2!=null)) {
+			return false;
+		}
+		return o1.equals(o2);
+	}
 }

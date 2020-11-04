@@ -354,7 +354,8 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 			graphElementLayoutSettings = new TreeMap<>();
 			
 			List<GraphElementLayoutService> layoutServices = ServiceFinder.findServices(GraphElementLayoutService.class);
-			for (GraphElementLayoutService layoutService : layoutServices) {
+			for (int i = 0; i < layoutServices.size(); i++) {
+				GraphElementLayoutService layoutService = layoutServices.get(i);
 				GraphElementLayoutSettingsPersistenceTreeMap settingsTreeMap = this.getGraphElementSettingsForDomain(layoutService.getDomain());
 				if (settingsTreeMap!=null) {
 					AbstractGraphElementLayoutSettings layoutSettings = layoutService.convertTreeMapToInstance(settingsTreeMap);
@@ -366,7 +367,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		}
 		return graphElementLayoutSettings;
 	}
-	
 	/**
 	 * Sets the graph element layout settings for domains.
 	 * @param graphElementLayoutSettingsForDomains the graph element layout settings for domains
@@ -375,6 +375,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.graphElementLayoutSettings = graphElementLayoutSettingsForDomains;
 	}
 
+	
 	/**
 	 * Gets the graph element layout settings.
 	 * @return the graph element layout settings
@@ -385,8 +386,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		}
 		return graphElementLayoutSettingsPersisted;
 	}
-	
-	
 	/**
 	 * Sets the graph element layout settings.
 	 * @param graphElementLayoutSettings the new graph element layout settings
@@ -394,13 +393,13 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	private void setGraphElementLayoutSettingsPersisted(ArrayList<GraphElementLayoutSettingsPersistenceTreeMap> graphElementLayoutSettings) {
 		this.graphElementLayoutSettingsPersisted = graphElementLayoutSettings;
 	}
-
+	
 	/**
 	 * Gets the settings for the specified domain.
 	 * @param domain the domain
 	 * @return the settings, null if not found
 	 */
-	public GraphElementLayoutSettingsPersistenceTreeMap getGraphElementSettingsForDomain (String domain) {
+	public GraphElementLayoutSettingsPersistenceTreeMap getGraphElementSettingsForDomain(String domain) {
 		for (GraphElementLayoutSettingsPersistenceTreeMap settings : this.getGraphElementLayoutSettingsPersisted()) {
 			if (settings.getDomain().equals(domain)) {
 				return settings;
@@ -408,7 +407,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		}
 		return null;
 	}
-
 	/**
 	 * Adds the graph element settings tree map.
 	 * @param treeMap the tree map
@@ -458,10 +456,10 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.deploymentSettings = deploymentSettings;
 	}
 	/**
-	 * Gets the deployment settings.
+	 * Returns the deployment settings.
 	 * @return the deployment settings
 	 */
-	public DeploymentSettings getDeploymentSettingsModel() {
+	public DeploymentSettings getDeploymentSettings() {
 		if (deploymentSettings==null) {
 			deploymentSettings = new DeploymentSettings();
 		}
@@ -477,24 +475,139 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		
 		HyGridAbstractEnvironmentModel copy = new HyGridAbstractEnvironmentModel();
 		copy.setSimulationStatus(this.getSimulationStatus().getCopy());
-		copy.setTimeModelType(this.getTimeModelType());
 		if (this.getSetupExtension()!=null) {
 			copy.setSetupExtension(this.getSetupExtension().getCopy());
 		}
 		
-		copy.setSimulationIntervalLength(this.getSimulationIntervalLength());
-		copy.setSimulationIntervalUnitIndex(this.getSimulationIntervalUnitIndex());
+		// --- Time model type ----------------------------
+		copy.setTimeModelType(this.getTimeModelType());
+		
+		// --- Continuous time model ----------------------
 		copy.setNetworkCalculationIntervalLength(this.getNetworkCalculationIntervalLength());
 		copy.setNetworkCalculationIntervalUnitIndex(this.getNetworkCalculationIntervalUnitIndex());
-		copy.setExecutionDataBase(this.getExecutionDataBase());
 		copy.setEnergyTransmissionConfiguration(this.getEnergyTransmissionConfiguration().getCopy());
+
+		// --- Discrete time model ------------------------
+		copy.setSimulationIntervalLength(this.getSimulationIntervalLength());
+		copy.setSimulationIntervalUnitIndex(this.getSimulationIntervalUnitIndex());
+		copy.setDiscreteSnapshotSimulation(this.isDiscreteSnapshotSimulation());
+		copy.setSnapshotDecisionLocation(this.getSnapshotDecisionLocation());
+		copy.setSnapshotCentralDecisionClass(this.getSnapshotCentralDecisionClass());
+		
+		// --- Data handling ------------------------------
+		copy.setExecutionDataBase(this.getExecutionDataBase());
+		copy.setScheduleLengthRestriction(SerialClone.clone(this.getScheduleLengthRestriction()));
+
+		// --- Visualization settings ---------------------
 		copy.setDisplayUpdateConfiguration(this.getDisplayUpdateConfiguration().getCopy());
 		copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
 		copy.setGraphElementLayoutSettingsPersisted((ArrayList<GraphElementLayoutSettingsPersistenceTreeMap>) this.getGraphElementLayoutSettingsPersisted().clone());
-		copy.setDeploymentSettings(this.getDeploymentSettingsModel().getCopy());
-		copy.setScheduleLengthRestriction(SerialClone.clone(this.getScheduleLengthRestriction()));
+		
+		// --- Deployment settings ------------------------
+		copy.setDeploymentSettings(this.getDeploymentSettings().getCopy());
+		
 		// --- Maybe to be extended ... ------------
 		return copy;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof HyGridAbstractEnvironmentModel)) return false;
+
+		// ------------------------------------------------
+		// --- Compare object type ------------------------
+		HyGridAbstractEnvironmentModel hyGridComp = (HyGridAbstractEnvironmentModel) compObj;
+
+		// ------------------------------------------------
+		// --- SimulationStatus ---------------------------
+		if (hyGridComp.getSimulationStatus().equals(this.getSimulationStatus())==false) return false;
+		
+		// ------------------------------------------------
+		// --- Compare SetupExtension ---------------------
+		SetupExtension seHyGridComp = hyGridComp.getSetupExtension();
+		SetupExtension seThis = this.getSetupExtension(); 
+		if (seHyGridComp==null && seThis==null) {
+			// -- equal !
+		} else if ((seHyGridComp!=null && seThis==null) || (seHyGridComp==null && seThis!=null)) {
+			return false;
+		} else {
+			if (seHyGridComp.equals(seThis)==false) return false;
+		}
+
+		// ------------------------------------------------
+		// --- Compare Time Model Type --------------------
+		if (hyGridComp.getTimeModelType()!=this.getTimeModelType()) return false;
+		
+		// ------------------------------------------------
+		// --- Continuous time model ----------------------
+		if (hyGridComp.getNetworkCalculationIntervalLength()!=this.getNetworkCalculationIntervalLength()) return false;
+		if (hyGridComp.getNetworkCalculationIntervalUnitIndex()!= this.getNetworkCalculationIntervalUnitIndex()) return false;
+		if (hyGridComp.getEnergyTransmissionConfiguration().equals(this.getEnergyTransmissionConfiguration())==false) return false;
+
+		// ------------------------------------------------
+		// --- Discrete time model ------------------------
+		if (hyGridComp.getSimulationIntervalLength()!=this.getSimulationIntervalLength()) return false;
+		if (hyGridComp.getSimulationIntervalUnitIndex()!=this.getSimulationIntervalUnitIndex()) return false;
+		if (hyGridComp.isDiscreteSnapshotSimulation()!=this.isDiscreteSnapshotSimulation()) return false;
+		if (hyGridComp.getSnapshotDecisionLocation()!=this.getSnapshotDecisionLocation()) return false;
+		String cdcHyGridComp = hyGridComp.getSnapshotCentralDecisionClass();
+		String cdcThis = this.getSnapshotCentralDecisionClass();
+		if (cdcHyGridComp==null && cdcThis==null) {
+			// -- equal !
+		} else if ((cdcHyGridComp!=null && cdcThis==null) || (cdcHyGridComp==null && cdcThis!=null)) {
+			return false;
+		} else {
+			if (cdcHyGridComp.equals(cdcThis)==false) return false;
+		}
+		
+		// ------------------------------------------------
+		// --- Data handling ------------------------------
+		if (hyGridComp.getExecutionDataBase()!=this.getExecutionDataBase()) return false;
+		
+		ScheduleLengthRestriction slrComp = hyGridComp.getScheduleLengthRestriction();
+		ScheduleLengthRestriction slrThis = this.getScheduleLengthRestriction();
+		long slrDurationComp = UnitConverter.convertDurationToMilliseconds(slrComp.getDuration());
+		long slrDurationThis = UnitConverter.convertDurationToMilliseconds(slrThis.getDuration());
+		if (slrDurationComp!=slrDurationThis) return false;
+		if (slrComp.getIdScheduleLengthRestriction()!=slrThis.getIdScheduleLengthRestriction()) return false;
+		if (slrComp.getMaxNumberOfSystemStates()!=slrThis.getMaxNumberOfSystemStates()) return false;
+		
+		
+		// ------------------------------------------------
+		// --- Visualization settings ---------------------
+		if (hyGridComp.getDisplayUpdateConfiguration().equals(this.getDisplayUpdateConfiguration())==false) return false;
+		
+		TreeMap<String, AbstractGraphElementLayoutSettings> gelsTreeMapComp = hyGridComp.getGraphElementLayoutSettings();
+		TreeMap<String, AbstractGraphElementLayoutSettings> gelsTreeMapThis = this.getGraphElementLayoutSettings();
+		if (gelsTreeMapComp.size()!=gelsTreeMapThis.size()) return false;
+		
+		List<String> gelsDomainNameList = new ArrayList<String>(gelsTreeMapComp.keySet());
+		for (int i = 0; i < gelsDomainNameList.size(); i++) {
+			String gelsDomainName = gelsDomainNameList.get(i);
+			AbstractGraphElementLayoutSettings gelsComp = gelsTreeMapComp.get(gelsDomainName);
+			AbstractGraphElementLayoutSettings gelsThis = gelsTreeMapComp.get(gelsDomainName);
+			if (gelsComp==null && gelsThis==null) {
+				// - equal, but will not happen -
+			} else if ((gelsComp!=null && gelsThis==null) || (gelsComp==null && gelsThis!=null)) {
+				return false;
+			} else {
+				if (gelsComp.equals(gelsThis)==false) return false;
+			}
+		}
+
+		// ------------------------------------------------
+		// --- Deployment settings ------------------------
+		if (hyGridComp.getDeploymentSettings().equals(this.getDeploymentSettings())==false) return false;
+
+		// --- Maybe to be extended ... ------------
+		return true;
+	}
+	
 }

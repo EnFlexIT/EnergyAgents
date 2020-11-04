@@ -162,8 +162,6 @@ public class AWBIntegrationPlugIn extends PlugIn {
 			abstractEnvModel = (HyGridAbstractEnvironmentModel) this.project.getUserRuntimeObject();
 			// --- Make sure that just a copy of the current instance is used -
 			abstractEnvModel = abstractEnvModel.getCopy();
-			// --- Add setupExtension -----------------------------------------
-//			abstractEnvModel.setSetupExtension(this.getSetupExtension());
 
 		} catch (Exception ex) {
 			System.err.println("Error while trying to get the abstract environment model - using a default model now!");

@@ -58,7 +58,7 @@ public class DeploymentSettingsProjectWindowTab extends JPanel {
 		this.currProject=project;
 		
 		HyGridAbstractEnvironmentModel abstractDM = (HyGridAbstractEnvironmentModel) this.currProject.getUserRuntimeObject();
-		this.deploymentSetting = abstractDM.getDeploymentSettingsModel();
+		this.deploymentSetting = abstractDM.getDeploymentSettings();
 		
 		// --- Clear some fields that should not be set in the default settings ---
 		this.deploymentSetting.getKeyStore().setKeyStoreName(null);

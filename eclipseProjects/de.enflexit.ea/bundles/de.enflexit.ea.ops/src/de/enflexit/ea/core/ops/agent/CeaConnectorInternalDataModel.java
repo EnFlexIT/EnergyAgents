@@ -97,7 +97,7 @@ public class CeaConnectorInternalDataModel implements Serializable {
 	private AID getAidOfCeaFromDeploymentSettings() {
 		AID aid = null;
 		if (this.getHyGridAbstractEnvironmentModel()!=null) {
-			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettingsModel().getCentralAgentSpecifier();
+			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettings().getCentralAgentSpecifier();
 			aid = ceaSpecifier.getAID();
 		}
 		return aid;
@@ -133,7 +133,7 @@ public class CeaConnectorInternalDataModel implements Serializable {
 	private AID getAidOfCeaAsLocalAgent() {
 		AID aid = null;
 		if (this.getHyGridAbstractEnvironmentModel()!=null) {
-			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettingsModel().getCentralAgentSpecifier();
+			AgentSpecifier ceaSpecifier = this.getHyGridAbstractEnvironmentModel().getDeploymentSettings().getCentralAgentSpecifier();
 			aid = new AID(ceaSpecifier.getAgentName(), AID.ISLOCALNAME);
 		}
 		return aid;

@@ -152,7 +152,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	 */
 	private DeploymentSettings getDefaultDeploymentSettingsFromProject() {
 		HyGridAbstractEnvironmentModel abstractDM = (HyGridAbstractEnvironmentModel) this.project.getUserRuntimeObject();
-		DeploymentSettings deploymentSettings = abstractDM.getDeploymentSettingsModel();
+		DeploymentSettings deploymentSettings = abstractDM.getDeploymentSettings();
 		deploymentSettings.setDeploymentMode(DeploymentMode.FULL);
 		return deploymentSettings;
 	}

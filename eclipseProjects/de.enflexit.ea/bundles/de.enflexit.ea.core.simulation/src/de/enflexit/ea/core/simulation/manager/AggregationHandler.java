@@ -17,8 +17,7 @@ import jade.core.AID;
 /**
  * The {@link AbstractAggregationHandler} implementation to be used by the {@link SimulationManager}
  * 
- * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class AggregationHandler extends AbstractAggregationHandler {
 

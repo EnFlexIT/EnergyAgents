@@ -78,7 +78,7 @@ public class ProxyAgent extends Agent {
 	private AID getCEAAid(){
 		if(this.ceaAID == null){
 			HyGridAbstractEnvironmentModel absEnv = (HyGridAbstractEnvironmentModel) Application.getProjectFocused().getEnvironmentController().getAbstractEnvironmentModel();
-			AgentSpecifier ceaSpecifier = absEnv.getDeploymentSettingsModel().getCentralAgentSpecifier();
+			AgentSpecifier ceaSpecifier = absEnv.getDeploymentSettings().getCentralAgentSpecifier();
 			this.ceaAID = ceaSpecifier.getAID();
 		}
 		return this.ceaAID;

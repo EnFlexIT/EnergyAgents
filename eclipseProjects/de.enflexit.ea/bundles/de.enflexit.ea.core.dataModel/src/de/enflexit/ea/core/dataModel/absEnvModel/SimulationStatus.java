@@ -58,4 +58,20 @@ public class SimulationStatus implements Serializable {
 		return copy;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof SimulationStatus)) return false;
+		
+		// --- Compare object type ------------------------
+		SimulationStatus compSState = (SimulationStatus) compObj;
+		if (compSState.getState()!=this.getState()) return false;
+		
+		return true;
+	}
 }

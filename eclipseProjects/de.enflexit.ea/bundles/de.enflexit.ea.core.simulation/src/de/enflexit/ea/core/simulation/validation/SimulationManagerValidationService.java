@@ -20,6 +20,7 @@ public class SimulationManagerValidationService implements HyGridValidationServi
 		ArrayList<HyGridValidationAdapter> validationChecks = new ArrayList<>();
 		validationChecks.add(new SiMaClassNameChecks());
 		validationChecks.add(new SiMaNotFoundCheck());
+		validationChecks.add(new StrategyClassCheck());
 		return validationChecks;
 	}
 

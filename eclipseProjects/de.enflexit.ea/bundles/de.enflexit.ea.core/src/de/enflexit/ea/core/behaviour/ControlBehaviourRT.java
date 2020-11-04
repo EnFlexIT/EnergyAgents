@@ -366,23 +366,15 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 */
 	public DiscreteSimulationStep getDiscreteSimulationStep() {
 
-		TechnicalSystemStateEvaluation tsse = null;
-		DiscreteSystemStateType dsTypeIndividual = null;
-		
 		// --- Try to get individual system state types -------------
+		TechnicalSystemStateEvaluation tsse = null;
 		switch (this.typeOfControlledSystem) {
 		case TechnicalSystem:
 			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
-			if (this.rtEvaluationStrategy instanceof DiscreteIteratorInterface) {
-				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType(tsse);
-			}
 			break;
 			
 		case TechnicalSystemGroup:
 			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
-			if (this.rtGroupEvaluationStrategy instanceof DiscreteIteratorInterface) {
-				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType(tsse);
-			}
 			break;
 			
 		default:
@@ -390,22 +382,51 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		}
 		
 		// --- Use an individual discrete system state type? --------
-		DiscreteSystemStateType dsStateType = DiscreteSystemStateType.Final;
-		if (dsTypeIndividual!=null) {
-			dsStateType = dsTypeIndividual;
+		DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
+		if (dsTypeIndividual==null) {
+			return new DiscreteSimulationStep(tsse, DiscreteSystemStateType.Final);
 		}
-		return new DiscreteSimulationStep(tsse, dsStateType);
+		return new DiscreteSimulationStep(tsse, dsTypeIndividual);
 	}
+	/**
+	 * Returns the DiscreteSystemStateType as returned by the current evaluation strategy.
+	 * @return the discrete system state type
+	 */
+	private DiscreteSystemStateType getDiscreteSystemStateType() {
+		
+		if (this.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return null;
+		
+		// --- Try to get individual system state types -------------
+		DiscreteSystemStateType dsTypeIndividual = null;
+		switch (this.typeOfControlledSystem) {
+		case TechnicalSystem:
+			if (this.rtEvaluationStrategy instanceof DiscreteIteratorInterface) {
+				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtEvaluationStrategy).getDiscreteSystemStateType();
+			}
+			break;
+			
+		case TechnicalSystemGroup:
+			if (this.rtGroupEvaluationStrategy instanceof DiscreteIteratorInterface) {
+				dsTypeIndividual = ((DiscreteIteratorInterface) this.rtGroupEvaluationStrategy).getDiscreteSystemStateType();
+			}
+			break;
+			
+		default:
+			break;
+		}
+		return dsTypeIndividual;
+	}
+	
 	/**
 	 * Answers the question, if the current execution is part of an iteration.
 	 * @return true, if is iteration step
 	 */
 	private boolean isDiscreteIterationStep() {
-		if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			DiscreteSimulationStep dsStep = this.getDiscreteSimulationStep();
-			return dsStep.getDiscreteSystemStateType()==DiscreteSystemStateType.Iteration; 
-		}
-		return false;
+		
+		if (this.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return false;
+		// --- Try to get individual system state types -------------
+		DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
+		return dsTypeIndividual!=null && dsTypeIndividual==DiscreteSystemStateType.Iteration; 
 	}
 	
 	

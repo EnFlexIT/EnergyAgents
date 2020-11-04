@@ -133,6 +133,38 @@ public class ColorSettingsIntervalBased implements Serializable, Comparable<Colo
 		return this.upperBound!=Double.MAX_VALUE;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof ColorSettingsIntervalBased)) return false;
+		
+		ColorSettingsIntervalBased csIntComp = (ColorSettingsIntervalBased) compObj;
+		
+		if (csIntComp.getLowerBound()!=this.getLowerBound()) return false;
+		if (csIntComp.getUpperBound()!=this.getUpperBound()) return false;
+
+		String colorComp = csIntComp.getValueColorString();
+		String colorThis = this.getValueColorString();
+		if (colorComp==null && colorThis==null) {
+			// - equals -
+		} else if ((colorComp!=null && colorThis==null) || (colorComp==null && colorThis!=null)) {
+			return false;
+		} else {
+			if (colorComp.equals(colorThis)==false) return false;
+		}
+		
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(ColorSettingsIntervalBased otherColorSettings) {
 		// --- Compare based on the lower bound ------
@@ -146,7 +178,6 @@ public class ColorSettingsIntervalBased implements Serializable, Comparable<Colo
 	public boolean isValidInterval() {
 		return (this.lowerBound<this.upperBound);
 	}
-	
 	/**
 	 * Checks if the specified value is within the interval for this color settings instance.
 	 * @param value the value
@@ -163,7 +194,6 @@ public class ColorSettingsIntervalBased implements Serializable, Comparable<Colo
 	public boolean hasError() {
 		return error;
 	}
-
 	/**
 	 * Sets the error flag.
 	 * @param error the new error

@@ -333,7 +333,7 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 
 		// --- If the selected MTP is HTTPS and the agent is not a proxy agent, include the agent's encoded certificate ---------
 		String certificate = null;
-		if (myAgent.getInternalDataModel().getHyGridAbstractEnvironmentModel().getDeploymentSettingsModel().getCentralAgentSpecifier().getMtpType().equals(MtpProtocol.HTTPS.toString())) {
+		if (myAgent.getInternalDataModel().getHyGridAbstractEnvironmentModel().getDeploymentSettings().getCentralAgentSpecifier().getMtpType().equals(MtpProtocol.HTTPS.toString())) {
 			certificate = this.getEncodedCertificate();
 		}
 		

@@ -86,6 +86,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
+	private Integer averageOfAgentAnswersExpected;
 	private HashSet<String> agentsInitialized;
 	private HashSet<String> agentsSuccessfulStarted;
 
@@ -103,6 +104,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HashSet<String> controlBehaviourRTStateUpdateSources;
 	private HashSet<String> controlBehaviourRTStateUpdateAnswered;
 	
+	private long statSimulationStartTime;
+	private long statSimulationEndTime;
+	private int statSimulationStepsDiscrete;
 	
 	
 	/* (non-Javadoc)
@@ -634,11 +638,14 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				if (this.isPaused==false) {
 					simState.setState(STATE.B_ExecuteSimuation);
 					this.print("Execute Simulation!", false);
+					this.statSimulationStartTime = System.currentTimeMillis();
+					
 					// --- Case separation Time Model --------------------------------------------
 					switch (this.hygridSettings.getTimeModelType()) {
 					case TimeModelDiscrete: // ---------------------------------------------------
 						this.getControlBehaviourRTStateUpdateAnswered().clear();
 						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.statSimulationStepsDiscrete++;
 						this.setEndTimeNextSimulationStep();
 						// --- Disable NetworkModel updates within GUI ----------------------------
 						this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
@@ -666,7 +673,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 						
 					case TimeModelContinuous:
 						simState.setState(STATE.C_StopSimulation);
-						this.print("Finalise Simulation!", false);
+						this.statSimulationEndTime = System.currentTimeMillis();
+						this.print("Finalize Simulation!", false);
 						this.getTimeModelContinuous().setExecuted(false);
 						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
 						break;
@@ -684,7 +692,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			ex.printStackTrace();
 		}
 	}
-	
 	
 	/**
 	 * Check if the end of a discrete simulation step is reached. If so, the next 
@@ -751,6 +758,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				}
 			} else {
 				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
+				this.statSimulationEndTime = System.currentTimeMillis();
 				this.print("Finalize Simulation!", false);
 				this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
 			}
@@ -761,6 +769,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			
 			// --- Start next simulation step -------------------------------------------
 			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+			this.statSimulationStepsDiscrete++;
 			this.setEndTimeNextSimulationStep();
 			
 		} catch (Exception ex) {
@@ -789,7 +798,13 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				// --- Set new states to the Schedules of the aggregation -----
 				STATE simState = this.hygridSettings.getSimulationStatus().getState();
 				if (simState==STATE.B_ExecuteSimuation) {
-					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states.");
+					// --- Debug text -----------------------------------------
+					String displayTextNumbers = "(Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!";
+					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states " + displayTextNumbers + ".");
+					// --- Error during simulation? ---------------------------
+					if (agentAnswers.size()!=this.getAverageOfAgentAnswersExpected()) {
+						this.print("Received " + agentAnswers.size() + " instead of " + this.getAverageOfAgentAnswersExpected() + " expected answers from agents in simulation.", true);
+					}
 					this.getAggregationHandler().setAgentAnswers(agentAnswers);
 				}
 				
@@ -895,6 +910,16 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return this.numberOfExecutedDeviceAgents;
 	}
+	/**
+	 * Returns the average of agent answers expected.
+	 * @return the average of agent answers expected
+	 */
+	private int getAverageOfAgentAnswersExpected() {
+		if (averageOfAgentAnswersExpected==null) {
+			averageOfAgentAnswersExpected = (int) ((this.getNumberOfExpectedDeviceAgents() + this.getAgentsInitialized().size() + this.getAgentsSuccessfulStarted().size()) / 3.0);
+		}
+		return averageOfAgentAnswersExpected;
+	}
 
 	// --------------------------------------------------------------------------------------------
 	// --- Handling / counting of involved agents during start ------------------------------------
@@ -919,6 +944,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return agentsSuccessfulStarted;
 	}
+	
+	
 	
 	// --------------------------------------------------------------------------------------------
 	// --- Handling of EnvironmentNotification's --------------------------------------------------
@@ -1080,12 +1107,35 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			this.getAgentNotifications().add(envNote);
 			if (this.getAgentNotifications().size()==this.getNumberOfExpectedDeviceAgents()) {
 				this.print("Finalisation of simulation completed!", false);
+				this.printRuntimeStatistics();
 				this.resetAgentNotifications();
 				this.doNextSimulationStep();
 			}
 		}
 	}
 	
+	/**
+	 * Prints the simulation statistics.
+	 */
+	private void printRuntimeStatistics() {
+		
+		long timeMillis = this.statSimulationEndTime - this.statSimulationStartTime; 
+		
+		double timeSeconds = (double)timeMillis / 1000.0;
+		timeSeconds = Math.round(timeSeconds*1000.0) / 1000.0;
+
+		double timeMinutes = ((((double)timeMillis / 1000) / 60.0));
+		timeMinutes = Math.round(timeMinutes * 100.0) / 100.0;
+		String timeExplanation = timeMillis + " ms, " + timeSeconds + " s, " + timeMinutes + " Min";
+
+		// --- Prepare Text -----------
+		String msg = "Total Runtime: " + timeExplanation;
+		if (this.statSimulationStepsDiscrete>0) {
+			int timePerStep = (int) ((double)timeMillis / (double) this.statSimulationStepsDiscrete);
+			msg += " (" + this.statSimulationStepsDiscrete + " discrete simulation steps with " + timePerStep + " ms/step)";
+		}
+		this.print(msg, false);
+	}
 	
 	// ----------------------------------------------------------------------------------
 	// --- The following is used in the context of continuous time simulations ----------

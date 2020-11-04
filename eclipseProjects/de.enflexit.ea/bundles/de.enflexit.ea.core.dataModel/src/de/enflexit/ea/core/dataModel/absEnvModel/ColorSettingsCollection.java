@@ -23,7 +23,6 @@ public class ColorSettingsCollection implements Serializable{
 	public boolean isEnabled() {
 		return enabled;
 	}
-
 	/**
 	 * Sets the enabled.
 	 * @param enabled the new enabled
@@ -42,7 +41,6 @@ public class ColorSettingsCollection implements Serializable{
 		}
 		return colorSettings;
 	}
-
 	/**
 	 * Sets the color settings.
 	 * @param colorSettings the new color settings
@@ -74,7 +72,6 @@ public class ColorSettingsCollection implements Serializable{
 				return interval;
 			}
 		}
-		
 		return null;	// No matching interval found
 	}
 
@@ -177,6 +174,43 @@ public class ColorSettingsCollection implements Serializable{
 		for (int i=0; i<this.getColorSettingsVector().size(); i++) {
 			this.getColorSettingsVector().get(i).setError(false);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+
+		if (compObj==null) return false;
+		if (compObj==this) return true;
+		if (!(compObj instanceof ColorSettingsCollection)) return false;
+		
+		ColorSettingsCollection cscComp = (ColorSettingsCollection) compObj;
+
+		if (cscComp.isEnabled()!=this.isEnabled()) return true;
+		
+		
+		Vector<ColorSettingsIntervalBased> csVectorComp = cscComp.getColorSettingsVector();
+		Vector<ColorSettingsIntervalBased> csVectorThis = this.getColorSettingsVector();
+		if (csVectorComp.size()!=csVectorThis.size()) return false;
+
+		Collections.sort(csVectorComp);
+		Collections.sort(csVectorThis);
+		
+		for (int i = 0; i < csVectorComp.size(); i++) {
+			ColorSettingsIntervalBased csIntComp = csVectorComp.get(i);
+			ColorSettingsIntervalBased csIntThis = csVectorThis.get(i);
+			if (csIntComp==null && csIntThis==null) {
+				// - equal - 
+			} else if ((csIntComp!=null && csIntThis==null) || (csIntComp==null && csIntThis!=null)) {
+				return false;
+			} else {
+				if (csIntComp.equals(csIntThis)==false) return false;
+			}
+		}
+		
+		return true;
 	}
 	
 }
