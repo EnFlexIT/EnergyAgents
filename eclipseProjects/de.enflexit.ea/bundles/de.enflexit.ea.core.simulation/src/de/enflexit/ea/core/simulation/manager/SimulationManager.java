@@ -28,6 +28,7 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
@@ -36,6 +37,8 @@ import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.blackboard.Blackboard;
 import de.enflexit.ea.core.blackboard.Blackboard.BlackboardState;
+import de.enflexit.ea.core.dashboard.DashboardAgent;
+import de.enflexit.ea.core.dashboard.DashboardService;
 import de.enflexit.ea.core.dashboard.DashboardSubscriptionResponder;
 import de.enflexit.ea.core.blackboard.BlackboardAgent;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
@@ -84,6 +87,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
 	private boolean isHeadlessOperation;
+	private boolean showDashboard;
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
@@ -126,6 +130,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --- SimpleBoolean for headless operation -----------------------
 			Simple_Boolean sBool = (Simple_Boolean) args[0];
 			this.setHeadlessOperation(sBool.getBooleanValue());
+			
+			// --- SimpleBoolean for dashboard configuration ------------------
+			if (args.length>1 && args[1] instanceof Simple_Boolean) {
+				this.setShowDashboard(((Simple_Boolean)args[1]).getBooleanValue());
+			}
 		}
 		
 		// --- super.setup() will get the copy of current EnvironmentModel ----
@@ -152,20 +161,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- Add the managers internal cyclic simulation behaviour ----------
 		this.addSimulationBehaviour();
 		
-		// --- Start the dashboard subscription responder -------
-		this.addBehaviour(this.getDashboardSubscriptionResponder());
-	}
-	
-	
-	/**
-	 * Gets the dashboard subscription responder.
-	 * @return the dashboard subscription responder
-	 */
-	private DashboardSubscriptionResponder getDashboardSubscriptionResponder() {
-		if (dashboardSubscriptionResponder==null) {
-			dashboardSubscriptionResponder = new DashboardSubscriptionResponder(this, this.getAggregationHandler());
+		// --- Start the dashboard responder if configured --------------------
+		if (this.showDashboard==true) {
+			this.addBehaviour(this.getDashboardSubscriptionResponder());
 		}
-		return dashboardSubscriptionResponder;
 	}
 
 	/* (non-Javadoc)
@@ -178,7 +177,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getBlackboard().stopBlackboardListenerServiceThread();
 		super.takeDown();
 	}
-	
 	
 	/**
 	 * Registers the performance measurements of the simulation manager if the
@@ -367,6 +365,24 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	public void setHeadlessOperation(boolean isHeadlessOperation) {
 		this.isHeadlessOperation = isHeadlessOperation;
 	}
+	
+	
+	/**
+	 * Checks if is show dashboard.
+	 * @return true, if is show dashboard
+	 */
+	public boolean isShowDashboard() {
+		return showDashboard;
+	}
+
+	/**
+	 * Sets the show dashboard.
+	 * @param showDashboard the new show dashboard
+	 */
+	public void setShowDashboard(boolean showDashboard) {
+		this.showDashboard = showDashboard;
+	}
+
 
 	/**
 	 * Gets the HyGrid abstract environment model.
@@ -522,6 +538,33 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	}
 	
 	// --------------------------------------------------------------------------------------------
+	// --- Dashboard handling ---------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	
+	//TODO Starting the dashboard agent like this leads to strange problems -> timing issue? 
+	/**
+	 * Starts the dashboard agent.
+	 */
+	private void startDashboardAgent() {
+		try {
+			this.getContainerController().createNewAgent("DaAg", DashboardAgent.class.getName(), null).start();
+		} catch (StaleProxyException spe) {
+			spe.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets the dashboard subscription responder.
+	 * @return the dashboard subscription responder
+	 */
+	private DashboardSubscriptionResponder getDashboardSubscriptionResponder() {
+		if (dashboardSubscriptionResponder==null) {
+			dashboardSubscriptionResponder = new DashboardSubscriptionResponder(this, this.getAggregationHandler());
+		}
+		return dashboardSubscriptionResponder;
+	}
+	
+	// --------------------------------------------------------------------------------------------
 	// --- Aggregation handling & simulation schedule ---------------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
@@ -576,8 +619,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			this.getBlackboard().getNotificationTrigger().notifyAll();
 		}
 		
-		// --- Notify dashboard subscribers -----------------------------------
-		this.getDashboardSubscriptionResponder().notifySubscribers();
 	}
 	
 	// --------------------------------------------------------------------------------------------

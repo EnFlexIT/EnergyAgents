@@ -1,9 +1,5 @@
 package de.enflexit.ea.core.dashboard;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +78,9 @@ public class DashboardAgent extends Agent {
 		}
 	}
 	
-	
-	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#takeDown()
+	 */
 	@Override
 	protected void takeDown() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -95,8 +92,6 @@ public class DashboardAgent extends Agent {
 		});
 	}
 
-
-
 	/**
 	 * Prepare aggregation dashboard.
 	 * @param dashboardService the dashboard service
@@ -104,7 +99,6 @@ public class DashboardAgent extends Agent {
 	private void prepareAggregationDashboard(DashboardService dashboardService) {
 		DashboardController dashboardController = dashboardService.getDashboardController();
 		this.getDashboardControllers().put(dashboardController.getDomain(), dashboardController);
-
 		this.getDashboardsTabbedPane().add(dashboardController.getDomain(), dashboardController.getDashboardPanel());
 		
 		try {
@@ -168,6 +162,7 @@ public class DashboardAgent extends Agent {
 			dashboardVisualizationFrame = new JFrame("AWB Dashboard");
 			dashboardVisualizationFrame.setContentPane(this.getDashboardsTabbedPane());
 			dashboardVisualizationFrame.setSize(1024, 550);
+			dashboardVisualizationFrame.setLocationRelativeTo(null);
 			dashboardVisualizationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		}
 		return dashboardVisualizationFrame;

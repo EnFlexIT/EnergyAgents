@@ -9,8 +9,11 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
+
+import agentgui.simulationService.transaction.DisplayAgentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionBy;
 import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionFor;
 import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
@@ -23,12 +26,13 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.SubscriptionResponder;
+import jade.proto.states.ReplySender;
 
 /**
  * The Class DashboardSubscriptionResponder.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DashboardSubscriptionResponder extends SubscriptionResponder {
+public class DashboardSubscriptionResponder extends SubscriptionResponder implements AggregationListener {
 
 	private static final long serialVersionUID = -2349228912000862029L;
 	
@@ -45,8 +49,8 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 	public DashboardSubscriptionResponder(Agent agent, AbstractAggregationHandler aggregationHandler) {
 		super(agent, createMessageTemplate());
 		this.aggregationHandler = aggregationHandler;
+		this.aggregationHandler.addAggregationListener(this);
 	}
-
 	/**
 	 * Creates the message template.
 	 * @return the message template
@@ -55,13 +59,27 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 		return MessageTemplate.MatchProtocol(FIPA_SUBSCRIBE);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AggregationListener#networkCalculationDone()
+	 */
+	@Override
+	public void networkCalculationDone() {
+		this.notifySubscribers();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AggregationListener#sendDisplayAgentNotification(agentgui.simulationService.transaction.DisplayAgentNotification)
+	 */
+	@Override
+	public void sendDisplayAgentNotification(DisplayAgentNotification displayNotification) {
+		// --- Nothing to do here
+	}
+	
 	/**
 	 * Notify subscribers.
 	 * @param aggregations the aggregations
 	 */
 	public void notifySubscribers() {
 		
-		this.getAggregationHandler().getSubNetworkConfigurations();
 		List<DashboardSubscription> subscriptions = new ArrayList<DashboardSubscription>(this.getSubscriptionsHashMap().keySet());
 		for (int i=0; i<this.getAggregationHandler().getSubNetworkConfigurations().size(); i++) {
 			
@@ -72,7 +90,9 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder {
 				if (subscription.getDomain().equals(aggregation.getDomain())) {
 					try {
 						ACLMessage notificationMessage = this.prepareNotificationMessage(subscription, aggregation);
-						this.getSubscriptionsHashMap().get(subscription).notify(notificationMessage);
+						ReplySender.adjustReply(myAgent, notificationMessage, this.getSubscriptionsHashMap().get(subscription).getMessage());
+						myAgent.send(notificationMessage);
+//						this.getSubscriptionsHashMap().get(subscription).notify(notificationMessage);
 						
 					} catch (IOException e) {
 						System.err.println("[" + this.getClass().getSimpleName() + "] Error creating notification essage for domain " + aggregation.getDomain());
