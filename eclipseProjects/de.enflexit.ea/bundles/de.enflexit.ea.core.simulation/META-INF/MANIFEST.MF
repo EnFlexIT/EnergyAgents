@@ -20,7 +20,8 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.blackboard,
  de.enflexit.ea.core.aggregation,
- de.enflexit.ea.core.validation
+ de.enflexit.ea.core.validation,
+ de.enflexit.ea.core.dashboard
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/simulationManagerValidationService.xml
