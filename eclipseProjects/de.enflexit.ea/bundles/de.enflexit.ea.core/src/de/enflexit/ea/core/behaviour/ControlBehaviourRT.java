@@ -15,10 +15,13 @@ import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
 import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
@@ -71,8 +74,12 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private AbstractEvaluationStrategyRT rtEvaluationStrategy;
 	private AbstractGroupEvaluationStrategyRT rtGroupEvaluationStrategy;
 	
+	private Boolean centralControlledSnapshotSimulation;
+	
 	private long currentTime;
 	private boolean receivedNewMeasurements;
+	
+	
 	
 	/**
 	 * Instantiates a new control behaviour that is used during real time.
@@ -367,26 +374,49 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	public DiscreteSimulationStep getDiscreteSimulationStep() {
 
 		// --- Try to get individual system state types -------------
+		Vector<TechnicalSystemStateEvaluation> tsseVector = null;
 		TechnicalSystemStateEvaluation tsse = null;
 		switch (this.typeOfControlledSystem) {
 		case TechnicalSystem:
-			tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.isCentralControlledSnapshotSimulation()==true) {
+				tsseVector = this.rtEvaluationStrategy.getAllPossibleSnapshotStatesByDefinition(this.currentTime);
+			} else {
+				tsse = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			}
 			break;
 			
 		case TechnicalSystemGroup:
-			tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			if (this.isCentralControlledSnapshotSimulation()==true) {
+				tsseVector = this.rtEvaluationStrategy.getAllPossibleSnapshotStatesByDefinition(this.currentTime);
+			} else {
+				tsse = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
+			}
 			break;
 			
 		default:
 			break;
 		}
 		
-		// --- Use an individual discrete system state type? --------
-		DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
-		if (dsTypeIndividual==null) {
-			return new DiscreteSimulationStep(tsse, DiscreteSystemStateType.Final);
+		// --- Prepare return value ---------------------------------
+		DiscreteSimulationStep dsStep = null;
+		if (this.isCentralControlledSnapshotSimulation()==true) {
+			// ------------------------------------------------------
+			// --- Central decision process -------------------------
+			// ------------------------------------------------------
+			dsStep = new DiscreteSimulationStepCentralDecision(tsseVector); 
+			
+		} else {
+			// ------------------------------------------------------
+			// --- Decentral decision process -----------------------
+			// ------------------------------------------------------
+			// --- Use an individual discrete system state type? --------
+			DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
+			if (dsTypeIndividual==null) {
+				dsStep = new DiscreteSimulationStep(tsse, DiscreteSystemStateType.Final);
+			}
+			dsStep = new DiscreteSimulationStep(tsse, dsTypeIndividual);
 		}
-		return new DiscreteSimulationStep(tsse, dsTypeIndividual);
+		return dsStep;
 	}
 	/**
 	 * Returns the DiscreteSystemStateType as returned by the current evaluation strategy.
@@ -429,6 +459,20 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return dsTypeIndividual!=null && dsTypeIndividual==DiscreteSystemStateType.Iteration; 
 	}
 	
+	/**
+	 * Checks if a central controlled snapshot simulation is executed.
+	 * @return true, if is central controlled snapshot simulation
+	 */
+	private boolean isCentralControlledSnapshotSimulation() {
+		if (centralControlledSnapshotSimulation==null) {
+			HyGridAbstractEnvironmentModel hyGridAbsEnv = this.internalDataModel.getHyGridAbstractEnvironmentModel();
+			boolean isSnapshot = hyGridAbsEnv.isDiscreteSnapshotSimulation();
+			boolean isSnapshotCentral = hyGridAbsEnv.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Central;
+			boolean isSnapshotCentralClassAvailable = hyGridAbsEnv.getSnapshotCentralDecisionClass()!=null;
+			centralControlledSnapshotSimulation = isSnapshot && isSnapshotCentral && isSnapshotCentralClassAvailable;
+		}
+		return centralControlledSnapshotSimulation;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -517,26 +561,29 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Execute individual evaluation strategy -----------
 			TechnicalSystemStateEvaluation tsseLocal = null;
 			try {
-				// --- Get evaluation start and end time ------------
-				long evalStartTime = this.currentTime;
-				long evalEndTime = this.currentTime;
-				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
-				if (tmd!=null) {
-					evalStartTime = evalEndTime - tmd.getStep();
+				if (this.isCentralControlledSnapshotSimulation()==false) {
+
+					// --- Get evaluation start and end time ------------
+					long evalStartTime = this.currentTime;
+					long evalEndTime = this.currentTime;
+					TimeModelDiscrete tmd = this.getTimeModelDiscrete();
+					if (tmd!=null) {
+						evalStartTime = evalEndTime - tmd.getStep();
+					}
+					this.rtEvaluationStrategy.setEvaluationStartTime(evalStartTime);
+					this.rtEvaluationStrategy.setEvaluationEndTime(evalEndTime);
+					
+					// --- Check if we're in a running iteration --------
+					if (this.isDiscreteIterationStep()==true) {
+						// -- Revert evaluation to start time of step ---
+						this.rtEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
+					}
+					
+					// --- Things to do for TechnicalSystems ------------
+					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
+					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
+					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				}
-				this.rtEvaluationStrategy.setEvaluationStartTime(evalStartTime);
-				this.rtEvaluationStrategy.setEvaluationEndTime(evalEndTime);
-				
-				// --- Check if we're in a running iteration --------
-				if (this.isDiscreteIterationStep()==true) {
-					// -- Revert evaluation to start time of step ---
-					this.rtEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
-				}
-				
-				// --- Things to do for TechnicalSystems ------------
-				this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
-				this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
-				tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 					
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -8,7 +8,7 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
  * The Class DiscreteSimulationStep is used in the context of discrete simulations to
  * transfer a current system states to the simulation manager.
  * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @author Christian Derksen - SOFTEC - University of Duisburg-Essen
  */
 public class DiscreteSimulationStep extends AbstractDiscreteSimulationStep<TechnicalSystemStateEvaluation> {
 

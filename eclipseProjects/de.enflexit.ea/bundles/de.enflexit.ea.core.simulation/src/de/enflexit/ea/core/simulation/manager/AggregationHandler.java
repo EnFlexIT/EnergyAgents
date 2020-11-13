@@ -12,6 +12,7 @@ import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
 import jade.core.AID;
 
 /**
@@ -69,12 +70,21 @@ public class AggregationHandler extends AbstractAggregationHandler {
 	public void appendToNetworkComponentsScheduleController(String networkComponentID, Object updateObject) {
 		
 		if (updateObject instanceof DiscreteSimulationStep) {
+			
 			// --- Discrete Simulation: Got DiscreteSimulationStep from NetworkComponent ------
 			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject; 
 			if (this.getDiscreteIteratingSystems().contains(networkComponentID)==true) {
 				// -- System belongs to the iterating systems => put state to reminder --------
 				this.getDiscreteIteratingSystemsStateTypeLog().put(networkComponentID, dsStep.getDiscreteSystemStateType());
 			}
+			
+			if (dsStep instanceof DiscreteSimulationStepCentralDecision) {
+				DiscreteSimulationStepCentralDecision dsStepCD = (DiscreteSimulationStepCentralDecision) dsStep;
+				System.out.println("Stop");
+				// --- TODO ---
+				
+			} 
+			
 			// --- Got a new system state from a part of the network --------------------------
 			this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getSystemState());
 
