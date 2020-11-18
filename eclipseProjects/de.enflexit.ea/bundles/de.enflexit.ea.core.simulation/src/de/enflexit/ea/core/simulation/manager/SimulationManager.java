@@ -31,7 +31,6 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
-import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.blackboard.Blackboard;
@@ -563,18 +562,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --------------------------------------------------------------------
 		// --- Set state time to the blackboard -------------------------------
 		this.getBlackboard().setStateTime(this.getAggregationHandler().getEvaluationEndTime());
-
-		// --- Update the aggregation-specific blackboard models --------------
-		List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfigurations();
-		for (int i = 0; i < subnetConfigList.size(); i++) {
-			AbstractSubNetworkConfiguration subnetConfig = subnetConfigList.get(i);
-			if (subnetConfig!=null) {
-				AbstractNetworkCalculationStrategy calculationStrategy = subnetConfig.getNetworkCalculationStrategy();
-				if (calculationStrategy!=null) {
-					calculationStrategy.updateSubBlackboardModel();
-				}
-			}
-		}
 		
 		// --- Set the blackboard state ---------------------------------------
 		BlackboardState bBoardSate = null;

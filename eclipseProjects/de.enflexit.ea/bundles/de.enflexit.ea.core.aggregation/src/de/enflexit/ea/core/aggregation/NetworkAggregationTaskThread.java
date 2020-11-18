@@ -128,12 +128,14 @@ public class NetworkAggregationTaskThread extends Thread {
 			switch (this.currentJob) {
 			case ExecuteNetworkCalculation:
 				// --- Execute the evaluation -----------------------
-				AbstractNetworkCalculationStrategy netClacStrategy = this.subNetConfig.getNetworkCalculationStrategy();
-				if (netClacStrategy!=null) {
+				AbstractNetworkCalculationStrategy netCalcStrategy = this.subNetConfig.getNetworkCalculationStrategy();
+				if (netCalcStrategy!=null) {
 					String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION + this.subNetConfig.getID();
 					this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
-					netClacStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
+					netCalcStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
 					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
+					// --- Update the sub blackboard model ---------- 
+					netCalcStrategy.updateSubBlackboardModel();
 				}
 				this.currentJob = null;
 				break;
