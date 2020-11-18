@@ -22,6 +22,7 @@ import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.RTControlRegistration;
 import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
 import energy.FixedVariableList;
 import energy.evaluation.AbstractEvaluationStrategy;
@@ -96,16 +97,22 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			
 			// --- Enable individual preparation (e.g. for a voltage measurement) -------
 			this.prepareForSimulation(this.getNetworkModel());
+
 			
+			// --------------------------------------------------------------------------
+			// --- Register RT strategy controlled system at simulation manager? --------
+			if (this.getEnergyAgent().isExecutedControlBehaviourRT()==true) {
+				this.getSimulationConnector().sendManagerNotification(new RTControlRegistration());
+			}
+			// --- Register an iterating strategy at the simulation manager? ------------
+			if (this.isDiscreteIteratingRTStrategy()==true) {
+				this.getSimulationConnector().sendManagerNotification(new DiscreteIteratorRegistration());
+			}
 			// --- Send null TSSE as registration for states from control behaviour? ----
 			if (this.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
 				this.sendControlBehaviourRTStateUpdateToEnvironmentModel(null);
 			}
 			
-			// --- Register an iterating strategy at the simulation manager? ------------
-			if (this.isDiscreteIteratingRTStrategy()==true) {
-				this.getSimulationConnector().sendManagerNotification(new DiscreteIteratorRegistration());
-			}
 			
 			// --- Send notification to simulation manager that this agent is ready -----
 			this.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);

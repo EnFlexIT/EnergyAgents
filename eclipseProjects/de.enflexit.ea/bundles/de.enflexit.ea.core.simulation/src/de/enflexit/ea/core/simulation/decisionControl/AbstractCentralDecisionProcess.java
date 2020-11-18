@@ -3,9 +3,10 @@ package de.enflexit.ea.core.simulation.decisionControl;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.awb.env.networkModel.NetworkModel;
-
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
+import de.enflexit.ea.core.simulation.manager.AggregationHandler;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**
@@ -15,7 +16,7 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
  */
 public abstract class AbstractCentralDecisionProcess {
 
-	private NetworkModel networkModel;
+	private AggregationHandler aggregationHandler;
 
 	private TreeMap<String, Vector<TechnicalSystemStateEvaluation>> systemsVariability;
 	
@@ -26,18 +27,18 @@ public abstract class AbstractCentralDecisionProcess {
 	
 	
 	/**
-	 * Return the network model.
-	 * @return the network model
+	 * Sets the aggregation handler.
+	 * @param aggregationHandler the new aggregation handler
 	 */
-	public NetworkModel getNetworkModel() {
-		return networkModel;
+	public void setAggregationHandler(AggregationHandler aggregationHandler) {
+		this.aggregationHandler = aggregationHandler;
 	}
 	/**
-	 * Sets the network model.
-	 * @param networkModel the new network model
+	 * Returns the current aggregation handler.
+	 * @return the aggregation handler
 	 */
-	public void setNetworkModel(NetworkModel networkModel) {
-		this.networkModel = networkModel;
+	public AggregationHandler getAggregationHandler() {
+		return aggregationHandler;
 	}
 	
 	/**
@@ -51,9 +52,38 @@ public abstract class AbstractCentralDecisionProcess {
 		return systemsVariability;
 	}
 	
+	/**
+	 * Executes the central decision process.
+	 */
+	public void executeDecisionProcess() {
+		// TODO Auto-generated method stub
+		System.out.println("Execute central decision process ....");
+		
+	}
 	
 	
-	
+	// ----------------------------------------------------------------------------------
+	// --- From here, static help methods central decisions are located -----------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Checks if the specified HyGridAbstractEnvironmentModel specifies a central controlled snapshot simulation.
+	 *
+	 * @param hyGridAbsEnvModel the {@link HyGridAbstractEnvironmentModel} to check
+	 * @return true, if is central controlled snapshot simulation
+	 */
+	public static boolean isCentralControlledSnapshotSimulation(HyGridAbstractEnvironmentModel hyGridAbsEnvModel) {
+		
+		boolean centralControlledSnapshotSimulation = false;
+		if (hyGridAbsEnvModel!=null) {
+			boolean isSnapshot = hyGridAbsEnvModel.isDiscreteSnapshotSimulation();
+			boolean isSnapshotCentral = hyGridAbsEnvModel.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Central;
+			boolean isSnapshotCentralClassAvailable = hyGridAbsEnvModel.getSnapshotCentralDecisionClass()!=null;
+			centralControlledSnapshotSimulation = isSnapshot && isSnapshotCentral && isSnapshotCentralClassAvailable;
+		} else {
+			centralControlledSnapshotSimulation = false;
+		}
+		return centralControlledSnapshotSimulation;
+	}
 	
 	/**
 	 * Creates the specified central decision process.

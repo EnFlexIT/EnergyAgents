@@ -13,6 +13,7 @@ import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
+import de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionProcess;
 import jade.core.AID;
 
 /**
@@ -22,9 +23,12 @@ import jade.core.AID;
  */
 public class AggregationHandler extends AbstractAggregationHandler {
 
+	private HashSet<String> realTimeControlledSystems;
+	
 	private HashSet<String> discreteIteratingSystems;
 	private HashMap<String, DiscreteSystemStateType> discreteIteratingSystemsStateTypeLog;
 	
+	private AbstractCentralDecisionProcess centralDecisionProcess;
 	
 	/**
 	 * Instantiates the aggregation handler for the {@link SimulationManager}.
@@ -71,21 +75,28 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		
 		if (updateObject instanceof DiscreteSimulationStep) {
 			
-			// --- Discrete Simulation: Got DiscreteSimulationStep from NetworkComponent ------
-			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject; 
-			if (this.getDiscreteIteratingSystems().contains(networkComponentID)==true) {
-				// -- System belongs to the iterating systems => put state to reminder --------
+			// --- Discrete Simulation: Got DiscreteSimulationStep for NetworkComponent -----------
+			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject;
+			if (dsStep instanceof DiscreteSimulationStepCentralDecision) {
+				// -- Put state into state log ----------------------------------------------------
 				this.getDiscreteIteratingSystemsStateTypeLog().put(networkComponentID, dsStep.getDiscreteSystemStateType());
+				
+				// --- Place system variability in decision process -------------------------------
+				AbstractCentralDecisionProcess cdProcess = this.getCentralDecisionProcess();
+				if (cdProcess!=null) {
+					DiscreteSimulationStepCentralDecision dsStepCD = (DiscreteSimulationStepCentralDecision) dsStep;
+					cdProcess.getSystemsVariability().put(networkComponentID, dsStepCD.getPossibleSystemStates());
+				}
+				
+			} else {
+				// -- Put state into state log? ---------------------------------------------------
+				if (this.getDiscreteIteratingSystems().contains(networkComponentID)==true) {
+					// -- System belongs to the iterating systems => put into state log -----------
+					this.getDiscreteIteratingSystemsStateTypeLog().put(networkComponentID, dsStep.getDiscreteSystemStateType());
+				}
 			}
 			
-			if (dsStep instanceof DiscreteSimulationStepCentralDecision) {
-				DiscreteSimulationStepCentralDecision dsStepCD = (DiscreteSimulationStepCentralDecision) dsStep;
-				System.out.println("Stop");
-				// --- TODO ---
-				
-			} 
-			
-			// --- Got a new system state from a part of the network --------------------------
+			// --- Got a new system state from a part of the network ------------------------------
 			this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getSystemState());
 
 		} else {
@@ -93,6 +104,24 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		}
 	}
 	
+	
+	/**
+	 * Registers the specified real time controlled system.
+	 * @param localName the local name
+	 */
+	public void registerRealTimeControlledSystem(String localName) {
+		this.getRealTimeControlledSystems().add(localName);
+	}
+	/**
+	 * Returns all systems that are under control of a real time strategy.
+	 * @return the real time controlled systems
+	 */
+	public HashSet<String> getRealTimeControlledSystems() {
+		if (realTimeControlledSystems==null) {
+			realTimeControlledSystems = new HashSet<String>();
+		}
+		return realTimeControlledSystems;
+	}
 	
 	/**
 	 * Registers the specified discrete iterating system.
@@ -156,7 +185,9 @@ public class AggregationHandler extends AbstractAggregationHandler {
 	 */
 	public boolean isPendingIteratingSystemInPartSequence() {
 		// --- Check if target answers in part sequence are reached -----------
-		return this.getDiscreteIteratingSystemsStateTypeLog().values().size()!=this.getDiscreteIteratingSystems().size();
+		int noOfIteratingSystems = this.getDiscreteIteratingSystems().size();
+		int noOfIteratingSystemsAnswered = this.getDiscreteIteratingSystemsStateTypeLog().values().size();
+		return noOfIteratingSystemsAnswered < noOfIteratingSystems && noOfIteratingSystemsAnswered != noOfIteratingSystems;
 	}
 	/**
 	 * Checks if iterating systems are pending in a discrete simulation step. 
@@ -169,5 +200,47 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		// --- Check if simulation step is finalized --------------------------
 		return this.getDiscreteIteratingSystemsStateTypeLog().values().contains(DiscreteSystemStateType.Iteration);
 	}
+
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, methods for central decision are located --------------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Checks if the current HyGridAbstractEnvironmentModel specifies a central controlled snapshot simulation.
+	 * @return true, if is central controlled snapshot simulation
+	 */
+	public boolean isCentralSnapshotSimulation() {
+		return AbstractCentralDecisionProcess.isCentralControlledSnapshotSimulation(this.getHyGridAbstractEnvironmentModel());
+	}
+	/**
+	 * Checks if a system is pending in central snapshot simulation.
+	 * @return true, if is pending system in central snapshot simulation
+	 */
+	public boolean isPendingSystemInCentralSnapshotSimulation() {
+		if (this.isCentralSnapshotSimulation()==false) return false;
+		int noOfRTControlledSystems = this.getRealTimeControlledSystems().size();
+		int noOfRTControlledSystemsAnswered = this.getDiscreteIteratingSystemsStateTypeLog().size();
+		return noOfRTControlledSystemsAnswered < noOfRTControlledSystems && noOfRTControlledSystemsAnswered!=noOfRTControlledSystems;
+	}
+	
+	/**
+	 * Returns the central decision process if configured.
+	 * @return the central decision process or null if not configured so   
+	 */
+	public AbstractCentralDecisionProcess getCentralDecisionProcess() {
+		if (centralDecisionProcess==null) {
+			// --- Check if we work in a central controlled snapshot simulation ---------
+			if (this.isCentralSnapshotSimulation()==true) {
+				String cdClass = this.getHyGridAbstractEnvironmentModel().getSnapshotCentralDecisionClass();
+				centralDecisionProcess = AbstractCentralDecisionProcess.createCentralDecisionProcess(cdClass);
+				if (centralDecisionProcess!=null) {
+					centralDecisionProcess.setAggregationHandler(this);
+				}
+			}
+		}
+		return centralDecisionProcess;
+	}
+
+	
 	
 }

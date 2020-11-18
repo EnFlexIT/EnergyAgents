@@ -47,6 +47,7 @@ import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.RTControlRegistration;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
@@ -730,31 +731,49 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- To avoid reaction in continuous time simulations -------------------------
 		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
 
-		boolean isPendingSystemInPartSequence = this.getAggregationHandler().isPendingIteratingSystemInPartSequence();
-		boolean isPendingSysteminSimulationStep = this.getAggregationHandler().isPendingIteratingSystemInSimulationStep();
-		boolean isPendingControlBehaviourRTStateUpdate = this.isPendingControlBehaviourRTStateUpdate();
 		
-		boolean isDoNextSimulationStep = isPendingSystemInPartSequence==false && isPendingSysteminSimulationStep==false && isPendingControlBehaviourRTStateUpdate==false; 
+		boolean isDoNextSimulationStep = true;
 		
-		// ------------------------------------------------------------------------------
-		// --- In case of any discrete iterating system ---------------------------------
-		// ------------------------------------------------------------------------------
-		if (isUpdatedDiscreteSimulationStep==true && this.getAggregationHandler().isIteratingSystem()==true) {
+		AggregationHandler agh = this.getAggregationHandler();
+		if (agh.isCentralSnapshotSimulation()==true) {
+			// --------------------------------------------------------------------------
+			// --- Central decision case ------------------------------------------------
+			// --------------------------------------------------------------------------
+			// --- Do we expect further DiscreteSimulationStepCentralDecision? ----------
+			if (agh.isPendingSystemInCentralSnapshotSimulation()==true) return;
+			// --- Execute evaluation in central decision process -----------------------
+			agh.getCentralDecisionProcess().executeDecisionProcess();
 			
-			// --- Do we expect further discrete simulation part steps ------------------
-			if (isPendingSystemInPartSequence==true) return;
-			// --- Reset part step reminder ---------------------------------------------
-			this.getAggregationHandler().clearDiscreteIteratingSystemsStateTypeLogFromIterations();
+		} else {
+			// --------------------------------------------------------------------------
+			// --- Decentral decision case ----------------------------------------------
+			// --------------------------------------------------------------------------
+			boolean isPendingSystemInPartSequence = agh.isPendingIteratingSystemInPartSequence();
+			boolean isPendingSysteminSimulationStep = agh.isPendingIteratingSystemInSimulationStep();
+			boolean isPendingControlBehaviourRTStateUpdate = this.isPendingControlBehaviourRTStateUpdate();
 			
-			// --- Disable Blackboard notifications? ------------------------------------
-			if (isPendingSysteminSimulationStep==false) {
-				// --- No further Blackboard notifications are required for this (time) step
-				this.getBlackboard().setAgentNotificationsEnabled(false);
+			isDoNextSimulationStep = isPendingSystemInPartSequence==false && isPendingSysteminSimulationStep==false && isPendingControlBehaviourRTStateUpdate==false; 
+			
+			// --------------------------------------------------------------------------
+			// --- In case of any discrete iterating system -----------------------------
+			// --------------------------------------------------------------------------
+			if (isUpdatedDiscreteSimulationStep==true && agh.isIteratingSystem()==true) {
+				
+				// --- Do we expect further discrete simulation part steps --------------
+				if (isPendingSystemInPartSequence==true) return;
+				// --- Reset part step reminder -----------------------------------------
+				agh.clearDiscreteIteratingSystemsStateTypeLogFromIterations();
+				
+				// --- Disable Blackboard notifications? --------------------------------
+				if (isPendingSysteminSimulationStep==false) {
+					// --- No further Blackboard notifications are required for this (time) step
+					this.getBlackboard().setAgentNotificationsEnabled(false);
+				}
+				// --- Execute Network calculation --------------------------------------
+				agh.runEvaluationUntil(this.getTime(), true, this.isDebugDiscreteSimulationSchedule);
+				// --- Reset Blackboard notifications! ----------------------------------
+				this.getBlackboard().setAgentNotificationsEnabled(true);
 			}
-			// --- Execute Network calculation ------------------------------------------
-			this.getAggregationHandler().runEvaluationUntil(this.getTime(), true, this.isDebugDiscreteSimulationSchedule);
-			// --- Reset Blackboard notifications! --------------------------------------
-			this.getBlackboard().setAgentNotificationsEnabled(true);
 		}
 
 		// ------------------------------------------------------------------------------
@@ -1009,11 +1028,14 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			networkModelLocal.getAlternativeNetworkModel().put(senderName, networkModelAlternative);
 			this.sendDisplayAgentNotification(new EnvironmentModelUpdateNotification(this.getEnvironmentModel()));
 			return;
+
+		} else if (envNote.getNotification() instanceof RTControlRegistration) {
+			this.getAggregationHandler().registerRealTimeControlledSystem(envNote.getSender().getLocalName());
+			return;
 			
 		} else if (envNote.getNotification() instanceof DiscreteIteratorRegistration) {
 			this.getAggregationHandler().registerDiscreteIteratingSystem(envNote.getSender().getLocalName());
 			return;
-			
 		}
 		
 		// ----------------------------------------------------------------------------------------
