@@ -7,7 +7,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.simulation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.enflexit.ea.core.simulation.classLoadService,
+Export-Package: de.enflexit.ea.core.simulation.classFilter,
+ de.enflexit.ea.core.simulation.classLoadService,
+ de.enflexit.ea.core.simulation.decisionControl,
  de.enflexit.ea.core.simulation.manager,
  de.enflexit.ea.core.simulation.validation
 Require-Bundle: de.enflexit.common,
@@ -23,5 +25,6 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.validation,
  de.enflexit.ea.core.dashboard
 Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/bundleClassFilterService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/simulationManagerValidationService.xml

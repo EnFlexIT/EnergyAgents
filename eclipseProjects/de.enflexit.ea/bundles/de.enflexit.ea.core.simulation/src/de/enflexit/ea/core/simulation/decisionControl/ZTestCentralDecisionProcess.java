@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.dataModel.simulation;
+package de.enflexit.ea.core.simulation.decisionControl;
 
 /**
  * The Class ZTestCentralDecisionProcess.

@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -40,6 +41,7 @@ import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeUnit;
 import agentgui.simulationService.time.TimeUnitVector;
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
@@ -51,7 +53,6 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
-import de.enflexit.ea.core.dataModel.simulation.AbstractCentralDecisionProcess;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration.DeltaMechanism;
@@ -1344,24 +1345,46 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	 */
 	private void setSnapshotCentralDecisionClass() {
 		
-		Class<?> search4Class = AbstractCentralDecisionProcess.class;
+		// ----------------------------------------------------------
+		// --- Try to get base class for central decisions ----------
+		// ----------------------------------------------------------
+		// --- This UNUSUAL way was select to overcome --------------
+		// --- cyclic bundle dependencies ---------------------------
+		// ----------------------------------------------------------		
+		Class<?> search4Class = null;
+		try {
+			search4Class = BaseClassLoadServiceUtility.forName("de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionProcess");
+		} catch (ClassNotFoundException | NoClassDefFoundError cnEx) {
+			cnEx.printStackTrace();
+		}
+		
+		// --- Will hopefully never happen! -------------------------
+		if (search4Class==null) {
+			String title = "Critical internal error!";
+			String msg = "[" + this.getClass().getSimpleName() + "] The class reference for the AbstractCentralDecisionProcess is incorrect!\nPlease, inform the developers about this error!";
+			System.err.println(msg);
+			JOptionPane.showMessageDialog(Application.getMainWindow(), msg, title, JOptionPane.ERROR_MESSAGE, null);
+			return;
+		}
+		
+		// --- Open the ClassSelectionDialog ----------------------
 		String   search4CurrentValue = this.getJTextFieldCentralDecisionClass().getText();
 		String   search4DefaultValue = null;
 		String   search4Description = "Select the central decision process class to apply.";
 		
 		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, true);
 		cs.setVisible(true);
-		// --- act in the dialog ... --------------------
+		// --- act in the dialog ... ------------------------------
 		if (cs.isCanceled()==true) return;
 		
-		// ----------------------------------------------
-		// --- Class was selected. Proceed it -----------
+		// --------------------------------------------------------
+		// --- Class was selected. Proceed it ---------------------
 		String classSelected = cs.getClassSelected();
 		if (classSelected.isEmpty()==true) classSelected =null;
 
 		cs.dispose();
 		cs = null;
-		// ----------------------------------------------
+		// --------------------------------------------------------
 		
 		this.getJTextFieldCentralDecisionClass().setText(classSelected);
 		this.getJTextFieldCentralDecisionClass().setToolTipText(classSelected);

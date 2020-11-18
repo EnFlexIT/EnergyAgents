@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.dataModel.simulation;
+package de.enflexit.ea.core.simulation.decisionControl;
 
 import java.util.TreeMap;
 import java.util.Vector;

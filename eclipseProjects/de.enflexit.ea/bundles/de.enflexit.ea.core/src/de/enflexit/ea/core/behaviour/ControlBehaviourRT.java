@@ -466,10 +466,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private boolean isCentralControlledSnapshotSimulation() {
 		if (centralControlledSnapshotSimulation==null) {
 			HyGridAbstractEnvironmentModel hyGridAbsEnv = this.internalDataModel.getHyGridAbstractEnvironmentModel();
-			boolean isSnapshot = hyGridAbsEnv.isDiscreteSnapshotSimulation();
-			boolean isSnapshotCentral = hyGridAbsEnv.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Central;
-			boolean isSnapshotCentralClassAvailable = hyGridAbsEnv.getSnapshotCentralDecisionClass()!=null;
-			centralControlledSnapshotSimulation = isSnapshot && isSnapshotCentral && isSnapshotCentralClassAvailable;
+			if (hyGridAbsEnv!=null) {
+				boolean isSnapshot = hyGridAbsEnv.isDiscreteSnapshotSimulation();
+				boolean isSnapshotCentral = hyGridAbsEnv.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Central;
+				boolean isSnapshotCentralClassAvailable = hyGridAbsEnv.getSnapshotCentralDecisionClass()!=null;
+				centralControlledSnapshotSimulation = isSnapshot && isSnapshotCentral && isSnapshotCentralClassAvailable;
+			} else {
+				centralControlledSnapshotSimulation = false;
+			}
 		}
 		return centralControlledSnapshotSimulation;
 	}
