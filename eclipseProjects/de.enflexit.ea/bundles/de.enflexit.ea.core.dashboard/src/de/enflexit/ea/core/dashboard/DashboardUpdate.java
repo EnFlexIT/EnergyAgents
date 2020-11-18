@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionFor;
-import de.enflexit.ea.core.dataModel.ontology.DynamicComponentState;
 
 /**
  * The Class NetworkComponentStateUpdate.
