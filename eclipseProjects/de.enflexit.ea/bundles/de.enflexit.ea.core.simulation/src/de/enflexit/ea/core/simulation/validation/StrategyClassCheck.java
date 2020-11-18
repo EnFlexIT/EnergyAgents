@@ -12,6 +12,7 @@ import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.AbstractSnapshotStrategy;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
+import energygroup.GroupController;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
 import energygroup.evaluation.AbstractGroupSnapshotStrategy;
 
@@ -25,6 +26,7 @@ import energygroup.evaluation.AbstractGroupSnapshotStrategy;
 public class StrategyClassCheck extends HyGridValidationAdapter {
 
 	private OptionModelController omc;
+	private GroupController gc;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateEomTechnicalSystem(org.awb.env.networkModel.NetworkComponent, energy.optionModel.TechnicalSystem)
@@ -32,6 +34,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystem(NetworkComponent netComp, TechnicalSystem ts) {
 		String evalStrategyClass = ts.getEvaluationSettings().getEvaluationClass();
+		this.getOptionModelController().setTechnicalSystem(ts);
 		return this.getValidationMessage(netComp, evalStrategyClass, false);
 	}
 	
@@ -41,6 +44,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystemGroup(NetworkComponent netComp, TechnicalSystemGroup tsg) {
 		String evalStrategyClass = tsg.getTechnicalSystem().getEvaluationSettings().getEvaluationClass();
+		this.getGroupController().setTechnicalSystemGroup(tsg);
 		return this.getValidationMessage(netComp, evalStrategyClass, true);
 	}
 
@@ -54,6 +58,17 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 		}
 		return omc;
 	}
+	/**
+	 * Returns the private GroupController.
+	 * @return the group controller
+	 */
+	private GroupController getGroupController() {
+		if (gc==null) {
+			gc = new GroupController();
+		}
+		return gc;
+	}
+	
 	/**
 	 * Gets the validation message for the specified evaluation class.
 	 *
@@ -72,7 +87,14 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 		
 		if (evalStrategyClassName!=null && evalStrategyClassName.isEmpty()==false) {
 			// --- Check with respect to the current simulation type --------------------
-			AbstractEvaluationStrategy strategy = this.getOptionModelController().createEvaluationStrategy(evalStrategyClassName);
+			AbstractEvaluationStrategy strategy = null;
+			if (isAggregation==false) {
+				strategy = this.getOptionModelController().createEvaluationStrategy(evalStrategyClassName);
+			} else {
+				strategy = this.getGroupController().getGroupOptionModelController().createEvaluationStrategy(evalStrategyClassName);
+			}
+			
+			
 			if (strategy==null) {
 				// --- Error while initiating strategy class ----------------------------
 				msgDescription = "Error while initiating strategy class '" + evalStrategyClassName + "' for " + netCompDescription + ". See console for further information.";
