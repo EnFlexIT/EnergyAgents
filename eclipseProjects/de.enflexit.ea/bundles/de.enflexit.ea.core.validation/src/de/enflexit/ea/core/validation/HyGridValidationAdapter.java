@@ -7,6 +7,7 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
+import agentgui.simulationService.time.TimeModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 import energy.optionModel.ScheduleList;
@@ -24,6 +25,7 @@ public class HyGridValidationAdapter {
 	private SimulationSetup setup;
 	
 	private GraphEnvironmentController graphController;
+	private TimeModel timeModel;
 	private NetworkModel networkModel;
 	private HyGridAbstractEnvironmentModel hyGridAbsEnvModel;
 	
@@ -52,7 +54,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate graph settings after file load.
 	 *
-	 * @param graphSettings the graph settings
+	 * @param graphSettings the {@link GeneralGraphSettings4MAS} to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateGeneralGraphSettingsAfterFileLoad(GeneralGraphSettings4MAS graphSettings) {
@@ -65,7 +67,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate the specified project here.
 	 *
-	 * @param project the project
+	 * @param project the {@link Project} to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateProject(Project project) {
@@ -75,7 +77,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate the specified SimulationSetup here.
 	 *
-	 * @param setup the setup
+	 * @param setup the setup (a {@link SimulationSetup}) to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateSetup(SimulationSetup setup) {
@@ -85,7 +87,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate the specified NetworkModel here.
 	 *
-	 * @param networkModel the network model
+	 * @param networkModel the {@link NetworkModel} to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateNetworkModel(NetworkModel networkModel) {
@@ -95,7 +97,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate the specified NetworkComponent here.
 	 *
-	 * @param netComp the net comp
+	 * @param netComp the {@link NetworkComponent} to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateNetworkComponent(NetworkComponent netComp) {
@@ -105,7 +107,7 @@ public class HyGridValidationAdapter {
 	/**
 	 * Validate the specified HyGridAbstractEnvironmentModel here.
 	 *
-	 * @param absEnvModel the abs env model
+	 * @param absEnvModel the {@link HyGridAbstractEnvironmentModel} to check
 	 * @return a {@link HyGridValidationMessage} if something is newsworthy or <code>null</code>
 	 */
 	public HyGridValidationMessage validateHyGridAbstractEnvironmentModel(HyGridAbstractEnvironmentModel absEnvModel) {
@@ -152,7 +154,7 @@ public class HyGridValidationAdapter {
 	
 	
 	/**
-	 * Gets the project.
+	 * Return the current project.
 	 * @return the project
 	 */
 	public Project getProject() {
@@ -196,6 +198,21 @@ public class HyGridValidationAdapter {
 		this.graphController = graphController;
 	}
 
+	/**
+	 * Sets the time model.
+	 * @param timeModel the new time model
+	 */
+	public void setTimeModel(TimeModel timeModel) {
+		this.timeModel = timeModel;
+	}
+	/**
+	 * Gets the time model.
+	 * @return the time model
+	 */
+	public TimeModel getTimeModel() {
+		return this.timeModel;
+	}
+	
 	/**
 	 * Gets the network model.
 	 * @return the network model

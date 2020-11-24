@@ -366,8 +366,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
-	 * important {@link DiscreteSystemStateType} for the iteration between agent and environment 
-	 * in the current discrete simulation step.
+	 * {@link DiscreteSystemStateType} that is important for the iteration between agent 
+	 * and environment in the current discrete simulation step.
 	 *
 	 * @return the discrete simulation step
 	 */

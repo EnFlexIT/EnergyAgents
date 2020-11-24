@@ -2,7 +2,10 @@ package de.enflexit.ea.core.simulation.validation;
 
 import org.awb.env.networkModel.NetworkComponent;
 
+import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
+import de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionProcess;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
@@ -27,6 +30,49 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 
 	private OptionModelController omc;
 	private GroupController gc;
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateHyGridAbstractEnvironmentModel(de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel)
+	 */
+	@Override
+	public HyGridValidationMessage validateHyGridAbstractEnvironmentModel(HyGridAbstractEnvironmentModel absEnvModel) {
+
+		// -------------------------------------------------------------------------------
+		// --- Check the central decision class here -------------------------------------
+		// -------------------------------------------------------------------------------
+		MessageType msgType = MessageType.Error;
+		String msg = "Class definition error for central decision process!";
+		String msgDescription = null;
+		
+		boolean isDiscreteSimulation = (this.getTimeModel() instanceof TimeModelDiscrete);
+		boolean isSnapShotSimulation = absEnvModel.isDiscreteSnapshotSimulation();
+		boolean isCentralDecsion = absEnvModel.getSnapshotDecisionLocation()==SnapshotDecisionLocation.Central;
+		if (isDiscreteSimulation==true && isSnapShotSimulation && isCentralDecsion==true) {
+			// --- Check the specified class for central decisions ----------------------
+			String decisionProcessClass = absEnvModel.getSnapshotCentralDecisionClass();
+			if (decisionProcessClass==null) {
+				msgDescription = "No class was defined for the central decision process.";
+			} else {
+				// --- Try to create an instance of the decision process ----------------
+				AbstractCentralDecisionProcess decisionProcess = null;
+				try {
+					decisionProcess = AbstractCentralDecisionProcess.createCentralDecisionProcess(decisionProcessClass);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+					//ex.printStackTrace();
+				}
+				if (decisionProcess==null) {
+					msgDescription = "The currently spcified class '" + decisionProcessClass + "' for the central decision process could not be initiated.";
+				}
+			}
+		}
+		
+		HyGridValidationMessage hvm = null;
+		if (msgDescription!=null) {
+			hvm = new HyGridValidationMessage(msg, msgType);
+			hvm.setDescription(msgDescription);
+		}
+		return hvm;
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateEomTechnicalSystem(org.awb.env.networkModel.NetworkComponent, energy.optionModel.TechnicalSystem)
@@ -101,30 +147,61 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				
 			} else {
 				// --- Do the type check ------------------------------------------------
-				boolean isSnapShotSimulation = getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
+				boolean isSnapShotSimulation = this.getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
+				SnapshotDecisionLocation sdl = this.getHyGridAbstractEnvironmentModel().getSnapshotDecisionLocation();
+				
 				if (isAggregation==false) {
+					// ------------------------------------------------------------------
 					// --- Check for TechnicalSystem instances --------------------------
-					if (isSnapShotSimulation==true) {
-						if (!(strategy instanceof AbstractSnapshotStrategy)) {
-							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+					// ------------------------------------------------------------------
+					switch (sdl) {
+					case Decentral:
+						// --- Check for the right strategy type ------------------------
+						if (isSnapShotSimulation==true) {
+							if (!(strategy instanceof AbstractSnapshotStrategy)) {
+								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+							}
+						} else {
+							if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+							}
 						}
-					} else {
-						if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+						break;
+
+					case Central:
+						// --- Ensure that the class is of type RT strategy -------------
+						if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 						}
+						break;
 					}
 					
+					
 				} else {
+					// ------------------------------------------------------------------
 					// --- Check for TechnicalSystemGroup instances ---------------------
-					if (isSnapShotSimulation==true) {
-						if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
-							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
-						}
-					} else {
-						if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+					// ------------------------------------------------------------------
+					switch (sdl) {
+					case Decentral:
+						// --- Check for the right strategy type ------------------------
+						if (isSnapShotSimulation==true) {
+							if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
+								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+							}
+						} else {
+							if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+							}
+						}		
+						break;
+
+					case Central:
+						// --- Ensure that the class is of type RT strategy -------------
+						if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 						}
-					}					
+						break;
+					}
 					
 				}
 			}

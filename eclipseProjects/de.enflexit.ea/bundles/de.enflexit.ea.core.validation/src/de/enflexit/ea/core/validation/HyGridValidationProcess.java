@@ -26,6 +26,7 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import agentgui.simulationService.time.TimeModel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
@@ -361,6 +362,16 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 		// --- If null, try to get the registered services -------------------- 
 		if (serviceList==null) serviceList = this.getValidationServiceList();
 		
+		// --- Collect required instances for validation checks ---------------
+		Project project = this.getProject();
+		if (project==null) return validatorList;
+		
+		SimulationSetup setup = project.getSimulationSetups().getCurrSimSetup();
+		GraphEnvironmentController graphController = this.getGraphController();
+		TimeModel timeModel = this.getTimeModel();
+		NetworkModel networkModel = graphController.getNetworkModel();
+		HyGridAbstractEnvironmentModel hygridAbsModel = this.getHyGridAbstractEnvironmentModel();
+		
 		// --- Walk through the list of specified services --------------------
 		for (int i = 0; i < serviceList.size(); i++) {
 			// --- Get the checks from the registered service -----------------
@@ -373,11 +384,12 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				HyGridValidationAdapter validationAdapter = serviceValidatorList.get(j);
 				if (setRuntimeInstancesToValidationAdapter==true) {
 					// --- Set the required project instances to the adapter --
-					validationAdapter.setProject(this.getProject());
-					validationAdapter.setSetup(this.getProject().getSimulationSetups().getCurrSimSetup());
-					validationAdapter.setGraphController(this.getGraphController());
-					validationAdapter.setNetworkModel(this.getGraphController().getNetworkModel());
-					validationAdapter.setHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());	
+					validationAdapter.setProject(project);
+					validationAdapter.setSetup(setup);
+					validationAdapter.setGraphController(graphController);
+					validationAdapter.setTimeModel(timeModel);
+					validationAdapter.setNetworkModel(networkModel);
+					validationAdapter.setHyGridAbstractEnvironmentModel(hygridAbsModel);	
 				}
 				validatorList.add(validationAdapter);
 			}
@@ -447,6 +459,18 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			}
 		}
 		return graphController;
+	}
+	/**
+	 * Returns the current TimeModel.
+	 * @return the time model
+	 */
+	private TimeModel getTimeModel() {
+		TimeModel timeModel = null;
+		Project project = this.getProject(); 
+		if (project!=null) {
+			timeModel = project.getTimeModelController().getTimeModel();
+		}
+		return timeModel;
 	}
 	/**
 	 * Returns the current HyGridAbstractEnvironmentModel.

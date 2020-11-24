@@ -75,12 +75,13 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		
 		if (updateObject instanceof DiscreteSimulationStep) {
 			
+			// ------------------------------------------------------------------------------------
 			// --- Discrete Simulation: Got DiscreteSimulationStep for NetworkComponent -----------
+			// ------------------------------------------------------------------------------------
 			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) updateObject;
 			if (dsStep instanceof DiscreteSimulationStepCentralDecision) {
-				// -- Put state into state log ----------------------------------------------------
-				this.getDiscreteIteratingSystemsStateTypeLog().put(networkComponentID, dsStep.getDiscreteSystemStateType());
-				
+				// --- Register as discrete iterating system --------------------------------------
+				this.registerDiscreteIteratingSystem(networkComponentID);
 				// --- Place system variability in decision process -------------------------------
 				AbstractCentralDecisionProcess cdProcess = this.getCentralDecisionProcess();
 				if (cdProcess!=null) {
@@ -218,9 +219,13 @@ public class AggregationHandler extends AbstractAggregationHandler {
 	 */
 	public boolean isPendingSystemInCentralSnapshotSimulation() {
 		if (this.isCentralSnapshotSimulation()==false) return false;
+		
+		AbstractCentralDecisionProcess cdProcess = this.getCentralDecisionProcess(); 
+		if (cdProcess==null) return true;
+
 		int noOfRTControlledSystems = this.getRealTimeControlledSystems().size();
-		int noOfRTControlledSystemsAnswered = this.getDiscreteIteratingSystemsStateTypeLog().size();
-		return noOfRTControlledSystemsAnswered < noOfRTControlledSystems && noOfRTControlledSystemsAnswered!=noOfRTControlledSystems;
+		int noOfSystemsAnswered = cdProcess.getSystemsVariability().size();
+		return noOfSystemsAnswered < noOfRTControlledSystems && noOfSystemsAnswered!=noOfRTControlledSystems;
 	}
 	
 	/**
@@ -232,15 +237,17 @@ public class AggregationHandler extends AbstractAggregationHandler {
 			// --- Check if we work in a central controlled snapshot simulation ---------
 			if (this.isCentralSnapshotSimulation()==true) {
 				String cdClass = this.getHyGridAbstractEnvironmentModel().getSnapshotCentralDecisionClass();
-				centralDecisionProcess = AbstractCentralDecisionProcess.createCentralDecisionProcess(cdClass);
-				if (centralDecisionProcess!=null) {
-					centralDecisionProcess.setAggregationHandler(this);
+				try {
+					centralDecisionProcess = AbstractCentralDecisionProcess.createCentralDecisionProcess(cdClass);
+					if (centralDecisionProcess!=null) {
+						centralDecisionProcess.setAggregationHandler(this);
+					}
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
 		return centralDecisionProcess;
 	}
-
-	
 	
 }

@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import agentgui.core.application.Application;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
@@ -154,7 +155,10 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.timeModelType = timeModelType;
 	}
 	/**
-	 * Gets the current time model type.
+	 * Returns the current {@link TimeModelType} <b>at the runtime of the agent system</b>.<br>
+	 * Do not use this method to check the configuration before runtime! Instead, use the projects
+	 * {@link TimeModelController} to check the current {@link TimeModel}.
+	 *  
 	 * @return the time model type
 	 */
 	public TimeModelType getTimeModelType() {
