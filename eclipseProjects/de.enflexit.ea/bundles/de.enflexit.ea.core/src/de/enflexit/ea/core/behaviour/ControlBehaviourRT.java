@@ -163,7 +163,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		default:
 			break;
 		}
-		
 		return eomController;
 	}
 	/**
@@ -191,6 +190,17 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		}
 		this.internalDataModel.deleteObserver(this);
 		if (this.myAgent!=null) this.myAgent.removeBehaviour(this);
+	}
+	
+	/**
+	 * Returns the simulated IO interface.
+	 * @return the abstract IO simulated
+	 */
+	private AbstractIOSimulated getAbstractIOSimulated() {
+		if (this.agentIOBehaviour instanceof AbstractIOSimulated) {
+			return (AbstractIOSimulated) this.agentIOBehaviour;
+		}
+		return null;
 	}
 	
 	/**
@@ -324,8 +334,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 * @return the time model discrete
 	 */
 	private TimeModelDiscrete getTimeModelDiscrete() {
-		if (this.agentIOBehaviour instanceof AbstractIOSimulated) {
-			AbstractIOSimulated ioSimulated = (AbstractIOSimulated) this.agentIOBehaviour;
+		AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
+		if (ioSimulated!=null) {
 			return ioSimulated.getTimeModelDiscrete();
 		}
 		return null;
@@ -337,14 +347,10 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 * @param tsseLocal the current local system state 
 	 */
 	private void sendControlBehaviourRTStateUpdateToEnvironmentModel(TechnicalSystemStateEvaluation tsseLocal) {
-		
 		if (this.isSimulation()==true) {
-			EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
-			if (eaIO instanceof AbstractIOSimulated) {
-				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
-				if (ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
-					ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
-				}
+			AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
+			if (ioSimulated!=null && ioSimulated.isSetTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel()==true) {
+				ioSimulated.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 			}
 		}
 	}
@@ -356,13 +362,11 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		
 		if (this.isSimulation()==false || this.getTimeModelType()==TimeModelType.TimeModelContinuous) return;
 		
-		// --- Get the discrete simulation step ---------------------
-		DiscreteSimulationStep dsStep = this.getDiscreteSimulationStep();
-		EnergyAgentIO eaIO = this.energyAgent.getEnergyAgentIO();
-		if (eaIO instanceof AbstractIOSimulated) {
-			AbstractIOSimulated ioSimulated = (AbstractIOSimulated) eaIO;
-			ioSimulated.sendManagerNotification(dsStep);
+		AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
+		if (ioSimulated!=null) {
+			ioSimulated.sendManagerNotification(this.getDiscreteSimulationStep());
 		}
+		
 	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
@@ -403,7 +407,12 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// ------------------------------------------------------
 			// --- Central decision process -------------------------
 			// ------------------------------------------------------
-			dsStep = new DiscreteSimulationStepCentralDecision(tsseVector); 
+			boolean requiresEnvModelInfo = false;
+			AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
+			if (ioSimulated!=null) {
+				requiresEnvModelInfo = ioSimulated.requiresEnvironmentModelInformation(); 
+			}
+			dsStep = new DiscreteSimulationStepCentralDecision(tsseVector, requiresEnvModelInfo); 
 			
 		} else {
 			// ------------------------------------------------------
@@ -597,15 +606,49 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 			this.sendDiscreteSimulationsStepToSimulationManager();
 
-			// --- Get the selected set points ----------------------
-			if (tsseLocal!=null) {
-				// --- Take the copy of the current list ------------
-				FixedVariableList setPointList = this.getSetPointList().getCopy(); 
-				// --- Assign TSSE-values to the set-point list -----
-				this.assignTechnicalSystemStateValuesToSetPointList(tsseLocal, setPointList);
-				// --- Assign set point to the IO-interface ---------
-				this.agentIOBehaviour.setSetPointsToSystem(setPointList);
-			}
+			// --- Assign set points from tsse ----------------------
+			this.setSetPointsFromTechnicalSystemStateEvaluation(tsseLocal);
+
+		}
+	}
+	
+	/**
+	 * Set the set points of the IO interface on the base of the specified {@link TechnicalSystemStateEvaluation}.
+	 * @param tsse the system state to translate into set points
+	 */
+	public void setSetPointsFromTechnicalSystemStateEvaluation(TechnicalSystemStateEvaluation tsse) {
+		
+		if (tsse==null) return;
+		
+		// --- Take the copy of the local set point list ------------
+		FixedVariableList setPointList = this.getSetPointList().getCopy();
+		
+		switch (typeOfControlledSystem) {
+		case TechnicalSystem:
+			// --- Assign TSSE-values to the set-point list ---------
+			this.assignTechnicalSystemStateValuesToSetPointList(tsse, setPointList);
+			// --- Assign set point to the IO-interface -------------
+			this.agentIOBehaviour.setSetPointsToSystem(setPointList);
+			break;
+
+		case TechnicalSystemGroup:
+			// --- Create an aggregations set-point description -----
+			FixedVariableListForAggregation fvListFA = new FixedVariableListForAggregation();
+			
+			// --- 1. Get set-points of superordinate system --------
+			this.assignTechnicalSystemStateValuesToSetPointList(tsse, setPointList);
+			fvListFA.addAll(setPointList); 
+
+			// --- 2. Get set-points of sub systems -----------------
+			SetPointSelectionTreeAction sps = new SetPointSelectionTreeAction(this.gc, this.rtGroupEvaluationStrategy, fvListFA);
+			sps.doGroupTreeAction();
+			
+			// --- Assign set point to the IO-interface -------------
+			this.agentIOBehaviour.setSetPointsToSystem(fvListFA);
+			break;
+			
+		default:
+			break;
 		}
 	}
 	
@@ -693,23 +736,9 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 			this.sendDiscreteSimulationsStepToSimulationManager();
 
-			// --- Get the selected set points ----------------------
-			if (tsseLocal!=null) {
-				// --- Create an aggregations set-point description -
-				FixedVariableListForAggregation fvListFA = new FixedVariableListForAggregation();
-				
-				// --- 1. Get set-points of superordinate system ----
-				FixedVariableList setPointList = this.getSetPointList().getCopy(); 
-				this.assignTechnicalSystemStateValuesToSetPointList(tsseLocal, setPointList);
-				fvListFA.addAll(setPointList); 
-
-				// --- 2. Get set-points of sub systems -------------
-				SetPointSelectionTreeAction sps = new SetPointSelectionTreeAction(this.gc, this.rtGroupEvaluationStrategy, fvListFA);
-				sps.doGroupTreeAction();
-				
-				// --- Assign set point to the IO-interface ---------
-				this.agentIOBehaviour.setSetPointsToSystem(fvListFA);
-			}
+			// --- Assign set points from tsse ----------------------
+			this.setSetPointsFromTechnicalSystemStateEvaluation(tsseLocal);
+			
 		}
 		
 	}

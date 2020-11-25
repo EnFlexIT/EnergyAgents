@@ -28,17 +28,23 @@ public class RandomCentralDecisionProcess extends AbstractCentralDecisionProcess
 	@Override
 	public TimeStepDecisions getTimeStepDecisions(long evaluationTime) {
 		
+		// ----------------------------------------------------------
 		// --- Check if the iteration counter needs to be reseted ---
+		// ----------------------------------------------------------
 		if (this.isNewEvaluationTime()==true) {
 			this.iterationCount = 0;
 		} else {
 			this.iterationCount++;
 		}
-		
+
+		// ----------------------------------------------------------
 		// --- Define return type -----------------------------------
+		// ----------------------------------------------------------
 		TimeStepDecisions tsd = new TimeStepDecisions();
 		
+		// ----------------------------------------------------------
 		// --- Run through list of variable systems -----------------
+		// ----------------------------------------------------------
 		List<String> netCompIDs = new ArrayList<String>(this.getSystemsVariability().keySet());
 		for (int i = 0; i < netCompIDs.size(); i++) {
 			
@@ -51,14 +57,18 @@ public class RandomCentralDecisionProcess extends AbstractCentralDecisionProcess
 			tsd.getSystemStates().put(netCompID, tsseDecision);
 		}
 		
+		// ----------------------------------------------------------
 		// --- Set the DiscreteSystemStateType ----------------------
+		// ----------------------------------------------------------
 		DiscreteSystemStateType dst = DiscreteSystemStateType.Iteration;
 		if (this.iterationCount>=this.iterationCountMax) {
 			dst = DiscreteSystemStateType.Final;
 		} 
 		tsd.setDiscreteSystemStateType(dst);
 		
+		// ----------------------------------------------------------
 		// --- Some debug output ------------------------------------
+		// ----------------------------------------------------------
 		if (this.isDebug==true) {
 			String stateDescription = "";
 			for (int i = 0; i < netCompIDs.size(); i++) {

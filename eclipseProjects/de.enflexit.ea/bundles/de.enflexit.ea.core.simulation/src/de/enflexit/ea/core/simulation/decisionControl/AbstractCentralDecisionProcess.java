@@ -1,17 +1,22 @@
 package de.enflexit.ea.core.simulation.decisionControl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
+import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
 import de.enflexit.ea.core.simulation.manager.AggregationHandler;
+import de.enflexit.ea.core.simulation.manager.SimulationManager;
 import energy.helper.DisplayHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
+import jade.core.AID;
 
 /**
  * The Class AbstractCentralDecisionProcess.
@@ -23,9 +28,13 @@ public abstract class AbstractCentralDecisionProcess {
 	private AggregationHandler aggregationHandler;
 
 	private TreeMap<String, Vector<TechnicalSystemStateEvaluation>> systemsVariability;
+	private HashSet<String> environmentDependentSystems;
+	
 	private long evaluationTime;
 	private long evaluationTimePrevious;
 	private boolean newEvaluationTime;
+	
+	
 	/**
 	 * Constructor for central decision process.
 	 */
@@ -59,6 +68,54 @@ public abstract class AbstractCentralDecisionProcess {
 	}
 	
 	/**
+	 * Returns the IDs of the environment dependent systems.
+	 * @return the environment dependent systems
+	 */
+	protected HashSet<String> getEnvironmentDependentSystems() {
+		if (environmentDependentSystems==null) {
+			environmentDependentSystems = new HashSet<String>();
+		}
+		return environmentDependentSystems;
+	}
+	/**
+	 * Registers the possible simulation steps that are provided by the specified simulation step
+	 * for central decisions.
+	 *
+	 * @param dsStepCD the DiscreteSimulationStepCentralDecision
+	 */
+	public void registerDiscreteSimulationStepCentralDecision(String networkComponentID, DiscreteSimulationStepCentralDecision dsStepCD) {
+		
+		if (dsStepCD==null) return;
+		
+		// --- Add to state variability -------------------------------------------------------------------------------
+		if (dsStepCD.getPossibleSystemStates()!=null) {
+			this.getSystemsVariability().put(networkComponentID, dsStepCD.getPossibleSystemStates());
+		}
+		// --- Remind systems that dependent on the EnvironmentModel (and Blackboard) for local measurements ----------
+		if (dsStepCD.requiresEnvironmentModelInformation()==true) {
+			this.getEnvironmentDependentSystems().add(networkComponentID);
+		}
+	}
+	/**
+	 * Resets the systems variability TreeMap after the decision process.
+	 * @param discreteSystemStateType the discrete system state type
+	 */
+	private void resetSystemsVariability(DiscreteSystemStateType discreteSystemStateType) {
+		
+		switch (discreteSystemStateType) {
+		case Final:
+			this.getSystemsVariability().clear();
+			break;
+
+		case Iteration:
+			for (String netCompID : this.getEnvironmentDependentSystems()) {
+				this.getSystemsVariability().remove(netCompID);
+			}
+			break;
+		}
+	}
+	
+	/**
 	 * Returns the current evaluation time.
 	 * @return the evaluation time
 	 */
@@ -88,20 +145,22 @@ public abstract class AbstractCentralDecisionProcess {
 	
 	
 	/**
-	 * Executes the central decision process.
-	 * @param currTime the current time
+	 * Executes the central decision process and sends the system states 
+	 * that are to be used by the local systems to the systems.
+	 *
+	 * @param siMa the current Simulation Manager
 	 */
-	public final void execute(long currTime) {
+	public final void execute(SimulationManager siMa) {
 		
-		this.setEvaluationTime(currTime);
+		// --- Set the current simulation time ------------------------------------------
+		this.setEvaluationTime(siMa.getTime());
 		
-		TimeStepDecisions tsd = null;
 		try {
 			
 			// --- Get decisions from sub-class implementation --------------------------
-			tsd = this.getTimeStepDecisions(this.getEvaluationTime());
+			TimeStepDecisions tsd = this.getTimeStepDecisions(this.getEvaluationTime());
 			
-			// --- Check if the decision are (in) complete ------------------------------
+			// --- Check if the decision are complete -----------------------------------
 			String decisionErrMsg = this.getDecisionErrorMessage(tsd);
 			if (decisionErrMsg!=null) {
 				DisplayHelper.systemOutPrintlnGlobalTime(this.getEvaluationTime(), "[" + this.getClass().getSimpleName() + "] Decision errors for", "\n" + decisionErrMsg, true);
@@ -109,30 +168,31 @@ public abstract class AbstractCentralDecisionProcess {
 			
 			// --- Transfer to simulation process ---------------------------------------
 			if (tsd!=null && tsd.getSystemStates().size()>0) {
-				// --- Add states to the aggregations handler ScheduleController --------
+				// --- Get each single decision -----------------------------------------
 				List<String> netCompIDs = new ArrayList<String>(tsd.getSystemStates().keySet());
 				for (int i = 0; i < netCompIDs.size(); i++) {
 					String netCompID = netCompIDs.get(i);
 					TechnicalSystemStateEvaluation tsse = tsd.getSystemStates().get(netCompID);
 					if (tsse!=null) {
-						this.getAggregationHandler().appendToNetworkComponentsScheduleController(netCompID, new DiscreteSimulationStep(tsse, tsd.getDiscreteSystemStateType()));
+						// --- Define the DiscreteSimulationStep for the system --------- 
+						DiscreteSimulationStep dsStep = new DiscreteSimulationStep(tsse, tsd.getDiscreteSystemStateType());
+						// --- Add states into aggregations handler ScheduleController --
+						this.getAggregationHandler().appendToNetworkComponentsScheduleController(netCompID, dsStep);
+						// --- Send TSSE's to the local agents ControlBehaviourRT -------
+						siMa.sendAgentNotification(new AID(netCompID, AID.ISLOCALNAME), dsStep);
 					}
 				}
 			}
 			
-			// --- Send new states to agents ControlBehaviourRT to update local system --
-			// TODO
-			
-			// --- Clear current system variability -------------------------------------
-			this.getSystemsVariability().clear();
+			// --- Clear TreeMap with the systems variability ---------------------------
+			this.resetSystemsVariability(tsd.getDiscreteSystemStateType());
 			
 		} catch (Exception ex) {
 			DisplayHelper.systemOutPrintlnGlobalTime(this.getEvaluationTime(), "[" + this.getClass().getSimpleName() + "] Error while executing central decision process for", ":", true);
 			ex.printStackTrace();
 		}
-		
 	}
-	
+
 	/**
 	 * Has to return the control decisions for each variable system in the current time step.
 	 *
@@ -231,5 +291,6 @@ public abstract class AbstractCentralDecisionProcess {
 		}
 		return cdp;
 	}
+
 	
 }

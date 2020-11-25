@@ -485,7 +485,7 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 			// --- Get the first element and work on it ------------------
 			if (notifications.size()!=0) {
 				notification = notifications.get(0);
-				notification = ioSimulated.onEnvironmentNotification(notification);
+				notification = ioSimulated.filterEnvironmentNotification(notification);
 				if (notification.getProcessingInstruction().isDelete()) {
 					removeFirstElement = true;	
 					moveAsLastElement = false;

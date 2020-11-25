@@ -2,9 +2,6 @@ package de.enflexit.ea.core;
 
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.transaction.EnvironmentNotification;
-import de.enflexit.ea.core.AbstractIOSimulated;
-
 /**
  * The Class IOSimulated is used to simulate measurements from an energy conversion 
  * process, if the current project setup is used for simulations. Especially this class
@@ -38,14 +35,6 @@ public class DefaultIOSimulated extends AbstractIOSimulated {
 	@Override
 	protected boolean commitMeasurementsToAgentsManually() {
 		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see agentgui.simulationService.behaviour.SimulationServiceBehaviour#onEnvironmentNotification(agentgui.simulationService.transaction.EnvironmentNotification)
-	 */
-	@Override
-	protected EnvironmentNotification onEnvironmentNotification(EnvironmentNotification notification) {
-		return super.onEnvironmentNotification(notification);
 	}
 	
 }

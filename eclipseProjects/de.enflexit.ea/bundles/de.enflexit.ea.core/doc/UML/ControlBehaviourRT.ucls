@@ -59,51 +59,51 @@
     </display>  
   </class>  
   <association id="7">    
-    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
-      <attribute id="8" name="initialStateAdaptionConfigured">        
-        <position height="0" width="0" x="-46" y="-50"/>      
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="8" name="rtEvaluationStrategy">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-46" y="-50"/>      
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="10">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="4"/>  
-  </realization>  
-  <nesting id="11">    
+  <association id="10">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="11" name="agentIOBehaviour">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="12" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="13">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="2"/>  
   </nesting>  
-  <realization id="12">    
+  <realization id="14">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <realization id="15">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="4"/>  
   </realization>  
-  <association id="13">    
-    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
-      <attribute id="14" name="agentIOBehaviour">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="15" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true" variant="ASSOCIATION"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="16">    
-    <end type="SOURCE" refId="3" navigable="false" variant="ASSOCIATION">      
-      <attribute id="17" name="rtEvaluationStrategy">        
-        <position height="0" width="0" x="0" y="0"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="17" name="initialStateAdaptionConfigured">        
+        <position height="0" width="0" x="-46" y="-50"/>      
       </attribute>      
       <multiplicity id="18" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="-46" y="-50"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true" variant="ASSOCIATION"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

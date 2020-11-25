@@ -86,7 +86,7 @@ public class AggregationHandler extends AbstractAggregationHandler {
 				AbstractCentralDecisionProcess cdProcess = this.getCentralDecisionProcess();
 				if (cdProcess!=null) {
 					DiscreteSimulationStepCentralDecision dsStepCD = (DiscreteSimulationStepCentralDecision) dsStep;
-					cdProcess.getSystemsVariability().put(networkComponentID, dsStepCD.getPossibleSystemStates());
+					cdProcess.registerDiscreteSimulationStepCentralDecision(networkComponentID, dsStepCD);
 				}
 				
 			} else {

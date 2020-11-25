@@ -16,14 +16,18 @@ public class DiscreteSimulationStepCentralDecision extends DiscreteSimulationSte
 	private static final long serialVersionUID = 6904841448098955429L;
 
 	private Vector<TechnicalSystemStateEvaluation> possibleSystemStatesVector;
+	private boolean requiresEnvironmentModelInformation;
 	
 	/**
 	 * Instantiates a new discrete simulation step for central decision processes.
+	 *
 	 * @param tsseVector the vector with the possible system states
+	 * @param requiresEnvironmentModelInformation indicator that the system requires environment model information (e.g. after network calculation)
 	 */
-	public DiscreteSimulationStepCentralDecision(Vector<TechnicalSystemStateEvaluation> tsseVector) {
+	public DiscreteSimulationStepCentralDecision(Vector<TechnicalSystemStateEvaluation> tsseVector, boolean requiresEnvironmentModelInformation) {
 		super(null, DiscreteSystemStateType.Iteration);
 		this.setPossibleSystemStates(tsseVector);
+		this.setRequiresEnvironmentModelInformation(requiresEnvironmentModelInformation);
 	}
 
 	/**
@@ -41,6 +45,23 @@ public class DiscreteSimulationStepCentralDecision extends DiscreteSimulationSte
 		this.possibleSystemStatesVector = newTsseVector;
 	}
 	
+	/**
+	 * Sets the indicator that the current system requires environment model information 
+	 * (e.g. for artificial sensor data that may be received after network calculation via blackboard).
+	 * @param requiresEnvironmentModelInformation the new system requires environment information
+	 */
+	public void setRequiresEnvironmentModelInformation(boolean requiresEnvironmentModelInformation) {
+		this.requiresEnvironmentModelInformation = requiresEnvironmentModelInformation;
+	}
+	/**
+	 * Checks if is system requires environment model information.
+	 * @return true, if is system requires environment model information
+	 */
+	public boolean requiresEnvironmentModelInformation() {
+		return requiresEnvironmentModelInformation;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep#toString()
 	 */
@@ -55,7 +76,7 @@ public class DiscreteSimulationStepCentralDecision extends DiscreteSimulationSte
 		} else {
 			displayText = "[" + this.getDiscreteSystemStateType().name() + "]";
 		}
-		displayText += " "; 
+		displayText += " Requires environment information: " + this.requiresEnvironmentModelInformation() + ", ";
 		
 		if (this.getPossibleSystemStates()==null) {
 			displayText += "No";

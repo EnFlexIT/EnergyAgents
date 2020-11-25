@@ -358,6 +358,23 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	}
 	
 	/**
+	 * Filters the specified environment notification for simulation purposes. Can not be overridden.
+	 *
+	 * @param notification the notification
+	 * @return the environment notification
+	 */
+	protected final EnvironmentNotification filterEnvironmentNotification(EnvironmentNotification notification){
+		
+		if (notification.isComingFromManager()==true && notification.getNotification() instanceof DiscreteSimulationStep && this.getEnergyAgent().isExecutedControlBehaviourRT()==true) {
+			// --- Work on a  
+			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) notification.getNotification();
+			this.getEnergyAgent().getControlBehaviourRT().setSetPointsFromTechnicalSystemStateEvaluation(dsStep.getSystemState());
+			return notification;
+		}
+		
+		return this.onEnvironmentNotification(notification);
+	}
+	/**
 	 * This method will be executed if an EnvironmentNotification arrives this agent.
 	 * @param notification the notification
 	 */
@@ -427,7 +444,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 				// ------------------------------------------------------------
 				// --- RT controlled / require external information? ----------
 				boolean isRTControlledSystem = this.getEnergyAgent().isExecutedControlBehaviourRT(); 
-				boolean isRequiresEnvModelInformation = this.commitMeasurementsToAgentsManually(); 
+				boolean isRequiresEnvModelInformation = this.requiresEnvironmentModelInformation(); 
 				DiscreteSimulationStep dsStep = null;
 				if (isRTControlledSystem==false) {
 					// --- Not RT controlled - (data source is ScheduleList) --
@@ -579,6 +596,15 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Set new measurements to the internal data model of the Energy Agent ------
 			this.commitMeasurementsToAgent();
 		}
+	}
+	
+	/**
+	 * Answers the question, if the simulated IO interface requires information from the environment model before new
+	 * measurement values can be committed to an energy agent (e.g. after a network calculation to get artificial sensor data).
+	 * @return true, if the simulated IO interface requires environment model information
+	 */
+	public final boolean requiresEnvironmentModelInformation() {
+		return this.commitMeasurementsToAgentsManually();
 	}
 	
 	/**

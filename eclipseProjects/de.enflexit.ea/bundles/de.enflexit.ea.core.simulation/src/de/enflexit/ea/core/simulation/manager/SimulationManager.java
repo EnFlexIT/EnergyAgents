@@ -743,7 +743,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			if (agh.isPendingSystemInCentralSnapshotSimulation()==true) return;
 			// --- Execute evaluation in central decision process -----------------------
 			if (agh.getCentralDecisionProcess()!=null) {
-				agh.getCentralDecisionProcess().execute(this.getTime());
+				agh.getCentralDecisionProcess().execute(this);
 			}
 		}
 		
