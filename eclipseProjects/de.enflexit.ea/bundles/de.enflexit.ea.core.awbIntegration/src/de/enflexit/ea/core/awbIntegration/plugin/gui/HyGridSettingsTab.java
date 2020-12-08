@@ -70,7 +70,8 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private static final long serialVersionUID = -1983567619404123877L;
 
 	private Project currProject;
-
+	private boolean isPauseObserver;
+	
 	private JPanel jPanelMain;
 	
 	private JLabel jLabelHeaderPowerTransmission;
@@ -328,7 +329,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		// --- Check if we have changes -------------------
 		if (hyGridDM.equals(hyGridDMOld)==false) {
+			this.isPauseObserver = true;
 			this.currProject.setUserRuntimeObject(hyGridDM);
+			this.isPauseObserver = false;
 		}
 	}
 	
@@ -1139,7 +1142,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	@Override
 	public void update(Observable observable, Object updateObject) {
 		if (updateObject.equals(Project.CHANGED_UserRuntimeObject)) {
-			this.loadDataModelToForm();
+			if (this.isPauseObserver==false) this.loadDataModelToForm();
 		}
 	}
 
