@@ -154,26 +154,28 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 					// ------------------------------------------------------------------
 					// --- Check for TechnicalSystem instances --------------------------
 					// ------------------------------------------------------------------
-					switch (sdl) {
-					case Decentral:
-						// --- Check for the right strategy type ------------------------
-						if (isSnapShotSimulation==true) {
-							if (!(strategy instanceof AbstractSnapshotStrategy)) {
-								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+					if (sdl!=null) {
+						switch (sdl) {
+						case Decentral:
+							// --- Check for the right strategy type ------------------------
+							if (isSnapShotSimulation==true) {
+								if (!(strategy instanceof AbstractSnapshotStrategy)) {
+									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+								}
+							} else {
+								if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+								}
 							}
-						} else {
-							if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+							break;
+							
+						case Central:
+							// --- Ensure that the class is of type RT strategy -------------
+							if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
 								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 							}
+							break;
 						}
-						break;
-
-					case Central:
-						// --- Ensure that the class is of type RT strategy -------------
-						if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
-							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
-						}
-						break;
 					}
 					
 					
@@ -181,26 +183,28 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 					// ------------------------------------------------------------------
 					// --- Check for TechnicalSystemGroup instances ---------------------
 					// ------------------------------------------------------------------
-					switch (sdl) {
-					case Decentral:
-						// --- Check for the right strategy type ------------------------
-						if (isSnapShotSimulation==true) {
-							if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
-								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
-							}
-						} else {
-							if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+					if (sdl!=null) {
+						switch (sdl) {
+						case Decentral:
+							// --- Check for the right strategy type ------------------------
+							if (isSnapShotSimulation==true) {
+								if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
+									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+								}
+							} else {
+								if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+								}
+							}		
+							break;
+							
+						case Central:
+							// --- Ensure that the class is of type RT strategy -------------
+							if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
 								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 							}
-						}		
-						break;
-
-					case Central:
-						// --- Ensure that the class is of type RT strategy -------------
-						if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
-							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+							break;
 						}
-						break;
 					}
 					
 				}
