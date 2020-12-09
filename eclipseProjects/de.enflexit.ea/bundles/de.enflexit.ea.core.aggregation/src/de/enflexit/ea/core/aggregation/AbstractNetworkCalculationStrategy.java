@@ -288,7 +288,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 				this.scheduleResult.setCalculationTime(System.currentTimeMillis() - this.evaluationStart); 
 				this.applyScheduleLengthRestriction(tsse.getGlobalTime());
 				// --- Update the result view -------------------------------------------
-				getEvaluationProcess().getScheduleController().setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleUpdated, scheduleResult));
+				getEvaluationProcess().getScheduleController().setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleUpdated, this.scheduleResult));
 				// --- Remind the sub result schedules in the evaluation process ------
 				getEvaluationProcess().addSubSchedules(scheduleResult, getAddResultTreeAction().getSubScheduleHash());
 				// --- Start to collect the sub results -------------------------------
