@@ -80,6 +80,15 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 	}
 	
 	/* (non-Javadoc)
+	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#isProduceTechnicalSystemGroupStateEvaluation()
+	 */
+	@Override
+	public boolean isProduceTechnicalSystemGroupStateEvaluation() {
+		//TODO Check in context of continuous time simulation
+		return false;
+	}
+	
+	/* (non-Javadoc)
 	 * @see energy.evaluation.AbstractEvaluationStrategy#runEvaluation()
 	 */
 	@Override
