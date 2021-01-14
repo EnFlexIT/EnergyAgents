@@ -117,9 +117,9 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder implem
 		dashboardUpdate.setTimestamp(this.getAggregationHandler().getEvaluationEndTime());
 		
 		if (dashboardSubscription.getSubscriptionFor()==SubscriptionFor.CURRENT_TSSE) {
+			HashMap<String, TechnicalSystemStateEvaluation> lastTSSEs = subNetworkConfiguration.getAggregationHandler().getLastTechnicalSystemStatesFromScheduleController();
 			for (int i=0; i<dashboardSubscription.getSubscriptionSpecifiers().size(); i++) {
 				String componentID = dashboardSubscription.getSubscriptionSpecifiers().get(i);
-				HashMap<String, TechnicalSystemStateEvaluation> lastTSSEs = subNetworkConfiguration.getAggregationHandler().getLastTechnicalSystemStatesFromScheduleController();
 				TechnicalSystemStateEvaluation tsse = lastTSSEs.get(componentID);
 				if (tsse!=null) {
 					dashboardUpdate.getUpdateObjects().put(componentID, TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse));
