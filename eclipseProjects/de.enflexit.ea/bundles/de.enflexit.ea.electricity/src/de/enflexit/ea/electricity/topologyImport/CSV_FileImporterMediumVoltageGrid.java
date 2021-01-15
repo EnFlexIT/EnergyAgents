@@ -153,7 +153,6 @@ public class CSV_FileImporterMediumVoltageGrid extends AbstractNetworkModelCsvIm
 		mapSettings.setUTMLongitudeZone(32);
 		mapSettings.setUTMLatitudeZone("U");
 		mapSettings.setMapScale(MapScale.m);
-		mapSettings.setShowMapTiles(false);
 		this.getNetworkModel().getMapSettingsTreeMap().put(this.getUtmLayoutID(), mapSettings);
 		
 		HashMap<String, HashMap<String, CableType>> cableTypes = this.importCableTypesFromFile();
