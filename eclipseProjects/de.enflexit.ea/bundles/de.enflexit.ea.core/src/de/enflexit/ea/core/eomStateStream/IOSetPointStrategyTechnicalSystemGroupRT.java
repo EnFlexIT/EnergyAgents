@@ -174,7 +174,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#meetDecisionForTechnicalSystem(javax.swing.tree.DefaultMutableTreeNode, energygroup.GroupTreeNodeObject, java.util.Vector)
 	 */
 	@Override
-	public TechnicalSystemStateDeltaEvaluation meetDecisionForTechnicalSystem(DefaultMutableTreeNode currentNode, GroupTreeNodeObject gtno, Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps) {
+	public TechnicalSystemStateDeltaEvaluation decideForDeltaStepToBeUsed(DefaultMutableTreeNode currentNode, GroupTreeNodeObject gtno, Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps) {
 
 		// --- Meet decision for the current set points ---------------------------------
 		String subSystemDescription = gtno.getSystemDescription(false);
@@ -381,7 +381,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#meetDecisionForScheduleList(javax.swing.tree.DefaultMutableTreeNode, energygroup.GroupTreeNodeObject, energy.optionModel.ScheduleList)
 	 */
 	@Override
-	public Schedule meetDecisionForScheduleList(DefaultMutableTreeNode currentNode, GroupTreeNodeObject gtno, ScheduleList scheduleList) {
+	public Schedule decideForScheduleToBeUsed(DefaultMutableTreeNode currentNode, GroupTreeNodeObject gtno, ScheduleList scheduleList) {
 		return null;
 	}
 	

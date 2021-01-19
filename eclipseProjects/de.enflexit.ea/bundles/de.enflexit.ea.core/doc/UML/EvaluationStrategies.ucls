@@ -48,12 +48,12 @@
     <end type="TARGET" refId="3"/>  
   </generalization>  
   <generalization id="6">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <generalization id="7">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="7">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
