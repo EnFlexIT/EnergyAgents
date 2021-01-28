@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.blackboard
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.enflexit.ea.core.blackboard
-Require-Bundle: de.enflexit.api,
- de.enflexit.common,
+Require-Bundle: de.enflexit.common,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,

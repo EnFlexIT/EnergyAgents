@@ -22,6 +22,5 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.core,
  org.agentgui.lib.jade,
  de.enflexit.ea.core.dataModel,
- de.enflexit.eom.awbAdapter,
  org.awb.env.networkModel,
  de.enflexit.ea.core.validation

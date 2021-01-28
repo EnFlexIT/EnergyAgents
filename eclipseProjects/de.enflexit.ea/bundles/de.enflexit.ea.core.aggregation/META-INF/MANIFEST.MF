@@ -19,6 +19,5 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.eom.core,
- de.enflexit.eom.awbAdapter,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.awbIntegration

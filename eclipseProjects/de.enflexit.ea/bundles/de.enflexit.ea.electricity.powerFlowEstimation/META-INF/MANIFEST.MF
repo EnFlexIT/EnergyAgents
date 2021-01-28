@@ -7,7 +7,6 @@ Automatic-Module-Name: net.agenthygrid.estimation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
- de.enflexit.ea.core,
  de.enflexit.ea.electricity.powerFlowCalculation,
  de.enflexit.ea.core.dataModel,
  org.agentgui.core,
