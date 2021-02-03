@@ -285,7 +285,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	@Override
 	public void setPauseSimulation(boolean doPause) {
 		this.isPaused = doPause;
-		if (this.isPaused==true) {
+		if (doPause==true) {
 			// ------------------------------------------------------
 			// --- Pause the simulation -----------------------------
 			// ------------------------------------------------------
@@ -796,6 +796,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --- Wait until the end of configured time between simulations steps ------
 			this.waitUntilTheEndOfCurrentSimulationStep();
 
+			// --- If simulation is paused, exit here ----------------------------------- 
+			if (this.isPaused==true) return;
+			
 			// --- Prepare next simulation step -----------------------------------------
 			TimeModelDiscrete tmd = this.getTimeModelDiscrete();
 			if (tmd.getTime()<tmd.getTimeStop()) {
@@ -814,11 +817,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --- Clear simulation step logs -------------------------------------------
 			this.getAggregationHandler().clearDiscreteIteratingSystemsStateTypeLog();
 			this.getControlBehaviourRTStateUpdateAnswered().clear();
-			
+
 			// --- Start next simulation step -------------------------------------------
 			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
 			this.statSimulationStepsDiscrete++;
 			this.setEndTimeNextSimulationStep();
+		
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

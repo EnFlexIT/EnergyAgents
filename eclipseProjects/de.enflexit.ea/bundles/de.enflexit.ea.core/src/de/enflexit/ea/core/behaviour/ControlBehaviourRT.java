@@ -421,7 +421,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Use an individual discrete system state type? --------
 			DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
 			if (dsTypeIndividual==null) {
-				dsStep = new DiscreteSimulationStep(tsse, DiscreteSystemStateType.Final);
+				dsTypeIndividual = DiscreteSystemStateType.Final;
 			}
 			dsStep = new DiscreteSimulationStep(tsse, dsTypeIndividual);
 		}

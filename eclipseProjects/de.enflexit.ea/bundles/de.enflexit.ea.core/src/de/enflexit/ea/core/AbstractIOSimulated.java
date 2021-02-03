@@ -105,7 +105,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 				this.getSimulationConnector().sendManagerNotification(new RTControlRegistration());
 			}
 			// --- Register an iterating strategy at the simulation manager? ------------
-			if (this.isDiscreteIteratingRTStrategy()==true) {
+			if (this.requiresEnvironmentModelInformation()==true || this.isDiscreteIteratingRTStrategy()==true) {
 				this.getSimulationConnector().sendManagerNotification(new DiscreteIteratorRegistration());
 			}
 			// --- Send null TSSE as registration for states from control behaviour? ----
@@ -366,7 +366,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	protected final EnvironmentNotification filterEnvironmentNotification(EnvironmentNotification notification){
 		
 		if (notification.isComingFromManager()==true && notification.getNotification() instanceof DiscreteSimulationStep && this.getEnergyAgent().isExecutedControlBehaviourRT()==true) {
-			// --- Work on a  
+			// --- Work on a DiscreteSimulationStep coming from a central decision process -------- 
 			DiscreteSimulationStep dsStep = (DiscreteSimulationStep) notification.getNotification();
 			this.getEnergyAgent().getControlBehaviourRT().setSetPointsFromTechnicalSystemStateEvaluation(dsStep.getSystemState());
 			return notification;
