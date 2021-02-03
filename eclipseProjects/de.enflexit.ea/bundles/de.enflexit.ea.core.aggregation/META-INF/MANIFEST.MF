@@ -12,6 +12,7 @@ Service-Component:
  OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.aggregation.classLoadService,
+ de.enflexit.ea.core.aggregation.fallback,
  de.enflexit.ea.core.aggregation.trafficLight
 Require-Bundle: de.enflexit.common,
  org.eclipse.osgi,
