@@ -23,6 +23,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
+import de.enflexit.ea.core.aggregation.fallback.FallbackSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
@@ -277,12 +278,20 @@ public abstract class AbstractAggregationHandler {
 	 * Initializes the aggregation handler.
 	 */
 	private void initialize() {
+		
+		// --- Fallback
+		FallbackSubNetworkConfiguration fbNetConfig = null;
+		
 		// --- Create an aggregation for each configuration ---------
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			AbstractSubNetworkConfiguration subConfig = this.getSubNetworkConfigurations().get(i);
 			AbstractSubAggregationBuilder subEomBuilder = subConfig.getSubAggregationBuilder();
-			this.getExecutedBuilds().add(subEomBuilder);
-			subEomBuilder.createEomAggregationInThread();
+			if (subConfig instanceof FallbackSubNetworkConfiguration) {
+				fbNetConfig = (FallbackSubNetworkConfiguration) subConfig;
+			} else {
+				this.getExecutedBuilds().add(subEomBuilder);
+				subEomBuilder.createEomAggregationInThread();
+			}
 		}
 		
 		// --- Wait for the end of the build processes --------------
@@ -293,6 +302,12 @@ public abstract class AbstractAggregationHandler {
 				//iEx.printStackTrace();
 			}
 		}
+		
+		// ---Finally create Fallback Aggregation ? -----------------
+		if (fbNetConfig!=null) {
+			fbNetConfig.getSubAggregationBuilder().createEomAggregation();
+		}
+		
 		// --- Reset executed builds Vector -------------------------
 		this.executedBuilds = null;
 	}

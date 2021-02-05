@@ -140,7 +140,7 @@ public abstract class AbstractSubAggregationBuilder {
 	 * Sets the contains sub systems.
 	 * @param containsSubSystems the new contains sub systems
 	 */
-	private void setContainsSubSystems(boolean containsSubSystems) {
+	protected void setContainsSubSystems(boolean containsSubSystems) {
 		this.containsSubSystems = containsSubSystems;
 	}
 	
@@ -168,57 +168,60 @@ public abstract class AbstractSubAggregationBuilder {
 
 		// --- Show visualization of the aggregation ? ------------------------
 		if (this.hasSubSystems()==true && this.isHeadlessOperation()==false) {
-		
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					
-					// --- Is there a parent container defined? ---------------
-					Container parentContainer = AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getAggregationVisualizationParentContainer();
-					if (parentContainer!=null) {
-						if (parentContainer instanceof JTabbedPane) {
-							JTabbedPane parentTabbedPane = (JTabbedPane) parentContainer;
-							parentTabbedPane.addTab(AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getSubNetworkDescriptionID(), AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
-						} else {
-							// --- Use parent container from configuration ----
-							parentContainer.add(AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
-						}
-						
-					} else {
-						
-						// --- Use the project desktop ------------------------
-						JDesktopPane desktop = Application.getProjectFocused().getProjectDesktop();
-						
-						// --- Build the visualization ------------------------
-						JInternalFrame intFrame = AbstractSubAggregationBuilder.this.getJInternalFrameAggregation();
-						intFrame.getContentPane().add(AbstractSubAggregationBuilder.this.getGroupMainPanel());
-						intFrame.setSize((int) (desktop.getWidth() * 0.95), (int) (desktop.getHeight() * 0.9));
-						
-						// --- Add JInternalFrame to the project desktop ------
-						try {
-							desktop.add(intFrame);
-							// --- Define a movement? -------------------------
-							int noOfIntFrames = desktop.getAllFrames().length;
-							if (noOfIntFrames>1) {
-								int movement = (noOfIntFrames-1) * 20;
-								intFrame.setLocation(movement, movement);
-							}
-							intFrame.setSelected(true);
-							intFrame.moveToFront();
-							
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					}
-					
-					// --- Configure visualization to network- and system-ID --
-					AbstractSubAggregationBuilder.this.setGroupVisualization();
-				}
-			});
+			this.showVisualization();
 		}
 		
 		// --- Unregister at the executed builds Vector -----------------------
 		this.getAggregationHandler().getExecutedBuilds().remove(this);
+	}
+	
+	protected void showVisualization() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				
+				// --- Is there a parent container defined? ---------------
+				Container parentContainer = AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getAggregationVisualizationParentContainer();
+				if (parentContainer!=null) {
+					if (parentContainer instanceof JTabbedPane) {
+						JTabbedPane parentTabbedPane = (JTabbedPane) parentContainer;
+						parentTabbedPane.addTab(AbstractSubAggregationBuilder.this.getSubAggregationConfiguration().getSubNetworkDescriptionID(), AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
+					} else {
+						// --- Use parent container from configuration ----
+						parentContainer.add(AbstractSubAggregationBuilder.this.getGroupMainPanel(parentContainer));
+					}
+					
+				} else {
+					
+					// --- Use the project desktop ------------------------
+					JDesktopPane desktop = Application.getProjectFocused().getProjectDesktop();
+					
+					// --- Build the visualization ------------------------
+					JInternalFrame intFrame = AbstractSubAggregationBuilder.this.getJInternalFrameAggregation();
+					intFrame.getContentPane().add(AbstractSubAggregationBuilder.this.getGroupMainPanel());
+					intFrame.setSize((int) (desktop.getWidth() * 0.95), (int) (desktop.getHeight() * 0.9));
+					
+					// --- Add JInternalFrame to the project desktop ------
+					try {
+						desktop.add(intFrame);
+						// --- Define a movement? -------------------------
+						int noOfIntFrames = desktop.getAllFrames().length;
+						if (noOfIntFrames>1) {
+							int movement = (noOfIntFrames-1) * 20;
+							intFrame.setLocation(movement, movement);
+						}
+						intFrame.setSelected(true);
+						intFrame.moveToFront();
+						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				
+				// --- Configure visualization to network- and system-ID --
+				AbstractSubAggregationBuilder.this.setGroupVisualization();
+			}
+		});
 	}
 	
 	/**
@@ -227,7 +230,9 @@ public abstract class AbstractSubAggregationBuilder {
 	public void terminateEomAggregation() {
 
 		// --- Stop the calculation -----------------------------
-		this.getNetworkCalculationStrategy().terminateRelatedStrategyInstances();
+		if (this.getNetworkCalculationStrategy()!=null) {
+			this.getNetworkCalculationStrategy().terminateRelatedStrategyInstances();
+		}
 		
 		// --- Dispose the GUI ----------------------------------
 		SwingUtilities.invokeLater(new Runnable() {
@@ -401,18 +406,19 @@ public abstract class AbstractSubAggregationBuilder {
 		
 		// --- Set the default evaluation strategy ----------------------------
 		EvaluationClass evalClass = new EvaluationClass();
-		evalClass.setStrategyID(this.getNetworkCalculationStrategyClass().getSimpleName());
-		evalClass.setClassName(this.getNetworkCalculationStrategyClass().getName());
-		evalClass.setDescription("GroupStrategy for the Network Calculation");
-		
-		evalSettings.getEvaluationClasses().add(evalClass);
-		evalSettings.setEvaluationClass(this.getNetworkCalculationStrategyClass().getName()); // - as default -
+		if (this.getNetworkCalculationStrategyClass()!=null) {
+			evalClass.setStrategyID(this.getNetworkCalculationStrategyClass().getSimpleName());
+			evalClass.setClassName(this.getNetworkCalculationStrategyClass().getName());
+			evalClass.setDescription("GroupStrategy for the Network Calculation");
+			evalSettings.getEvaluationClasses().add(evalClass);
+			evalSettings.setEvaluationClass(this.getNetworkCalculationStrategyClass().getName()); // - as default -
+		}
 		evalSettings.getEvaluationStateList().add(tssStart);
 		evalSettings.getEvaluationStateList().add(tssEnd);
 	}
 	
 	/**
-	 * Adds the subsystems to the build aggregation.
+	 * Adds the subsystems to the built aggregation.
 	 */
 	protected void addSubsystemsToAggregation() {
 		
@@ -423,42 +429,51 @@ public abstract class AbstractSubAggregationBuilder {
 		} else {
 			netComps = this.getNetworkModel().getNetworkComponentVectorSorted();
 		}
+		
+		// --- Collect all components that belong to the aggregation --------- 
 		for (int i = 0; i < netComps.size(); i++) {
-
 			// --- Check single NetworkComponent ------------------------------
 			NetworkComponent netComp = netComps.get(i);
 			boolean isPartOfSubnetwork = this.getSubAggregationConfiguration().isPartOfSubnetwork(netComp);
 			if (isPartOfSubnetwork==true) {
-				
-				ScheduleController scheduleController = this.getNetworkComponentsScheduleController().get(netComp.getId());
-				if (scheduleController==null) {
-					// --- Create a new ScheduleList --------------------------
-					ScheduleList sl = new ScheduleList();
-					sl.setNetworkID(netComp.getId());
-					sl.setSystemID(netComp.getType());
-					sl.getInterfaceSettings().addAll(this.getInterfaceSettings(netComp.getDataModel()));
-					
-					// --- Add as a new GroupMember ---------------------------
-					GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
-					
-					// --- Remind the ScheduleController ----------------------
-					GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
-					this.getNetworkComponentsScheduleController().put(netComp.getId(), gtno.getGroupMemberScheduleController());
-					this.setContainsSubSystems(true);
-					
-				} else {
-					
-					// --- Use existing ScheduleList & ScheduleController -----
-					ScheduleList sl = scheduleController.getScheduleList();
-					GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
-					GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
-					gtno.setGroupMemberScheduleController(scheduleController);
-					
-					// --- Remind the ScheduleController ----------------------
-					this.getNetworkComponentsScheduleController().put(netComp.getId(), gtno.getGroupMemberScheduleController());
-					this.setContainsSubSystems(true);
-				}
+				// --- Add the component to the aggregation -------------------
+				this.addSubSystemToAggregation(netComp);
 			}
+		}
+	}
+	
+	/**
+	 * Adds a single sub system to the aggregation.
+	 * @param subSystemComponent the sub system's {@link NetworkComponent}
+	 */
+	protected void addSubSystemToAggregation(NetworkComponent subSystemComponent) {
+		ScheduleController scheduleController = this.getNetworkComponentsScheduleController().get(subSystemComponent.getId());
+		if (scheduleController==null) {
+			// --- Create a new ScheduleList --------------------------
+			ScheduleList sl = new ScheduleList();
+			sl.setNetworkID(subSystemComponent.getId());
+			sl.setSystemID(subSystemComponent.getType());
+			sl.getInterfaceSettings().addAll(this.getInterfaceSettings(subSystemComponent.getDataModel()));
+			
+			// --- Add as a new GroupMember ---------------------------
+			GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
+			
+			// --- Remind the ScheduleController ----------------------
+			GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
+			this.getNetworkComponentsScheduleController().put(subSystemComponent.getId(), gtno.getGroupMemberScheduleController());
+			this.setContainsSubSystems(true);
+			
+		} else {
+			
+			// --- Use existing ScheduleList & ScheduleController -----
+			ScheduleList sl = scheduleController.getScheduleList();
+			GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
+			GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
+			gtno.setGroupMemberScheduleController(scheduleController);
+			
+			// --- Remind the ScheduleController ----------------------
+			this.getNetworkComponentsScheduleController().put(subSystemComponent.getId(), gtno.getGroupMemberScheduleController());
+			this.setContainsSubSystems(true);
 		}
 	}
 	

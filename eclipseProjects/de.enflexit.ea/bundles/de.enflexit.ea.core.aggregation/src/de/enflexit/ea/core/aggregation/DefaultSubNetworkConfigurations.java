@@ -10,6 +10,7 @@ import org.awb.env.networkModel.helper.DomainClustering;
 
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
+import de.enflexit.ea.core.aggregation.fallback.FallbackSubNetworkConfiguration;
 
 /**
  * The Class DefaultSubNetworkConfigurations provides all single and an all-in-one ArrayList
@@ -21,7 +22,7 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 
 	private static final long serialVersionUID = 4268158344918811861L;
 	
-	private final boolean isPrintClusterResult = false;
+	private final boolean isPrintClusterResult = true;
 	
 	protected AbstractAggregationHandler aggregationHandler;
 	private TreeMap<String, String> domainToSubNetworkConfigurationHash;
@@ -55,18 +56,27 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 	protected void createSubNetworkConfigurations() {
 		
 		int configIdCounter = 1;
+		boolean addFallbackStrategy = false;
+		
 		for (int i = 0; i < this.getDomainClustering().size(); i++) {
 			DomainCluster dCluster = this.getDomainClustering().get(i);
 			String configClassName = this.getDomainToSubNetworkConfigurationHash().get(dCluster.getDomain());
-			if (configClassName!=null && dCluster.getNetworkComponents().size()>1) {
+			
+			if (configClassName!=null && dCluster.getNetworkComponents().size()>0) {
 				
 				try {
-					// --- Initiate, configure and add to local data model ----
-					AbstractSubNetworkConfiguration subNetworkConfiguration = (AbstractSubNetworkConfiguration) BaseClassLoadServiceUtility.newInstance(configClassName);
-					subNetworkConfiguration.setID(configIdCounter);
-					subNetworkConfiguration.setDomainCluster(dCluster);
-					this.add(subNetworkConfiguration);
-					configIdCounter++;
+					if (configClassName.equals(FallbackSubNetworkConfiguration.class.getName())){
+						// --- Remember to add the FallbackConfiguration at the end of the list
+						addFallbackStrategy = true;
+					} else {
+						// --- Initiate, configure and add to local data model ----
+						AbstractSubNetworkConfiguration subNetworkConfiguration = (AbstractSubNetworkConfiguration) BaseClassLoadServiceUtility.newInstance(configClassName);
+						subNetworkConfiguration.setID(configIdCounter);
+						subNetworkConfiguration.setDomainCluster(dCluster);
+						
+						this.add(subNetworkConfiguration);
+						configIdCounter++;
+					}
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] The class '" + configClassName + "' could not be initiated!");
@@ -74,6 +84,14 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 				}
 			}
 		}
+		
+		// --- Add the fallback strategy if necessary ---------------
+		if (addFallbackStrategy==true) {
+			FallbackSubNetworkConfiguration fallbackConfiguration = new FallbackSubNetworkConfiguration();
+			fallbackConfiguration.setID(configIdCounter);
+			this.add(fallbackConfiguration);
+		}
+		
 	}
 	
 	/**
@@ -91,14 +109,24 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 	public TreeMap<String, String> getDomainToSubNetworkConfigurationHash() {
 		if (domainToSubNetworkConfigurationHash==null) {
 			domainToSubNetworkConfigurationHash = new TreeMap<>();
+			
+			// --- Get a list of all configured domains -------------
+			List<String> domainsLeft = new ArrayList<String>(this.getNetworkModel().getGeneralGraphSettings4MAS().getDomainSettings().keySet());
 
-			// --- Look for available SubNetworkConfigurations ----------------
+			// --- Look for available SubNetworkConfigurations ------
 			List<SubNetworkConfigurationService> services = ServiceFinder.findServices(SubNetworkConfigurationService.class);
 			for (int i=0; i<services.size(); i++) {
+				// --- 
 				SubNetworkConfigurationService service = services.get(i);
 				domainToSubNetworkConfigurationHash.put(service.getDomainID(), service.getSubNetworkConfigurationCass().getName());
+				domainsLeft.remove(service.getDomainID());
 			}
 			
+			// --- Fallback case if no other aggregation applies ----
+			for (int i=0; i<domainsLeft.size(); i++) {
+				domainToSubNetworkConfigurationHash.put(domainsLeft.get(i), FallbackSubNetworkConfiguration.class.getName());
+				System.out.println("[" + this.getClass().getSimpleName() + "] No SubNetworkConfiguration found for " + domainsLeft.get(i) + ", using fallback configuration");
+			}
 		}
 		return domainToSubNetworkConfigurationHash;
 	}
