@@ -56,44 +56,40 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 	protected void createSubNetworkConfigurations() {
 		
 		int configIdCounter = 1;
-		boolean fallbackAdded = false;
+		boolean addFallbackStrategy = false;
+		
 		for (int i = 0; i < this.getDomainClustering().size(); i++) {
 			DomainCluster dCluster = this.getDomainClustering().get(i);
 			String configClassName = this.getDomainToSubNetworkConfigurationHash().get(dCluster.getDomain());
 			
 			if (configClassName!=null && dCluster.getNetworkComponents().size()>0) {
-				//TODO check if size()>0 (instead of 1) causes problems anywhere
 				
 				try {
-					
-					// --- Make sure the fallback configuration is added only once
-					if (configClassName.equals(FallbackSubNetworkConfiguration.class.getName())) {
-						if (fallbackAdded==true) {
-							// --- Skip if it was already added ---------------
-							continue;
-						} else {
-							// --- Will be added in this iteration ------------
-							fallbackAdded = true;
-						}
-					}
-					
-					// --- Initiate, configure and add to local data model ----
-					AbstractSubNetworkConfiguration subNetworkConfiguration = (AbstractSubNetworkConfiguration) BaseClassLoadServiceUtility.newInstance(configClassName);
-					subNetworkConfiguration.setID(configIdCounter);
-					
-					// --- Set domain cluster for domain-specific SubNetworkConfigurations only
-					if (configClassName.equals(FallbackSubNetworkConfiguration.class.getName())==false) {
+					if (configClassName.equals(FallbackSubNetworkConfiguration.class.getName())){
+						// --- Remember to add the FallbackConfiguration at the end of the list
+						addFallbackStrategy = true;
+					} else {
+						// --- Initiate, configure and add to local data model ----
+						AbstractSubNetworkConfiguration subNetworkConfiguration = (AbstractSubNetworkConfiguration) BaseClassLoadServiceUtility.newInstance(configClassName);
+						subNetworkConfiguration.setID(configIdCounter);
 						subNetworkConfiguration.setDomainCluster(dCluster);
+						
+						this.add(subNetworkConfiguration);
+						configIdCounter++;
 					}
-					
-					this.add(subNetworkConfiguration);
-					configIdCounter++;
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] The class '" + configClassName + "' could not be initiated!");
 					ex.printStackTrace();
 				}
 			}
+		}
+		
+		// --- Add the fallback strategy if necessary ---------------
+		if (addFallbackStrategy==true) {
+			FallbackSubNetworkConfiguration fallbackConfiguration = new FallbackSubNetworkConfiguration();
+			fallbackConfiguration.setID(configIdCounter);
+			this.add(fallbackConfiguration);
 		}
 		
 	}

@@ -43,7 +43,11 @@ public class FallbackSubNetworkConfiguration extends AbstractSubNetworkConfigura
 	 */
 	@Override
 	public boolean isPartOfSubnetwork(String domain, AbstractDomainModel domainModel) {
-		return true;
+		/*
+		 * This method is never called, since the fallback aggregation is not bound to a specific domain. 
+		 * The relevant method in this case is isPartOfSubnetwork(NetworkComponent netComp) below. 
+		 */
+		return false;
 	}
 	
 	/* (non-Javadoc)
