@@ -10,6 +10,7 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
 import agentgui.core.application.Application;
@@ -843,7 +844,9 @@ public abstract class AbstractAggregationHandler {
 	// --- From here, exchange methods for an aggregation can be found --------
 	// ------------------------------------------------------------------------
 	/**
-	 * Returns the last technical system states from schedule controller.
+	 * Returns the last {@link TechnicalSystemStateEvaluation} from the {@link NetworkComponent}s {@link ScheduleController}.
+	 * Instances returned will be a copy of the system state, where the parent elements have been removed. 
+	 * 
 	 * @return the last technical system states from schedule controller
 	 */
 	public HashMap<String, TechnicalSystemStateEvaluation> getLastTechnicalSystemStatesFromScheduleController() {
@@ -853,20 +856,36 @@ public abstract class AbstractAggregationHandler {
 		List<String> netCompIDs = new ArrayList<>(this.getNetworkComponentsScheduleController().keySet()); 
 		for (int i = 0; i < netCompIDs.size(); i++) {
 			String netCompID = netCompIDs.get(i);
-			ScheduleController sc = this.getNetworkComponentsScheduleController().get(netCompID);
-			if (sc!=null && sc.getScheduleList().getSchedules().size()>0) {
-				Schedule schedule = sc.getScheduleList().getSchedules().get(0);
-				if (schedule!=null) {
-					TechnicalSystemStateEvaluation tsse = schedule.getTechnicalSystemStateEvaluation();
-					if (tsse!=null) {
-						TechnicalSystemStateEvaluation tsseCopy = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
-						latestTSSEs.put(netCompID, tsseCopy);
-					}
-				}
+			TechnicalSystemStateEvaluation tsseFound = this.getLastTechnicalSystemStateFromScheduleController(netCompID);
+			if (tsseFound!=null) {
+				latestTSSEs.put(netCompID, tsseFound);
 			}
 		}
 		return latestTSSEs;
 	}
+	/**
+	 * Returns the last {@link TechnicalSystemStateEvaluation} from the specified NetworkComponent's ScheduleController
+	 * (defined by it's network component ID). If found, the state returned will be a copy of the last state without parent elements.
+	 *
+	 * @param netCompID the ID of the NetworkComponent
+	 * @return the last technical system state from schedule controller
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID) {
+
+		TechnicalSystemStateEvaluation tsse = null;
+		ScheduleController sc = this.getNetworkComponentsScheduleController().get(netCompID);
+		if (sc!=null && sc.getScheduleList().getSchedules().size()>0) {
+			Schedule schedule = sc.getScheduleList().getSchedules().get(0);
+			if (schedule!=null) {
+				TechnicalSystemStateEvaluation tsseSchedule = schedule.getTechnicalSystemStateEvaluation();
+				if (tsseSchedule!=null) {
+					tsse = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsseSchedule);
+				}
+			}
+		}
+		return tsse;
+	}
+	
 	/**
 	 * Sets the specified HashMap of states to network components schedule controller as the only available state (will not be appended but exchanged).
 	 * @param tsseHash the HashMap of {@link TechnicalSystemStateEvaluation}

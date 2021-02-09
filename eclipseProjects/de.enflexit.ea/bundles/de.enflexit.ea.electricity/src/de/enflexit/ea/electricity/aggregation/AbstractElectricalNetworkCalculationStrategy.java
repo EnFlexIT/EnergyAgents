@@ -35,7 +35,7 @@ import energygroup.GroupTreeNodeObject;
 import energygroup.sequentialNetworks.AbstractSequentialNetworkCalculation;
 
 /**
- * Common super class for eletrical network calculation strategies
+ * Common super class for electrical network calculation strategies
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
