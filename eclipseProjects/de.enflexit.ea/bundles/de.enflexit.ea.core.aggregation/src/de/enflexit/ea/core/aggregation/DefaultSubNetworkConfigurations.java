@@ -22,7 +22,7 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 
 	private static final long serialVersionUID = 4268158344918811861L;
 	
-	private final boolean isPrintClusterResult = true;
+	private final boolean isPrintClusterResult = false;
 	
 	protected AbstractAggregationHandler aggregationHandler;
 	private TreeMap<String, String> domainToSubNetworkConfigurationHash;
@@ -125,7 +125,9 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 			// --- Fallback case if no other aggregation applies ----
 			for (int i=0; i<domainsLeft.size(); i++) {
 				domainToSubNetworkConfigurationHash.put(domainsLeft.get(i), FallbackSubNetworkConfiguration.class.getName());
-				System.out.println("[" + this.getClass().getSimpleName() + "] No SubNetworkConfiguration found for " + domainsLeft.get(i) + ", using fallback configuration");
+				if (this.isPrintClusterResult==true) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] No SubNetworkConfiguration found for " + domainsLeft.get(i) + ", using fallback configuration");
+				}
 			}
 		}
 		return domainToSubNetworkConfigurationHash;
