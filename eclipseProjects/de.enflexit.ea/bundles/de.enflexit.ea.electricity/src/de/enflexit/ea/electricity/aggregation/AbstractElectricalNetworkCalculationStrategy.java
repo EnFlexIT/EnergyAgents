@@ -48,8 +48,8 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	private Object calculationTrigger;
 	private Vector<Phase> powerFlowCalculationsFinalized;
 
-	private HashMap<String, ElectricalNodeState> graphNodeStates;
-	private HashMap<String, CableState> networkComponentStates;
+	private HashMap<String, ElectricalNodeState> nodeStates;
+	private HashMap<String, CableState> cableStates;
 	private HashMap<String, TechnicalSystemState> transformerStates;
 	
 	protected HashMap<Phase, Double> slackNodeVoltageLevel;
@@ -71,21 +71,21 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	 * Returns the electrical node states and represents one result of this network calculation.
 	 * @return the electrical node states
 	 */
-	public HashMap<String, ElectricalNodeState> getGraphNodeStates() {
-		if (graphNodeStates == null) {
-			graphNodeStates = new HashMap<String, ElectricalNodeState>();
+	public HashMap<String, ElectricalNodeState> getNodeStates() {
+		if (nodeStates == null) {
+			nodeStates = new HashMap<String, ElectricalNodeState>();
 		}
-		return graphNodeStates;
+		return nodeStates;
 	}
 	/**
 	 * Returns the network component states and represents one result of this network calculation.
 	 * @return the network component states
 	 */
-	public HashMap<String, CableState> getNetworkComponentStates() {
-		if (networkComponentStates == null) {
-			networkComponentStates = new HashMap<String, CableState>();
+	public HashMap<String, CableState> getCableStates() {
+		if (cableStates == null) {
+			cableStates = new HashMap<String, CableState>();
 		}
-		return networkComponentStates;
+		return cableStates;
 	}
 	/**
 	 * Returns the transformer states and represents one result of this network calculation.
@@ -397,8 +397,8 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	@Override
 	public void updateSubBlackboardModel() {
 		SubBlackboardModelElectricity subBlackboardModel = (SubBlackboardModelElectricity) this.getSubBlackboardModel();
-		subBlackboardModel.getGraphNodeStates().putAll(this.getGraphNodeStates());
-		subBlackboardModel.getNetworkComponentStates().putAll(this.getNetworkComponentStates());
+		subBlackboardModel.getNodeStates().putAll(this.getNodeStates());
+		subBlackboardModel.getCableStates().putAll(this.getCableStates());
 		subBlackboardModel.getTransformerStates().putAll(this.getTransformerStates());
 	}
 	

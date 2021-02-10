@@ -7,19 +7,30 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:59
+* @version 2021/02/9, 23:45:16
 */
 public class FlexibilityOffer extends GridStateControl{ 
 
    /**
-* Protege name: possiblePowerReal
+* Protege name: actuatorName
    */
-   private float possiblePowerReal;
-   public void setPossiblePowerReal(float value) { 
-    this.possiblePowerReal=value;
+   private String actuatorName;
+   public void setActuatorName(String value) { 
+    this.actuatorName=value;
    }
-   public float getPossiblePowerReal() {
-     return this.possiblePowerReal;
+   public String getActuatorName() {
+     return this.actuatorName;
+   }
+
+   /**
+* Protege name: possibleVoltageAdjustment
+   */
+   private float possibleVoltageAdjustment;
+   public void setPossibleVoltageAdjustment(float value) { 
+    this.possibleVoltageAdjustment=value;
+   }
+   public float getPossibleVoltageAdjustment() {
+     return this.possibleVoltageAdjustment;
    }
 
    /**
@@ -45,14 +56,14 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: possibleVoltageAdjustment
+* Protege name: possiblePowerReal
    */
-   private float possibleVoltageAdjustment;
-   public void setPossibleVoltageAdjustment(float value) { 
-    this.possibleVoltageAdjustment=value;
+   private float possiblePowerReal;
+   public void setPossiblePowerReal(float value) { 
+    this.possiblePowerReal=value;
    }
-   public float getPossibleVoltageAdjustment() {
-     return this.possibleVoltageAdjustment;
+   public float getPossiblePowerReal() {
+     return this.possiblePowerReal;
    }
 
    /**
@@ -64,17 +75,6 @@ public class FlexibilityOffer extends GridStateControl{
    }
    public float getPossiblePowerImag() {
      return this.possiblePowerImag;
-   }
-
-   /**
-* Protege name: actuatorName
-   */
-   private String actuatorName;
-   public void setActuatorName(String value) { 
-    this.actuatorName=value;
-   }
-   public String getActuatorName() {
-     return this.actuatorName;
    }
 
 }

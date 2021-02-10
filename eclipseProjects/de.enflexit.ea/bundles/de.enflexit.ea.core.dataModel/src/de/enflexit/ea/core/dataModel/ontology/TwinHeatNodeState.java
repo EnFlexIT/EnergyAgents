@@ -7,31 +7,9 @@ import jade.core.*;
 /**
 * Protege name: TwinHeatNodeState
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:59
+* @version 2021/02/9, 23:45:16
 */
 public class TwinHeatNodeState extends NodeComponentState{ 
-
-   /**
-* Protege name: supplyNodeState
-   */
-   private HeatNodeState supplyNodeState;
-   public void setSupplyNodeState(HeatNodeState value) { 
-    this.supplyNodeState=value;
-   }
-   public HeatNodeState getSupplyNodeState() {
-     return this.supplyNodeState;
-   }
-
-   /**
-* Protege name: thermalLoad
-   */
-   private UnitValue thermalLoad;
-   public void setThermalLoad(UnitValue value) { 
-    this.thermalLoad=value;
-   }
-   public UnitValue getThermalLoad() {
-     return this.thermalLoad;
-   }
 
    /**
 * Protege name: ambientTemperature
@@ -53,6 +31,28 @@ public class TwinHeatNodeState extends NodeComponentState{
    }
    public HeatNodeState getReturnNodeState() {
      return this.returnNodeState;
+   }
+
+   /**
+* Protege name: thermalLoad
+   */
+   private UnitValue thermalLoad;
+   public void setThermalLoad(UnitValue value) { 
+    this.thermalLoad=value;
+   }
+   public UnitValue getThermalLoad() {
+     return this.thermalLoad;
+   }
+
+   /**
+* Protege name: supplyNodeState
+   */
+   private HeatNodeState supplyNodeState;
+   public void setSupplyNodeState(HeatNodeState value) { 
+    this.supplyNodeState=value;
+   }
+   public HeatNodeState getSupplyNodeState() {
+     return this.supplyNodeState;
    }
 
 }

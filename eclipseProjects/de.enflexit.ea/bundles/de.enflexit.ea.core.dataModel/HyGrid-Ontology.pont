@@ -1,4 +1,4 @@
-; Fri Sep 18 14:33:52 CEST 2020
+; Wed Feb 10 00:53:02 CET 2021
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,286 +7,9 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot thermalLoad
+	(single-slot GridStateInfo
 		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageAbs
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot isolationThermalConductivity
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot roughness
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot heatSupplierAddress
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageMin
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot Q+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot surroundingTemperature
-;+		(comment "Surrounding temperature")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot current+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot coatingThickness
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot ratedVoltage
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot deltaTemperature
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot stringDoubleValue
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot possibleCurrentAdjustment
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot isClosed
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot l3
-		(type INSTANCE)
-;+		(allowed-classes UniPhaseElectricalNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageBand
-		(type INSTANCE)
-;+		(allowed-classes VoltageBand)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot breakerBegin
-		(type INSTANCE)
-;+		(allowed-classes CircuitBreaker)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot registerIndex
-		(type INTEGER)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot TimeStampRefPV
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot length
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot nominalSize
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressure
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot timeStamp
-		(type INSTANCE)
-;+		(allowed-classes LongValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot heatConsumption
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot energyLoss
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot linearCapacitance
-;+		(comment "The linear capacitance of this medium voltage cable.")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot phase2
-		(type INSTANCE)
-;+		(allowed-classes UniPhaseCableState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot proxyAgentAID
-;+		(comment "The proxy agent's AID")
-		(type INSTANCE)
-;+		(allowed-classes AID)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot actualBranchCurrent
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperatureIn
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi
-		(type FLOAT)
-		(default 1.0)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot minorLossCoefficient
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot linearResistance
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot measureLocation
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot componentOfViolation
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedHour
-;+		(comment "Hour to predict")
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot possibleFlexibilityOffers
-		(type INSTANCE)
-;+		(allowed-classes FlexibilityOffer)
-		(create-accessor read-write))
-	(single-slot voltageAvg
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot coatingThermalConductivity
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot GridState
-		(type INSTANCE)
-;+		(allowed-classes ElectricalGridState)
-		(create-accessor read-write))
-	(single-slot referenceSystem
-;+		(comment "This can be used to specify the reference system for the geo coordinates")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot unit
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot heatSupplierName
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot actualNodalVoltage
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot make
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot GlobalName
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperatureSetPoint
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot velocityOut
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot measuredVoltageL1
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot current+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot relativePower
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageReal
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot setpoints
-		(type INSTANCE)
-;+		(allowed-classes ModbusSetpoint)
-		(cardinality 1 ?VARIABLE)
-		(create-accessor read-write))
-	(single-slot measuredVoltage
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageRange
-		(type INSTANCE)
-;+		(allowed-classes VoltageBand)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageMax
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot TimeStampGridState
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot measuredVoltageL3
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
+;+		(allowed-classes ElectricalNodeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot counterpartAID
@@ -295,61 +18,17 @@
 ;+		(allowed-classes AID)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot velocityIn
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot l1
-		(type INSTANCE)
-;+		(allowed-classes UniPhaseElectricalNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot util+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cableOverloadInPercent
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot description
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot chosenFlexibilityImag
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot current+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot chosenFlexibilityReal
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot certificateBase64
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressureOut
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot isLoadNode
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot supplyPipeState
-		(type INSTANCE)
-;+		(allowed-classes HeatPipeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot HyGrid-Ontology_Slot_4
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gridStateAssessment
+		(type INSTANCE)
+;+		(allowed-classes GridStateAssessment)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredPowerReal
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot phase1
@@ -357,18 +36,59 @@
 ;+		(allowed-classes UniPhaseCableState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot utilization
-		(type FLOAT)
+	(single-slot breakerBegin
+		(type INSTANCE)
+;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot deltaPressure
+	(single-slot componentOfViolation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nominalPower
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot surrounding
+	(single-slot utilization
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot phase3
 		(type INSTANCE)
-;+		(allowed-classes PipeSurrounding)
+;+		(allowed-classes UniPhaseCableState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot LocalNodeNum
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot isolationThermalConductivity
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measuredVoltageL3
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot atComponent
+;+		(comment "The ID of the component next to which the breaker is located")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltage+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Q
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot PredictedDate
@@ -376,33 +96,44 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot requiredPowerReal
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot GridStateInfo
+	(single-slot l1
 		(type INSTANCE)
-;+		(allowed-classes ElectricalNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot manufacturer
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot util+L2
-		(type FLOAT)
+;+		(allowed-classes UniPhaseElectricalNodeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(multislot PredictedWeatherData
 		(type INSTANCE)
 ;+		(allowed-classes WeatherData)
 		(create-accessor read-write))
+	(single-slot voltageAbs
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot velocityIn
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dim
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearResistance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot TimeStampWeather
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot priority
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot minorLossCoefficient
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot measuredVoltageL2
@@ -410,213 +141,36 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot TimeStampGridState
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedHour
+;+		(comment "Hour to predict")
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatSupplierID
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot diameter
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot nPhaseOfViolation
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedWindSpeed
-;+		(comment "Predicted Wind Speed in m/s")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot setpointValue
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot breakerEnd
-		(type INSTANCE)
-;+		(allowed-classes CircuitBreaker)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot isControllable
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot possiblePowerImag
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedWeatherCondition
-;+		(comment "Sunny or cloudy weather condition")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot requiredCurrentAdjustment
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot surroundingThermalConductivity
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot linearReactance
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot stringLongValue
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot l2
-		(type INSTANCE)
-;+		(allowed-classes UniPhaseElectricalNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot xCoordinate
-		(type INSTANCE)
-;+		(allowed-classes DoubleValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot returnNodeState
-		(type INSTANCE)
-;+		(allowed-classes HeatNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot util+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltage+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot heatSupplierType
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot possibleVoltageAdjustment
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedTemperature
-;+		(comment "Predicted Temperature in °C")
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cable
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot ambientTemperature
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot Q+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot requiredVoltageAdjustment
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot yCoordinate
-		(type INSTANCE)
-;+		(allowed-classes DoubleValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot requiredPowerImag
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot value
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pipeThickness
-;+		(comment "The thickness of the pipe wall")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageTrafficLight
+	(single-slot utilizationTrafficLight
 		(type SYMBOL)
 ;+		(allowed-parents TrafficLight)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot electricalNodeState
-		(type INSTANCE)
-;+		(allowed-classes TriPhaseElectricalNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperatureOut
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot volumeFlow
+	(single-slot voltageMax
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot S
+	(single-slot surrounding
 		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot maxCurrent
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot gasNodeState
-		(type INSTANCE)
-;+		(allowed-classes GasNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot voltageImag
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot actuatorName
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot possiblePowerReal
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot supplyNodeState
-		(type INSTANCE)
-;+		(allowed-classes HeatNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot kindOfViolation
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot sensorID
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressureIn
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pipeThermalConductivity
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
+;+		(allowed-classes PipeSurrounding)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot isolationThickness
@@ -628,20 +182,88 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot voltageRange
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot thermalLoad
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot breakerID
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot priority
-		(type INTEGER)
+	(single-slot pipeThermalConductivity
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot temperature
+	(single-slot deltaPressure
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measureLocation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot P+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot din
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot description
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measuredVoltage
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperatureSetPoint
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageMin
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot voltage+L2
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot possibleFlexibilityOffers
+		(type INSTANCE)
+;+		(allowed-classes FlexibilityOffer)
+		(create-accessor read-write))
+	(single-slot S
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearReactance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cableOverloadInPercent
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot coatingThermalConductivity
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot remoteAgentAID
@@ -650,17 +272,53 @@
 ;+		(allowed-classes AID)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Q+L3
+	(multislot GridState
+		(type INSTANCE)
+;+		(allowed-classes ElectricalGridState)
+		(create-accessor read-write))
+	(single-slot voltageAvg
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot LocalNodeNum
-		(type INTEGER)
+	(single-slot maxCurrent
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot returnPipeState
+	(single-slot lossesQ
 		(type INSTANCE)
-;+		(allowed-classes HeatPipeState)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot stringLongValue
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperature
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot electricalNodeState
+		(type INSTANCE)
+;+		(allowed-classes TriPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot returnNodeState
+		(type INSTANCE)
+;+		(allowed-classes HeatNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l2
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L1
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot current
@@ -668,22 +326,369 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot gridStateAssessment
-		(type INSTANCE)
-;+		(allowed-classes GridStateAssessment)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot heatSupplierID
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot din
+	(single-slot make
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot phase3
+	(single-slot actualNodalVoltage
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot xCoordinate
+		(type INSTANCE)
+;+		(allowed-classes DoubleValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot lossesP
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot chosenFlexibilityImag
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GlobalName
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Q+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot P+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperatureOut
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot manufacturer
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot chosenFlexibilityReal
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot returnPipeState
+		(type INSTANCE)
+;+		(allowed-classes HeatPipeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot volumeFlow
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot certificateBase64
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot velocityOut
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureOut
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot unit
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot surroundingTemperature
+;+		(comment "Surrounding temperature")
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possibleVoltageAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pipeThickness
+;+		(comment "The thickness of the pipe wall")
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearCapacitance
+;+		(comment "The linear capacitance of this medium voltage cable.")
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredVoltageAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedTemperature
+;+		(comment "Predicted Temperature in °C")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot phase2
 		(type INSTANCE)
 ;+		(allowed-classes UniPhaseCableState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot measuredVoltageL1
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Q+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatSupplierName
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot P+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot referenceSystem
+;+		(comment "This can be used to specify the reference system for the geo coordinates")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Q+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cable
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredPowerImag
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot P
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ambientTemperature
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot stringDoubleValue
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageReal
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageTrafficLight
+		(type SYMBOL)
+;+		(allowed-parents TrafficLight)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatSupplierType
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatSupplierAddress
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot relativePower
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot surroundingThermalConductivity
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot coatingThickness
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot gasNodeState
+		(type INSTANCE)
+;+		(allowed-classes GasNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredCurrentAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot setpoints
+		(type INSTANCE)
+;+		(allowed-classes ModbusSetpoint)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot voltage+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot roughness
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot sensorID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot temperatureIn
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot TimeStampRefPV
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureIn
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot isControllable
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot deltaTemperature
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedWeatherCondition
+;+		(comment "Sunny or cloudy weather condition")
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressure
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageImag
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot proxyAgentAID
+;+		(comment "The proxy agent's AID")
+		(type INSTANCE)
+;+		(allowed-classes AID)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedWindSpeed
+;+		(comment "Predicted Wind Speed in m/s")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nominalSize
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot actuatorName
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possibleCurrentAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot l3
+		(type INSTANCE)
+;+		(allowed-classes UniPhaseElectricalNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi
+		(type FLOAT)
+		(default 1.0)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot actualBranchCurrent
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possiblePowerReal
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nPhaseOfViolation
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possiblePowerImag
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot energyLoss
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot kindOfViolation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ratedVoltage
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot supplyNodeState
+		(type INSTANCE)
+;+		(allowed-classes HeatNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageBand
+		(type INSTANCE)
+;+		(allowed-classes VoltageBand)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot heatConsumption
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot isLoadNode
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot yCoordinate
+		(type INSTANCE)
+;+		(allowed-classes DoubleValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot linearConductance
@@ -692,32 +697,37 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot voltage+L1
+	(single-slot length
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot setpointValue
 		(type FLOAT)
-;+		(cardinality 0 1)
+;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot nominalPower
+	(single-slot timeStamp
 		(type INSTANCE)
-;+		(allowed-classes UnitValue)
+;+		(allowed-classes LongValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot dim
-		(type STRING)
+	(single-slot breakerEnd
+		(type INSTANCE)
+;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot utilizationTrafficLight
+	(single-slot isClosed
 		(type SYMBOL)
-;+		(allowed-parents TrafficLight)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Q
+	(single-slot registerIndex
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot supplyPipeState
 		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot atComponent
-;+		(comment "The ID of the component next to which the breaker is located")
-		(type STRING)
+;+		(allowed-classes HeatPipeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -829,25 +839,25 @@
 (defclass ReferencePVMeasurementUpdate "Measurement Update of reference PV Measurement"
 	(is-a GridStateAgentManagement)
 	(role concrete)
-	(single-slot relativePower
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot TimeStampRefPV
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot relativePower
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass WeatherDataUpdate "Several Information about weather"
 	(is-a GridStateAgentManagement)
 	(role concrete)
-	(multislot PredictedWeatherData
-		(type INSTANCE)
-;+		(allowed-classes WeatherData)
-		(create-accessor read-write))
 	(single-slot TimeStampWeather
 		(type STRING)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot PredictedWeatherData
+		(type INSTANCE)
+;+		(allowed-classes WeatherData)
 		(create-accessor read-write)))
 
 (defclass GridStateControl
@@ -857,31 +867,51 @@
 (defclass GridStateViolation
 	(is-a GridStateControl)
 	(role concrete)
-	(single-slot cable
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot kindOfViolation
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot possibleFlexibilityOffers
 		(type INSTANCE)
 ;+		(allowed-classes FlexibilityOffer)
 		(create-accessor read-write))
-	(single-slot requiredCurrentAdjustment
+	(single-slot chosenFlexibilityImag
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot actuatorName
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot cableOverloadInPercent
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot chosenFlexibilityImag
+	(single-slot kindOfViolation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredPowerReal
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot cable
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot requiredVoltageAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredPowerImag
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot requiredCurrentAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot componentOfViolation
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot chosenFlexibilityReal
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -889,39 +919,27 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot nPhaseOfViolation
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot requiredPowerImag
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot requiredPowerReal
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot chosenFlexibilityReal
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot actuatorName
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot componentOfViolation
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot actualNodalVoltage
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nPhaseOfViolation
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass FlexibilityOffer
 	(is-a GridStateControl)
 	(role concrete)
-	(single-slot possiblePowerReal
+	(single-slot actuatorName
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possibleVoltageAdjustment
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot possibleCurrentAdjustment
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -929,20 +947,12 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot possibleCurrentAdjustment
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot possibleVoltageAdjustment
+	(single-slot possiblePowerReal
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot possiblePowerImag
 		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot actuatorName
-		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -970,12 +980,12 @@
 (defclass ElectricalPower
 	(is-a Power)
 	(role concrete)
-	(single-slot voltageAbs
+	(single-slot current
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot current
+	(single-slot voltageAbs
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1004,28 +1014,28 @@
 (defclass HeatNodeProperties
 	(is-a NodeComponentProperties)
 	(role concrete)
-	(single-slot nominalPower
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot isLoadNode
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nominalPower
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass ElectricalNodeProperties
 	(is-a NodeComponentProperties)
 	(role concrete)
-	(single-slot nominalPower
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot isLoadNode
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nominalPower
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -1045,15 +1055,7 @@
 (defclass PipeProperties "This class describes static properties of a heat pipe"
 	(is-a EdgeComponentProperties)
 	(role concrete)
-	(single-slot make
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot manufacturer
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot length
+	(single-slot roughness
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1062,7 +1064,25 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot manufacturer
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot make
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot diameter
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot pipeThermalConductivity
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot length
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1071,18 +1091,8 @@
 		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot roughness
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot pipeThickness
 ;+		(comment "The thickness of the pipe wall")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot diameter
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1091,14 +1101,14 @@
 (defclass HeatPipeProperties
 	(is-a PipeProperties)
 	(role concrete)
-	(single-slot isolationThermalConductivity
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot surrounding
 		(type INSTANCE)
 ;+		(allowed-classes PipeSurrounding)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot isolationThickness
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot coatingThickness
@@ -1106,7 +1116,7 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot isolationThickness
+	(single-slot isolationThermalConductivity
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1120,12 +1130,32 @@
 (defclass CableProperties
 	(is-a EdgeComponentProperties)
 	(role concrete)
-	(single-slot length
+	(single-slot linearResistance
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot dim
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot linearReactance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearConductance
+;+		(comment "The linear conductance of this medium voltage cable.")
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot maxCurrent
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot length
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1136,28 +1166,8 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot maxCurrent
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot dim
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot linearResistance
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot din
 		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot linearConductance
-;+		(comment "The linear conductance of this medium voltage cable.")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -1176,12 +1186,12 @@
 (defclass CableWithBreakerProperties
 	(is-a CableProperties)
 	(role concrete)
-	(single-slot breakerBegin
+	(single-slot breakerEnd
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot breakerEnd
+	(single-slot breakerBegin
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
@@ -1207,12 +1217,12 @@
 ;+		(allowed-classes UniPhaseElectricalNodeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot l3
+	(single-slot l2
 		(type INSTANCE)
 ;+		(allowed-classes UniPhaseElectricalNodeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot l2
+	(single-slot l3
 		(type INSTANCE)
 ;+		(allowed-classes UniPhaseElectricalNodeState)
 ;+		(cardinality 0 1)
@@ -1230,17 +1240,12 @@
 (defclass UniPhaseElectricalNodeState
 	(is-a ElectricalNodeState)
 	(role concrete)
-	(single-slot voltageReal
+	(single-slot current
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot voltageAbs
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P
+	(single-slot Q
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1255,17 +1260,22 @@
 		(default 1.0)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Q
+	(single-slot P
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageAbs
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot voltageReal
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot voltageImag
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot current
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1311,10 +1321,6 @@
 (defclass ElectricalGridState
 	(is-a NodeComponentState)
 	(role concrete)
-	(single-slot GlobalName
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot GridStateInfo
 		(type INSTANCE)
 ;+		(allowed-classes ElectricalNodeState)
@@ -1323,27 +1329,31 @@
 	(single-slot LocalNodeNum
 		(type INTEGER)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot GlobalName
+		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass TwinHeatNodeState
 	(is-a NodeComponentState)
 	(role concrete)
-	(single-slot thermalLoad
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot supplyNodeState
-		(type INSTANCE)
-;+		(allowed-classes HeatNodeState)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot ambientTemperature
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot returnNodeState
+		(type INSTANCE)
+;+		(allowed-classes HeatNodeState)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot thermalLoad
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot supplyNodeState
 		(type INSTANCE)
 ;+		(allowed-classes HeatNodeState)
 ;+		(cardinality 0 1)
@@ -1356,11 +1366,25 @@
 (defclass Cable
 	(is-a EdgeComponentState)
 	(role concrete)
-	(single-slot P+L1
+	(single-slot linearResistance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot dim
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearReactance
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi+L3
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot util+L3
+	(single-slot P+L3
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -1368,25 +1392,7 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot linearCapacitance
-;+		(comment "The linear capacitance of this medium voltage cable.")
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot util+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot din
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot P+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot Q+L2
+	(single-slot Q+L1
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -1396,33 +1402,38 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot P+L3
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot Q+L1
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot length
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Q+L3
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot current+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot linearCapacitance
+;+		(comment "The linear capacitance of this medium voltage cable.")
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot P+L1
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot util+L1
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot cosPhi+L1
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot linearReactance
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot current+L2
+	(single-slot util+L3
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -1431,29 +1442,28 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot dim
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot current+L1
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Q+L3
+	(single-slot Q+L2
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot linearResistance
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot cosPhi+L3
+	(single-slot P+L2
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot current+L3
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot cosPhi+L2
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot din
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -1464,32 +1474,32 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot voltage+L2
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot measureLocation
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot sensorID
-		(type STRING)
+	(single-slot voltage+L2
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot voltage+L1
 		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot sensorID
+		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass CableWithBreaker
 	(is-a Cable)
 	(role concrete)
-	(single-slot breakerBegin
+	(single-slot breakerEnd
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot breakerEnd
+	(single-slot breakerBegin
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
@@ -1498,7 +1508,12 @@
 (defclass PipeState
 	(is-a EdgeComponentState)
 	(role concrete)
-	(single-slot velocityIn
+	(single-slot temperatureOut
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot pressureOut
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1514,22 +1529,17 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot pressureIn
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot velocityOut
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot pressureOut
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot temperatureOut
-		(type INSTANCE)
-;+		(allowed-classes UnitValue)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot pressureIn
+	(single-slot velocityIn
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1543,12 +1553,12 @@
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot deltaPressure
+	(single-slot deltaTemperature
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot deltaTemperature
+	(single-slot deltaPressure
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1557,12 +1567,12 @@
 (defclass TwinPipeState
 	(is-a EdgeComponentState)
 	(role concrete)
-	(single-slot supplyPipeState
+	(single-slot returnPipeState
 		(type INSTANCE)
 ;+		(allowed-classes HeatPipeState)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot returnPipeState
+	(single-slot supplyPipeState
 		(type INSTANCE)
 ;+		(allowed-classes HeatPipeState)
 ;+		(cardinality 0 1)
@@ -1575,11 +1585,12 @@
 (defclass UniPhaseCableState
 	(is-a CableState)
 	(role concrete)
-	(single-slot utilization
-		(type FLOAT)
+	(single-slot Q
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot P
+	(single-slot current
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1589,12 +1600,21 @@
 		(default 1.0)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Q
+	(single-slot utilization
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot lossesQ
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot current
+	(single-slot P
+		(type INSTANCE)
+;+		(allowed-classes UnitValue)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot lossesP
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1612,12 +1632,12 @@
 (defclass UniPhaseCableWithBreaker
 	(is-a UniPhaseCableState)
 	(role concrete)
-	(single-slot breakerBegin
+	(single-slot breakerEnd
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot breakerEnd
+	(single-slot breakerBegin
 		(type INSTANCE)
 ;+		(allowed-classes CircuitBreaker)
 ;+		(cardinality 0 1)
@@ -1645,12 +1665,12 @@
 (defclass TriPhaseSensorState
 	(is-a TriPhaseCableState)
 	(role concrete)
-	(single-slot measuredVoltageL3
+	(single-slot measuredVoltageL1
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot measuredVoltageL1
+	(single-slot measuredVoltageL3
 		(type INSTANCE)
 ;+		(allowed-classes UnitValue)
 ;+		(cardinality 0 1)
@@ -1664,12 +1684,12 @@
 (defclass UnitValue
 	(is-a Concept)
 	(role concrete)
-	(single-slot value
-		(type FLOAT)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot unit
 		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot value
+		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -1692,7 +1712,7 @@
 (defclass VoltageBand
 	(is-a Concept)
 	(role concrete)
-	(single-slot voltageMax
+	(single-slot voltageMin
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -1700,7 +1720,7 @@
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot voltageMin
+	(single-slot voltageMax
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
@@ -1708,14 +1728,14 @@
 (defclass RemoteAgentInformation "Stores information about a testbed agent and its proxy agent"
 	(is-a Concept)
 	(role concrete)
-	(single-slot remoteAgentAID
-;+		(comment "The remote agent's AID")
+	(single-slot proxyAgentAID
+;+		(comment "The proxy agent's AID")
 		(type INSTANCE)
 ;+		(allowed-classes AID)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot proxyAgentAID
-;+		(comment "The proxy agent's AID")
+	(single-slot remoteAgentAID
+;+		(comment "The remote agent's AID")
 		(type INSTANCE)
 ;+		(allowed-classes AID)
 ;+		(cardinality 0 1)
@@ -1724,13 +1744,8 @@
 (defclass WeatherData
 	(is-a Concept)
 	(role concrete)
-	(single-slot PredictedHour
-;+		(comment "Hour to predict")
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedTemperature
-;+		(comment "Predicted Temperature in °C")
+	(single-slot PredictedWindSpeed
+;+		(comment "Predicted Wind Speed in m/s")
 		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -1739,14 +1754,19 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot PredictedTemperature
+;+		(comment "Predicted Temperature in °C")
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PredictedHour
+;+		(comment "Hour to predict")
+		(type INTEGER)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot PredictedWeatherCondition
 ;+		(comment "Sunny or cloudy weather condition")
 		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot PredictedWindSpeed
-;+		(comment "Predicted Wind Speed in m/s")
-		(type FLOAT)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -1783,18 +1803,22 @@
 (defclass ModbusSetpoint
 	(is-a Concept)
 	(role concrete)
-	(single-slot registerIndex
-		(type INTEGER)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
 	(single-slot setpointValue
 		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot registerIndex
+		(type INTEGER)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass CircuitBreaker
 	(is-a Concept)
 	(role concrete)
+	(single-slot breakerID
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(single-slot isClosed
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
@@ -1807,10 +1831,6 @@
 		(create-accessor read-write))
 	(single-slot atComponent
 ;+		(comment "The ID of the component next to which the breaker is located")
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot breakerID
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))

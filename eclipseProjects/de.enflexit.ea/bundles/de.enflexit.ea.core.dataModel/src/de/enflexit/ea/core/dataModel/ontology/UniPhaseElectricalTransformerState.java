@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseElectricalTransformerState
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class UniPhaseElectricalTransformerState extends UniPhaseElectricalNodeState{ 
 

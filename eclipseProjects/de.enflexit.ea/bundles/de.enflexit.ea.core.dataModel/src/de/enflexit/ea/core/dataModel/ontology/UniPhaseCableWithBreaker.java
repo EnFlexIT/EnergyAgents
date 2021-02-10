@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableWithBreaker
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class UniPhaseCableWithBreaker extends UniPhaseCableState{ 
-
-   /**
-* Protege name: breakerBegin
-   */
-   private CircuitBreaker breakerBegin;
-   public void setBreakerBegin(CircuitBreaker value) { 
-    this.breakerBegin=value;
-   }
-   public CircuitBreaker getBreakerBegin() {
-     return this.breakerBegin;
-   }
 
    /**
 * Protege name: breakerEnd
@@ -31,6 +20,17 @@ public class UniPhaseCableWithBreaker extends UniPhaseCableState{
    }
    public CircuitBreaker getBreakerEnd() {
      return this.breakerEnd;
+   }
+
+   /**
+* Protege name: breakerBegin
+   */
+   private CircuitBreaker breakerBegin;
+   public void setBreakerBegin(CircuitBreaker value) { 
+    this.breakerBegin=value;
+   }
+   public CircuitBreaker getBreakerBegin() {
+     return this.breakerBegin;
    }
 
 }

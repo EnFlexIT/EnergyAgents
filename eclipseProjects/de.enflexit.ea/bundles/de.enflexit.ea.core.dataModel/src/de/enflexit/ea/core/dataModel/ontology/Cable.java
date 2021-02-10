@@ -7,30 +7,41 @@ import jade.core.*;
 /**
 * Protege name: Cable
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class Cable extends EdgeComponentState{ 
 
    /**
-* Protege name: util L3
+* Protege name: dim
    */
-   private float util_L3;
-   public void setUtil_L3(float value) { 
-    this.util_L3=value;
+   private String dim;
+   public void setDim(String value) { 
+    this.dim=value;
    }
-   public float getUtil_L3() {
-     return this.util_L3;
+   public String getDim() {
+     return this.dim;
    }
 
    /**
-* Protege name: P L1
+* Protege name: linearResistance
    */
-   private float p_L1;
-   public void setP_L1(float value) { 
-    this.p_L1=value;
+   private UnitValue linearResistance;
+   public void setLinearResistance(UnitValue value) { 
+    this.linearResistance=value;
    }
-   public float getP_L1() {
-     return this.p_L1;
+   public UnitValue getLinearResistance() {
+     return this.linearResistance;
+   }
+
+   /**
+* Protege name: linearReactance
+   */
+   private UnitValue linearReactance;
+   public void setLinearReactance(UnitValue value) { 
+    this.linearReactance=value;
+   }
+   public UnitValue getLinearReactance() {
+     return this.linearReactance;
    }
 
    /**
@@ -42,6 +53,95 @@ public class Cable extends EdgeComponentState{
    }
    public float getUtil_L2() {
      return this.util_L2;
+   }
+
+   /**
+* Protege name: P L3
+   */
+   private float p_L3;
+   public void setP_L3(float value) { 
+    this.p_L3=value;
+   }
+   public float getP_L3() {
+     return this.p_L3;
+   }
+
+   /**
+* Protege name: cosPhi L3
+   */
+   private float cosPhi_L3;
+   public void setCosPhi_L3(float value) { 
+    this.cosPhi_L3=value;
+   }
+   public float getCosPhi_L3() {
+     return this.cosPhi_L3;
+   }
+
+   /**
+   * The linear conductance of this medium voltage cable.
+* Protege name: linearConductance
+   */
+   private UnitValue linearConductance;
+   public void setLinearConductance(UnitValue value) { 
+    this.linearConductance=value;
+   }
+   public UnitValue getLinearConductance() {
+     return this.linearConductance;
+   }
+
+   /**
+* Protege name: Q L1
+   */
+   private float q_L1;
+   public void setQ_L1(float value) { 
+    this.q_L1=value;
+   }
+   public float getQ_L1() {
+     return this.q_L1;
+   }
+
+   /**
+* Protege name: length
+   */
+   private UnitValue length;
+   public void setLength(UnitValue value) { 
+    this.length=value;
+   }
+   public UnitValue getLength() {
+     return this.length;
+   }
+
+   /**
+* Protege name: current L2
+   */
+   private float current_L2;
+   public void setCurrent_L2(float value) { 
+    this.current_L2=value;
+   }
+   public float getCurrent_L2() {
+     return this.current_L2;
+   }
+
+   /**
+* Protege name: Q L3
+   */
+   private float q_L3;
+   public void setQ_L3(float value) { 
+    this.q_L3=value;
+   }
+   public float getQ_L3() {
+     return this.q_L3;
+   }
+
+   /**
+* Protege name: P L1
+   */
+   private float p_L1;
+   public void setP_L1(float value) { 
+    this.p_L1=value;
+   }
+   public float getP_L1() {
+     return this.p_L1;
    }
 
    /**
@@ -68,84 +168,6 @@ public class Cable extends EdgeComponentState{
    }
 
    /**
-* Protege name: din
-   */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
-   }
-   public String getDin() {
-     return this.din;
-   }
-
-   /**
-* Protege name: P L2
-   */
-   private float p_L2;
-   public void setP_L2(float value) { 
-    this.p_L2=value;
-   }
-   public float getP_L2() {
-     return this.p_L2;
-   }
-
-   /**
-* Protege name: P L3
-   */
-   private float p_L3;
-   public void setP_L3(float value) { 
-    this.p_L3=value;
-   }
-   public float getP_L3() {
-     return this.p_L3;
-   }
-
-   /**
-   * The linear conductance of this medium voltage cable.
-* Protege name: linearConductance
-   */
-   private UnitValue linearConductance;
-   public void setLinearConductance(UnitValue value) { 
-    this.linearConductance=value;
-   }
-   public UnitValue getLinearConductance() {
-     return this.linearConductance;
-   }
-
-   /**
-* Protege name: Q L2
-   */
-   private float q_L2;
-   public void setQ_L2(float value) { 
-    this.q_L2=value;
-   }
-   public float getQ_L2() {
-     return this.q_L2;
-   }
-
-   /**
-* Protege name: cosPhi L2
-   */
-   private float cosPhi_L2;
-   public void setCosPhi_L2(float value) { 
-    this.cosPhi_L2=value;
-   }
-   public float getCosPhi_L2() {
-     return this.cosPhi_L2;
-   }
-
-   /**
-* Protege name: Q L1
-   */
-   private float q_L1;
-   public void setQ_L1(float value) { 
-    this.q_L1=value;
-   }
-   public float getQ_L1() {
-     return this.q_L1;
-   }
-
-   /**
 * Protege name: cosPhi L1
    */
    private float cosPhi_L1;
@@ -157,47 +179,14 @@ public class Cable extends EdgeComponentState{
    }
 
    /**
-* Protege name: length
+* Protege name: util L3
    */
-   private UnitValue length;
-   public void setLength(UnitValue value) { 
-    this.length=value;
+   private float util_L3;
+   public void setUtil_L3(float value) { 
+    this.util_L3=value;
    }
-   public UnitValue getLength() {
-     return this.length;
-   }
-
-   /**
-* Protege name: current L2
-   */
-   private float current_L2;
-   public void setCurrent_L2(float value) { 
-    this.current_L2=value;
-   }
-   public float getCurrent_L2() {
-     return this.current_L2;
-   }
-
-   /**
-* Protege name: linearReactance
-   */
-   private UnitValue linearReactance;
-   public void setLinearReactance(UnitValue value) { 
-    this.linearReactance=value;
-   }
-   public UnitValue getLinearReactance() {
-     return this.linearReactance;
-   }
-
-   /**
-* Protege name: dim
-   */
-   private String dim;
-   public void setDim(String value) { 
-    this.dim=value;
-   }
-   public String getDim() {
-     return this.dim;
+   public float getUtil_L3() {
+     return this.util_L3;
    }
 
    /**
@@ -223,36 +212,25 @@ public class Cable extends EdgeComponentState{
    }
 
    /**
-* Protege name: Q L3
+* Protege name: Q L2
    */
-   private float q_L3;
-   public void setQ_L3(float value) { 
-    this.q_L3=value;
+   private float q_L2;
+   public void setQ_L2(float value) { 
+    this.q_L2=value;
    }
-   public float getQ_L3() {
-     return this.q_L3;
+   public float getQ_L2() {
+     return this.q_L2;
    }
 
    /**
-* Protege name: linearResistance
+* Protege name: P L2
    */
-   private UnitValue linearResistance;
-   public void setLinearResistance(UnitValue value) { 
-    this.linearResistance=value;
+   private float p_L2;
+   public void setP_L2(float value) { 
+    this.p_L2=value;
    }
-   public UnitValue getLinearResistance() {
-     return this.linearResistance;
-   }
-
-   /**
-* Protege name: cosPhi L3
-   */
-   private float cosPhi_L3;
-   public void setCosPhi_L3(float value) { 
-    this.cosPhi_L3=value;
-   }
-   public float getCosPhi_L3() {
-     return this.cosPhi_L3;
+   public float getP_L2() {
+     return this.p_L2;
    }
 
    /**
@@ -264,6 +242,28 @@ public class Cable extends EdgeComponentState{
    }
    public float getCurrent_L3() {
      return this.current_L3;
+   }
+
+   /**
+* Protege name: din
+   */
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
+   }
+   public String getDin() {
+     return this.din;
+   }
+
+   /**
+* Protege name: cosPhi L2
+   */
+   private float cosPhi_L2;
+   public void setCosPhi_L2(float value) { 
+    this.cosPhi_L2=value;
+   }
+   public float getCosPhi_L2() {
+     return this.cosPhi_L2;
    }
 
 }

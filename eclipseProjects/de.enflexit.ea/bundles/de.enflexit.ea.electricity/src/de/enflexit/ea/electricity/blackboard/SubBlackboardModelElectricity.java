@@ -21,29 +21,29 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 
 	private static final long serialVersionUID = 3592422280428518923L;
 	
-	private HashMap<String, ElectricalNodeState> graphNodeStates;
-	private HashMap<String, CableState> networkComponentStates;
+	private HashMap<String, ElectricalNodeState> nodeStates;
+	private HashMap<String, CableState> cableStates;
 	private HashMap<String, TechnicalSystemState> transformerStates;
 	
 	/**
 	 * Gets the graph node states as HashMap.
 	 * @return the graph node states
 	 */
-	public HashMap<String, ElectricalNodeState> getGraphNodeStates() {
-		if (graphNodeStates==null) {
-			graphNodeStates = new HashMap<String, ElectricalNodeState>();
+	public HashMap<String, ElectricalNodeState> getNodeStates() {
+		if (nodeStates==null) {
+			nodeStates = new HashMap<String, ElectricalNodeState>();
 		}
-		return graphNodeStates;
+		return nodeStates;
 	}
 	/**
 	 * Gets the network component states as HashMap.
 	 * @return the network component states
 	 */
-	public HashMap<String, CableState> getNetworkComponentStates() {
-		if (networkComponentStates==null) {
-			networkComponentStates = new HashMap<String, CableState>();
+	public HashMap<String, CableState> getCableStates() {
+		if (cableStates==null) {
+			cableStates = new HashMap<String, CableState>();
 		}
-		return networkComponentStates;
+		return cableStates;
 	}
 	/**
 	 * Returns the transformer states of the current network.
@@ -70,16 +70,16 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		
 			switch (requestObjective) {
 				case PowerFlowCalculationResults:
-					answer = new PowerFlowCalculationResultAnswer(this.getGraphNodeStates(), this.getNetworkComponentStates());
+					answer = new PowerFlowCalculationResultAnswer(this.getNodeStates(), this.getCableStates());
 					break;
 				case TransformerPower:
 					answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
 					break;
 				case VoltageLevels:
-					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getGraphNodeStates().get(requestSpecifier.getIdentifier()));
+					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getNodeStates().get(requestSpecifier.getIdentifier()));
 					break;
 				case CurrentLevels:
-					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getNetworkComponentStates().get(requestSpecifier.getIdentifier()));
+					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getCableStates().get(requestSpecifier.getIdentifier()));
 					break;
 			}
 		}

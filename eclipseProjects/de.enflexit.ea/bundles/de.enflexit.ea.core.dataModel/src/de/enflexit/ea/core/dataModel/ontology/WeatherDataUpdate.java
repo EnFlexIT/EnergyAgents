@@ -8,9 +8,20 @@ import jade.core.*;
    * Several Information about weather
 * Protege name: WeatherDataUpdate
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:59
+* @version 2021/02/9, 23:45:16
 */
 public class WeatherDataUpdate extends GridStateAgentManagement{ 
+
+   /**
+* Protege name: TimeStampWeather
+   */
+   private String timeStampWeather;
+   public void setTimeStampWeather(String value) { 
+    this.timeStampWeather=value;
+   }
+   public String getTimeStampWeather() {
+     return this.timeStampWeather;
+   }
 
    /**
 * Protege name: PredictedWeatherData
@@ -32,16 +43,5 @@ public class WeatherDataUpdate extends GridStateAgentManagement{
    public Iterator getAllPredictedWeatherData() {return predictedWeatherData.iterator(); }
    public List getPredictedWeatherData() {return predictedWeatherData; }
    public void setPredictedWeatherData(List l) {predictedWeatherData = l; }
-
-   /**
-* Protege name: TimeStampWeather
-   */
-   private String timeStampWeather;
-   public void setTimeStampWeather(String value) { 
-    this.timeStampWeather=value;
-   }
-   public String getTimeStampWeather() {
-     return this.timeStampWeather;
-   }
 
 }

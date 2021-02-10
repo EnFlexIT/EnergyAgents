@@ -377,7 +377,7 @@ public class NetworkModelToCsvMapper {
 							
 						} else if (dataModelArray[0]==null){
 							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Data model incomplete: No properties instance set for node " + graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
-						}else {
+						} else {
 							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName() + "'!");
 						}
 						
@@ -456,7 +456,6 @@ public class NetworkModelToCsvMapper {
 	 * Creates the branch setup table.
 	 */
 	private void createBranchSetup() {
-		
 		
 		Graph<GraphNode, GraphEdge> graph = this.networkModel.getGraph();
 		int branchNumber = 1;

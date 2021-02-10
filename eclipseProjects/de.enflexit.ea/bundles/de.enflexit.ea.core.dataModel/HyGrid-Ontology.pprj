@@ -1,4 +1,4 @@
-; Fri Sep 18 14:33:52 CEST 2020
+; Wed Feb 10 00:53:02 CET 2021
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [HyGrid-Ontology_ProjectKB_Instance_10138]))
+	(properties [HyGrid-Ontology_ProjectKB_Instance_20144]))
 
 ([CLSES_TAB] of  Widget
 
@@ -57,11 +57,6 @@
 
 ([HyGrid-Ontology_ProjectKB_Instance_10137] of  Property_List
 )
-
-([HyGrid-Ontology_ProjectKB_Instance_10138] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
 
 ([HyGrid-Ontology_ProjectKB_Instance_10139] of  Widget
 
@@ -213,14 +208,19 @@
 ([HyGrid-Ontology_ProjectKB_Instance_170] of  Property_List
 )
 
-([HyGrid-Ontology_ProjectKB_Instance_20139] of  Map_Entry
+([HyGrid-Ontology_ProjectKB_Instance_20144] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([HyGrid-Ontology_ProjectKB_Instance_20145] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([HyGrid-Ontology_ProjectKB_Instance_20140] of  Map_Entry
+([HyGrid-Ontology_ProjectKB_Instance_20146] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
@@ -413,8 +413,8 @@
 ([HyGrid-Ontology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[HyGrid-Ontology_ProjectKB_Instance_20139]
-		[HyGrid-Ontology_ProjectKB_Instance_20140]))
+		[HyGrid-Ontology_ProjectKB_Instance_20145]
+		[HyGrid-Ontology_ProjectKB_Instance_20146]))
 
 ([INSTANCE_ANNOTATION_FORM_WIDGET] of  Widget
 

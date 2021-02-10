@@ -7,42 +7,9 @@ import jade.core.*;
 /**
 * Protege name: GridStateViolation
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:59
+* @version 2021/02/9, 23:45:16
 */
 public class GridStateViolation extends GridStateControl{ 
-
-   /**
-* Protege name: cable
-   */
-   private String cable;
-   public void setCable(String value) { 
-    this.cable=value;
-   }
-   public String getCable() {
-     return this.cable;
-   }
-
-   /**
-* Protege name: kindOfViolation
-   */
-   private String kindOfViolation;
-   public void setKindOfViolation(String value) { 
-    this.kindOfViolation=value;
-   }
-   public String getKindOfViolation() {
-     return this.kindOfViolation;
-   }
-
-   /**
-* Protege name: requiredCurrentAdjustment
-   */
-   private float requiredCurrentAdjustment;
-   public void setRequiredCurrentAdjustment(float value) { 
-    this.requiredCurrentAdjustment=value;
-   }
-   public float getRequiredCurrentAdjustment() {
-     return this.requiredCurrentAdjustment;
-   }
 
    /**
 * Protege name: possibleFlexibilityOffers
@@ -66,17 +33,6 @@ public class GridStateViolation extends GridStateControl{
    public void setPossibleFlexibilityOffers(List l) {possibleFlexibilityOffers = l; }
 
    /**
-* Protege name: cableOverloadInPercent
-   */
-   private float cableOverloadInPercent;
-   public void setCableOverloadInPercent(float value) { 
-    this.cableOverloadInPercent=value;
-   }
-   public float getCableOverloadInPercent() {
-     return this.cableOverloadInPercent;
-   }
-
-   /**
 * Protege name: chosenFlexibilityImag
    */
    private float chosenFlexibilityImag;
@@ -88,58 +44,25 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
-* Protege name: actualBranchCurrent
+* Protege name: kindOfViolation
    */
-   private float actualBranchCurrent;
-   public void setActualBranchCurrent(float value) { 
-    this.actualBranchCurrent=value;
+   private String kindOfViolation;
+   public void setKindOfViolation(String value) { 
+    this.kindOfViolation=value;
    }
-   public float getActualBranchCurrent() {
-     return this.actualBranchCurrent;
+   public String getKindOfViolation() {
+     return this.kindOfViolation;
    }
 
    /**
-* Protege name: requiredVoltageAdjustment
+* Protege name: cableOverloadInPercent
    */
-   private float requiredVoltageAdjustment;
-   public void setRequiredVoltageAdjustment(float value) { 
-    this.requiredVoltageAdjustment=value;
+   private float cableOverloadInPercent;
+   public void setCableOverloadInPercent(float value) { 
+    this.cableOverloadInPercent=value;
    }
-   public float getRequiredVoltageAdjustment() {
-     return this.requiredVoltageAdjustment;
-   }
-
-   /**
-* Protege name: nPhaseOfViolation
-   */
-   private int nPhaseOfViolation;
-   public void setNPhaseOfViolation(int value) { 
-    this.nPhaseOfViolation=value;
-   }
-   public int getNPhaseOfViolation() {
-     return this.nPhaseOfViolation;
-   }
-
-   /**
-* Protege name: requiredPowerImag
-   */
-   private float requiredPowerImag;
-   public void setRequiredPowerImag(float value) { 
-    this.requiredPowerImag=value;
-   }
-   public float getRequiredPowerImag() {
-     return this.requiredPowerImag;
-   }
-
-   /**
-* Protege name: requiredPowerReal
-   */
-   private float requiredPowerReal;
-   public void setRequiredPowerReal(float value) { 
-    this.requiredPowerReal=value;
-   }
-   public float getRequiredPowerReal() {
-     return this.requiredPowerReal;
+   public float getCableOverloadInPercent() {
+     return this.cableOverloadInPercent;
    }
 
    /**
@@ -154,14 +77,58 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
-* Protege name: chosenFlexibilityReal
+* Protege name: requiredPowerReal
    */
-   private float chosenFlexibilityReal;
-   public void setChosenFlexibilityReal(float value) { 
-    this.chosenFlexibilityReal=value;
+   private float requiredPowerReal;
+   public void setRequiredPowerReal(float value) { 
+    this.requiredPowerReal=value;
    }
-   public float getChosenFlexibilityReal() {
-     return this.chosenFlexibilityReal;
+   public float getRequiredPowerReal() {
+     return this.requiredPowerReal;
+   }
+
+   /**
+* Protege name: cable
+   */
+   private String cable;
+   public void setCable(String value) { 
+    this.cable=value;
+   }
+   public String getCable() {
+     return this.cable;
+   }
+
+   /**
+* Protege name: requiredVoltageAdjustment
+   */
+   private float requiredVoltageAdjustment;
+   public void setRequiredVoltageAdjustment(float value) { 
+    this.requiredVoltageAdjustment=value;
+   }
+   public float getRequiredVoltageAdjustment() {
+     return this.requiredVoltageAdjustment;
+   }
+
+   /**
+* Protege name: requiredCurrentAdjustment
+   */
+   private float requiredCurrentAdjustment;
+   public void setRequiredCurrentAdjustment(float value) { 
+    this.requiredCurrentAdjustment=value;
+   }
+   public float getRequiredCurrentAdjustment() {
+     return this.requiredCurrentAdjustment;
+   }
+
+   /**
+* Protege name: requiredPowerImag
+   */
+   private float requiredPowerImag;
+   public void setRequiredPowerImag(float value) { 
+    this.requiredPowerImag=value;
+   }
+   public float getRequiredPowerImag() {
+     return this.requiredPowerImag;
    }
 
    /**
@@ -176,6 +143,28 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
+* Protege name: chosenFlexibilityReal
+   */
+   private float chosenFlexibilityReal;
+   public void setChosenFlexibilityReal(float value) { 
+    this.chosenFlexibilityReal=value;
+   }
+   public float getChosenFlexibilityReal() {
+     return this.chosenFlexibilityReal;
+   }
+
+   /**
+* Protege name: actualBranchCurrent
+   */
+   private float actualBranchCurrent;
+   public void setActualBranchCurrent(float value) { 
+    this.actualBranchCurrent=value;
+   }
+   public float getActualBranchCurrent() {
+     return this.actualBranchCurrent;
+   }
+
+   /**
 * Protege name: actualNodalVoltage
    */
    private float actualNodalVoltage;
@@ -184,6 +173,17 @@ public class GridStateViolation extends GridStateControl{
    }
    public float getActualNodalVoltage() {
      return this.actualNodalVoltage;
+   }
+
+   /**
+* Protege name: nPhaseOfViolation
+   */
+   private int nPhaseOfViolation;
+   public void setNPhaseOfViolation(int value) { 
+    this.nPhaseOfViolation=value;
+   }
+   public int getNPhaseOfViolation() {
+     return this.nPhaseOfViolation;
    }
 
 }

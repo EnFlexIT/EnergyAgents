@@ -72,7 +72,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		// --------------------------------------------------------------------------
 		// --- Work on the changes of the GraphNode ---------------------------------
 		// --------------------------------------------------------------------------
-		ArrayList<String> nodeKeys = new ArrayList<String>(this.getNetworkCalculationStrategy().getGraphNodeStates().keySet());
+		ArrayList<String> nodeKeys = new ArrayList<String>(this.getNetworkCalculationStrategy().getNodeStates().keySet());
 		for (int i = 0; i < nodeKeys.size(); i++) {
 
 			// --- Get all required informations for this action --------------------
@@ -84,7 +84,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			
 			GraphNode graphNode = tsSettings.getGraphNode();
 			NetworkComponent netComp = tsSettings.getNetworkComponent();
-			UniPhaseElectricalNodeState uniNodeState = (UniPhaseElectricalNodeState) this.getNetworkCalculationStrategy().getGraphNodeStates().get(graphNodeID);
+			UniPhaseElectricalNodeState uniNodeState = (UniPhaseElectricalNodeState) this.getNetworkCalculationStrategy().getNodeStates().get(graphNodeID);
 			TechnicalSystemStateEvaluation tsse = sysStateChanges.get(netComp.getId());
 			
 			// --- Set the data model with the new TriPhaseElectricalNodeState ------
@@ -193,7 +193,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		// --------------------------------------------------------------------------
 		// --- Work on the changes of the NetworkComponents -------------------------
 		// --------------------------------------------------------------------------
-		ArrayList<String> netCompKeys= new ArrayList<String>(this.getNetworkCalculationStrategy().getNetworkComponentStates().keySet());
+		ArrayList<String> netCompKeys= new ArrayList<String>(this.getNetworkCalculationStrategy().getCableStates().keySet());
 		for (int i = 0; i < netCompKeys.size(); i++) {
 			
 			// --- Get all required informations for this action --------------------
@@ -203,7 +203,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 				tsSettings = this.createVisualisationElementsForNetworkComponent(netCompID);
 			} 
 			NetworkComponent netComp = tsSettings.getNetworkComponent();
-			UniPhaseCableState cableState = (UniPhaseCableState) this.getNetworkCalculationStrategy().getNetworkComponentStates().get(netCompID);
+			UniPhaseCableState cableState = (UniPhaseCableState) this.getNetworkCalculationStrategy().getCableStates().get(netCompID);
 			
 			// --- Set the data model with the new TriPhaseElectricalNodeState ------
 			Object[] dataModel = (Object[]) netComp.getDataModel();

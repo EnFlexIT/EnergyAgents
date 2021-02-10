@@ -7,41 +7,19 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableState
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class UniPhaseCableState extends CableState{ 
 
    /**
-* Protege name: utilization
+* Protege name: current
    */
-   private float utilization;
-   public void setUtilization(float value) { 
-    this.utilization=value;
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
    }
-   public float getUtilization() {
-     return this.utilization;
-   }
-
-   /**
-* Protege name: P
-   */
-   private UnitValue p;
-   public void setP(UnitValue value) { 
-    this.p=value;
-   }
-   public UnitValue getP() {
-     return this.p;
-   }
-
-   /**
-* Protege name: cosPhi
-   */
-   private float cosPhi;
-   public void setCosPhi(float value) { 
-    this.cosPhi=value;
-   }
-   public float getCosPhi() {
-     return this.cosPhi;
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
    /**
@@ -56,14 +34,58 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
-* Protege name: current
+* Protege name: cosPhi
    */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
+   private float cosPhi;
+   public void setCosPhi(float value) { 
+    this.cosPhi=value;
    }
-   public UnitValue getCurrent() {
-     return this.current;
+   public float getCosPhi() {
+     return this.cosPhi;
+   }
+
+   /**
+* Protege name: utilization
+   */
+   private float utilization;
+   public void setUtilization(float value) { 
+    this.utilization=value;
+   }
+   public float getUtilization() {
+     return this.utilization;
+   }
+
+   /**
+* Protege name: lossesQ
+   */
+   private UnitValue lossesQ;
+   public void setLossesQ(UnitValue value) { 
+    this.lossesQ=value;
+   }
+   public UnitValue getLossesQ() {
+     return this.lossesQ;
+   }
+
+   /**
+* Protege name: P
+   */
+   private UnitValue p;
+   public void setP(UnitValue value) { 
+    this.p=value;
+   }
+   public UnitValue getP() {
+     return this.p;
+   }
+
+   /**
+* Protege name: lossesP
+   */
+   private UnitValue lossesP;
+   public void setLossesP(UnitValue value) { 
+    this.lossesP=value;
+   }
+   public UnitValue getLossesP() {
+     return this.lossesP;
    }
 
 }

@@ -24,6 +24,7 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
+import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 
@@ -271,7 +272,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			tsseNew.setStateTime(statetime);
 	
 			// --- Get the sensor state -------------------------------------------------
-			TriPhaseSensorState sensor = (TriPhaseSensorState) this.getNetworkComponentStates().get(sensorNetCompID);
+			TriPhaseSensorState sensor = (TriPhaseSensorState) this.getCableStates().get(sensorNetCompID);
 			
 			// --- Define the 'measurements' --------------------------------------------
 			// --- Voltage --------------------------------
@@ -363,28 +364,28 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		Vector<Double> nodalPowerImag_L3= null;
 		
 		if (pfcL1 != null) {
-			uKabs_L1 = pfcL1.getNodalVoltageAbs();
+			uKabs_L1  = pfcL1.getNodalVoltageAbs();
 			cosPhi_L1 = pfcL1.getNodalCosPhi();
-			nodalPowerReal_L1= pfcL1.getNodalPowerReal();
-			nodalPowerImag_L1= pfcL1.getNodalPowerImag();
-			uKReal_L1=pfcL1.getNodalVoltageReal();
-			uKImag_L1=pfcL1.getNodalVoltageImag();
+			nodalPowerReal_L1 = pfcL1.getNodalPowerReal();
+			nodalPowerImag_L1 = pfcL1.getNodalPowerImag();
+			uKReal_L1 = pfcL1.getNodalVoltageReal();
+			uKImag_L1 = pfcL1.getNodalVoltageImag();
 		}
 		if (pfcL2 != null) {
-			uKabs_L2 = pfcL2.getNodalVoltageAbs();
+			uKabs_L2  = pfcL2.getNodalVoltageAbs();
 			cosPhi_L2 = pfcL2.getNodalCosPhi();
-			nodalPowerReal_L2= pfcL2.getNodalPowerReal();
-			nodalPowerImag_L2= pfcL2.getNodalPowerImag();
-			uKReal_L2=pfcL2.getNodalVoltageReal();
-			uKImag_L2=pfcL2.getNodalVoltageImag();
+			nodalPowerReal_L2 = pfcL2.getNodalPowerReal();
+			nodalPowerImag_L2 = pfcL2.getNodalPowerImag();
+			uKReal_L2 = pfcL2.getNodalVoltageReal();
+			uKImag_L2 = pfcL2.getNodalVoltageImag();
 		}
 		if (pfcL3 != null) {
-			uKabs_L3 = pfcL3.getNodalVoltageAbs();
+			uKabs_L3  = pfcL3.getNodalVoltageAbs();
 			cosPhi_L3 = pfcL3.getNodalCosPhi();
-			nodalPowerReal_L3= pfcL3.getNodalPowerReal();
-			nodalPowerImag_L3= pfcL3.getNodalPowerImag();
-			uKReal_L3=pfcL3.getNodalVoltageReal();
-			uKImag_L3=pfcL3.getNodalVoltageImag();
+			nodalPowerReal_L3 = pfcL3.getNodalPowerReal();
+			nodalPowerImag_L3 = pfcL3.getNodalPowerImag();
+			uKReal_L3 = pfcL3.getNodalVoltageReal();
+			uKImag_L3 = pfcL3.getNodalVoltageImag();
 		}
 
 		// --- Check all calculation results ----------------------------------
@@ -476,7 +477,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			dataModelArray[1] = tpNodeState;
 			//graphNode.setDataModel(dataModelArray);
 			// --- Remind this result -----------------------------------------
-			this.getGraphNodeStates().put(graphNode.getId(), tpNodeState);
+			this.getNodeStates().put(graphNode.getId(), tpNodeState);
 		}
 	}
 	
@@ -510,6 +511,14 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		Vector<Vector<Double>> q_L1 = null;
 		Vector<Vector<Double>> q_L2 = null;
 		Vector<Vector<Double>> q_L3 = null;
+		
+		Vector<Double> uKReal_L1 = null;
+		Vector<Double> uKReal_L2 = null;
+		Vector<Double> uKReal_L3 = null;
+		
+		Vector<Double> uKImag_L1 = null;
+		Vector<Double> uKImag_L2 = null;
+		Vector<Double> uKImag_L3 = null;
 
 		if (pfcL1 != null) {
 			iNabs_L1 = pfcL1.getBranchCurrentAbs();
@@ -517,6 +526,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			branchCosPhi_L1 = pfcL1.getBranchCosPhi();
 			p_L1 = pfcL1.getBranchPowerReal();
 			q_L1 = pfcL1.getBranchPowerImag();
+			uKReal_L1 = pfcL1.getNodalVoltageReal();
+			uKImag_L1 = pfcL1.getNodalVoltageImag();
 		}
 		
 		if (pfcL2 != null) {
@@ -525,6 +536,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			branchCosPhi_L2 = pfcL2.getBranchCosPhi();
 			p_L2 = pfcL2.getBranchPowerReal();
 			q_L2 = pfcL2.getBranchPowerImag();
+			uKReal_L2 = pfcL2.getNodalVoltageReal();
+			uKImag_L2 = pfcL2.getNodalVoltageImag();
 		}
 		
 		if (pfcL3 != null) {
@@ -533,6 +546,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			branchCosPhi_L3 = pfcL3.getBranchCosPhi();
 			p_L3 = pfcL3.getBranchPowerReal();
 			q_L3 = pfcL3.getBranchPowerImag();
+			uKReal_L3 = pfcL2.getNodalVoltageReal();
+			uKImag_L3 = pfcL2.getNodalVoltageImag();
 		}
 
 		// --- Get the reminded BranchDescription's ---------------------------
@@ -562,6 +577,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 					cableState = new TriPhaseCableState();
 				}
 			}
+			
 			cableState.setCurrent_L1(iNabs_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setCurrent_L2(iNabs_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setCurrent_L3(iNabs_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
@@ -582,6 +598,32 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			cableState.setQ_L2(q_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setQ_L3(q_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 
+			// --- Calculate cable losses -------------------------------------
+			double ukRealNode1_L1 = uKReal_L1.get(nodeIndexFrom);
+			double ukImagNode1_L1 = uKImag_L1.get(nodeIndexFrom);
+			double ukRealNode2_L1 = uKReal_L1.get(nodeIndexTo);
+			double ukImagNode2_L1 = uKImag_L1.get(nodeIndexTo);
+			CableLosses cableLossesL1 = new CableLosses(cableState.getPhase1().getCurrent().getValue(), cableState.getPhase1().getCosPhi(), ukRealNode1_L1, ukImagNode1_L1, ukRealNode2_L1, ukImagNode2_L1);
+			cableState.getPhase1().setLossesP(cableLossesL1.getLossesP());
+			cableState.getPhase1().setLossesQ(cableLossesL1.getLossesQ());
+			
+			double ukRealNode1_L2 = uKReal_L2.get(nodeIndexFrom);
+			double ukImagNode1_L2 = uKImag_L2.get(nodeIndexFrom);
+			double ukRealNode2_L2 = uKReal_L2.get(nodeIndexTo);
+			double ukImagNode2_L2 = uKImag_L2.get(nodeIndexTo);
+			CableLosses cableLossesL2 = new CableLosses(cableState.getPhase2().getCurrent().getValue(), cableState.getPhase2().getCosPhi(), ukRealNode1_L2, ukImagNode1_L2, ukRealNode2_L2, ukImagNode2_L2);
+			cableState.getPhase2().setLossesP(cableLossesL2.getLossesP());
+			cableState.getPhase2().setLossesQ(cableLossesL2.getLossesQ());
+			
+			double ukRealNode1_L3 = uKReal_L3.get(nodeIndexFrom);
+			double ukImagNode1_L3 = uKImag_L3.get(nodeIndexFrom);
+			double ukRealNode2_L3 = uKReal_L3.get(nodeIndexTo);
+			double ukImagNode2_L3 = uKImag_L3.get(nodeIndexTo);
+			CableLosses cableLossesL3 = new CableLosses(cableState.getPhase3().getCurrent().getValue(), cableState.getPhase3().getCosPhi(), ukRealNode1_L3, ukImagNode1_L3, ukRealNode2_L3, ukImagNode2_L3);
+			cableState.getPhase3().setLossesP(cableLossesL3.getLossesP());
+			cableState.getPhase3().setLossesQ(cableLossesL3.getLossesQ());
+			
+			
 			// --- Set voltage to sensors -------------------------------------
 			if (cableState instanceof TriPhaseSensorState) {
 				
@@ -598,7 +640,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 					Vector<GraphElement> graphNodeMeasurement = this.getNetworkModel().getGraphElementsFromNetworkComponent(netCompMeasurement);
 					if (graphNodeMeasurement.size()==1) {
 						String graphNodeID = graphNodeMeasurement.get(0).getId();
-						TriPhaseElectricalNodeState tpNodeState = (TriPhaseElectricalNodeState) this.getGraphNodeStates().get(graphNodeID);
+						TriPhaseElectricalNodeState tpNodeState = (TriPhaseElectricalNodeState) this.getNodeStates().get(graphNodeID);
 						if (tpNodeState!=null) {
 							sensorState.setVoltage_L1(tpNodeState.getL1NodeStateNotNull().getVoltageAbs().getValue());
 							sensorState.setVoltage_L2(tpNodeState.getL2NodeStateNotNull().getVoltageAbs().getValue());
@@ -613,7 +655,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			dataModel[1] = cableState;
 			netComp.setDataModel(dataModel);
 			// --- Remind this result -----------------------------------------
-			this.getNetworkComponentStates().put(netComp.getId(), cableState);
+			this.getCableStates().put(netComp.getId(), cableState);
 		}
 	}
 	

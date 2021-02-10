@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: ModbusSetpoint
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class ModbusSetpoint implements Concept {
-
-   /**
-* Protege name: registerIndex
-   */
-   private int registerIndex;
-   public void setRegisterIndex(int value) { 
-    this.registerIndex=value;
-   }
-   public int getRegisterIndex() {
-     return this.registerIndex;
-   }
 
    /**
 * Protege name: setpointValue
@@ -32,6 +21,17 @@ public class ModbusSetpoint implements Concept {
    }
    public float getSetpointValue() {
      return this.setpointValue;
+   }
+
+   /**
+* Protege name: registerIndex
+   */
+   private int registerIndex;
+   public void setRegisterIndex(int value) { 
+    this.registerIndex=value;
+   }
+   public int getRegisterIndex() {
+     return this.registerIndex;
    }
 
 }

@@ -24,6 +24,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
+import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 
@@ -245,7 +246,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			tsseNew.setStateTime(statetime);
 	
 			// --- Get the sensor state -------------------------------------------------
-			UniPhaseSensorState sensor = (UniPhaseSensorState) this.getNetworkComponentStates().get(sensorNetCompID);
+			UniPhaseSensorState sensor = (UniPhaseSensorState) this.getCableStates().get(sensorNetCompID);
 			
 			// --- Define the 'measurements' --------------------------------------------
 			// --- Voltage --------------------------------
@@ -285,13 +286,17 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		Vector<Double> branchCosPhi = null;
 		Vector<Vector<Double>> p = null;
 		Vector<Vector<Double>> q = null;
-
+		Vector<Double> uKReal = null;
+		Vector<Double> uKImag = null;
+		
 		if (pfc != null) {
 			iNabs = pfc.getBranchCurrentAbs();
 			utili = pfc.getBranchUtilization();
 			branchCosPhi = pfc.getBranchCosPhi();
 			p = pfc.getBranchPowerReal();
 			q = pfc.getBranchPowerImag();
+			uKReal = pfc.getNodalVoltageReal();
+			uKImag = pfc.getNodalVoltageImag();
 		}
 
 		// --- Get the reminded BranchDescription's ---------------------------
@@ -323,13 +328,26 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 					cableState = new UniPhaseCableState();
 				}
 			}
+			
 			p.get(nodeIndexFrom).set(nodeIndexTo, p.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
+			
 			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
 			cableState.setUtilization(utili.get(i).floatValue());
 			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
 			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
 			cableState.setQ(new UnitValue(q.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "var"));
+			
+			// --- Calculate cable losses -------------------------------------
+			double ukRealNode1 = uKReal.get(nodeIndexFrom);
+			double ukImagNode1 = uKImag.get(nodeIndexFrom);
+			double ukRealNode2 = uKReal.get(nodeIndexTo);
+			double ukImagNode2 = uKImag.get(nodeIndexTo);
+			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrent().getValue(), cableState.getCosPhi(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2);
+			cableState.setLossesP(cableLossesL1.getLossesP());
+			cableState.setLossesQ(cableLossesL1.getLossesQ());
+			
+			
 			// --- Set voltage to sensors -------------------------------------
 			if (cableState instanceof UniPhaseSensorState) {
 
@@ -345,7 +363,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 					Vector<GraphElement> graphNodeMeasurement = this.getNetworkModel().getGraphElementsFromNetworkComponent(netCompMeasurement);
 					if (graphNodeMeasurement.size()==1) {
 						String graphNodeID = graphNodeMeasurement.get(0).getId();
-						UniPhaseElectricalNodeState tpNodeState = (UniPhaseElectricalNodeState) this.getGraphNodeStates().get(graphNodeID);
+						UniPhaseElectricalNodeState tpNodeState = (UniPhaseElectricalNodeState) this.getNodeStates().get(graphNodeID);
 						if (tpNodeState!=null) {
 							sensorState.setMeasuredVoltage(tpNodeState.getVoltageAbs());
 						}
@@ -358,7 +376,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			dataModel[1] = cableState;
 			netComp.setDataModel(dataModel);
 			// --- Remind this result -----------------------------------------
-			this.getNetworkComponentStates().put(netComp.getId(), cableState);
+			this.getCableStates().put(netComp.getId(), cableState);
 		}
 	}
 
@@ -456,7 +474,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			dataModelArray[1] = upNodeState;
 			
 			// --- Remind this result -----------------------------------------
-			this.getGraphNodeStates().put(graphNode.getId(), upNodeState);
+			this.getNodeStates().put(graphNode.getId(), upNodeState);
 		}
 	}
 }

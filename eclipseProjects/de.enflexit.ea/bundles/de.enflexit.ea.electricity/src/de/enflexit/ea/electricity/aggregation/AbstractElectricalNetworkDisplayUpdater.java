@@ -109,7 +109,7 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 		TimeSeriesChart tsc = this.createTimeSeriesChart(graphNodeID, "Power & Voltage", "Power / Voltage");
 		Object[] dataModelArray = new Object[3];
 		dataModelArray[DATA_MODEL_PROPERTIES_INDEX] = nodeProperties;
-		dataModelArray[DATA_MODEL_STATE_INDEX] = this.getNetworkCalculationStrategy().getGraphNodeStates().get(graphNodeID);
+		dataModelArray[DATA_MODEL_STATE_INDEX] = this.getNetworkCalculationStrategy().getNodeStates().get(graphNodeID);
 		dataModelArray[DATA_MODEL_TIME_SERIES_INDEX] = tsc;
 		
 		// --- Get domain of current handler and GraphNode ----------
@@ -197,7 +197,7 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 		
 		Object[] dataModelArray = new Object[3];
 		dataModelArray[DATA_MODEL_PROPERTIES_INDEX] = componentProperties;
-		dataModelArray[DATA_MODEL_STATE_INDEX] = this.getNetworkCalculationStrategy().getNetworkComponentStates().get(netCompID);
+		dataModelArray[DATA_MODEL_STATE_INDEX] = this.getNetworkCalculationStrategy().getCableStates().get(netCompID);
 		dataModelArray[DATA_MODEL_TIME_SERIES_INDEX] = tsc;
 		netComp.setDataModel(dataModelArray);
 		

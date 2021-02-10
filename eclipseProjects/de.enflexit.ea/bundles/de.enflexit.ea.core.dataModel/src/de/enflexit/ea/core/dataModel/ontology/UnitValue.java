@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: UnitValue
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:59
+* @version 2021/02/9, 23:45:16
 */
 public class UnitValue implements Concept {
 
@@ -28,17 +28,6 @@ public class UnitValue implements Concept {
   this.setUnit(unit);
  }
    /**
-* Protege name: value
-   */
-   private float value;
-   public void setValue(float value) { 
-    this.value=value;
-   }
-   public float getValue() {
-     return this.value;
-   }
-
-   /**
 * Protege name: unit
    */
    private String unit;
@@ -47,6 +36,17 @@ public class UnitValue implements Concept {
    }
    public String getUnit() {
      return this.unit;
+   }
+
+   /**
+* Protege name: value
+   */
+   private float value;
+   public void setValue(float value) { 
+    this.value=value;
+   }
+   public float getValue() {
+     return this.value;
    }
 
 }

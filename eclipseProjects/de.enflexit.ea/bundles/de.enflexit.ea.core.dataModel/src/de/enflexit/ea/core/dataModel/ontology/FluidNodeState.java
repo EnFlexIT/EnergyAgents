@@ -8,7 +8,7 @@ import jade.core.*;
    * This class describes the dynamic properties of a node component in a heat network
 * Protege name: FluidNodeState
 * @author ontology bean generator
-* @version 2020/09/18, 14:32:58
+* @version 2021/02/9, 23:45:16
 */
 public class FluidNodeState extends NodeComponentState{ 
 
