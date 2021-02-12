@@ -1,3 +1,4 @@
+
 package de.enflexit.ea.electricity.aggregation.uniPhase;
 
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
-import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotificationGraph;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
@@ -44,8 +44,8 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
 
 /**
  * Network calculation strategy for uni-phase (or symmetrical) electricity grids.
- * @author mehlich
- *
+ * 
+ * @author Jan Mehlich - EVT - University of Wuppertal
  */
 public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	
@@ -130,14 +130,16 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		return fmSummarized;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy#getDefaultSlackNodeVoltage()
+	 */
 	@Override
 	protected double getDefaultSlackNodeVoltage() {
 		return this.defaultSlackNodeVoltage;
 	}
 	
-	/**
-	 * Creates the {@link DisplayAgentNotificationGraph} from the power flow calculation results.
-	 * @param globalTimeTo the global time to which is to be calculated
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy#summarizeResults(long)
 	 */
 	@Override
 	protected void summarizeResults(long globalTimeTo) {
