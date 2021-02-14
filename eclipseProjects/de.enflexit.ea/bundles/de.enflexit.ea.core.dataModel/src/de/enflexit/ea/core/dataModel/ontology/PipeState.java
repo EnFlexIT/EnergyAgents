@@ -7,9 +7,42 @@ import jade.core.*;
 /**
 * Protege name: PipeState
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class PipeState extends EdgeComponentState{ 
+
+   /**
+* Protege name: velocityOut
+   */
+   private UnitValue velocityOut;
+   public void setVelocityOut(UnitValue value) { 
+    this.velocityOut=value;
+   }
+   public UnitValue getVelocityOut() {
+     return this.velocityOut;
+   }
+
+   /**
+* Protege name: pressureIn
+   */
+   private UnitValue pressureIn;
+   public void setPressureIn(UnitValue value) { 
+    this.pressureIn=value;
+   }
+   public UnitValue getPressureIn() {
+     return this.pressureIn;
+   }
+
+   /**
+* Protege name: temperatureIn
+   */
+   private UnitValue temperatureIn;
+   public void setTemperatureIn(UnitValue value) { 
+    this.temperatureIn=value;
+   }
+   public UnitValue getTemperatureIn() {
+     return this.temperatureIn;
+   }
 
    /**
 * Protege name: pressureOut
@@ -20,17 +53,6 @@ public class PipeState extends EdgeComponentState{
    }
    public UnitValue getPressureOut() {
      return this.pressureOut;
-   }
-
-   /**
-* Protege name: temperatureOut
-   */
-   private UnitValue temperatureOut;
-   public void setTemperatureOut(UnitValue value) { 
-    this.temperatureOut=value;
-   }
-   public UnitValue getTemperatureOut() {
-     return this.temperatureOut;
    }
 
    /**
@@ -46,36 +68,14 @@ public class PipeState extends EdgeComponentState{
    }
 
    /**
-* Protege name: temperatureIn
+* Protege name: temperatureOut
    */
-   private UnitValue temperatureIn;
-   public void setTemperatureIn(UnitValue value) { 
-    this.temperatureIn=value;
+   private UnitValue temperatureOut;
+   public void setTemperatureOut(UnitValue value) { 
+    this.temperatureOut=value;
    }
-   public UnitValue getTemperatureIn() {
-     return this.temperatureIn;
-   }
-
-   /**
-* Protege name: pressureIn
-   */
-   private UnitValue pressureIn;
-   public void setPressureIn(UnitValue value) { 
-    this.pressureIn=value;
-   }
-   public UnitValue getPressureIn() {
-     return this.pressureIn;
-   }
-
-   /**
-* Protege name: velocityOut
-   */
-   private UnitValue velocityOut;
-   public void setVelocityOut(UnitValue value) { 
-    this.velocityOut=value;
-   }
-   public UnitValue getVelocityOut() {
-     return this.velocityOut;
+   public UnitValue getTemperatureOut() {
+     return this.temperatureOut;
    }
 
    /**

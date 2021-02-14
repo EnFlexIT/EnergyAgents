@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: CircuitBreaker
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class CircuitBreaker implements Concept {
 
@@ -21,6 +21,18 @@ public class CircuitBreaker implements Concept {
    }
    public String getBreakerID() {
      return this.breakerID;
+   }
+
+   /**
+   * The ID of the component next to which the breaker is located
+* Protege name: atComponent
+   */
+   private String atComponent;
+   public void setAtComponent(String value) { 
+    this.atComponent=value;
+   }
+   public String getAtComponent() {
+     return this.atComponent;
    }
 
    /**
@@ -43,18 +55,6 @@ public class CircuitBreaker implements Concept {
    }
    public boolean getIsControllable() {
      return this.isControllable;
-   }
-
-   /**
-   * The ID of the component next to which the breaker is located
-* Protege name: atComponent
-   */
-   private String atComponent;
-   public void setAtComponent(String value) { 
-    this.atComponent=value;
-   }
-   public String getAtComponent() {
-     return this.atComponent;
    }
 
 }

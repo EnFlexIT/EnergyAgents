@@ -32,7 +32,8 @@ public class PowerFlowParameter {
 	private double[][] dX;
 	private int nNumNodes;
 	private int nNumBranches;
-	private double dSlackVoltage;
+	private double dSlackVoltageReal;
+	private double dSlackVoltageImag;
 	private int nSlackNode;
 	
 	private Vector<PVNodeParameters> vPVNodes;
@@ -45,29 +46,36 @@ public class PowerFlowParameter {
 	 * @param matNodeSetup the mat node setup
 	 * @param matGridData the mat grid data
 	 * @param nSlackNode the n slack node
+	 * @param initialSlackNodeVoltageReal the initial slack node voltage real
+	 * @param initialSlackNodeVoltageImag the initial slack node voltage imag
 	 */
-	public PowerFlowParameter(double[][] matNodeSetup, double[][] matGridData, int nSlackNode, double initialSlackNodeVoltage) {
+	public PowerFlowParameter(double[][] matNodeSetup, double[][] matGridData, int nSlackNode, double initialSlackNodeVoltageReal, double initialSlackNodeVoltageImag) {
 		this.nSlackNode = nSlackNode;
 		this.dMatNodeSetup=matNodeSetup;
 		this.dMatGridData=matGridData;
 		this.nNumNodes= matNodeSetup.length;
-		this.setdSlackVoltage(initialSlackNodeVoltage);
+		this.setdSlackVoltageImag(initialSlackNodeVoltageImag);
+		this.setdSlackVoltageReal(initialSlackNodeVoltageReal);
 		this.convertDoubleArrays2Vector(matNodeSetup, matGridData);
 		this.initializeVectors();
 	}
 
 	/**
 	 * Instantiates a new power flow parameter.
+	 *
 	 * @param matNodeSetup the mat node setup
 	 * @param matGridData the mat grid data
 	 * @param nSlackNode the n slack node
+	 * @param initialSlackNodeVoltageReal the initial slack node voltage real
+	 * @param initialSlackNodeVoltageImag the initial slack node voltage imag
 	 */
-	public PowerFlowParameter(Vector<NodeAssociationParams> matNodeSetup, Vector<BranchParams> matGridData, int nSlackNode, double initialSlackNodeVoltage) {
+	public PowerFlowParameter(Vector<NodeAssociationParams> matNodeSetup, Vector<BranchParams> matGridData, int nSlackNode, double initialSlackNodeVoltageReal, double initialSlackNodeVoltageImag) {
 		this.nSlackNode=nSlackNode;
 		this.matNodeSetup=matNodeSetup;
 		this.matGridData=matGridData;
 		this.nNumNodes=matNodeSetup.size();
-		this.setdSlackVoltage(initialSlackNodeVoltage);
+		this.setdSlackVoltageImag(initialSlackNodeVoltageImag);
+		this.setdSlackVoltageReal(initialSlackNodeVoltageReal);
 		this.initializeVectors();
 	}
 	
@@ -80,7 +88,7 @@ public class PowerFlowParameter {
 		this.nNumBranches = this.matGridData.size();
 		// --- Create Nodal Admittance Matrix
 		this.buildNodalAdmittanceMatrix();
-		this.setNodalVoltageVector(this.dSlackVoltage);
+		this.setNodalVoltageVector(this.dSlackVoltageReal);
 		this.calculatex();
 		this.setMaxCurrentOnBasisofDataType();
 
@@ -316,38 +324,50 @@ public class PowerFlowParameter {
 
 	}
 
+	
 	/**
-	 * Gets the d slack voltage.
-	 *
-	 * @return the d slack voltage
+	 * Returns the real part of the slack voltage.
+	 * @return the slack voltage real
 	 */
-	public double getdSlackVoltage() {
-		return dSlackVoltage;
+	public double getdSlackVoltageReal() {
+		return dSlackVoltageReal;
 	}
-
 	/**
-	 * Sets the d slack voltage.
-	 *
-	 * @param dSlackVoltage the new d slack voltage
+	 * Sets the real part of the slack voltage.
+	 * @param dSlackVoltageReal the new real part of the slack voltage
 	 */
-	public void setdSlackVoltage(double dSlackVoltage) {
-		this.dSlackVoltage = dSlackVoltage;
-		this.setNodalVoltageVector(dSlackVoltage);
+	public void setdSlackVoltageReal(double dSlackVoltageReal) {
+		this.dSlackVoltageReal = dSlackVoltageReal;
+		// TODO Is this the right place for that call? 
+		this.setNodalVoltageVector(dSlackVoltageReal);
 		this.calculatex();
 	}
 
 	/**
+	 * Returns the imaginary part of the slack voltage.
+	 * @return the imaginary slack voltage 
+	 */
+	public double getdSlackVoltageImag() {
+		return dSlackVoltageImag;
+	}
+	/**
+	 * Sets the imaginary part of the slack voltage.
+	 * @param dSlackVoltageImag the new imaginary part of the slack voltage
+	 */
+	public void setdSlackVoltageImag(double dSlackVoltageImag) {
+		this.dSlackVoltageImag = dSlackVoltageImag;
+	}
+	
+	
+	/**
 	 * Gets the nodal voltage real.
-	 *
 	 * @return the nodal voltage real
 	 */
 	public Vector<Double> getNodalVoltageReal() {
 		return nodalVoltageReal;
 	}
-
 	/**
 	 * Gets the nodal voltage imag.
-	 *
 	 * @return the nodal voltage imag
 	 */
 	public Vector<Double> getNodalVoltageImag() {

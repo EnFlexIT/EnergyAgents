@@ -8,19 +8,19 @@ import jade.core.*;
    * This class describes static properties of a heat pipe
 * Protege name: PipeProperties
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class PipeProperties extends EdgeComponentProperties{ 
 
    /**
-* Protege name: make
+* Protege name: minorLossCoefficient
    */
-   private String make;
-   public void setMake(String value) { 
-    this.make=value;
+   private int minorLossCoefficient;
+   public void setMinorLossCoefficient(int value) { 
+    this.minorLossCoefficient=value;
    }
-   public String getMake() {
-     return this.make;
+   public int getMinorLossCoefficient() {
+     return this.minorLossCoefficient;
    }
 
    /**
@@ -35,17 +35,6 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: nominalSize
-   */
-   private int nominalSize;
-   public void setNominalSize(int value) { 
-    this.nominalSize=value;
-   }
-   public int getNominalSize() {
-     return this.nominalSize;
-   }
-
-   /**
 * Protege name: roughness
    */
    private UnitValue roughness;
@@ -57,14 +46,26 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: diameter
+   * The thickness of the pipe wall
+* Protege name: pipeThickness
    */
-   private UnitValue diameter;
-   public void setDiameter(UnitValue value) { 
-    this.diameter=value;
+   private UnitValue pipeThickness;
+   public void setPipeThickness(UnitValue value) { 
+    this.pipeThickness=value;
    }
-   public UnitValue getDiameter() {
-     return this.diameter;
+   public UnitValue getPipeThickness() {
+     return this.pipeThickness;
+   }
+
+   /**
+* Protege name: make
+   */
+   private String make;
+   public void setMake(String value) { 
+    this.make=value;
+   }
+   public String getMake() {
+     return this.make;
    }
 
    /**
@@ -79,6 +80,17 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
+* Protege name: diameter
+   */
+   private UnitValue diameter;
+   public void setDiameter(UnitValue value) { 
+    this.diameter=value;
+   }
+   public UnitValue getDiameter() {
+     return this.diameter;
+   }
+
+   /**
 * Protege name: length
    */
    private UnitValue length;
@@ -90,26 +102,14 @@ public class PipeProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: minorLossCoefficient
+* Protege name: nominalSize
    */
-   private int minorLossCoefficient;
-   public void setMinorLossCoefficient(int value) { 
-    this.minorLossCoefficient=value;
+   private int nominalSize;
+   public void setNominalSize(int value) { 
+    this.nominalSize=value;
    }
-   public int getMinorLossCoefficient() {
-     return this.minorLossCoefficient;
-   }
-
-   /**
-   * The thickness of the pipe wall
-* Protege name: pipeThickness
-   */
-   private UnitValue pipeThickness;
-   public void setPipeThickness(UnitValue value) { 
-    this.pipeThickness=value;
-   }
-   public UnitValue getPipeThickness() {
-     return this.pipeThickness;
+   public int getNominalSize() {
+     return this.nominalSize;
    }
 
 }

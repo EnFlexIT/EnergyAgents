@@ -387,7 +387,7 @@ public abstract class AbstractSubNetworkConfiguration {
 						groupCalc.setGroupEvaluationStrategy(netCalcStrategy);
 						// --- Set further instance -------------------------------------
 						netCalcStrategy.setAggregationHandler(this.getAggregationHandler());
-						netCalcStrategy.setSubAggregationConfiguration(this);
+						netCalcStrategy.setSubNetworkConfiguration(this);
 						// --- Activate the performance measurements? -------------------
 						if (this.aggregationHandler.debugIsDoPerformanceMeasurements()==true) {
 							netCalcStrategy.setPerformanceMeasurementAverageBase(this.aggregationHandler.debugGetMaxNumberForPerformanceAverage());

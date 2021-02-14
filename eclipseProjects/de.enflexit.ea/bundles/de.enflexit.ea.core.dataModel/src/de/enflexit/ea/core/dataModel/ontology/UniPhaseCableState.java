@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableState
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class UniPhaseCableState extends CableState{ 
 
@@ -23,28 +23,6 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
-* Protege name: Q
-   */
-   private UnitValue q;
-   public void setQ(UnitValue value) { 
-    this.q=value;
-   }
-   public UnitValue getQ() {
-     return this.q;
-   }
-
-   /**
-* Protege name: cosPhi
-   */
-   private float cosPhi;
-   public void setCosPhi(float value) { 
-    this.cosPhi=value;
-   }
-   public float getCosPhi() {
-     return this.cosPhi;
-   }
-
-   /**
 * Protege name: utilization
    */
    private float utilization;
@@ -53,17 +31,6 @@ public class UniPhaseCableState extends CableState{
    }
    public float getUtilization() {
      return this.utilization;
-   }
-
-   /**
-* Protege name: lossesQ
-   */
-   private UnitValue lossesQ;
-   public void setLossesQ(UnitValue value) { 
-    this.lossesQ=value;
-   }
-   public UnitValue getLossesQ() {
-     return this.lossesQ;
    }
 
    /**
@@ -86,6 +53,39 @@ public class UniPhaseCableState extends CableState{
    }
    public UnitValue getLossesP() {
      return this.lossesP;
+   }
+
+   /**
+* Protege name: Q
+   */
+   private UnitValue q;
+   public void setQ(UnitValue value) { 
+    this.q=value;
+   }
+   public UnitValue getQ() {
+     return this.q;
+   }
+
+   /**
+* Protege name: lossesQ
+   */
+   private UnitValue lossesQ;
+   public void setLossesQ(UnitValue value) { 
+    this.lossesQ=value;
+   }
+   public UnitValue getLossesQ() {
+     return this.lossesQ;
+   }
+
+   /**
+* Protege name: cosPhi
+   */
+   private float cosPhi;
+   public void setCosPhi(float value) { 
+    this.cosPhi=value;
+   }
+   public float getCosPhi() {
+     return this.cosPhi;
    }
 
 }

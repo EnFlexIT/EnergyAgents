@@ -86,7 +86,7 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 		Vector<Double> nodalVoltageReal = new Vector<>();
 		
 		for(int i=0;i<this.getnNumNodes();i++) {
-			nodalVoltageReal.add(this.getPowerFlowParameter().getdSlackVoltage());
+			nodalVoltageReal.add(this.getPowerFlowParameter().getdSlackVoltageReal());
 		}
 		
 		// --- Set PV Nodes in dX

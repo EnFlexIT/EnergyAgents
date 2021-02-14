@@ -338,7 +338,7 @@ public abstract class AbstractPowerFlowCalculation {
 	}
 	
 	protected double getdSlackNodeVoltage() {
-		return this.getPowerFlowParameter().getdSlackVoltage();
+		return this.getPowerFlowParameter().getdSlackVoltageReal();
 	}
 	
 	protected int getnNumNodes() {

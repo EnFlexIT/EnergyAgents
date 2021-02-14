@@ -228,7 +228,7 @@ public class DistrictModel {
 			this.buildSensorInfluence();
 	
 			// --- Setting powerflow parameters-------------------------------------------------------------------------------
-			PowerFlowParameter powerFlowParameter = new PowerFlowParameter(this.getvNodeAssociation(),this.getvBranchParams(), this.getnSlackNode(), 400.0/Math.sqrt(3));
+			PowerFlowParameter powerFlowParameter = new PowerFlowParameter(this.getvNodeAssociation(),this.getvBranchParams(), this.getnSlackNode(), 400.0/Math.sqrt(3), 0);
 			
 			this.setPowerFlowParameter(powerFlowParameter);
 			// this.getvPowerFlowParameter().get(0).setvPVNodes(this.getvPVNodeParameters());

@@ -645,7 +645,7 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	
 		// --- Setting PV Nodes
 		actualPowerFlowParameter.setvPVNodes(vPvNode);
-		actualPowerFlowParameter.setdSlackVoltage(dSlackVoltage);
+		actualPowerFlowParameter.setdSlackVoltageReal(dSlackVoltage);
 		actualPowerFlowParameter.setNodalPowerReal(new Vector<Double>());
 		actualPowerFlowParameter.setNodalPowerImag(new Vector<Double>());
 	

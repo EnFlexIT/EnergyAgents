@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: UnitValue
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class UnitValue implements Concept {
 
@@ -27,17 +27,27 @@ public class UnitValue implements Concept {
   this.setValue(value);
   this.setUnit(unit);
  }
-   /**
-* Protege name: unit
-   */
-   private String unit;
-   public void setUnit(String value) { 
-    this.unit=value;
-   }
-   public String getUnit() {
-     return this.unit;
-   }
-
+/* (non-Javadoc)
+ * @see java.lang.Object#equals(java.lang.Object)
+ */
+ @Override
+ public boolean equals(Object compObj) {
+  if (compObj==null || !(compObj instanceof UnitValue)) return false;
+  // --- Compare value and unit ---
+  UnitValue compUnitValue = (UnitValue) compObj;
+  if (compUnitValue.getValue()!=this.getValue()) return false;
+ 
+  String compUnit = compUnitValue.getUnit();
+  String thisUnit = this.getUnit();
+  if (compUnit==null && thisUnit==null) {
+    // --- Nothing to do here ----
+  } else if ((compUnit==null && thisUnit!=null) || (compUnit!=null && thisUnit==null)) {
+    return false;
+  } else {
+    if (compUnit.equals(thisUnit)==false) return false;   	 
+  }
+  return true;
+ }
    /**
 * Protege name: value
    */
@@ -47,6 +57,17 @@ public class UnitValue implements Concept {
    }
    public float getValue() {
      return this.value;
+   }
+
+   /**
+* Protege name: unit
+   */
+   private String unit;
+   public void setUnit(String value) { 
+    this.unit=value;
+   }
+   public String getUnit() {
+     return this.unit;
    }
 
 }

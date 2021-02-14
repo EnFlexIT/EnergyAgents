@@ -171,7 +171,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 		Vector<Double> uK_new_imag= new Vector<Double>();
 		
 //		dX = this.getPowerFlowParameter().getdX();
-		double dSlackVoltage = this.getPowerFlowParameter().getdSlackVoltage();
+		double dSlackVoltage = this.getPowerFlowParameter().getdSlackVoltageReal();
 		for(int i=0;i<this.getnNumNodes();i++) {
 			uK_new_real.add(dSlackVoltage);
 			uK_new_imag.add(0.0);

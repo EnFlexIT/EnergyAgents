@@ -1,4 +1,3 @@
-
 package de.enflexit.ea.electricity.aggregation.uniPhase;
 
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculati
 import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
-
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.EnergyFlowMeasured;
@@ -41,7 +39,6 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
 import energygroup.calculation.FlowsMeasuredGroup;
 import energygroup.calculation.FlowsMeasuredGroupMember;
 
-
 /**
  * Network calculation strategy for uni-phase (or symmetrical) electricity grids.
  * 
@@ -49,13 +46,26 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
  */
 public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	
-	//TODO make configurable
-	private double defaultSlackNodeVoltage = 10000/Math.sqrt(3);
-
+	private UniPhaseElectricalSlackNodeHandler slackNodeHandler;
+	
+	/**
+	 * Instantiates a new UniPhaseElectricalNetworkCalculationStrategy.
+	 * @param optionModelController the option model controller
+	 */
 	public UniPhaseElectricalNetworkCalculationStrategy(OptionModelController optionModelController) {
 		super(optionModelController);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy#getSlackNodeHandler()
+	 */
+	@Override
+	public UniPhaseElectricalSlackNodeHandler getSlackNodeHandler() {
+		if (slackNodeHandler==null) {
+			slackNodeHandler = new UniPhaseElectricalSlackNodeHandler(this);
+		}
+		return slackNodeHandler;
+	}
 
 	/* (non-Javadoc)
 	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#doNetworkCalculation(javax.swing.tree.DefaultMutableTreeNode, java.util.List, energygroup.calculation.FlowsMeasuredGroup)
@@ -63,8 +73,8 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	@Override
 	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup fmGroup) {
 		
-		String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.getSubAggregationConfiguration().getID();
-		String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.getSubAggregationConfiguration().getID();
+		String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.getSubNetworkConfiguration().getID();
+		String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.getSubNetworkConfiguration().getID();
 		
 		this.debugPrintLine(fmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
 
@@ -72,16 +82,15 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		if (isSkipNetworkCalculation==false) {
 		
 			// --- Update slack node voltage level for sensor data based calculations ---
-			this.updateSlackNodeVoltage();
+			this.getSlackNodeHandler().updateSlackNodeState();
 			
 			// --------------------------------------------------------------------------
 			// --- (Re) execute the phase dependent electrical network calculation ------
 			// --------------------------------------------------------------------------
 			this.getPowerFlowCalculationsFinalized().clear();
 			// --- Reset the slack node voltage level? ----------------------------------
-			if (this.isChangedSlackNodeVoltageLevel==true) {
-				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.AllPhases));
-				this.isChangedSlackNodeVoltageLevel = false;
+			if (this.getSlackNodeHandler().isChangedSlackNodeState()==true) {
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).setSlackNodeVoltageLevel(this.getSlackNodeHandler().getSlackNodeState());
 			}
 			// --- Reset the calculation parameter --------------------------------------
 			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.AllPhases).resetCalculationBase(currentParentNode, fmGroup);
@@ -128,14 +137,6 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		this.summarizeResults(fmGroup.getGlobalTimeTo());
 		// -- Done ----------------------------------------------------------------------
 		return fmSummarized;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy#getDefaultSlackNodeVoltage()
-	 */
-	@Override
-	protected double getDefaultSlackNodeVoltage() {
-		return this.defaultSlackNodeVoltage;
 	}
 	
 	/* (non-Javadoc)
@@ -409,7 +410,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		}
 
 		// --- Check all calculation results ----------------------------------
-		String domain = this.getSubAggregationConfiguration().getDomain();
+		String domain = this.getSubNetworkConfiguration().getDomain();
 		for (int i = 0; i < uKabs.size(); i++) {
 
 			int rowNumber = i+1;

@@ -12,9 +12,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
-import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
@@ -23,8 +21,6 @@ import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyUnitFactorPrefixSI;
-import energy.optionModel.FixedDouble;
-import energy.optionModel.FixedVariable;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemState;
@@ -52,9 +48,6 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	private HashMap<String, CableState> cableStates;
 	private HashMap<String, TechnicalSystemState> transformerStates;
 	
-	protected HashMap<Phase, Double> slackNodeVoltageLevel;
-	protected boolean isChangedSlackNodeVoltageLevel;
-
 	private List<String> sensorIDs;
 	
 	
@@ -65,7 +58,6 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	public AbstractElectricalNetworkCalculationStrategy(OptionModelController optionModelController) {
 		super(optionModelController);
 	}
-	
 	
 	/**
 	 * Returns the electrical node states and represents one result of this network calculation.
@@ -107,7 +99,7 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	 */
 	public NetworkModelToCsvMapper getNetworkModelToCsvMapper() {
 		if (networkModelToCsvMapper==null) {
-			DomainCluster domainCluster = this.getSubAggregationConfiguration().getDomainCluster();
+			DomainCluster domainCluster = this.getSubNetworkConfiguration().getDomainCluster();
 			networkModelToCsvMapper = new NetworkModelToCsvMapper(this.getNetworkModel(), domainCluster);
 		}
 		return networkModelToCsvMapper;
@@ -165,81 +157,10 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	}
 	
 	/**
-	 * Sets the slack node voltage level for all three phases of the network / transformer.
-	 * @param newVoltageLevel the new slack node voltage level
+	 * Has to return the current slack node handler.
+	 * @return the slack node handler
 	 */
-	public void setSlackNodeVoltageLevel(HashMap<Phase, Double> newSlackNodeVoltageLevel) {
-		this.slackNodeVoltageLevel = newSlackNodeVoltageLevel;
-		this.isChangedSlackNodeVoltageLevel = true;
-	}
-	/**
-	 * Returns the current slack node voltage level.
-	 * @return the slack node voltage level
-	 */
-	protected HashMap<Phase, Double> getSlackNodeVoltageLevel() {
-		if (slackNodeVoltageLevel==null) {
-			slackNodeVoltageLevel = new HashMap<>();
-			slackNodeVoltageLevel.put(Phase.L1, this.getDefaultSlackNodeVoltage());
-			slackNodeVoltageLevel.put(Phase.L2, this.getDefaultSlackNodeVoltage());
-			slackNodeVoltageLevel.put(Phase.L3, this.getDefaultSlackNodeVoltage());
-		}
-		return this.slackNodeVoltageLevel;
-	}
-	
-	/**
-	 * Has to return the default slack node voltage.
-	 * @return the default slack node voltage
-	 */
-	protected abstract double getDefaultSlackNodeVoltage();
-	
-	/**
-	 * Updates the slack node voltage level in case that the source of the data is based on sensor data.
-	 */
-	protected void updateSlackNodeVoltage() {
-
-		if (this.getAggregationHandler().getExecutionDataBase()==ExecutionDataBase.SensorData) {
-
-			// ---- Which sensor / sensor data? --------------------- 
-			SlackNodeDescription snDesc = this.getNetworkModelToCsvMapper().getSlackNodeVector().get(0);
-			NetworkComponent netCompSlackNode = this.getNetworkModel().getNetworkComponent(snDesc.getNetworkComponentID());
-
-			// --- Try to find a sensor Neighbor here -------------- 
-			String netCompIDSensor = null;
-			Vector<NetworkComponent> snNeighbours = this.getNetworkModel().getNeighbourNetworkComponents(netCompSlackNode);
-			for (int i = 0; i < snNeighbours.size(); i++) {
-				NetworkComponent snNeighbour = snNeighbours.get(i);
-				//TODO adjust type, add mv sensor?
-				if (snNeighbour.getType().equalsIgnoreCase("Sensor")==true) {
-					netCompIDSensor = snNeighbour.getId();
-					break;
-				}
-			}
-			
-			// --- Get the last TSSE from the corresponding sensor --
-			if (netCompIDSensor!=null) {
-				ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(netCompIDSensor);
-				
-				if (sc!=null && sc.getScheduleList().getSchedules().size()>0) {
-					HashMap<Phase,Double> newSlackNodeVoltageLevel = new HashMap<>();
-					Schedule schedule = sc.getScheduleList().getSchedules().get(0);
-					TechnicalSystemStateEvaluation tsseSensor = schedule.getTechnicalSystemStateEvaluation();
-					for (int i = 0; i < tsseSensor.getIOlist().size(); i++) {
-						FixedVariable fvIO = tsseSensor.getIOlist().get(i);
-						if(fvIO.getVariableID().equals("Voltage L1")) { //TODO UniPhase?
-							newSlackNodeVoltageLevel.put(Phase.L1, ((FixedDouble)fvIO).getValue());
-						}
-						if(fvIO.getVariableID().equals("Voltage L2")) {
-							newSlackNodeVoltageLevel.put(Phase.L2, ((FixedDouble)fvIO).getValue());
-						}
-						if(fvIO.getVariableID().equals("Voltage L3")) {
-							newSlackNodeVoltageLevel.put(Phase.L3, ((FixedDouble)fvIO).getValue());
-						}
-					} 
-					this.setSlackNodeVoltageLevel(newSlackNodeVoltageLevel);
-				}
-			}
-		}
-	}
+	public abstract AbstractSlackNodeHandler getSlackNodeHandler();
 
 	/**
 	 * Wait until the calculation is finalized.
@@ -325,10 +246,10 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 			sensorIDs = new ArrayList<>();
 			// --- List all available NetworkComponents --- 
 			Vector<NetworkComponent> netComps = null;
-			if (this.getSubAggregationConfiguration().getDomainCluster()==null) {
+			if (this.getSubNetworkConfiguration().getDomainCluster()==null) {
 				netComps = this.getAggregationHandler().getNetworkModel().getNetworkComponentVectorSorted();
 			} else {
-				netComps = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
+				netComps = this.getSubNetworkConfiguration().getDomainCluster().getNetworkComponents();
 			}
 			
 			for (int i = 0; i < netComps.size(); i++) {

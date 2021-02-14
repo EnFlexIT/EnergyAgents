@@ -1,5 +1,8 @@
 package de.enflexit.ea.core.dataModel;
 
+import energy.optionModel.FixedVariable;
+import energy.optionModel.TechnicalSystemStateEvaluation;
+
 /**
  * This class is intended to make constants that are required in different bundles globally available. 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
@@ -37,6 +40,37 @@ public final class GlobalHyGridConstants {
 	public static String BLACKBOARD_AGENT_NAME = "BlackBoardAgent";  
 	
 	
+	// ------------------------------------------
+	// --- GlobalElectricityConstants -----------
+	// ------------------------------------------
+	/**
+	 * The Class GlobalElectricityConstants.
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	public static final class GlobalElectricityConstants {
+		
+		/**
+		 * The enumeration GlobalTransformerMeasurements represents the globally known IO-variables of transformer.
+		 * If an implemented transformer will influence the slack node voltage level for a power flow calculation, the
+		 * produced system state (a {@link TechnicalSystemStateEvaluation}) should include the following enumeration
+		 * parts depending on the use case (three or only one electrical phase considered). Use the {@link #name()}
+		 * method of the enumeration to use a parts as variable name or variableID respectively.
+		 * 
+		 * @see FixedVariable#setVariableID(String)
+		 */
+		public enum GlobalTransformerMeasurements {
+			lvVoltageRealAllPhases, 
+			lvVoltageImagAllPhases,
+			
+			lvVoltageRealL1, 
+			lvVoltageImagL1,
+			lvVoltageRealL2, 
+			lvVoltageImagL2,
+			lvVoltageRealL3, 
+			lvVoltageImagL3
+		}
+		
+	}
 	
 	
 	// ------------------------------------------

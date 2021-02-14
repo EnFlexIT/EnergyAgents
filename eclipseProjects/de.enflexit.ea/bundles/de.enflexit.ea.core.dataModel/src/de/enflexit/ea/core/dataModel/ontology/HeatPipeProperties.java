@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: HeatPipeProperties
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class HeatPipeProperties extends PipeProperties{ 
 
    /**
-* Protege name: surrounding
+* Protege name: isolationThickness
    */
-   private PipeSurrounding surrounding;
-   public void setSurrounding(PipeSurrounding value) { 
-    this.surrounding=value;
+   private UnitValue isolationThickness;
+   public void setIsolationThickness(UnitValue value) { 
+    this.isolationThickness=value;
    }
-   public PipeSurrounding getSurrounding() {
-     return this.surrounding;
+   public UnitValue getIsolationThickness() {
+     return this.isolationThickness;
    }
 
    /**
@@ -34,14 +34,14 @@ public class HeatPipeProperties extends PipeProperties{
    }
 
    /**
-* Protege name: isolationThickness
+* Protege name: coatingThermalConductivity
    */
-   private UnitValue isolationThickness;
-   public void setIsolationThickness(UnitValue value) { 
-    this.isolationThickness=value;
+   private UnitValue coatingThermalConductivity;
+   public void setCoatingThermalConductivity(UnitValue value) { 
+    this.coatingThermalConductivity=value;
    }
-   public UnitValue getIsolationThickness() {
-     return this.isolationThickness;
+   public UnitValue getCoatingThermalConductivity() {
+     return this.coatingThermalConductivity;
    }
 
    /**
@@ -56,14 +56,14 @@ public class HeatPipeProperties extends PipeProperties{
    }
 
    /**
-* Protege name: coatingThermalConductivity
+* Protege name: surrounding
    */
-   private UnitValue coatingThermalConductivity;
-   public void setCoatingThermalConductivity(UnitValue value) { 
-    this.coatingThermalConductivity=value;
+   private PipeSurrounding surrounding;
+   public void setSurrounding(PipeSurrounding value) { 
+    this.surrounding=value;
    }
-   public UnitValue getCoatingThermalConductivity() {
-     return this.coatingThermalConductivity;
+   public PipeSurrounding getSurrounding() {
+     return this.surrounding;
    }
 
 }

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class FlexibilityOffer extends GridStateControl{ 
 
@@ -23,14 +23,25 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: possibleVoltageAdjustment
+* Protege name: possiblePowerImag
    */
-   private float possibleVoltageAdjustment;
-   public void setPossibleVoltageAdjustment(float value) { 
-    this.possibleVoltageAdjustment=value;
+   private float possiblePowerImag;
+   public void setPossiblePowerImag(float value) { 
+    this.possiblePowerImag=value;
    }
-   public float getPossibleVoltageAdjustment() {
-     return this.possibleVoltageAdjustment;
+   public float getPossiblePowerImag() {
+     return this.possiblePowerImag;
+   }
+
+   /**
+* Protege name: possiblePowerReal
+   */
+   private float possiblePowerReal;
+   public void setPossiblePowerReal(float value) { 
+    this.possiblePowerReal=value;
+   }
+   public float getPossiblePowerReal() {
+     return this.possiblePowerReal;
    }
 
    /**
@@ -56,25 +67,14 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: possiblePowerReal
+* Protege name: possibleVoltageAdjustment
    */
-   private float possiblePowerReal;
-   public void setPossiblePowerReal(float value) { 
-    this.possiblePowerReal=value;
+   private float possibleVoltageAdjustment;
+   public void setPossibleVoltageAdjustment(float value) { 
+    this.possibleVoltageAdjustment=value;
    }
-   public float getPossiblePowerReal() {
-     return this.possiblePowerReal;
-   }
-
-   /**
-* Protege name: possiblePowerImag
-   */
-   private float possiblePowerImag;
-   public void setPossiblePowerImag(float value) { 
-    this.possiblePowerImag=value;
-   }
-   public float getPossiblePowerImag() {
-     return this.possiblePowerImag;
+   public float getPossibleVoltageAdjustment() {
+     return this.possibleVoltageAdjustment;
    }
 
 }

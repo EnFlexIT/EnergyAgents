@@ -1,29 +1,23 @@
 package de.enflexit.ea.electricity.aggregation.triPhase;
 
 import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.awb.env.networkModel.NetworkComponent;
+
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationPreprocessor;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
-import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
-import de.enflexit.ea.core.dataModel.ontology.SlackNodeSetVoltageLevelNotification;
-import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
+import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
-import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.EnergyCarrier;
-import energygroup.GroupController;
 import jade.core.AID;
 
 /**
@@ -35,9 +29,7 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 
 	public static final String SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS = "Electrical Distribution Grid - Three Phase, 230 V";
 	
-	private static final float VOLTAGE_BAND_MIN = 0;
-	private static final float VOLTAGE_BAND_MAX = 1000;
-	
+
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getSubnetworkID()
 	 */
@@ -123,39 +115,8 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 	 */
 	@Override
 	public boolean onNetworkStateInformation(AID sender, NetworkStateInformation networkStateInformation) {
-		
-		if (networkStateInformation instanceof SlackNodeSetVoltageLevelNotification && this.getDomainCluster().isPartOfDomainCluster(sender.getLocalName())==true) {
-			// --- Cast to SlackNodeSetVoltageLevel and set new voltage level -------
-			SlackNodeSetVoltageLevelNotification snvl = (SlackNodeSetVoltageLevelNotification) networkStateInformation;
-			
-			double slackNodeVoltage = snvl.getVoltageAbs().getValue();
-			
-			if (slackNodeVoltage>=VOLTAGE_BAND_MIN && slackNodeVoltage<VOLTAGE_BAND_MAX) {
-				// --- Find the corresponding calculation strategy ---------------------- 
-				String subnetworkDescription = SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-				List<AbstractSubNetworkConfiguration> subnetConfigList = this.getAggregationHandler().getSubNetworkConfiguration(subnetworkDescription);
-				for (int i = 0; i < subnetConfigList.size(); i++) {
-					
-					// --- Check if the aggregator contains the sender system -----------
-					GroupController groupController = this.getSubAggregationBuilder().getGroupController();
-					DefaultMutableTreeNode treeNode = groupController.getGroupTreeModel().getGroupTreeNodeByNetworkID(sender.getLocalName());
-					if (treeNode==null) continue;
-					
-					// --- Put slack node voltage level to network calculation strategy - 
-					AbstractElectricalNetworkCalculationStrategy netClacStrategy = (AbstractElectricalNetworkCalculationStrategy) this.getNetworkCalculationStrategy();
-					if (netClacStrategy!=null) {
-						HashMap<Phase, Double> slackNodeVoltageLevel = new HashMap<>();
-						slackNodeVoltageLevel.put(Phase.L1, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L2, (double) snvl.getVoltageAbs().getValue());
-						slackNodeVoltageLevel.put(Phase.L3, (double) snvl.getVoltageAbs().getValue());
-						netClacStrategy.setSlackNodeVoltageLevel(slackNodeVoltageLevel);
-						break;
-					}
-				}
-				return true;
-			}
-			
-		}
+		// --- Previously, the handling of the 'SlackNodeSetVoltageLevelNotification' could be found here ---
+		// --- => Removed since the improvements on the transformer model and handling ----------------------
 		return false;
 	}
 	

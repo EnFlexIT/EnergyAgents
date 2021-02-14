@@ -411,7 +411,6 @@ public class NetworkModelToCsvMapper {
 				// --- Remind transformer / slack node ------------------------
 				if (netComp.getType().equals("Transformer") || netComp.getType().equals("TransformerControllable") || netComp.getType().equals("SlackNode")) {
 					this.getSlackNodeVector().add(new SlackNodeDescription(nodeNumber, netComp.getId()));
-					
 				}
 				
 				// --- Increase rowBumber -------------------------------------

@@ -8,9 +8,20 @@ import jade.core.*;
 /**
 * Protege name: PipeSurrounding
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class PipeSurrounding implements Concept {
+
+   /**
+* Protege name: surroundingThermalConductivity
+   */
+   private float surroundingThermalConductivity;
+   public void setSurroundingThermalConductivity(float value) { 
+    this.surroundingThermalConductivity=value;
+   }
+   public float getSurroundingThermalConductivity() {
+     return this.surroundingThermalConductivity;
+   }
 
    /**
    * Surrounding temperature
@@ -22,17 +33,6 @@ public class PipeSurrounding implements Concept {
    }
    public UnitValue getSurroundingTemperature() {
      return this.surroundingTemperature;
-   }
-
-   /**
-* Protege name: surroundingThermalConductivity
-   */
-   private float surroundingThermalConductivity;
-   public void setSurroundingThermalConductivity(float value) { 
-    this.surroundingThermalConductivity=value;
-   }
-   public float getSurroundingThermalConductivity() {
-     return this.surroundingThermalConductivity;
    }
 
 }

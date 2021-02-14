@@ -8,7 +8,7 @@ import jade.core.*;
    * This class describes static properties of an edge component in a network model
 * Protege name: EdgeComponentProperties
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class EdgeComponentProperties extends StaticComponentProperties{ 
 

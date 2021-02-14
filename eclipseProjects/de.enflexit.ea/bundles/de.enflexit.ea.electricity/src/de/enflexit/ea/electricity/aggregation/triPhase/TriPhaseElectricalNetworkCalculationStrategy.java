@@ -27,7 +27,6 @@ import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculati
 import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
-
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.EnergyFlowMeasured;
@@ -46,20 +45,35 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
  */
 public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	
-	private double defaultSlackNodeVoltage = 400/Math.sqrt(3);
-
+	private TriPhaseElectricalSlackNodeHandler slackNodeHandler;
+	
+	/**
+	 * Instantiates a new TriPhaseElectricalNetworkCalculationStrategy.
+	 * @param optionModelController the option model controller
+	 */
 	public TriPhaseElectricalNetworkCalculationStrategy(OptionModelController optionModelController) {
 		super(optionModelController);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy#getSlackNodeHandler()
+	 */
+	@Override
+	public TriPhaseElectricalSlackNodeHandler getSlackNodeHandler() {
+		if (slackNodeHandler==null) {
+			slackNodeHandler = new TriPhaseElectricalSlackNodeHandler(this);
+		}
+		return slackNodeHandler;
+	}
+	
 	/* (non-Javadoc)
 	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#doNetworkCalculation(javax.swing.tree.DefaultMutableTreeNode, java.util.List, energygroup.calculation.FlowsMeasuredGroup)
 	 */
 	@Override
 	public FlowsMeasuredGroupMember doNetworkCalculation(DefaultMutableTreeNode currentParentNode, List<TechnicalInterface> outerInterfaces, FlowsMeasuredGroup efmGroup) {
 		
-		String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.getSubAggregationConfiguration().getID();
-		String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.getSubAggregationConfiguration().getID();
+		String netCalcID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_NETWORK_CALCULATION + this.getSubNetworkConfiguration().getID();
+		String flowSumID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_FLOW_SUMMARIZATION + this.getSubNetworkConfiguration().getID();
 
 		this.debugPrintLine(efmGroup.getGlobalTimeTo(), "Execute network calculation in '" + this.getClass().getSimpleName() + "'");
 		
@@ -67,18 +81,17 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		if (isSkipNetworkCalculation==false) {
 			
 			// --- Update slack node voltage level for sensor data based calculations ---
-			this.updateSlackNodeVoltage();
+			this.getSlackNodeHandler().updateSlackNodeState();
 			
 			// --------------------------------------------------------------------------
 			// --- (Re) execute the phase dependent electrical network calculation ------
 			// --------------------------------------------------------------------------
 			this.getPowerFlowCalculationsFinalized().clear();
 			// --- Reset the slack node voltage level? ----------------------------------
-			if (this.isChangedSlackNodeVoltageLevel==true) {
-				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L1));
-				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L2));
-				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).setSlackNodeVoltageLevel(this.getSlackNodeVoltageLevel().get(Phase.L3));
-				this.isChangedSlackNodeVoltageLevel = false;
+			if (this.getSlackNodeHandler().isChangedSlackNodeState()==true) {
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).setSlackNodeVoltageLevel(this.getSlackNodeHandler().getSlackNodeState().getSlackNodeStateL1());
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L2).setSlackNodeVoltageLevel(this.getSlackNodeHandler().getSlackNodeState().getSlackNodeStateL2());
+				this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L3).setSlackNodeVoltageLevel(this.getSlackNodeHandler().getSlackNodeState().getSlackNodeStateL3());
 			}
 			// --- Reset the calculation parameter --------------------------------------
 			this.getPowerFlowCalculationThread(Thread.currentThread(), Phase.L1).resetCalculationBase(currentParentNode, efmGroup);
@@ -126,10 +139,6 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		return efmSummarized;
 	}
 	
-	@Override
-	protected double getDefaultSlackNodeVoltage() {
-		return this.defaultSlackNodeVoltage;
-	}
 	
 	/**
 	 * Creates the {@link DisplayAgentNotificationGraph} from the power flow calculation results.
@@ -389,7 +398,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		}
 
 		// --- Check all calculation results ----------------------------------
-		String domain = this.getSubAggregationConfiguration().getDomain();
+		String domain = this.getSubNetworkConfiguration().getDomain();
 		for (int i = 0; i < this.getArrayLength(uKabs_L1, uKabs_L2, uKabs_L3); i++) {
 
 			int rowNumber = i+1;

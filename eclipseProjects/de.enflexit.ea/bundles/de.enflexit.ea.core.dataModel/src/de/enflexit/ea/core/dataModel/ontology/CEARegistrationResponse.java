@@ -8,7 +8,7 @@ import jade.core.*;
    * The response that is send to registered agents by the CEA
 * Protege name: CEARegistrationResponse
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class CEARegistrationResponse extends TestbedAgentManagement{ 
 

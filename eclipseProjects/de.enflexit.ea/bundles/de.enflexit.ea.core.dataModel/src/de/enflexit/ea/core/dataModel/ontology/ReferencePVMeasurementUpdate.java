@@ -8,7 +8,7 @@ import jade.core.*;
    * Measurement Update of reference PV Measurement
 * Protege name: ReferencePVMeasurementUpdate
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class ReferencePVMeasurementUpdate extends GridStateAgentManagement{ 
 

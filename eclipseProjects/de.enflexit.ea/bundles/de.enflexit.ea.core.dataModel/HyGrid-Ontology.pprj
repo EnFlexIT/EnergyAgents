@@ -1,4 +1,4 @@
-; Wed Feb 10 00:53:02 CET 2021
+; Mon Feb 15 14:55:46 CET 2021
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -19,7 +19,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [HyGrid-Ontology_ProjectKB_Instance_20144]))
+	(properties [HyGrid-Ontology_ProjectKB_Instance_30177]))
 
 ([CLSES_TAB] of  Widget
 
@@ -208,25 +208,6 @@
 ([HyGrid-Ontology_ProjectKB_Instance_170] of  Property_List
 )
 
-([HyGrid-Ontology_ProjectKB_Instance_20144] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([HyGrid-Ontology_ProjectKB_Instance_20145] of  Map_Entry
-
-	(key "change_tracking_active")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
-([HyGrid-Ontology_ProjectKB_Instance_20146] of  Map_Entry
-
-	(key "add_name_on_instance_form")
-	(key_class "java.lang.String")
-	(value "false")
-	(value_class "java.lang.String"))
-
 ([HyGrid-Ontology_ProjectKB_Instance_20160] of  Property_List
 )
 
@@ -413,8 +394,27 @@
 ([HyGrid-Ontology_ProjectKB_Instance_221] of  Map
 
 	(entries
-		[HyGrid-Ontology_ProjectKB_Instance_20145]
-		[HyGrid-Ontology_ProjectKB_Instance_20146]))
+		[HyGrid-Ontology_ProjectKB_Instance_30178]
+		[HyGrid-Ontology_ProjectKB_Instance_30179]))
+
+([HyGrid-Ontology_ProjectKB_Instance_30177] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([HyGrid-Ontology_ProjectKB_Instance_30178] of  Map_Entry
+
+	(key "change_tracking_active")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
+
+([HyGrid-Ontology_ProjectKB_Instance_30179] of  Map_Entry
+
+	(key "add_name_on_instance_form")
+	(key_class "java.lang.String")
+	(value "false")
+	(value_class "java.lang.String"))
 
 ([INSTANCE_ANNOTATION_FORM_WIDGET] of  Widget
 

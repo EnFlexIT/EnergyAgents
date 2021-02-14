@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowCalculation.ActiveReactivePowerPair;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
@@ -39,7 +40,6 @@ public class PowerFlowCalculationThread extends Thread {
 
 	public static final String POWER_FLOW_CALCULATION_CLASS = "PowerFlowCalculationClass";
 	
-	private boolean debug = false;
 	private boolean shutdown = false;
 	
 	private Phase phase;
@@ -99,7 +99,9 @@ public class PowerFlowCalculationThread extends Thread {
 			}
 			
 			if (matNodeSetup!=null & matGridData!=null) {
-				powerFlowParameter = new PowerFlowParameter(matNodeSetup, matGridData, nSlackNode, this.calculationStrategy.getDefaultSlackNodeVoltage());
+				// --- Get the SlackNodeState --------------
+				UniPhaseSlackNodeState upsns = this.calculationStrategy.getSlackNodeHandler().getSlackNodeState(this.phase);
+				powerFlowParameter = new PowerFlowParameter(matNodeSetup, matGridData, nSlackNode, upsns.getVoltageReal().getValue(), upsns.getVoltageImag().getValue());
 				// --- Set the transformer/slack node to the parameter ------------
 				if (slackNodeVector!=null) {
 					if (slackNodeVector.size() > 1) {
@@ -111,14 +113,16 @@ public class PowerFlowCalculationThread extends Thread {
 		}
 		return powerFlowParameter;
 	}
+	
 	/**
 	 * Sets the slack node voltage level.
-	 * @param newVoltageLevel the new slack node voltage level
+	 * @param slackNodeState the new slack node voltage level
 	 */
-	public void setSlackNodeVoltageLevel(double newVoltageLevel) {
+	public void setSlackNodeVoltageLevel(UniPhaseSlackNodeState slackNodeState) {
 		PowerFlowParameter powerFlowPara = this.getPowerFlowParameter();
 		if (powerFlowPara!=null) {
-			powerFlowPara.setdSlackVoltage(newVoltageLevel);
+			powerFlowPara.setdSlackVoltageImag(slackNodeState.getVoltageImag().getValue());
+			powerFlowPara.setdSlackVoltageReal(slackNodeState.getVoltageReal().getValue());
 		}
 	}
 	/**
@@ -137,7 +141,7 @@ public class PowerFlowCalculationThread extends Thread {
 		if (powerFlowCalculation==null) {
 			PowerFlowParameter powerFlowPara = this.getPowerFlowParameter();
 			if (powerFlowPara!=null) {
-				powerFlowCalculation = (AbstractPowerFlowCalculation) this.calculationStrategy.getSubAggregationConfiguration().getUserClassInstance(POWER_FLOW_CALCULATION_CLASS);
+				powerFlowCalculation = (AbstractPowerFlowCalculation) this.calculationStrategy.getSubNetworkConfiguration().getUserClassInstance(POWER_FLOW_CALCULATION_CLASS);
 				powerFlowCalculation.setPowerFlowParameter(powerFlowPara);
 			}
 		}
@@ -181,10 +185,6 @@ public class PowerFlowCalculationThread extends Thread {
 			try {
 				// --- Try-Catch block for the calculation ----------
 				if (this.currentParentNode!=null && this.efmGroup!=null) {
-					//TODO: remove this debugging block
-					if (this.calculationStrategy.getAggregationHandler().getClass().getSimpleName().equals("DecisionAggregationHandler") && this.debug ) {
-						System.out.println("executing calculation for DecionAgrHandler "+this);
-					}
 					// --- Do the actual calculation now ------------ 
 					HashMap<Integer, ActiveReactivePowerPair> powerPairs = this.getPowerPairsForPhase(this.currentParentNode, this.efmGroup);
 					if (this.getPowerFlowCalculation()!=null) {

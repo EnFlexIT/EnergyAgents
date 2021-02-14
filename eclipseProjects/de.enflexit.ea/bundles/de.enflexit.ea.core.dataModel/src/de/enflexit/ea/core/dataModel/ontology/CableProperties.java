@@ -7,9 +7,32 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class CableProperties extends EdgeComponentProperties{ 
+
+   /**
+* Protege name: din
+   */
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
+   }
+   public String getDin() {
+     return this.din;
+   }
+
+   /**
+   * The linear capacitance of this medium voltage cable.
+* Protege name: linearCapacitance
+   */
+   private UnitValue linearCapacitance;
+   public void setLinearCapacitance(UnitValue value) { 
+    this.linearCapacitance=value;
+   }
+   public UnitValue getLinearCapacitance() {
+     return this.linearCapacitance;
+   }
 
    /**
 * Protege name: dim
@@ -20,17 +43,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public String getDim() {
      return this.dim;
-   }
-
-   /**
-* Protege name: linearResistance
-   */
-   private UnitValue linearResistance;
-   public void setLinearResistance(UnitValue value) { 
-    this.linearResistance=value;
-   }
-   public UnitValue getLinearResistance() {
-     return this.linearResistance;
    }
 
    /**
@@ -56,6 +68,17 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
+* Protege name: length
+   */
+   private UnitValue length;
+   public void setLength(UnitValue value) { 
+    this.length=value;
+   }
+   public UnitValue getLength() {
+     return this.length;
+   }
+
+   /**
    * The linear conductance of this medium voltage cable.
 * Protege name: linearConductance
    */
@@ -68,37 +91,14 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: length
+* Protege name: linearResistance
    */
-   private UnitValue length;
-   public void setLength(UnitValue value) { 
-    this.length=value;
+   private UnitValue linearResistance;
+   public void setLinearResistance(UnitValue value) { 
+    this.linearResistance=value;
    }
-   public UnitValue getLength() {
-     return this.length;
-   }
-
-   /**
-   * The linear capacitance of this medium voltage cable.
-* Protege name: linearCapacitance
-   */
-   private UnitValue linearCapacitance;
-   public void setLinearCapacitance(UnitValue value) { 
-    this.linearCapacitance=value;
-   }
-   public UnitValue getLinearCapacitance() {
-     return this.linearCapacitance;
-   }
-
-   /**
-* Protege name: din
-   */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
-   }
-   public String getDin() {
-     return this.din;
+   public UnitValue getLinearResistance() {
+     return this.linearResistance;
    }
 
 }

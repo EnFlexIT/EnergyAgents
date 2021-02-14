@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ElectricalPower
 * @author ontology bean generator
-* @version 2021/02/9, 23:45:16
+* @version 2021/02/15, 12:09:03
 */
 public class ElectricalPower extends Power{ 
-
-   /**
-* Protege name: current
-   */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
-   }
-   public UnitValue getCurrent() {
-     return this.current;
-   }
 
    /**
 * Protege name: voltageAbs
@@ -31,6 +20,17 @@ public class ElectricalPower extends Power{
    }
    public UnitValue getVoltageAbs() {
      return this.voltageAbs;
+   }
+
+   /**
+* Protege name: current
+   */
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
+   }
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
 }

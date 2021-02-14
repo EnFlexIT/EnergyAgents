@@ -45,7 +45,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	private boolean debug = false;
 	
 	private AbstractAggregationHandler aggregationHandler;
-	private AbstractSubNetworkConfiguration subAggregationConfiguration;
+	private AbstractSubNetworkConfiguration subNetworkConfiguration;
 	
 	private NetworkModel networkModel;
 	private long evaluationStepEndTime;
@@ -67,7 +67,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	 * @return the domain
 	 */
 	protected String getDomain() {
-		return this.subAggregationConfiguration.getDomain();
+		return this.subNetworkConfiguration.getDomain();
 	}
 	
 	/**
@@ -87,17 +87,17 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	
 	/**
 	 * Sets the current sub aggregation configuration.
-	 * @param subAggregationConfiguration the new sub aggregation configuration
+	 * @param subNetworkConfiguration the new sub aggregation configuration
 	 */
-	public void setSubAggregationConfiguration(AbstractSubNetworkConfiguration subAggregationConfiguration) {
-		this.subAggregationConfiguration = subAggregationConfiguration;
+	public void setSubNetworkConfiguration(AbstractSubNetworkConfiguration subNetworkConfiguration) {
+		this.subNetworkConfiguration = subNetworkConfiguration;
 	}
 	/**
 	 * Returns the current sub aggregation configuration.
 	 * @return the sub aggregation configuration
 	 */
-	public AbstractSubNetworkConfiguration getSubAggregationConfiguration() {
-		return subAggregationConfiguration;
+	public AbstractSubNetworkConfiguration getSubNetworkConfiguration() {
+		return subNetworkConfiguration;
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	 * @return the time step configured
 	 */
 	protected long getTimeStepConfigured() {
-		AbstractSubAggregationBuilder subAggregationBuilder = this.getSubAggregationConfiguration().getSubAggregationBuilder();
+		AbstractSubAggregationBuilder subAggregationBuilder = this.getSubNetworkConfiguration().getSubAggregationBuilder();
 		return subAggregationBuilder.getTimeStepConfigured();
 	}
 	/**
@@ -163,7 +163,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	 * Does the preprocessing.
 	 */
 	private void doPreprocessing() {
-		AbstractNetworkCalculationPreprocessor preProcessor = this.getSubAggregationConfiguration().getNetworkCalculationPreprocessor();
+		AbstractNetworkCalculationPreprocessor preProcessor = this.getSubNetworkConfiguration().getNetworkCalculationPreprocessor();
 		if (preProcessor!=null) {
 			try {
 				preProcessor.doPreprocessing(this.getEvaluationStepEndTime());
@@ -200,7 +200,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		
 		// --- Check / do the preprocessing (e.g. a state estimation --------------------
-		String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING + this.getSubAggregationConfiguration().getID();
+		String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING + this.getSubNetworkConfiguration().getID();
 		this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
 		this.doPreprocessing();
 		this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
@@ -219,7 +219,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 			// --------------------------------------------------------------------------
 			// --- Get the possible subsequent steps and states -------------------------
 			// --------------------------------------------------------------------------
-			String delatStepID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL + this.getSubAggregationConfiguration().getID();
+			String delatStepID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL + this.getSubNetworkConfiguration().getID();
 			this.aggregationHandler.setPerformanceMeasurementStarted(delatStepID);
 			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, duration, rebuildDecisionGraph);
 			this.aggregationHandler.setPerformanceMeasurementFinalized(delatStepID);
@@ -490,7 +490,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	 * @return the sub blackboard model
 	 */
 	protected AbstractSubBlackboardModel getSubBlackboardModel() {
-		return this.getSubAggregationConfiguration().getSubBlackboardModel();
+		return this.getSubNetworkConfiguration().getSubBlackboardModel();
 	}
 	
 }
