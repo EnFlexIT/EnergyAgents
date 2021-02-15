@@ -241,7 +241,12 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 						this.waitForEvaluationProcess(ep);
 						// --- Get resulting schedule -------------------------
 						ScheduleList scheduleList = ep.getEvaluationResults();
-						scheduleToUse = scheduleList.getSchedules().get(0);
+						if (scheduleList.getSchedules().size()>0) {
+							scheduleToUse = scheduleList.getSchedules().get(0);
+						} else {
+							scheduleToUse = null;
+						}
+						
 						// --- Start a queue keeper? ------------------
 						if (requiresStateQueueKeeper==true) {
 							this.setStateQueueKeeper(new StateQueueKeeperTechnicalSystemGroup(this, this.getConnectorToSystemStateDispatcher()));
