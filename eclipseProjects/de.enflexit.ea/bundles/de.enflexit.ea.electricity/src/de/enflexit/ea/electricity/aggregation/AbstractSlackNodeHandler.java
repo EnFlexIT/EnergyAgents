@@ -329,7 +329,7 @@ public abstract class AbstractSlackNodeHandler {
 			// --- Compare with old state ------- 
 			SlackNodeState oldSlackNodeState = this.getSlackNodeState();
 			if (newSlackNodeState.equals(oldSlackNodeState)==false) {
-				this.setSlackNodeState(oldSlackNodeState);
+				this.setSlackNodeState(newSlackNodeState);
 				this.setChangedSlackNodeState(true);
 			}
 		}
