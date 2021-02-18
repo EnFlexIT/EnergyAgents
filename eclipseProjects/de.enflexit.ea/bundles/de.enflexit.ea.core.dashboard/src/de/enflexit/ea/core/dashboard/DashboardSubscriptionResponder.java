@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
@@ -12,6 +11,7 @@ import org.awb.env.networkModel.NetworkModel;
 
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.dashboard.DashboardSubscription.SubscriptionBy;
@@ -128,10 +128,10 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder implem
 				}
 			}
 		} else if (dashboardSubscription.getSubscriptionFor() == SubscriptionFor.DOMAIN_DATAMODEL_STATE) {
-			NetworkModel aggregationModel = subNetworkConfiguration.getSubNetworkModel();
 			for (int i=0; i<dashboardSubscription.getSubscriptionSpecifiers().size(); i++) {
+				
 				String componentID = dashboardSubscription.getSubscriptionSpecifiers().get(i);
-				DynamicComponentState componentState = this.getStateObjectFromNetworkComponent(componentID, aggregationModel, dashboardSubscription.getDomain());
+				DynamicComponentState componentState = this.getStateObjectForNetworkComponent(componentID, subNetworkConfiguration);
 				if (componentState!=null) {
 					dashboardUpdate.getUpdateObjects().put(componentID, componentState);
 				}
@@ -143,47 +143,24 @@ public class DashboardSubscriptionResponder extends SubscriptionResponder implem
 	}
 	
 	/**
-	 * Gets the state object from the given network component.
-	 * @param networkComponent the network component
+	 * Gets the calculated state object for a network component from the aggregation's {@link AbstractNetworkCalculationStrategy}.
 	 * @param networkModel the network model
-	 * @param domain the domain of interest
-	 * @return the state object
+	 * @param componentID the component ID
+	 * @param subNetworkConfiguration the sub network configuration
+	 * @return the state object for network component
 	 */
-	private DynamicComponentState getStateObjectFromNetworkComponent(String componentID, NetworkModel networkModel, String domain) {
-		
-		NetworkComponent networkComponent = networkModel.getNetworkComponent(componentID);
-		
+	private DynamicComponentState getStateObjectForNetworkComponent(String componentID, AbstractSubNetworkConfiguration subNetworkConfiguration) {
 		DynamicComponentState componentState = null;
-		Object dataModelObject = null;
-		Object[] dataModelArray = null;
-		List<GraphElement> graphElements = networkModel.getGraphElementsFromNetworkComponent(networkComponent);
+		// --- Get the graph elements for the specified network component -----
+		List<GraphElement> graphElements = subNetworkConfiguration.getSubNetworkModel().getGraphElementsFromNetworkComponent(subNetworkConfiguration.getSubNetworkModel().getNetworkComponent(componentID));
 		if (graphElements.size()==1) {
-			// --- Distribution node -> get data model from the node ----------
+			// --- Node component -> use the graph node ID -------------------- 
 			GraphNode graphNode = (GraphNode) graphElements.get(0);
-			dataModelObject = graphNode.getDataModel();
+			componentState = subNetworkConfiguration.getNetworkCalculationStrategy().getNodeStates().get(graphNode.getId());
 		} else {
-			// --- Edge component -> get the data model from the component ---- 
-			dataModelObject = networkComponent.getDataModel();
+			// --- Edge component -> use the component ID directly ------------
+			componentState = subNetworkConfiguration.getNetworkCalculationStrategy().getEdgeStates().get(componentID);
 		}
-		
-		// --- Handle Object[] or TreeMap based data models -------------------
-		if (dataModelObject!=null) {
-			if (dataModelObject instanceof TreeMap<?, ?>) {
-				@SuppressWarnings("unchecked")
-				TreeMap<String, Object[]> dmTreeMap = (TreeMap<String, Object[]>) dataModelObject;
-				dataModelArray = dmTreeMap.get(domain);
-			} else {
-				dataModelArray = (Object[]) dataModelObject;
-			}
-		}
-
-		// --- Get the state object from the data model -----------------------
-		if (dataModelArray!=null) {
-			componentState = (DynamicComponentState) dataModelArray[1];
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Couldn't get state data model from network component " + networkComponent.getId());
-		}
-		
 		return componentState;
 	}
 	
