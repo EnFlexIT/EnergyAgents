@@ -14,6 +14,7 @@ import org.awb.env.networkModel.helper.DomainCluster;
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
+import de.enflexit.ea.core.dataModel.ontology.EdgeComponentState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import energy.OptionModelController;
@@ -59,9 +60,8 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		super(optionModelController);
 	}
 	
-	/**
-	 * Returns the electrical node states and represents one result of this network calculation.
-	 * @return the electrical node states
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy#getNodeStates()
 	 */
 	public HashMap<String, ElectricalNodeState> getNodeStates() {
 		if (nodeStates == null) {
@@ -69,6 +69,15 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		}
 		return nodeStates;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy#getEdgeStates()
+	 */
+	@Override
+	public HashMap<String, ? extends EdgeComponentState> getEdgeStates() {
+		return this.getCableStates();
+	}
+
 	/**
 	 * Returns the network component states and represents one result of this network calculation.
 	 * @return the network component states

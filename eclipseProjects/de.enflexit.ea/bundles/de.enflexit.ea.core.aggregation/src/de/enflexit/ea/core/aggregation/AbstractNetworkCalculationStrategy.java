@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.aggregation;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -9,6 +10,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
+import de.enflexit.ea.core.dataModel.ontology.EdgeComponentState;
+import de.enflexit.ea.core.dataModel.ontology.NodeComponentState;
 import energy.OptionModelController;
 import energy.evaluation.EvaluationProcess;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
@@ -125,6 +128,18 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		}
 		return this.networkModel;
 	}
+	
+	/**
+	 * Gets the calculated node states.
+	 * @return the node states
+	 */
+	public abstract HashMap<String, ? extends NodeComponentState> getNodeStates();
+	
+	/**
+	 * Gets the calculated edge states.
+	 * @return the edge states
+	 */
+	public abstract HashMap<String, ? extends EdgeComponentState> getEdgeStates();
 	
 	/**
 	 * Returns the time step that is configured with the HyGird setup.
