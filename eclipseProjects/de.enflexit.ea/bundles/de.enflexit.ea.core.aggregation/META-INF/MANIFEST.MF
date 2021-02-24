@@ -21,4 +21,5 @@ Require-Bundle: de.enflexit.common,
  org.awb.env.networkModel,
  de.enflexit.eom.core,
  de.enflexit.ea.core.dataModel,
- de.enflexit.ea.core.awbIntegration
+ de.enflexit.ea.core.awbIntegration,
+ org.agentgui.lib.jung

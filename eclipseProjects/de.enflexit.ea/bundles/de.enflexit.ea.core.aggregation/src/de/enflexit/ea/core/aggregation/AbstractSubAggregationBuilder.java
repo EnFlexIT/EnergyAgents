@@ -11,6 +11,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import agentgui.core.application.Application;
@@ -19,6 +21,7 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import edu.uci.ics.jung.graph.SparseGraph;
 import energy.OptionModelController;
 import energy.optionModel.Duration;
 import energy.optionModel.EnergyFlowGeneral;
@@ -175,6 +178,9 @@ public abstract class AbstractSubAggregationBuilder {
 		this.getAggregationHandler().getExecutedBuilds().remove(this);
 	}
 	
+	/**
+	 * Show the visualization of the aggregation.
+	 */
 	protected void showVisualization() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -297,16 +303,121 @@ public abstract class AbstractSubAggregationBuilder {
 	}
 	
 	/**
-	 * Returns the initial network model.
-	 * @return the initial network model
+	 * Gets the reduced network model, containing only components that belong to the aggregation.
+	 * @return the aggregation network model
 	 */
-	protected NetworkModel getNetworkModel() {
+	protected NetworkModel getAggregationNetworkModel() {
 		if (networkModel==null) {
-			networkModel = this.getAggregationHandler().getNetworkModel();
-			// TODO Extract the sub network model 
+			// --- Build the network model based on the aggregation's domain cluster ----
+			networkModel = this.buildAggregationNetworkModel();
+			
+			// --- If not available, use  the original network model as fallback --------
+			if (networkModel==null) {
+				networkModel = this.getOriginalNetworkModel();
+			}
 		}
 		return networkModel;
 	}
+	
+	/**
+	 * Gets the original network model, containing all network components.
+	 * @return the original network model
+	 */
+	private NetworkModel getOriginalNetworkModel() {
+		return this.getAggregationHandler().getNetworkModel();
+	}
+	
+	/**
+	 * Built the network model for the aggregation.
+	 * @return the network model
+	 */
+	private NetworkModel buildAggregationNetworkModel() {
+		NetworkModel aggregationNetworkModel = null;
+		
+		// --- Check if the domain cluster for the aggregation exists and contains network components
+		if (this.getSubAggregationConfiguration().getDomainCluster()!=null && this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents().size()>0) {
+			// --- Prepare the network model for the aggregation --------------
+			aggregationNetworkModel = new NetworkModel();
+			aggregationNetworkModel.setGeneralGraphSettings4MAS(this.getOriginalNetworkModel().getGeneralGraphSettings4MAS());
+			aggregationNetworkModel.setGraph(new SparseGraph<GraphNode, GraphEdge>());
+			aggregationNetworkModel.setLayoutID(this.getOriginalNetworkModel().getLayoutID());
+			
+			// --- Add the initial network component --------------------------
+			NetworkComponent initialComponent = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents().get(0);
+			if (this.getOriginalNetworkModel().getGraphElementsFromNetworkComponent(initialComponent).size()==1) {
+				GraphNode initialNode =  (GraphNode) this.getOriginalNetworkModel().getGraphElementsFromNetworkComponent(initialComponent).get(0);
+				aggregationNetworkModel.addNetworkComponent(initialComponent, false);
+				aggregationNetworkModel.getGraph().addVertex(initialNode);
+				aggregationNetworkModel.addGraphElementToNetworkComponentRelation(initialNode, initialComponent);
+				
+				// --- Check the adjacent edges of the initial node -----------
+				this.addAdjacentEdgesRecursively(initialNode, aggregationNetworkModel);
+				
+			} else {
+				//TODO handle complex components 
+			}
+			aggregationNetworkModel.refreshGraphElements();
+		}
+		
+		return aggregationNetworkModel;
+	}
+	
+	/**
+	 * This method the adjacent edges recursively (depth first graph traversal). For all adjacent edges of the specified node,
+	 * this method will check the opposite node. If it is part of the domain cluster, both edge and opposite node will be added
+	 * to the aggregation network model. Then the opposite node's adjacent edges will be processed. Terminates if no further 
+	 * unprocessed edges are found.  
+	 * @param originalNode the original node
+	 * @param aggregationNetworkModel the aggregation network model
+	 */
+	private void addAdjacentEdgesRecursively(GraphNode originalNode, NetworkModel aggregationNetworkModel) {
+		
+		// --- Iterate over the node's adjacent edges -------------------------
+		Vector<GraphEdge> adjacentEdges = new Vector<GraphEdge>(this.getOriginalNetworkModel().getGraph().getIncidentEdges(originalNode));
+		for (int i=0; i<adjacentEdges.size(); i++) {
+			GraphEdge adjacentEdge = adjacentEdges.get(i);
+			NetworkComponent edgeComponent = this.getOriginalNetworkModel().getNetworkComponent(adjacentEdge);
+			// --- Check if this edge was already added -----------------------
+			if (aggregationNetworkModel.getNetworkComponent(edgeComponent.getId())==null) {
+				// --- Check the opposite graph node --------------------------
+				GraphNode oppositeNode = this.getOriginalNetworkModel().getGraph().getOpposite(originalNode, adjacentEdge);
+				NetworkComponent oppositeComponent = this.getDistributionNodeComponentForGraphNode(oppositeNode);
+				if (oppositeComponent!=null && this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents().contains(oppositeComponent)) {
+					
+					// --- Check if the opposite component was added already, add if not
+					if (aggregationNetworkModel.getNetworkComponent(oppositeComponent.getId())==null) {
+						aggregationNetworkModel.addNetworkComponent(oppositeComponent, false);
+						aggregationNetworkModel.getGraph().addVertex(oppositeNode);
+						aggregationNetworkModel.addGraphElementToNetworkComponentRelation(oppositeNode, oppositeComponent);
+					}
+					
+					// --- Add the edge's component ---------------------------
+					aggregationNetworkModel.addNetworkComponent(edgeComponent, false);
+					aggregationNetworkModel.getGraph().addEdge(adjacentEdge, originalNode, oppositeNode);
+					aggregationNetworkModel.addGraphElementToNetworkComponentRelation(adjacentEdge, edgeComponent);
+					
+					// --- Check adjacent edges of the opposite node ----------
+					this.addAdjacentEdgesRecursively(oppositeNode, aggregationNetworkModel);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Gets the distribution node component for Graph node.
+	 * @param graphNode the graph node
+	 * @return the distribution node component for Graph node
+	 */
+	private NetworkComponent getDistributionNodeComponentForGraphNode(GraphNode graphNode) {
+		List<NetworkComponent> nodeComponents = this.getOriginalNetworkModel().getNetworkComponents(graphNode);
+		for(NetworkComponent netComp : nodeComponents) {
+			if (this.getOriginalNetworkModel().isDistributionNode(netComp)) {
+				return netComp;
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Creates the {@link TechnicalSystemGroup} for the aggregation.
@@ -427,7 +538,7 @@ public abstract class AbstractSubAggregationBuilder {
 		if (this.getSubAggregationConfiguration().getDomainCluster()!=null) {
 			netComps = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
 		} else {
-			netComps = this.getNetworkModel().getNetworkComponentVectorSorted();
+			netComps = this.getAggregationNetworkModel().getNetworkComponentVectorSorted();
 		}
 		
 		// --- Collect all components that belong to the aggregation --------- 
