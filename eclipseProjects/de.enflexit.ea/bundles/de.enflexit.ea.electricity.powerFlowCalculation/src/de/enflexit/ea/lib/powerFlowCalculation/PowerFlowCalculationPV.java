@@ -84,24 +84,22 @@ public class PowerFlowCalculationPV extends AbstractPowerFlowCalculation{
 		this.dX = this.powerFlowParameter.getdX();
 		
 		Vector<Double> nodalVoltageReal = new Vector<>();
+		Vector<Double> nodalVoltageImag = new Vector<>();
 		
 		for(int i=0;i<this.getnNumNodes();i++) {
 			nodalVoltageReal.add(this.getPowerFlowParameter().getdSlackVoltageReal());
+			nodalVoltageImag.add(this.getPowerFlowParameter().getdSlackVoltageImag());
 		}
 		
 		// --- Set PV Nodes in dX
+		//TODO Insert Imaginary Voltages also here?
 		for(int i=0;i<this.getvPVNodes().size();i++) {
 			this.dX[this.getvPVNodes().get(i).getnPVNode()-1+this.getnNumNodes()][0]=this.getvPVNodes().get(i).getdVoltageOfPVNode();
 			nodalVoltageReal.set(this.getvPVNodes().get(i).getnPVNode()-1, this.getvPVNodes().get(i).getdVoltageOfPVNode());
 		}
 		
 		this.setNodalVoltageReal(nodalVoltageReal);
-		Vector<Double > temp = new Vector<>();
-		for(int i=0;i<this.getnNumNodes();i++) {
-			temp.add(0.0);
-		}
-		
-		this.setNodalVoltageImag(temp);
+		this.setNodalVoltageImag(nodalVoltageImag);
 		
 		// Newton-Raphson with PV
 		while (this.isbIterationProcess()) {
