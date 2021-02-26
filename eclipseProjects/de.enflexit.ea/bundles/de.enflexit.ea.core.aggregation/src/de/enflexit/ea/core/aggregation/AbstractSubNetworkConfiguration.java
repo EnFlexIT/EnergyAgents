@@ -103,7 +103,7 @@ public abstract class AbstractSubNetworkConfiguration {
 	 * @return the sub network model
 	 */
 	public NetworkModel getSubNetworkModel() {
-		return this.getSubAggregationBuilder().getNetworkModel();
+		return this.getSubAggregationBuilder().getAggregationNetworkModel();
 	}
 	
 	

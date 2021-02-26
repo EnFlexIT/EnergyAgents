@@ -161,7 +161,7 @@ public class DashboardAgent extends Agent {
 		if (dashboardVisualizationFrame==null) {
 			dashboardVisualizationFrame = new JFrame("AWB Dashboard");
 			dashboardVisualizationFrame.setContentPane(this.getDashboardsTabbedPane());
-			dashboardVisualizationFrame.setSize(1024, 550);
+			dashboardVisualizationFrame.setSize(1024, 600);
 			dashboardVisualizationFrame.setLocationRelativeTo(null);
 			dashboardVisualizationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		}
