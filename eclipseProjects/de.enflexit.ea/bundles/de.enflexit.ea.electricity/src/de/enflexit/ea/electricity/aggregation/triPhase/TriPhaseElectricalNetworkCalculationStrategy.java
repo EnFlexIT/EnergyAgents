@@ -504,14 +504,22 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		Vector<Vector<Double>> iNabs_L1 = null;
 		Vector<Vector<Double>> iNabs_L2 = null;
 		Vector<Vector<Double>> iNabs_L3 = null;
-
-		Vector<Double> utili_L1 = null;
-		Vector<Double> utili_L2 = null;
-		Vector<Double> utili_L3 = null;
 		
+		Vector<Vector<Double>> iNreal_L1 = null;
+		Vector<Vector<Double>> iNreal_L2 = null;
+		Vector<Vector<Double>> iNreal_L3 = null;
+		
+		Vector<Vector<Double>> iNimag_L1 = null;
+		Vector<Vector<Double>> iNimag_L2 = null;
+		Vector<Vector<Double>> iNimag_L3 = null;
+
 		Vector<Double> branchCosPhi_L1 = null;
 		Vector<Double> branchCosPhi_L2 = null;
 		Vector<Double> branchCosPhi_L3 = null;
+		
+		Vector<Double> utili_L1 = null;
+		Vector<Double> utili_L2 = null;
+		Vector<Double> utili_L3 = null;
 		
 		Vector<Vector<Double>> p_L1 = null;
 		Vector<Vector<Double>> p_L2 = null;
@@ -531,8 +539,10 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 
 		if (pfcL1 != null) {
 			iNabs_L1 = pfcL1.getBranchCurrentAbs();
-			utili_L1 = pfcL1.getBranchUtilization();
+			iNreal_L1 = pfcL1.getBranchCurrentReal();
+			iNimag_L1 = pfcL1.getBranchCurrentImag();
 			branchCosPhi_L1 = pfcL1.getBranchCosPhi();
+			utili_L1 = pfcL1.getBranchUtilization();
 			p_L1 = pfcL1.getBranchPowerReal();
 			q_L1 = pfcL1.getBranchPowerImag();
 			uKReal_L1 = pfcL1.getNodalVoltageReal();
@@ -541,8 +551,10 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		
 		if (pfcL2 != null) {
 			iNabs_L2 = pfcL2.getBranchCurrentAbs();
-			utili_L2 = pfcL2.getBranchUtilization();
+			iNreal_L2 = pfcL2.getBranchCurrentReal();
+			iNimag_L2 = pfcL2.getBranchCurrentImag();
 			branchCosPhi_L2 = pfcL2.getBranchCosPhi();
+			utili_L2 = pfcL2.getBranchUtilization();
 			p_L2 = pfcL2.getBranchPowerReal();
 			q_L2 = pfcL2.getBranchPowerImag();
 			uKReal_L2 = pfcL2.getNodalVoltageReal();
@@ -551,8 +563,10 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		
 		if (pfcL3 != null) {
 			iNabs_L3 = pfcL3.getBranchCurrentAbs();
-			utili_L3 = pfcL3.getBranchUtilization();
+			iNreal_L3 = pfcL3.getBranchCurrentReal();
+			iNimag_L3 = pfcL3.getBranchCurrentImag();
 			branchCosPhi_L3 = pfcL3.getBranchCosPhi();
+			utili_L3 = pfcL3.getBranchUtilization();
 			p_L3 = pfcL3.getBranchPowerReal();
 			q_L3 = pfcL3.getBranchPowerImag();
 			uKReal_L3 = pfcL2.getNodalVoltageReal();
@@ -591,13 +605,21 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			cableState.setCurrent_L2(iNabs_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setCurrent_L3(iNabs_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			
-			cableState.setUtil_L1(utili_L1.get(i).floatValue());
-			cableState.setUtil_L2(utili_L2.get(i).floatValue());
-			cableState.setUtil_L3(utili_L3.get(i).floatValue());
+//			cableState.getPhase1().setCurrentReal(iNreal_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+//			cableState.getPhase2().setCurrentReal(iNreal_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+//			cableState.getPhase3().setCurrentReal(iNreal_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+//			
+//			cableState.getPhase1().setCurrentImag(iNimag_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+//			cableState.getPhase2().setCurrentImag(iNimag_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+//			cableState.getPhase3().setCurrentImag(iNimag_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			
 			cableState.setCosPhi_L1(branchCosPhi_L1.get(i).floatValue());
 			cableState.setCosPhi_L2(branchCosPhi_L2.get(i).floatValue());
 			cableState.setCosPhi_L3(branchCosPhi_L3.get(i).floatValue());
+			
+			cableState.setUtil_L1(utili_L1.get(i).floatValue());
+			cableState.setUtil_L2(utili_L2.get(i).floatValue());
+			cableState.setUtil_L3(utili_L3.get(i).floatValue());
 			
 			cableState.setP_L1(p_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setP_L2(p_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());

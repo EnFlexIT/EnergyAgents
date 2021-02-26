@@ -285,8 +285,10 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	private void setCableStates(AbstractPowerFlowCalculation pfc, NetworkModelToCsvMapper netModel2CsvMapper) {
 		
 		Vector<Vector<Double>> iNabs = null;
-		Vector<Double> utili = null;
+		Vector<Vector<Double>> iNreal = null;
+		Vector<Vector<Double>> iNimag = null;
 		Vector<Double> branchCosPhi = null;
+		Vector<Double> utili = null;
 		Vector<Vector<Double>> p = null;
 		Vector<Vector<Double>> q = null;
 		Vector<Double> uKReal = null;
@@ -294,8 +296,10 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		
 		if (pfc != null) {
 			iNabs = pfc.getBranchCurrentAbs();
-			utili = pfc.getBranchUtilization();
+			iNreal = pfc.getBranchCurrentReal();
+			iNimag = pfc.getBranchCurrentImag();
 			branchCosPhi = pfc.getBranchCosPhi();
+			utili = pfc.getBranchUtilization();
 			p = pfc.getBranchPowerReal();
 			q = pfc.getBranchPowerImag();
 			uKReal = pfc.getNodalVoltageReal();
@@ -336,8 +340,10 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			
 			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setUtilization(utili.get(i).floatValue());
+//			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+//			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
 			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
+			cableState.setUtilization(utili.get(i).floatValue());
 			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
 			cableState.setQ(new UnitValue(q.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "var"));
 			
