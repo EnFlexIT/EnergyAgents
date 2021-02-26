@@ -7,19 +7,30 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableState
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class UniPhaseCableState extends CableState{ 
 
    /**
-* Protege name: current
+* Protege name: currentReal
    */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
+   private UnitValue currentReal;
+   public void setCurrentReal(UnitValue value) { 
+    this.currentReal=value;
    }
-   public UnitValue getCurrent() {
-     return this.current;
+   public UnitValue getCurrentReal() {
+     return this.currentReal;
+   }
+
+   /**
+* Protege name: lossesP
+   */
+   private UnitValue lossesP;
+   public void setLossesP(UnitValue value) { 
+    this.lossesP=value;
+   }
+   public UnitValue getLossesP() {
+     return this.lossesP;
    }
 
    /**
@@ -34,6 +45,17 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
+* Protege name: current
+   */
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
+   }
+   public UnitValue getCurrent() {
+     return this.current;
+   }
+
+   /**
 * Protege name: P
    */
    private UnitValue p;
@@ -45,14 +67,14 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
-* Protege name: lossesP
+* Protege name: currentImag
    */
-   private UnitValue lossesP;
-   public void setLossesP(UnitValue value) { 
-    this.lossesP=value;
+   private UnitValue currentImag;
+   public void setCurrentImag(UnitValue value) { 
+    this.currentImag=value;
    }
-   public UnitValue getLossesP() {
-     return this.lossesP;
+   public UnitValue getCurrentImag() {
+     return this.currentImag;
    }
 
    /**

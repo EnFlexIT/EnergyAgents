@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: GridStateAssessment
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class GridStateAssessment implements Concept {
-
-   /**
-* Protege name: utilizationTrafficLight
-   */
-   private TrafficLight utilizationTrafficLight;
-   public void setUtilizationTrafficLight(TrafficLight value) { 
-    this.utilizationTrafficLight=value;
-   }
-   public TrafficLight getUtilizationTrafficLight() {
-     return this.utilizationTrafficLight;
-   }
 
    /**
 * Protege name: voltageTrafficLight
@@ -32,6 +21,17 @@ public class GridStateAssessment implements Concept {
    }
    public TrafficLight getVoltageTrafficLight() {
      return this.voltageTrafficLight;
+   }
+
+   /**
+* Protege name: utilizationTrafficLight
+   */
+   private TrafficLight utilizationTrafficLight;
+   public void setUtilizationTrafficLight(TrafficLight value) { 
+    this.utilizationTrafficLight=value;
+   }
+   public TrafficLight getUtilizationTrafficLight() {
+     return this.utilizationTrafficLight;
    }
 
 }

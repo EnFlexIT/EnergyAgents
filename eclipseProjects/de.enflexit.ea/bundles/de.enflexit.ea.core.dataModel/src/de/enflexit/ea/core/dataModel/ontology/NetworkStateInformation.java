@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: NetworkStateInformation
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class NetworkStateInformation implements AgentAction {
 

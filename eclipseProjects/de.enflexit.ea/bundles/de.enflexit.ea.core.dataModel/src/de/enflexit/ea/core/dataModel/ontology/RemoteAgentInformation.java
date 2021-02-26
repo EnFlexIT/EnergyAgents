@@ -9,7 +9,7 @@ import jade.core.*;
    * Stores information about a testbed agent and its proxy agent
 * Protege name: RemoteAgentInformation
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class RemoteAgentInformation implements Concept {
 
@@ -22,18 +22,6 @@ public class RemoteAgentInformation implements Concept {
 	   return (this.proxyAgentAID != null && this.remoteAgentAID != null);
    }
    /**
-   * The proxy agent's AID
-* Protege name: proxyAgentAID
-   */
-   private AID proxyAgentAID;
-   public void setProxyAgentAID(AID value) { 
-    this.proxyAgentAID=value;
-   }
-   public AID getProxyAgentAID() {
-     return this.proxyAgentAID;
-   }
-
-   /**
    * The remote agent's AID
 * Protege name: remoteAgentAID
    */
@@ -43,6 +31,18 @@ public class RemoteAgentInformation implements Concept {
    }
    public AID getRemoteAgentAID() {
      return this.remoteAgentAID;
+   }
+
+   /**
+   * The proxy agent's AID
+* Protege name: proxyAgentAID
+   */
+   private AID proxyAgentAID;
+   public void setProxyAgentAID(AID value) { 
+    this.proxyAgentAID=value;
+   }
+   public AID getProxyAgentAID() {
+     return this.proxyAgentAID;
    }
 
 }

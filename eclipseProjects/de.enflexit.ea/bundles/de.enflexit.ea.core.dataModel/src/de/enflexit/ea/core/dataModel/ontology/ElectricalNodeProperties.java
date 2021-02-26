@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ElectricalNodeProperties
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class ElectricalNodeProperties extends NodeComponentProperties{ 
-
-   /**
-* Protege name: isLoadNode
-   */
-   private boolean isLoadNode;
-   public void setIsLoadNode(boolean value) { 
-    this.isLoadNode=value;
-   }
-   public boolean getIsLoadNode() {
-     return this.isLoadNode;
-   }
 
    /**
 * Protege name: nominalPower
@@ -31,6 +20,17 @@ public class ElectricalNodeProperties extends NodeComponentProperties{
    }
    public UnitValue getNominalPower() {
      return this.nominalPower;
+   }
+
+   /**
+* Protege name: isLoadNode
+   */
+   private boolean isLoadNode;
+   public void setIsLoadNode(boolean value) { 
+    this.isLoadNode=value;
+   }
+   public boolean getIsLoadNode() {
+     return this.isLoadNode;
    }
 
 }

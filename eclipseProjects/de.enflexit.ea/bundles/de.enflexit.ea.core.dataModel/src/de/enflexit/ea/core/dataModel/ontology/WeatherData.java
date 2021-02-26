@@ -8,20 +8,32 @@ import jade.core.*;
 /**
 * Protege name: WeatherData
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class WeatherData implements Concept {
 
    /**
-   * Predicted Temperature in °C
-* Protege name: PredictedTemperature
+   * Predicted Wind Speed in m/s
+* Protege name: PredictedWindSpeed
    */
-   private float predictedTemperature;
-   public void setPredictedTemperature(float value) { 
-    this.predictedTemperature=value;
+   private float predictedWindSpeed;
+   public void setPredictedWindSpeed(float value) { 
+    this.predictedWindSpeed=value;
    }
-   public float getPredictedTemperature() {
-     return this.predictedTemperature;
+   public float getPredictedWindSpeed() {
+     return this.predictedWindSpeed;
+   }
+
+   /**
+   * Date of Prediction
+* Protege name: PredictedDate
+   */
+   private String predictedDate;
+   public void setPredictedDate(String value) { 
+    this.predictedDate=value;
+   }
+   public String getPredictedDate() {
+     return this.predictedDate;
    }
 
    /**
@@ -37,18 +49,6 @@ public class WeatherData implements Concept {
    }
 
    /**
-   * Predicted Wind Speed in m/s
-* Protege name: PredictedWindSpeed
-   */
-   private float predictedWindSpeed;
-   public void setPredictedWindSpeed(float value) { 
-    this.predictedWindSpeed=value;
-   }
-   public float getPredictedWindSpeed() {
-     return this.predictedWindSpeed;
-   }
-
-   /**
    * Hour to predict
 * Protege name: PredictedHour
    */
@@ -61,15 +61,15 @@ public class WeatherData implements Concept {
    }
 
    /**
-   * Date of Prediction
-* Protege name: PredictedDate
+   * Predicted Temperature in °C
+* Protege name: PredictedTemperature
    */
-   private String predictedDate;
-   public void setPredictedDate(String value) { 
-    this.predictedDate=value;
+   private float predictedTemperature;
+   public void setPredictedTemperature(float value) { 
+    this.predictedTemperature=value;
    }
-   public String getPredictedDate() {
-     return this.predictedDate;
+   public float getPredictedTemperature() {
+     return this.predictedTemperature;
    }
 
 }

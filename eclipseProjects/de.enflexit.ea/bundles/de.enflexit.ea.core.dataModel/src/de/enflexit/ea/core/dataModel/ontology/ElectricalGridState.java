@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: ElectricalGridState
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class ElectricalGridState extends NodeComponentState{ 
-
-   /**
-* Protege name: LocalNodeNum
-   */
-   private int localNodeNum;
-   public void setLocalNodeNum(int value) { 
-    this.localNodeNum=value;
-   }
-   public int getLocalNodeNum() {
-     return this.localNodeNum;
-   }
 
    /**
 * Protege name: GridStateInfo
@@ -42,6 +31,17 @@ public class ElectricalGridState extends NodeComponentState{
    }
    public String getGlobalName() {
      return this.globalName;
+   }
+
+   /**
+* Protege name: LocalNodeNum
+   */
+   private int localNodeNum;
+   public void setLocalNodeNum(int value) { 
+    this.localNodeNum=value;
+   }
+   public int getLocalNodeNum() {
+     return this.localNodeNum;
    }
 
 }

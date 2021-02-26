@@ -605,13 +605,13 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			cableState.setCurrent_L2(iNabs_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			cableState.setCurrent_L3(iNabs_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
 			
-//			cableState.getPhase1().setCurrentReal(iNreal_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
-//			cableState.getPhase2().setCurrentReal(iNreal_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
-//			cableState.getPhase3().setCurrentReal(iNreal_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
-//			
-//			cableState.getPhase1().setCurrentImag(iNimag_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
-//			cableState.getPhase2().setCurrentImag(iNimag_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
-//			cableState.getPhase3().setCurrentImag(iNimag_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue());
+			cableState.getPhase1().setCurrentReal(new UnitValue(iNreal_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.getPhase2().setCurrentReal(new UnitValue(iNreal_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.getPhase3().setCurrentReal(new UnitValue(iNreal_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			
+			cableState.getPhase1().setCurrentImag(new UnitValue(iNimag_L1.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.getPhase2().setCurrentImag(new UnitValue(iNimag_L2.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.getPhase3().setCurrentImag(new UnitValue(iNimag_L3.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
 			
 			cableState.setCosPhi_L1(branchCosPhi_L1.get(i).floatValue());
 			cableState.setCosPhi_L2(branchCosPhi_L2.get(i).floatValue());

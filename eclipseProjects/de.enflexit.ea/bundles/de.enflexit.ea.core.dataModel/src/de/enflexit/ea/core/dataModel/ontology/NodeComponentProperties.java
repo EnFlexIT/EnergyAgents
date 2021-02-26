@@ -8,7 +8,7 @@ import jade.core.*;
    * This class describes static properties of a node component in a network model
 * Protege name: NodeComponentProperties
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class NodeComponentProperties extends StaticComponentProperties{ 
 

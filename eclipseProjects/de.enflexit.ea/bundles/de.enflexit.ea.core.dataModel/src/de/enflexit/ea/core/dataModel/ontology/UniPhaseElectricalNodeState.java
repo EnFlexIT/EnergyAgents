@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseElectricalNodeState
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class UniPhaseElectricalNodeState extends ElectricalNodeState{ 
 
@@ -113,6 +113,17 @@ public double getSCalculated() {
  return this.getVoltageAbsNotNull().getValue() * this.getCurrentNotNull().getValue(); 
 }
    /**
+* Protege name: voltageImag
+   */
+   private UnitValue voltageImag;
+   public void setVoltageImag(UnitValue value) { 
+    this.voltageImag=value;
+   }
+   public UnitValue getVoltageImag() {
+     return this.voltageImag;
+   }
+
+   /**
 * Protege name: voltageAbs
    */
    private UnitValue voltageAbs;
@@ -121,17 +132,6 @@ public double getSCalculated() {
    }
    public UnitValue getVoltageAbs() {
      return this.voltageAbs;
-   }
-
-   /**
-* Protege name: current
-   */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
-   }
-   public UnitValue getCurrent() {
-     return this.current;
    }
 
    /**
@@ -146,14 +146,14 @@ public double getSCalculated() {
    }
 
    /**
-* Protege name: voltageReal
+* Protege name: current
    */
-   private UnitValue voltageReal;
-   public void setVoltageReal(UnitValue value) { 
-    this.voltageReal=value;
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
    }
-   public UnitValue getVoltageReal() {
-     return this.voltageReal;
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
    /**
@@ -168,14 +168,14 @@ public double getSCalculated() {
    }
 
    /**
-* Protege name: voltageImag
+* Protege name: voltageReal
    */
-   private UnitValue voltageImag;
-   public void setVoltageImag(UnitValue value) { 
-    this.voltageImag=value;
+   private UnitValue voltageReal;
+   public void setVoltageReal(UnitValue value) { 
+    this.voltageReal=value;
    }
-   public UnitValue getVoltageImag() {
-     return this.voltageImag;
+   public UnitValue getVoltageReal() {
+     return this.voltageReal;
    }
 
    /**

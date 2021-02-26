@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TriPhaseElectricalNodeState
 * @author ontology bean generator
-* @version 2021/02/15, 12:09:03
+* @version 2021/02/26, 14:45:40
 */
 public class TriPhaseElectricalNodeState extends ElectricalNodeState{ 
 
@@ -27,14 +27,14 @@ public UniPhaseElectricalNodeState getL3NodeStateNotNull() {
 	return this.l3;
 }
    /**
-* Protege name: l1
+* Protege name: l2
    */
-   private UniPhaseElectricalNodeState l1;
-   public void setL1(UniPhaseElectricalNodeState value) { 
-    this.l1=value;
+   private UniPhaseElectricalNodeState l2;
+   public void setL2(UniPhaseElectricalNodeState value) { 
+    this.l2=value;
    }
-   public UniPhaseElectricalNodeState getL1() {
-     return this.l1;
+   public UniPhaseElectricalNodeState getL2() {
+     return this.l2;
    }
 
    /**
@@ -49,14 +49,14 @@ public UniPhaseElectricalNodeState getL3NodeStateNotNull() {
    }
 
    /**
-* Protege name: l2
+* Protege name: l1
    */
-   private UniPhaseElectricalNodeState l2;
-   public void setL2(UniPhaseElectricalNodeState value) { 
-    this.l2=value;
+   private UniPhaseElectricalNodeState l1;
+   public void setL1(UniPhaseElectricalNodeState value) { 
+    this.l1=value;
    }
-   public UniPhaseElectricalNodeState getL2() {
-     return this.l2;
+   public UniPhaseElectricalNodeState getL1() {
+     return this.l1;
    }
 
 }

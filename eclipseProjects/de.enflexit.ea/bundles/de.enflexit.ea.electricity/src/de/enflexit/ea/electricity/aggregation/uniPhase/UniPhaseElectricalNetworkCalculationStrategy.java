@@ -340,8 +340,8 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			
 			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-//			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-//			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
 			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
 			cableState.setUtilization(utili.get(i).floatValue());
 			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
