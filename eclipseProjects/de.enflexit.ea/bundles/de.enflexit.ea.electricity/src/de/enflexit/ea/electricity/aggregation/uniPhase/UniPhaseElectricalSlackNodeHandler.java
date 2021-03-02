@@ -79,7 +79,7 @@ public class UniPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastTransformerState(TechnicalSystemStateEvaluation tsseLast) {
 		
-		float errorIndicatingValue = -1;
+		float errorIndicatingValue = 0;
 		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
 		
 		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
@@ -108,8 +108,8 @@ public class UniPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastSensorState(TechnicalSystemStateEvaluation tsseLast) {
 
-		float errorIndicatingValue = -1;
-		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(-1);
+		float errorIndicatingValue = 0;
+		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
 		
 		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
 			FixedDouble fvIO = (FixedDouble) tsseLast.getIOlist().get(i);

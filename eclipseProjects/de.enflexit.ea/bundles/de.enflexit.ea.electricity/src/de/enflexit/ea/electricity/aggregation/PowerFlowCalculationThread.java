@@ -121,6 +121,9 @@ public class PowerFlowCalculationThread extends Thread {
 	public void setSlackNodeVoltageLevel(UniPhaseSlackNodeState slackNodeState) {
 		PowerFlowParameter powerFlowPara = this.getPowerFlowParameter();
 		if (powerFlowPara!=null) {
+			// --- For debugging, set true ------
+			boolean debug = false;
+			if (debug==true) System.out.println("[" + this.getClass().getSimpleName() + "] " + phase.name() + " New slack node voltage real: " + slackNodeState.getVoltageReal().getValue() + ", imaginary: " + slackNodeState.getVoltageImag().getValue() + "");
 			powerFlowPara.setdSlackVoltageImag(slackNodeState.getVoltageImag().getValue());
 			powerFlowPara.setdSlackVoltageReal(slackNodeState.getVoltageReal().getValue());
 		}

@@ -97,7 +97,7 @@ public class TriPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastTransformerState(TechnicalSystemStateEvaluation tsseLast) {
 		
-		float errorIndicatingValue = -1;
+		float errorIndicatingValue = 0;
 		TriPhaseSlackNodeState tpSns = createTriPhaseSlackNodeState(errorIndicatingValue);
 		
 		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
@@ -137,8 +137,8 @@ public class TriPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastSensorState(TechnicalSystemStateEvaluation tsseLast) {
 		
-		float errorIndicatingValue = -1;
-		TriPhaseSlackNodeState tpSns = createTriPhaseSlackNodeState(-1);
+		float errorIndicatingValue = 0;
+		TriPhaseSlackNodeState tpSns = createTriPhaseSlackNodeState(errorIndicatingValue);
 		
 		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
 			FixedDouble fvIO = (FixedDouble) tsseLast.getIOlist().get(i);

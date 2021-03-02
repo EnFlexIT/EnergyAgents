@@ -21,6 +21,7 @@ import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyFlowMeasured;
 import energy.optionModel.EnergyMeasurement;
 import energy.optionModel.EnergyUnitFactorPrefixSI;
+import energy.optionModel.FixedBoolean;
 import energy.optionModel.GoodFlow;
 import energy.optionModel.GoodFlowMeasured;
 import energy.optionModel.GoodMeasurement;
@@ -51,6 +52,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	private AbstractSubNetworkConfiguration subNetworkConfiguration;
 	
 	private NetworkModel networkModel;
+	private Long evaluationStepStartTime;
 	private long evaluationStepEndTime;
 	
 	private TechnicalSystemStateEvaluation tsse;
@@ -173,6 +175,26 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	public long getEvaluationStepEndTime() {
 		return evaluationStepEndTime;
 	}
+	/**
+	 * Returns the last evaluation step start time that will be set with the call of the {@link #runEvaluation(boolean)} method 
+	 * in case that the parameter to rebuild the decision graph is set to false.
+	 * 
+	 * @return the evaluation step start time
+	 */
+	public long getEvaluationStepStartTime() {
+		if (evaluationStepStartTime==null) {
+			// --- By default use the configured start time ---------
+			evaluationStepStartTime = this.getStartTime();
+		}
+		return evaluationStepStartTime;
+	}
+	/**
+	 * Sets the evaluation step start time.
+	 * @param evaluationStepStartTime the new evaluation step start time
+	 */
+	public void setEvaluationStepStartTime(Long evaluationStepStartTime) {
+		this.evaluationStepStartTime = evaluationStepStartTime;
+	}
 	
 	/**
 	 * Does the preprocessing.
@@ -214,7 +236,38 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		// --- Get Start situation ------------------------------------------------------
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		
-		// --- Check / do the preprocessing (e.g. a state estimation --------------------
+		// ------------------------------------------------------------------------------
+		// --- Check if we are in a repetition (e.g. a discrete iteration) --------------
+		// ------------------------------------------------------------------------------
+		if (rebuildDecisionGraph==false) {
+			// --- Remind start time for possible iterations ----------------------------
+			this.setEvaluationStepStartTime(tsse.getGlobalTime());
+		} else {
+			// --- Reset reminder tsse in the current GroupCalculation ------------------ 
+			this.getGroupCalculation().resetTechnicalSystemStateEvaluationUsedForCalculations();
+			// --- Check if this is the initial state -----------------------------------
+			if (tsse.getParent()==null && tsse.getGlobalTime()==this.getEvaluationStepStartTime()) {
+				// --- Update IO-List values --------------------------------------------
+				this.optionModelController.updateTechnicalSystemStateIOList(tsse);
+				// --- Create temporary IO-value to restart GroupCalculation ------------
+				FixedBoolean fbTmp = new FixedBoolean();
+				fbTmp.setVariableID("ValueToRestartEnergyFlowCalculationInGroupCalculation");
+				fbTmp.setValue(true);
+				// --- Temporary, add to IO-list and update energy flows ----------------
+				tsse.getIOlist().add(fbTmp);
+				this.optionModelController.updateTechnicalSystemStateEnergyFlows(tsse, 0, false);
+				tsse.getIOlist().remove(fbTmp);
+				
+			} else {
+				// --- Revert to previous start time ------------------------------------
+				tsse = this.revertTechnicalSystemStateEvaluationScheduleAndCalculations(tsse, this.getEvaluationStepStartTime());
+				this.setTechnicalSystemStateEvaluation(tsse);
+			}
+		}
+		// ------------------------------------------------------------------------------
+		
+		
+		// --- Check / do the preprocessing (e.g. a state estimation) -------------------
 		String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_PREPROCESSING + this.getSubNetworkConfiguration().getID();
 		this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
 		this.doPreprocessing();
@@ -277,7 +330,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 			TechnicalSystemState tssStart = (TechnicalSystemState) this.getEvaluationSettings().getEvaluationStateList().get(0);
 			this.optionModelController.updateTechnicalSystemStateIOList(tssStart);
 			// --- Get energy flows, execute network calculation --------------
-			this.optionModelController.updateTechnicalSystemStateEnergyFlows(tssStart, 0, false);
+			this.optionModelController.updateTechnicalSystemStateEnergyFlows(tssStart, 0, true);
 			// --- Convert to a TechnicalSystemStateEvaluation ---------------- 
 			tsse = TechnicalSystemStateHelper.convertToTechnicalSystemStateEvaluation(tssStart);
 			// --- Set this as the initial state for the evaluation -----------
