@@ -13,6 +13,7 @@ import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseSensorAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseSensorAdapter;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
@@ -21,6 +22,8 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.eom.awb.adapter.EomAdapter;
 import energy.domain.DefaultDomainModelElectricity.Phase;
+import energy.optionModel.FixedDouble;
+import energy.optionModel.FixedVariable;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**
@@ -125,6 +128,38 @@ public abstract class AbstractSlackNodeHandler {
 		if (snsToCheck==null || snsToCheck.getVoltageReal()==null) return true;
 		return snsToCheck.getVoltageReal().getValue()==errorIndicatingRealStartValue;
 	}
+	/**
+	 * Return a UniPhaseSlackNodeState from the specified TechnicalSystemStateEvaluation.
+	 *
+	 * @param tsse the TechnicalSystemStateEvaluation
+	 * @return the UniPhaseSlackNodeState from technical system state evaluation
+	 */
+	public static UniPhaseSlackNodeState getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(TechnicalSystemStateEvaluation tsse) {
+		
+		float errorIndicatingValue = 0;
+		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
+		
+		for (int i = 0; i < tsse.getIOlist().size(); i++) {
+			// --- Check IO-value ----------------------------------- 
+			FixedVariable fv = tsse.getIOlist().get(i);
+			if (fv instanceof FixedDouble) {
+				// --- Get the float value --------------------------
+				float value = (float) ((FixedDouble) fv).getValue();
+				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealAllPhases.name())) {
+					upSns.getVoltageReal().setValue(value);
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagAllPhases.name())) {
+					upSns.getVoltageImag().setValue(value);
+				}
+			}
+		}
+		
+		// --- Check for invalid slack node state -------------------
+		if (isErrorInUniPhaseSlackNodeState(upSns, errorIndicatingValue)) {
+			upSns = null;
+		}
+		return upSns;
+	}
+	
 	
 	/**
 	 * Creates the TriPhaseSlackNodeState with 0 as start value for the real parts..
@@ -161,7 +196,48 @@ public abstract class AbstractSlackNodeHandler {
 		if (isErrorInUniPhaseSlackNodeState(snsToCheck.getSlackNodeStateL3(), errorIndicatingRealStartValue)==true) return true;
 		return false;
 	}
-	
+	/**
+	 * Return a TriPhaseSlackNodeState from the specified TechnicalSystemStateEvaluation.
+	 *
+	 * @param tsse the TechnicalSystemStateEvaluation
+	 * @return the TriPhaseSlackNodeState from technical system state evaluation
+	 */
+	public static TriPhaseSlackNodeState getTriPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(TechnicalSystemStateEvaluation tsse) {
+		
+		float errorIndicatingValue = 0;
+		TriPhaseSlackNodeState tpSns = createTriPhaseSlackNodeState(errorIndicatingValue);
+		
+		for (int i = 0; i < tsse.getIOlist().size(); i++) {
+			// --- Check IO-value -----------------------------------
+			FixedVariable fv = tsse.getIOlist().get(i);
+			if (fv instanceof FixedDouble) {
+				// --- Get the float value --------------------------
+				float value = (float) ((FixedDouble) fv).getValue();
+
+				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL1.name())) {
+					tpSns.getSlackNodeStateL1().getVoltageReal().setValue(value);
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL1.name())) {
+					tpSns.getSlackNodeStateL1().getVoltageImag().setValue(value);
+
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL2.name())) {
+					tpSns.getSlackNodeStateL2().getVoltageReal().setValue(value);
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL2.name())) {
+					tpSns.getSlackNodeStateL2().getVoltageImag().setValue(value);
+
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL3.name())) {
+					tpSns.getSlackNodeStateL3().getVoltageReal().setValue(value);
+				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL3.name())) {
+					tpSns.getSlackNodeStateL3().getVoltageImag().setValue(value);
+				}
+			}
+		}
+		
+		// --- Check for invalid slack node state -------------------
+		if (isErrorInTriPhaseSlackNodeState(tpSns, errorIndicatingValue)) {
+			tpSns = null;
+		}
+		return tpSns;
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- From here method to find the initial slack node voltage ------------

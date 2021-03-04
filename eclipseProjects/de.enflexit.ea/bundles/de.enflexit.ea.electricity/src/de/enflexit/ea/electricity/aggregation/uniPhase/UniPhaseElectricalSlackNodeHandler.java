@@ -1,13 +1,11 @@
 package de.enflexit.ea.electricity.aggregation.uniPhase;
 
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.AbstractSlackNodeHandler;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
-import energy.optionModel.FixedVariable;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**
@@ -78,29 +76,7 @@ public class UniPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	 */
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastTransformerState(TechnicalSystemStateEvaluation tsseLast) {
-		
-		float errorIndicatingValue = 0;
-		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
-		
-		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
-			// --- Check IO-value ----------------------------------- 
-			FixedVariable fv = tsseLast.getIOlist().get(i);
-			if (fv instanceof FixedDouble) {
-				// --- Get the float value --------------------------
-				float value = (float) ((FixedDouble) fv).getValue();
-				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealAllPhases.name())) {
-					upSns.getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagAllPhases.name())) {
-					upSns.getVoltageImag().setValue(value);
-				}
-			}
-		}
-		
-		// --- Check for invalid slack node state -------------------
-		if (isErrorInUniPhaseSlackNodeState(upSns, errorIndicatingValue)) {
-			upSns = null;
-		}
-		return upSns;
+		return getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(tsseLast);
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.electricity.aggregation.AbstractSlackNodeHandler#getSlackNodeStateFromLastSensorState(energy.optionModel.TechnicalSystemStateEvaluation)

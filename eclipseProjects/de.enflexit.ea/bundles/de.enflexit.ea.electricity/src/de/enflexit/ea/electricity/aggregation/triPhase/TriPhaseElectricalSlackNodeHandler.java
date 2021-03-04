@@ -1,6 +1,5 @@
 package de.enflexit.ea.electricity.aggregation.triPhase;
 
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
@@ -8,7 +7,6 @@ import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculati
 import de.enflexit.ea.electricity.aggregation.AbstractSlackNodeHandler;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
-import energy.optionModel.FixedVariable;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**
@@ -96,40 +94,7 @@ public class TriPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	 */
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastTransformerState(TechnicalSystemStateEvaluation tsseLast) {
-		
-		float errorIndicatingValue = 0;
-		TriPhaseSlackNodeState tpSns = createTriPhaseSlackNodeState(errorIndicatingValue);
-		
-		for (int i = 0; i < tsseLast.getIOlist().size(); i++) {
-			// --- Check IO-value -----------------------------------
-			FixedVariable fv = tsseLast.getIOlist().get(i);
-			if (fv instanceof FixedDouble) {
-				// --- Get the float value --------------------------
-				float value = (float) ((FixedDouble) fv).getValue();
-
-				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL1.name())) {
-					tpSns.getSlackNodeStateL1().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL1.name())) {
-					tpSns.getSlackNodeStateL1().getVoltageImag().setValue(value);
-
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL2.name())) {
-					tpSns.getSlackNodeStateL2().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL2.name())) {
-					tpSns.getSlackNodeStateL2().getVoltageImag().setValue(value);
-
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL3.name())) {
-					tpSns.getSlackNodeStateL3().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL3.name())) {
-					tpSns.getSlackNodeStateL3().getVoltageImag().setValue(value);
-				}
-			}
-		}
-		
-		// --- Check for invalid slack node state -------------------
-		if (isErrorInTriPhaseSlackNodeState(tpSns, errorIndicatingValue)) {
-			tpSns = null;
-		}
-		return tpSns;
+		return getTriPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(tsseLast);
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.electricity.aggregation.AbstractSlackNodeHandler#getSlackNodeStateFromLastSensorState(energy.optionModel.TechnicalSystemStateEvaluation)
