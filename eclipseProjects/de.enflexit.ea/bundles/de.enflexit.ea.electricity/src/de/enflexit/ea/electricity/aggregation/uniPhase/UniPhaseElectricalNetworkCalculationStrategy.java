@@ -352,7 +352,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			double ukImagNode1 = uKImag.get(nodeIndexFrom);
 			double ukRealNode2 = uKReal.get(nodeIndexTo);
 			double ukImagNode2 = uKImag.get(nodeIndexTo);
-			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrent().getValue(), cableState.getCosPhi(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2);
+			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrentReal().getValue(), cableState.getCurrentImag().getValue(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2);
 			cableState.setLossesP(cableLossesL1.getLossesP());
 			cableState.setLossesQ(cableLossesL1.getLossesQ());
 			

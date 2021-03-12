@@ -15,8 +15,8 @@ public class CableLosses {
 	private double uKRealNode2 = 0;
 	private double uKImagNode2 = 0;
 	
-	private double current;
-	private double cosPhi;
+	private double currentReal;
+	private double currentImag;
 	
 	private UnitValue lossesP;
 	private UnitValue lossesQ;
@@ -25,16 +25,16 @@ public class CableLosses {
 	/**
 	 * Instantiates a new cable losses and will immediately provide the real and complex losses.
 	 *
-	 * @param cableCurrent the cable current
-	 * @param cosPhi the cos phi
+	 * @param cableCurrentReal the cable current real
+	 * @param cableCurrentImag the cable current imaginary
 	 * @param uKRealNode1 the real voltage node 1
 	 * @param uKImagNode1 the complex voltage node 1
 	 * @param uKRealNode2 the real voltage node 2
 	 * @param uKImagNode2 the complex voltage node 2
 	 */
-	public CableLosses(double cableCurrent, double cosPhi, double uKRealNode1, double uKImagNode1, double uKRealNode2, double uKImagNode2) {
-		this.current = cableCurrent;
-		this.cosPhi = cosPhi;
+	public CableLosses(double cableCurrentReal, double cableCurrentImag, double uKRealNode1, double uKImagNode1, double uKRealNode2, double uKImagNode2) {
+		this.currentReal = cableCurrentReal;
+		this.currentImag = cableCurrentImag;
 		this.uKRealNode1 = uKRealNode1;
 		this.uKImagNode1 = uKImagNode1;
 		this.uKRealNode2 = uKRealNode2;
@@ -47,19 +47,18 @@ public class CableLosses {
 	private void calculate() {
 
 		try {
-			
-			double sinPhi = Math.sin(Math.acos(this.cosPhi));
-			double voltageRealDiff    = Math.abs(this.uKRealNode1 - this.uKRealNode2);
-			double voltageComplexDiff = Math.abs(this.uKImagNode1 - this.uKImagNode2);
-			
+
 			// --- Complex assignment for P and Q losses --------
 			//double I = (current * cosPhi) + j * (current * sinPhi);
 			//double dU = (voltageRealDiff + j * voltageComplexDiff);
 			//double dS = dU * I;
 			//dS = (voltageRealDiff + j * voltageComplexDiff) * ((current * cosPhi) + j * (current * sinPhi));
 
-			double dP = (voltageRealDiff * this.current * this.cosPhi) - (voltageComplexDiff * (this.current * sinPhi));
-			double dQ =  voltageComplexDiff * this.current * this.cosPhi + (voltageRealDiff * (this.current * sinPhi));
+			double voltageRealDiff    = this.uKRealNode1 - this.uKRealNode2;
+			double voltageComplexDiff = this.uKImagNode1 - this.uKImagNode2;
+
+			double dP = voltageRealDiff * this.currentReal - voltageComplexDiff * this.currentImag;
+			double dQ =  voltageComplexDiff * this.currentReal + voltageRealDiff * this.currentImag;
 			
 			// --- Set result -----------------------------------
 			this.getLossesP().setValue((float)dP);
