@@ -70,11 +70,11 @@ public class CableLosses {
 //			this.getLossesQ().setValue((float)dQ);
 			
 			// --- Calculation of cableParameters
-			double length = this.cableProperties.getLength().getValue();
+			double length = this.cableProperties.getLength().getValue() / 1000.0;
 			double R = this.cableProperties.getLinearResistance().getValue() * length;
-			double X = this.cableProperties.getLinearReactance().getValue() * length;
-			double G = this.cableProperties.getLinearConductance().getValue() * length;
-			double B = 100 * Math.PI *this.cableProperties.getLinearCapacitance().getValue()*1E-9 * length;
+			double X = this.cableProperties.getLinearReactance()==null   ? 0.0 : this.cableProperties.getLinearReactance().getValue() * length;
+			double G = this.cableProperties.getLinearConductance()==null ? 0.0 : this.cableProperties.getLinearConductance().getValue() * length;
+			double B = this.cableProperties.getLinearCapacitance()==null ? 0.0 : 100 * Math.PI * this.cableProperties.getLinearCapacitance().getValue()*1E-9 * length;
 			
 			// --- Complex assignment for longitudinal losses ---
 			// S = U * I
@@ -94,15 +94,22 @@ public class CableLosses {
 			// P + j*Q = (G + j*B) * (uKReal + j*uKImag) * (uKReal + j*uKImag)
 			// P + j*Q = (G + j*B) * (uKReal*uKReal - uKImag*uKImag + j*(2*uKReal*uKImag))
 			// P + j*Q = G*(uKReal*uKReal - uKImag*uKImag) - 2*B*uKReal*uKImag + j*(B*(uKReal*uKReal - uKImag*uKImag) + 2*G*uKReal*uKImag)
-			double dPNode1 = 0.5*(G*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) - 2*B*uKRealNode1*uKImagNode1);
-			double dQNode1 = 0.5*(B*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) + 2*G*uKRealNode1*uKImagNode1);
-			double dPNode2 = 0.5*(G*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) - 2*B*uKRealNode2*uKImagNode2);
-			double dQNode2 = 0.5*(B*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) + 2*G*uKRealNode2*uKImagNode2);
+			double dPNode1 = 0;
+			double dQNode1 = 0;
+			double dPNode2 = 0;
+			double dQNode2 = 0;
+			
+//			double dPNode1 = 0.5*(G*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) - 2*B*uKRealNode1*uKImagNode1);
+//			double dQNode1 = 0.5*(B*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) + 2*G*uKRealNode1*uKImagNode1);
+//			double dPNode2 = 0.5*(G*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) - 2*B*uKRealNode2*uKImagNode2);
+//			double dQNode2 = 0.5*(B*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) + 2*G*uKRealNode2*uKImagNode2);
 			
 			this.getLossesP().setValue((float) (dPlen + dPNode1 + dPNode2));
 			this.getLossesQ().setValue((float) (dQlen + dQNode1 + dQNode2));
+			
 		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error in cable losses calculation:");
+			ex.printStackTrace();
 		}
 	}
 	
