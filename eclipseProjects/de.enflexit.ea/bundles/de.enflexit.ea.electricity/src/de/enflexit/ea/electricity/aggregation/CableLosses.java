@@ -94,18 +94,14 @@ public class CableLosses {
 			// P + j*Q = (G + j*B) * (uKReal + j*uKImag) * (uKReal + j*uKImag)
 			// P + j*Q = (G + j*B) * (uKReal*uKReal - uKImag*uKImag + j*(2*uKReal*uKImag))
 			// P + j*Q = G*(uKReal*uKReal - uKImag*uKImag) - 2*B*uKReal*uKImag + j*(B*(uKReal*uKReal - uKImag*uKImag) + 2*G*uKReal*uKImag)
-			double dPNode1 = 0;
-//			double dQNode1 = 0;
-			double dPNode2 = 0;
-//			double dQNode2 = 0;
 			
-//			double dPNode1 = 0.5*(G*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) - 2*B*uKRealNode1*uKImagNode1);
+			double dPNode1 = 0.5*(G*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) - 2*B*uKRealNode1*uKImagNode1);
 			double dQNode1 = 0.5*(B*(uKRealNode1*uKRealNode1 - uKImagNode1*uKImagNode1) + 2*G*uKRealNode1*uKImagNode1);
-//			double dPNode2 = 0.5*(G*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) - 2*B*uKRealNode2*uKImagNode2);
+			double dPNode2 = 0.5*(G*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) - 2*B*uKRealNode2*uKImagNode2);
 			double dQNode2 = 0.5*(B*(uKRealNode2*uKRealNode2 - uKImagNode2*uKImagNode2) + 2*G*uKRealNode2*uKImagNode2);
 			
 			this.getLossesP().setValue((float) (dPlen + dPNode1 + dPNode2));
-			this.getLossesQ().setValue((float) (dQlen + dQNode1 + dQNode2));
+			this.getLossesQ().setValue((float) (dQlen - dQNode1 - dQNode2));
 			
 		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error in cable losses calculation:");
