@@ -76,12 +76,20 @@ public abstract class DashboardController {
 					if (widget!=null) {
 						widget.processUpdate(update);
 					} else {
-						System.err.println("[" + this.getClass().getSimpleName() + "] No dashboard widget found for ID " + update.getID());
+						System.err.println("[" + DashboardController.this.getSimpleClassName() + "] No dashboard widget found for ID " + update.getID());
 					}
 				}
 				DashboardController.this.getPendingUpdates().clear();
 			}
 		});
+	}
+	
+	/**
+	 * Gets the simple class name. Helper method to be used in the runnable above
+	 * @return the simple class name
+	 */
+	private String getSimpleClassName() {
+		return this.getClass().getSimpleName();
 	}
 	/**
 	 * Gets the dashboard panel.
