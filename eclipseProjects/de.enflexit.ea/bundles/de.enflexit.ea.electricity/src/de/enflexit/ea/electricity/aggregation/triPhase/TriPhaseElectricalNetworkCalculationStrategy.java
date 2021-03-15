@@ -17,6 +17,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
+import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
@@ -585,11 +586,13 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 
 			Object[] dataModel = null;
 			TriPhaseCableState cableState = null;
+			CableProperties cableProperties = null;
 			// --- Get the current data model of the branch element -----------
 			if (netComp.getDataModel() == null) {
 				dataModel = new Object[3];
 			} else {
 				dataModel = (Object[]) netComp.getDataModel();
+				cableProperties = (CableProperties) dataModel[0];
 				cableState = (TriPhaseCableState) dataModel[1];
 			}
 			// --- In case that no element was set yet ------------------------
@@ -636,7 +639,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			double ukImagNode2_L1 = uKImag_L1.get(nodeIndexTo);
 			
 			
-			CableLosses cableLossesL1 = new CableLosses(cableState.getPhase1().getCurrentReal().getValue(), cableState.getPhase1().getCurrentImag().getValue(), ukRealNode1_L1, ukImagNode1_L1, ukRealNode2_L1, ukImagNode2_L1);
+			CableLosses cableLossesL1 = new CableLosses(cableState.getPhase1().getCurrentReal().getValue(), cableState.getPhase1().getCurrentImag().getValue(), ukRealNode1_L1, ukImagNode1_L1, ukRealNode2_L1, ukImagNode2_L1, cableProperties);
 			cableState.getPhase1().setLossesP(cableLossesL1.getLossesP());
 			cableState.getPhase1().setLossesQ(cableLossesL1.getLossesQ());
 			
@@ -644,7 +647,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			double ukImagNode1_L2 = uKImag_L2.get(nodeIndexFrom);
 			double ukRealNode2_L2 = uKReal_L2.get(nodeIndexTo);
 			double ukImagNode2_L2 = uKImag_L2.get(nodeIndexTo);
-			CableLosses cableLossesL2 = new CableLosses(cableState.getPhase2().getCurrentReal().getValue(), cableState.getPhase2().getCurrentImag().getValue(), ukRealNode1_L2, ukImagNode1_L2, ukRealNode2_L2, ukImagNode2_L2);
+			CableLosses cableLossesL2 = new CableLosses(cableState.getPhase2().getCurrentReal().getValue(), cableState.getPhase2().getCurrentImag().getValue(), ukRealNode1_L2, ukImagNode1_L2, ukRealNode2_L2, ukImagNode2_L2, cableProperties);
 			cableState.getPhase2().setLossesP(cableLossesL2.getLossesP());
 			cableState.getPhase2().setLossesQ(cableLossesL2.getLossesQ());
 			
@@ -652,7 +655,7 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			double ukImagNode1_L3 = uKImag_L3.get(nodeIndexFrom);
 			double ukRealNode2_L3 = uKReal_L3.get(nodeIndexTo);
 			double ukImagNode2_L3 = uKImag_L3.get(nodeIndexTo);
-			CableLosses cableLossesL3 = new CableLosses(cableState.getPhase3().getCurrentReal().getValue(), cableState.getPhase3().getCurrentImag().getValue(), ukRealNode1_L3, ukImagNode1_L3, ukRealNode2_L3, ukImagNode2_L3);
+			CableLosses cableLossesL3 = new CableLosses(cableState.getPhase3().getCurrentReal().getValue(), cableState.getPhase3().getCurrentImag().getValue(), ukRealNode1_L3, ukImagNode1_L3, ukRealNode2_L3, ukImagNode2_L3, cableProperties);
 			cableState.getPhase3().setLossesP(cableLossesL3.getLossesP());
 			cableState.getPhase3().setLossesQ(cableLossesL3.getLossesQ());
 			

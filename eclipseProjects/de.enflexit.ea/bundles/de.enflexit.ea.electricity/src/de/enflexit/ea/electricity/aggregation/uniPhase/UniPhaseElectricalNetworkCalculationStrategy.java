@@ -16,6 +16,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
 import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
+import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableWithBreaker;
@@ -318,11 +319,13 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 
 			Object[] dataModel = null;
 			UniPhaseCableState cableState = null;//TODO Change to UniPhaseElectricalEdgeState as soon as the NetworkComponentStates are switched to the new ontology
+			CableProperties cableProperties = null;
 			// --- Get the current data model of the branch element -----------
 			if (netComp.getDataModel() == null) {
 				dataModel = new Object[3];
 			} else {
 				dataModel = (Object[]) netComp.getDataModel();
+				cableProperties = (CableProperties) dataModel[0];
 				cableState = (UniPhaseCableState) dataModel[1];
 			}
 			// --- In case that no element was set yet ------------------------
@@ -352,7 +355,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			double ukImagNode1 = uKImag.get(nodeIndexFrom);
 			double ukRealNode2 = uKReal.get(nodeIndexTo);
 			double ukImagNode2 = uKImag.get(nodeIndexTo);
-			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrentReal().getValue(), cableState.getCurrentImag().getValue(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2);
+			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrentReal().getValue(), cableState.getCurrentImag().getValue(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2, cableProperties);
 			cableState.setLossesP(cableLossesL1.getLossesP());
 			cableState.setLossesQ(cableLossesL1.getLossesQ());
 			
