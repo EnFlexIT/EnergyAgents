@@ -29,7 +29,7 @@ import energy.schedule.loading.ScheduleTimeRangeController;
 import jade.core.ProfileImpl;
 
 /**
- * The Class SmartHousePlugIn adds a further tab to the visual representation of the SimulationSetup and an additional abstract data model.
+ * The Class AWBIntegrationPlugIn adds a further tab to the visual representation of the SimulationSetup and an additional abstract data model.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
