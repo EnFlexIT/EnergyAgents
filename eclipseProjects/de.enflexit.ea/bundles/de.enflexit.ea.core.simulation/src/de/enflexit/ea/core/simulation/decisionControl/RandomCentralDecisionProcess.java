@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Vector;
 
 import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
-import energy.GlobalInfo;
 import energy.helper.DisplayHelper;
+import energy.helper.NumberHelper;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
@@ -52,7 +52,7 @@ public class RandomCentralDecisionProcess extends AbstractCentralDecisionProcess
 			Vector<TechnicalSystemStateEvaluation> tsseVector = this.getSystemsVariability().get(netCompID);
 			
 			// --- Make a random decision here ----------------------
-			int selectionIndex = GlobalInfo.getRandomInteger(0, tsseVector.size()-1);
+			int selectionIndex = NumberHelper.getRandomInteger(0, tsseVector.size()-1);
 			TechnicalSystemStateEvaluation tsseDecision = tsseVector.get(selectionIndex);
 			tsd.getSystemStates().put(netCompID, tsseDecision);
 		}

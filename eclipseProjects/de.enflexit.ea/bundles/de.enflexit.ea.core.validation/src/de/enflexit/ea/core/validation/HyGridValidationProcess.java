@@ -33,7 +33,7 @@ import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
-import energy.GlobalInfo;
+import energy.helper.NumberHelper;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
@@ -182,9 +182,9 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			durationText = durationMS + " ms";
 		} else {
 			if (durationS<=300) {
-				durationText = GlobalInfo.round(durationS, 2) + " s";
+				durationText = NumberHelper.round(durationS, 2) + " s";
 			} else {
-				durationText = GlobalInfo.round(durationMin , 2) + " min";
+				durationText = NumberHelper.round(durationMin , 2) + " min";
 			}
 		}
 		this.addMessage("Done! - Finalized in " + durationText + ".", MessageType.Information);
