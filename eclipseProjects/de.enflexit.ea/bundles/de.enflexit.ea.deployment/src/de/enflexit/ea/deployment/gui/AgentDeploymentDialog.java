@@ -220,7 +220,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 			gbc_separator.gridy = 0;
 			contentPanel.add(getSeparator(), gbc_separator);
 			GridBagConstraints gbc_networkComponentSelectionPanel = new GridBagConstraints();
-			gbc_networkComponentSelectionPanel.insets = new Insets(10, 0, 0, 5);
+			gbc_networkComponentSelectionPanel.insets = new Insets(10, 10, 0, 10);
 			gbc_networkComponentSelectionPanel.fill = GridBagConstraints.BOTH;
 			gbc_networkComponentSelectionPanel.gridx = 2;
 			gbc_networkComponentSelectionPanel.gridy = 0;
@@ -658,9 +658,9 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 			gbl_networkComponentSelectionPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 			networkComponentSelectionPanel.setLayout(gbl_networkComponentSelectionPanel);
 			GridBagConstraints gbc_jLabelSelectComponents = new GridBagConstraints();
+			gbc_jLabelSelectComponents.insets = new Insets(0, 5, 5, 0);
 			gbc_jLabelSelectComponents.anchor = GridBagConstraints.NORTH;
 			gbc_jLabelSelectComponents.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jLabelSelectComponents.insets = new Insets(0, 15, 5, 0);
 			gbc_jLabelSelectComponents.gridx = 0;
 			gbc_jLabelSelectComponents.gridy = 0;
 			networkComponentSelectionPanel.add(getJLabelSelectComponents(), gbc_jLabelSelectComponents);
