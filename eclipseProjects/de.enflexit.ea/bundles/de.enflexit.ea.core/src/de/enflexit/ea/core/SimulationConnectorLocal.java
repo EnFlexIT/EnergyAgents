@@ -96,17 +96,18 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 				try {
 					// --- Wait for a simulation manager to be found ----------
 					SimulationServiceHelper simHelper = (SimulationServiceHelper) myAgent.getHelper(SimulationService.NAME);
-					while (simHelper.getManagerAgent()==null) {
+					while (ioSimulated.done()==false && simHelper.getManagerAgent()==null) {
 						Thread.sleep(100);
 					}
 					
 					// --- Wait for the environment model ---------------------
-					while (simHelper.getEnvironmentModel()==null) {
+					while (ioSimulated.done()==false && simHelper.getEnvironmentModel()==null) {
 						Thread.sleep(100);
 					}
+					if (ioSimulated.done()==true) return;
+					
 					// --- Inform manager about initialization ----------------
 					SimulationConnectorLocal.this.sendManagerNotification(STATE_CONFIRMATION.Initialized);
-					
 					
 					// --- Get the actual environment model -------------------
 					EnvironmentModel envModel = simHelper.getEnvironmentModel();
@@ -356,7 +357,6 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 		this.ioSimulated.setDone(true);
 		this.removeNotificationHandler();
 		this.sensorPlugOut();
-		this.myAgent.doDelete();
 	}
 
 	/* (non-Javadoc)
