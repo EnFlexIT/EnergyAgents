@@ -114,11 +114,11 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			}
 			
 			
-			// --- Send notification to simulation manager that this agent is ready -----
-			this.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
-			
 			// --- finalize the setup of the energy agent -------------------------------
 			this.getEnergyAgent().onEnvironmentModelSet();
+
+			// --- Send notification to simulation manager that this agent is ready -----
+			this.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
