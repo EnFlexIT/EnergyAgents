@@ -178,7 +178,7 @@ public class OpsController implements FieldVisualizationService {
 		
 		boolean successful = false;
 		if (this.isConnected()==true) {
-			Application.getJadePlatform().stop();
+			Application.getJadePlatform().stop(false);
 			successful = true;
 			// --- Reset local variables ------------------
 			this.setCeaAID(null);

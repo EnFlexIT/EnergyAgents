@@ -9,11 +9,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
-import energy.GlobalInfo;
 import energy.OptionModelController;
-import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.evaluation.AbstractEvaluationStrategyRT.InitialStateAdaption;
+import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
+import energy.helper.NumberHelper;
 import energy.optionModel.AbstractFlow;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
@@ -150,7 +150,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 					tssDeltaDecision = deltaSteps.get(0);
 				} else {
 					DisplayHelper.systemOutPrintlnGlobalTime(tsse.getGlobalTime(), "=> ", this.getClass().getSimpleName() + ": No set point matching found " + systemDescription + ". - Use random decision!");
-					int decisionIndex = GlobalInfo.getRandomInteger(0, deltaSteps.size()-1);
+					int decisionIndex = NumberHelper.getRandomInteger(0, deltaSteps.size()-1);
 					tssDeltaDecision = deltaSteps.get(decisionIndex);	
 				}
 			}
@@ -210,7 +210,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 				tssDeltaDecision = deltaSteps.get(0);
 			} else {
 				DisplayHelper.systemOutPrintlnGlobalTime(tsse.getGlobalTime(), "=> ", this.getClass().getSimpleName() + ": No set point matching found '" + subSystemDescription + "'. - Use random decision!");
-				int decisionIndex = GlobalInfo.getRandomInteger(0, deltaSteps.size()-1);
+				int decisionIndex = NumberHelper.getRandomInteger(0, deltaSteps.size()-1);
 				tssDeltaDecision = deltaSteps.get(decisionIndex);	
 			}
 		}

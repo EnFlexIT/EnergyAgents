@@ -149,7 +149,7 @@ public class Blackboard {
 		boolean isWaitForBlackboardAgent = (workingThreadToWaitFor==null || workingThreadToWaitFor==BlackboardWorkingThread.BlackboardAgent); 
 		boolean isWaitForBlackboardListenerThread = (workingThreadToWaitFor==null || workingThreadToWaitFor==BlackboardWorkingThread.BlackboardListenerThread);
 		
-		if (isWaitForBlackboardAgent==true) {
+		if (this.isDoTerminate()==false && isWaitForBlackboardAgent==true) {
 			FinalizationTrigger ftAgent = this.getFinalizationTriggerBlackboardAgent();
 			synchronized (ftAgent) {
 				if (ftAgent.isFinalized()==false) {
@@ -161,7 +161,7 @@ public class Blackboard {
 			}
 		}
 		
-		if (isWaitForBlackboardListenerThread==true) {
+		if (this.isDoTerminate()==false && isWaitForBlackboardListenerThread==true) {
 			FinalizationTrigger ftThread4Listener = this.getFinalizationTriggerBlackboardListenerThread();
 			synchronized (ftThread4Listener) {
 				if (ftThread4Listener.isFinalized()==false) {
@@ -203,6 +203,9 @@ public class Blackboard {
 		this.doTerminate = true;
 		synchronized (this.getWakeUpTrigger()) {
 			this.getWakeUpTrigger().notifyAll();
+		}
+		synchronized (this.getFinalizationTriggerBlackboardAgent()) {
+			this.getFinalizationTriggerBlackboardAgent().notifyAll();
 		}
 		this.resetBlackboardDataModel();
 	}

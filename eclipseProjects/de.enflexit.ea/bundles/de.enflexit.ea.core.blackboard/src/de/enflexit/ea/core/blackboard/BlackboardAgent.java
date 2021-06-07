@@ -64,6 +64,8 @@ public class BlackboardAgent extends Agent {
 	protected void takeDown() {
 		this.simServiceBehaviour.setExit(true);
 		this.tbf.getThread(this.simServiceBehaviour).interrupt();
+		this.removeBehaviour(this.simServiceBehaviour);
+		this.simServiceBehaviour=null;
 	}
 	
 	/**

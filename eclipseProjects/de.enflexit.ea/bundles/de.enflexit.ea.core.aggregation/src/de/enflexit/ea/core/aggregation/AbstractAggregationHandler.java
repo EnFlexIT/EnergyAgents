@@ -60,6 +60,8 @@ public abstract class AbstractAggregationHandler {
 	private String ownerName;
 	private Object ownerInstance;
 
+	private boolean doTerminate; 
+	
 	private EnvironmentModel environmentModel;
 
 	private TimeModelDateBased timeModel;
@@ -328,6 +330,9 @@ public abstract class AbstractAggregationHandler {
 	 * Terminates the current aggregation handler. 
 	 */
 	public void terminate() {
+		
+		// --- Set local flag to terminate ------------------------------------
+		this.doTerminate = true;
 		
 		// --- Terminate NetworkCalculationThreads ----------------------------
 		try {
@@ -1342,7 +1347,7 @@ public abstract class AbstractAggregationHandler {
 	 */
 	private void waitForNetworkAggregationTasksDone() {
 		synchronized (this.getLocalThreadTrigger()) {
-			if (this.isDoneNetworkAggregationTasks()==false) {
+			if (this.doTerminate==false && this.isDoneNetworkAggregationTasks()==false) {
 				try {
 					this.getLocalThreadTrigger().wait();
 				} catch (InterruptedException iEx) {

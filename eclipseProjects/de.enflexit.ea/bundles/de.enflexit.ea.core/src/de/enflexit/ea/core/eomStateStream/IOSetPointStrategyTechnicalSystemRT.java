@@ -6,11 +6,11 @@ import java.util.Vector;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import energy.FixedVariableList;
-import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
+import energy.helper.NumberHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -143,7 +143,7 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 					tssDeltaDecision = deltaSteps.get(0);
 				} else {
 					DisplayHelper.systemOutPrintlnGlobalTime(tsse.getGlobalTime(), "=> ", this.getClass().getSimpleName() + ": No set point matching found " + systemDescription + ". - Use random decision!");
-					int decisionIndex = GlobalInfo.getRandomInteger(0, deltaSteps.size()-1);
+					int decisionIndex = NumberHelper.getRandomInteger(0, deltaSteps.size()-1);
 					tssDeltaDecision = deltaSteps.get(decisionIndex);	
 				}
 			}
