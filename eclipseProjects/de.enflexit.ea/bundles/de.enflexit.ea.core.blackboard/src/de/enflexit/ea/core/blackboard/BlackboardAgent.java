@@ -299,7 +299,7 @@ public class BlackboardAgent extends Agent {
 					break;
 				case NetworkComponentDataModel:
 					NetworkComponent netComp = networkModel.getNetworkComponent(singleRequest.getIdentifier());
-					answer = new GraphNodeAnswer(singleRequest.getIdentifier(), netComp.getDataModel());
+					answer = new NetworkComponentAnswer(singleRequest.getIdentifier(), netComp.getDataModel());
 					break;
 				}
 			}
