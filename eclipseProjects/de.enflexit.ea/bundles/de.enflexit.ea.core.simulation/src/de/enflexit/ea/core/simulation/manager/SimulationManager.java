@@ -180,6 +180,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getAggregationHandler().terminate();
 		this.stopNetworkCalculationExecuter();
 		this.getBlackboard().stopBlackboardListenerServiceThread();
+		this.removeSimulationBehaviour();
 		super.doDelete();
 	}
 	/* (non-Javadoc)
