@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -16,6 +15,7 @@ import org.awb.env.networkModel.visualisation.ACLMessageForwardingListener;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
 import agentgui.core.application.Language;
+import de.enflexit.ea.core.awbIntegration.ImageHelper;
 import de.enflexit.eom.awb.adapter.EomAdapter;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
@@ -74,7 +74,7 @@ public class SwitchableEomAdapter extends EomAdapter implements ACLMessageForwar
 		this.sendRequestOperaitonStateMessage();
 		if (this.menuItemOperation == null){
 			this.menuItemOperation = new JCheckBoxMenuItem(Language.translate("Operating", Language.EN));
-			this.menuItemOperation.setIcon(new ImageIcon(SwitchableEomAdapter.class.getResource("/hygrid/plugin/gui/img/powerButton.png")));
+			this.menuItemOperation.setIcon(ImageHelper.getImageIcon("powerButton.png"));
 			this.menuItemOperation.setSelected(operating);
 			this.menuItemOperation.addActionListener(new ActionListener() {
 				

@@ -194,6 +194,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					TechnicalSystem technicalSystem = (TechnicalSystem) dataModelOfNetworkComponent;
 					OptionModelController omc = new OptionModelController();
 					omc.setTechnicalSystem(technicalSystem);
+					omc.setControllingAgent(this.getIoSimulated().getEnergyAgent());
 					// --- Execute evaluation ---------------------------------
 					EvaluationProcess ep = omc.getEvaluationProcess();
 					// --- Try to get real time strategy ----------------------
@@ -229,6 +230,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					GroupController gc = new GroupController();
 					gc.setTechnicalSystemGroup(systemGroup);
 					OptionModelController omc = gc.getGroupOptionModelController();
+					omc.setControllingAgent(this.getIoSimulated().getEnergyAgent());
 					// --- Execute evaluation ---------------------------------
 					EvaluationProcess ep = omc.getEvaluationProcess();
 					// --- Try to get real time strategy ----------------------

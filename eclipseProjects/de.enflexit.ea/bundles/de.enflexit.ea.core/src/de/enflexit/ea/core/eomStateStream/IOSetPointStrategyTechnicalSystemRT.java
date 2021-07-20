@@ -77,15 +77,17 @@ public class IOSetPointStrategyTechnicalSystemRT extends AbstractEvaluationStrat
 		// --- Try accessing ControlBehaviourRT -------------------------------
 		if (this.ioSimulated.getEnergyAgent().isExecutedControlBehaviourRT()==true) {
 			ControlBehaviourRT cbRT = this.ioSimulated.getEnergyAgent().getControlBehaviourRT();
-			TechnicalSystemStateEvaluation lastTSSE = cbRT.getRealTimeEvaluationStrategy().getTechnicalSystemStateEvaluation();
-			while (lastTSSE.getGlobalTime()>timeStep) {
-				if (lastTSSE.getParent()==null) break;
-				lastTSSE = lastTSSE.getParent();
-			}
-			
-			if (lastTSSE.getGlobalTime()==timeStep) {
-				// --- Extract set points -------------------------------------
-				fvListSetPoint = this.createSetPointListFromSystemState(lastTSSE);
+			TechnicalSystemStateEvaluation lastTSSE = cbRT.getRealTimeEvaluationStrategy().getTechnicalSystemStateEvaluationAllowNull();
+			if (lastTSSE!=null) {
+				while (lastTSSE.getGlobalTime()>timeStep) {
+					if (lastTSSE.getParent()==null) break;
+					lastTSSE = lastTSSE.getParent();
+				}
+				
+				if (lastTSSE.getGlobalTime()==timeStep) {
+					// --- Extract set points -------------------------------------
+					fvListSetPoint = this.createSetPointListFromSystemState(lastTSSE);
+				}
 			}
 		}
 		return fvListSetPoint;
