@@ -13,6 +13,7 @@ Export-Package: de.enflexit.ea.electricity.aggregation,
  de.enflexit.ea.electricity.scheduleImport,
  de.enflexit.ea.electricity.topologyImport
 Require-Bundle: de.enflexit.common,
+ de.enflexit.geography,
  de.enflexit.eom.core,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.awbIntegration,
