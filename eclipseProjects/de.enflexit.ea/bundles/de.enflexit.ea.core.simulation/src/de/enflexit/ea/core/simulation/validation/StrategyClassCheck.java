@@ -57,7 +57,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				AbstractCentralDecisionProcess decisionProcess = null;
 				try {
 					decisionProcess = AbstractCentralDecisionProcess.createCentralDecisionProcess(decisionProcessClass);
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+				} catch (Exception ex) {
 					//ex.printStackTrace();
 				}
 				if (decisionProcess==null) {

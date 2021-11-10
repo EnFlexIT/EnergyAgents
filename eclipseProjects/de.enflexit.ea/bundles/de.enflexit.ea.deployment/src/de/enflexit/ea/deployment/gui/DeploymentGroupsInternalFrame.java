@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -39,6 +37,8 @@ import agentgui.core.application.Application;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;

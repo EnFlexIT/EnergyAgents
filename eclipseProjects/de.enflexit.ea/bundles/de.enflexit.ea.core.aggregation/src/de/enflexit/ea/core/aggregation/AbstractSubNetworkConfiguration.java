@@ -570,8 +570,8 @@ public abstract class AbstractSubNetworkConfiguration {
 		T newInstance=null;
 		try {
 			newInstance = (T) BaseClassLoadServiceUtility.newInstance(classToInitiate.getName());
-		} catch (ClassCastException | ClassNotFoundException | InstantiationException | IllegalAccessException ccEx) {
-			ccEx.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return newInstance;	
 	}

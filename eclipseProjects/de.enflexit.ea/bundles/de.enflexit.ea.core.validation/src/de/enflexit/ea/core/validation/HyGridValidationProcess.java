@@ -2,8 +2,6 @@ package de.enflexit.ea.core.validation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
@@ -27,6 +25,8 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;

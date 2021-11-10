@@ -282,7 +282,7 @@ public abstract class AbstractCentralDecisionProcess {
 	 * @throws InstantiationException 
 	 * @throws ClassNotFoundException 
 	 */
-	public static AbstractCentralDecisionProcess createCentralDecisionProcess(String decisionProcessClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static AbstractCentralDecisionProcess createCentralDecisionProcess(String decisionProcessClassName) throws Exception {
 		
 		AbstractCentralDecisionProcess cdp = null;
 		if (decisionProcessClassName!=null && decisionProcessClassName.isEmpty()==false) {

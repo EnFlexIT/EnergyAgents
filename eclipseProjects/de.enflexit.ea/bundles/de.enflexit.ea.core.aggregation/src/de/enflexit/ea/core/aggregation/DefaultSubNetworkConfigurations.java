@@ -78,7 +78,7 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 						configIdCounter++;
 					}
 					
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+				} catch (Exception ex) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] The class '" + configClassName + "' could not be initiated!");
 					ex.printStackTrace();
 				}

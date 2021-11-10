@@ -1,11 +1,10 @@
 package de.enflexit.ea.core.dataModel.graphLayout;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.JPanel;
 
 import agentgui.core.project.Project;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersistenceTreeMap;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 

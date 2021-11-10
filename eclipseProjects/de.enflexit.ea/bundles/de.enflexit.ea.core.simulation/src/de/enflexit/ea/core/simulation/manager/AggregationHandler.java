@@ -242,7 +242,7 @@ public class AggregationHandler extends AbstractAggregationHandler {
 					if (centralDecisionProcess!=null) {
 						centralDecisionProcess.setAggregationHandler(this);
 					}
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}

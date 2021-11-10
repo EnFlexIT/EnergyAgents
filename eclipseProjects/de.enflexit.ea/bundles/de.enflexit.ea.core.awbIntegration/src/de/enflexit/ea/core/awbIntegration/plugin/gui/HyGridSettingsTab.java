@@ -8,8 +8,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
@@ -40,6 +38,8 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeUnit;
 import agentgui.simulationService.time.TimeUnitVector;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
