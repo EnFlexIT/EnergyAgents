@@ -72,6 +72,10 @@ public class FallbackSubNetworkConfiguration extends AbstractSubNetworkConfigura
 			// --- Component has no agent class -----------
 			return false;
 		}
+		if (cts.getDomain().contains("Coordination")) {
+			// --- Ignore components from the coordination domain
+			return false;
+		}
 		
 		// --- Third check: Does the component contain an EOM-based data model?
 		Object netCompDM = netComp.getDataModel();
