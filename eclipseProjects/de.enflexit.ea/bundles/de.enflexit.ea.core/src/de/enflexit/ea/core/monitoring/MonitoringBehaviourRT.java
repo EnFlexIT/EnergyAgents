@@ -2,12 +2,12 @@ package de.enflexit.ea.core.monitoring;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.event.EventListenerList;
 
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;

@@ -2,14 +2,14 @@ package de.enflexit.ea.core.behaviour;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;

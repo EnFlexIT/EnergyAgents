@@ -1,10 +1,10 @@
 package de.enflexit.ea.core.dataModel.measurements;
 
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
 
+import de.enflexit.common.Observable;
 import de.enflexit.ea.core.dataModel.ontology.Measurement;
 
 /**

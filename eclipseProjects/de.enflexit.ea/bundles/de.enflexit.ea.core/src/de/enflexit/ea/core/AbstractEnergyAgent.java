@@ -2,8 +2,6 @@ package de.enflexit.ea.core;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
@@ -14,6 +12,8 @@ import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyClassTreeObject;

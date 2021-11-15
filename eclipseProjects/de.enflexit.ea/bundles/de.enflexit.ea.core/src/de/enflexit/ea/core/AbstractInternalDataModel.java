@@ -2,12 +2,12 @@ package de.enflexit.ea.core;
 
 import java.io.File;
 import java.util.List;
-import java.util.Observable;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
+import de.enflexit.common.Observable;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.dataModel.DirectoryHelper;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
