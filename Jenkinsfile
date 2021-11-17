@@ -5,7 +5,7 @@ pipeline {
       steps {
         echo 'Energy Agents: Start Snapshot Build and Deployment ...'
         sh 'mvn --version'
-        sh 'mvn clean install -P p2DeployClean -f eclipseProjects/de.enflexit.ea'
+        sh 'mvn clean install -P p2Deploy -f eclipseProjects/de.enflexit.ea'
         echo 'Energy Agents: Build & Deployment of Snapshot is done!'
       }
     }
