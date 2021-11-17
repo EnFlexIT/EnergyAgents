@@ -3,7 +3,7 @@
    <feature id="de.enflexit.ea.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
       <category name="de.enflexit.ea"/>
    </feature>
-   <feature id="de.enflexit.ea.feature.source" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+   <feature id="de.enflexit.ea.feature.source" version="0.0.0">
       <category name="de.enflexit.ea"/>
    </feature>
    <category-def name="de.enflexit.ea" label="Energy Agent"/>

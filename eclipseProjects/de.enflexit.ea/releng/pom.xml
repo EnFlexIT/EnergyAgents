@@ -14,7 +14,7 @@
 
     <modules>
          <module>de.enflexit.ea.configuration</module>
-         <module>de.enflexit.ea.update</module>
 		 <module>de.enflexit.ea.target</module>
+         <module>de.enflexit.ea.update</module>
     </modules>
 </project>
