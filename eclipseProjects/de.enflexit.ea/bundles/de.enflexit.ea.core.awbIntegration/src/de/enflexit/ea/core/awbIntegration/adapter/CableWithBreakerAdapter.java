@@ -107,8 +107,10 @@ public abstract class CableWithBreakerAdapter extends NetworkComponentAdapter im
 
 		// --- Define menu item vector ------------------------------
 		Vector<JComponent> myMenuItmes = new Vector<JComponent>();
-		this.addMenuItemForCircuitBreaker(myMenuItmes, this.getValidCircuitBreaker(breakerConfig.getBreakerBegin()), true);
-		this.addMenuItemForCircuitBreaker(myMenuItmes, this.getValidCircuitBreaker(breakerConfig.getBreakerEnd())  , false);
+		if (breakerConfig!=null) {
+			this.addMenuItemForCircuitBreaker(myMenuItmes, this.getValidCircuitBreaker(breakerConfig.getBreakerBegin()), true);
+			this.addMenuItemForCircuitBreaker(myMenuItmes, this.getValidCircuitBreaker(breakerConfig.getBreakerEnd())  , false);
+		}
 		return myMenuItmes;
 	}
 	
