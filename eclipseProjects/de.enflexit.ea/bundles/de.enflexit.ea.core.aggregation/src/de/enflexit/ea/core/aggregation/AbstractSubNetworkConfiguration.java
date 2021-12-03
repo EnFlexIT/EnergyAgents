@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.aggregation;
 
 import java.awt.Container;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -546,8 +547,8 @@ public abstract class AbstractSubNetworkConfiguration {
 		
 		T newInstance=null;
 		try {
-			newInstance = classToInitiate.newInstance();
-		} catch (InstantiationException | IllegalAccessException ex) {
+			newInstance = classToInitiate.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
 			//e.printStackTrace();
 		}
 		// --- Try to get the instance by using the class load service --------
