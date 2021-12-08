@@ -1204,6 +1204,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			// --- Transfer old settings to the new ---
 			timModelNew.setTimeStart(timeModelOld.getTimeStart());
 			timModelNew.setTimeStop(timeModelOld.getTimeStop());
+			timModelNew.setZoneId(timeModelOld.getZoneId());
 			timModelNew.setTimeFormat(timeModelOld.getTimeFormat());
 			// --- Save the new time model settings -------
 			tmc.saveTimeModelToSimulationSetup();
