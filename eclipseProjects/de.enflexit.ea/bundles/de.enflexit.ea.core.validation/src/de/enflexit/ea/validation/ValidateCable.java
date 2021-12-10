@@ -25,23 +25,23 @@ public class ValidateCable extends HyGridValidationAdapter {
 			// Extract dataModel
 			Object[] dataModel = (Object[]) netComp.getDataModel();
 			// Check if dataModel exists
-			if(dataModel == null) {
-				// dataModel does not exist. Please generate one by loading the properties
+			if (dataModel==null || (dataModel.getClass().isArray()==true && dataModel[0]==null)) {
+				// --- No data model exists. --------------------------------------------
 				String message = "Error found for " + netComp.getType() + " " + netComp.getId() + ": No Data Model found for this Component!";
 				String description = "Try to edit the cable properties of " + netComp.getType() + " " + netComp.getId() + " - this is possibly already enough.";
 				return new HyGridValidationMessage(message, MessageType.Error,description);
 			} else {
-				CableProperties cableDataModel = (CableProperties) dataModel[0];
-				
+				// -- Get the actual cable model ----------------------------------------
+				CableProperties cdm = (CableProperties) dataModel[0];
 				// Check for a permitted length of the cable
-				if(cableDataModel.getLength().getValue() == 0) {
-					String message = "Error found for " + netComp.getType() + " " + netComp.getId() + ": Length is zero!";
+				if (cdm.getLength()==null || cdm.getLength().getValue() == 0) {
+					String message = "Error found for " + netComp.getType() + " " + netComp.getId() + ": Length is not specified or zero!";
 					String description = "Edit the length of the Cable.\nOtherwise the subnetwork can't be calculated.";
 					return new HyGridValidationMessage(message, MessageType.Error,description);
 				}
 				
 				// Check for linear Resistance or Inductance and warn if both are zero
-				if(cableDataModel.getLinearResistance().getValue() == 0 && cableDataModel.getLinearReactance().getValue() == 0) {
+				if (cdm.getLinearResistance().getValue()==0 && cdm.getLinearReactance().getValue()==0) {
 					String message = "Error found for " + netComp.getType() + " " + netComp.getId() + ": Linear Resistance and Linear Reactance are both zero!";
 					String description = "Edit at least one of the needed values.\nOtherwise the subnetwork can't be calculated.";
 					return new HyGridValidationMessage(message, MessageType.Error,description);
