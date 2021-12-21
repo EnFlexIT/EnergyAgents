@@ -16,6 +16,8 @@ import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
+import de.enflexit.ea.core.dataModel.ontology.CableWithBreakerProperties;
+import de.enflexit.ea.core.dataModel.ontology.CircuitBreaker;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import edu.uci.ics.jung.graph.Graph;
@@ -481,18 +483,23 @@ public class NetworkModelToCsvMapper {
 				
 				// --- Data model is a Object Array of an Ontology adapter ----
 				Object[] dataModelArray = (Object[]) netComp.getDataModel();
-				if (dataModelArray[0]!=null && dataModelArray[0] instanceof CableProperties) {
+				if (dataModelArray[0]==null) continue;
+				
+				// --- Handle cable and sub classes ---------------------------
+				if (dataModelArray[0] instanceof CableProperties) {
 					
-					CableProperties cable 			  = (CableProperties) dataModelArray[0];
-					double dLengthLine		  = cable.getLength().getValue();
+					CableProperties cable 		= (CableProperties) dataModelArray[0];
+					double dLengthLine		  	= cable.getLength().getValue();
 					double dResistanceLinear_R  = cable.getLinearResistance()==null  ? 0.0 : cable.getLinearResistance().getValue();
 					double dReactanceLinear_X   = cable.getLinearReactance()==null   ? 0.0 : cable.getLinearReactance().getValue();
 					double dLinearCapacitance_C = cable.getLinearCapacitance()==null ? 0.0 : cable.getLinearCapacitance().getValue();
 					double dLinearConductance_G = cable.getLinearConductance()==null ? 0.0 : cable.getLinearConductance().getValue();
-					double nMaxCurrent		  = cable.getMaxCurrent()==null 	   ? 0.0 : cable.getMaxCurrent().getValue();
+					double nMaxCurrent		 	= cable.getMaxCurrent()==null 	  	 ? 0.0 : cable.getMaxCurrent().getValue();
 					
-					// --- Check for Sensor information -----------------------
 					if (cable instanceof SensorProperties) {
+						// ----------------------------------------------------
+						// --- Handle Sensor information ----------------------
+						// ----------------------------------------------------
 						SensorProperties sensor = (SensorProperties) cable;
 						if (sensor.getMeasureLocation()!=null) {
 							// --- Check, where the measurement location is ---
@@ -518,8 +525,16 @@ public class NetworkModelToCsvMapper {
 							newTableRow.set(colNodeNumberTo, (double)nodeNumberTo);
 							this.getTableModelSensors().addRow(newTableRow);
 						}
+						
+					} else if (cable instanceof CableWithBreakerProperties) {
+						// ----------------------------------------------------
+						// --- Handle breaker configuration -------------------
+						// ----------------------------------------------------
+						CableWithBreakerProperties cwBreaker = (CableWithBreakerProperties) cable;
+						if (this.isOpenBreaker(cwBreaker.getBreakerBegin())==true) continue;
+						if (this.isOpenBreaker(cwBreaker.getBreakerEnd())==true) continue;
+						
 					}
-					
 					
 					// --- Add row to setup vector ----------------------------
 					Vector<Double> row = new Vector<Double>();
@@ -568,10 +583,21 @@ public class NetworkModelToCsvMapper {
 					
 					branchNumber++;
 				}
-			}
-			
+			} // end if 'instanceof Object[]'
 			
 		} // end for 
+	}
+	
+	/**
+	 * Checks if the specified CircuitBreaker is open.
+	 *
+	 * @param cb the CircuitBreaker to check
+	 * @return true, if is open breaker
+	 */
+	private boolean isOpenBreaker(CircuitBreaker cb) {
+		if (cb==null) return false;
+		if (cb.getBreakerID()==null || cb.getBreakerID().isBlank()) return false;
+		return !cb.getIsClosed();
 	}
 	
 	
