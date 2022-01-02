@@ -246,7 +246,6 @@ public abstract class AbstractSubAggregationBuilder {
 			public void run() {
 				AbstractSubAggregationBuilder.this.getGroupMainPanel().setDoModelChangeCheckBeforeClosing(false);
 				AbstractSubAggregationBuilder.this.getGroupMainPanel().closeEomUserInterface();
-				
 			}
 		});
 	}
