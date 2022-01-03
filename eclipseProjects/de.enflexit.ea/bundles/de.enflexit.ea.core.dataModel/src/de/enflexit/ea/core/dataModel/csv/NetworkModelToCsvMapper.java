@@ -596,7 +596,7 @@ public class NetworkModelToCsvMapper {
 	 */
 	private boolean isOpenBreaker(CircuitBreaker cb) {
 		if (cb==null) return false;
-		if (cb.getBreakerID()==null || cb.getBreakerID().isBlank()) return false;
+		if (cb.getBreakerID()==null || cb.getBreakerID().trim().isEmpty()) return false;
 		return !cb.getIsClosed();
 	}
 	
