@@ -52,6 +52,7 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
     "snapshotCentralDecisionClass",
     "networkCalculationIntervalLength",
     "networkCalculationIntervalUnitIndex",
+    "stateTransmission",
     "executionDataBase",
     "energyTransmissionConfiguration",
     "displayUpdateConfiguration",
@@ -67,6 +68,11 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	public static enum TimeModelType {
 		TimeModelDiscrete,
 		TimeModelContinuous
+	}
+	
+	public enum StateTransmission {
+		AsDefined,
+		Reduced
 	}
 	
 	/** The location for control decisions in snapshot simulations that is either within agents or in a specific class */
@@ -85,11 +91,13 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	
 	@XmlTransient private SetupExtension setupExtension;
 	
-	private long simulationIntervalLength = 5;
-	private int simulationIntervalUnitIndex = 1;
-	
 	private long networkCalculationIntervalLength = 5;
 	private int networkCalculationIntervalUnitIndex = 1;
+	
+	private StateTransmission stateTransmission;
+	
+	private long simulationIntervalLength = 5;
+	private int simulationIntervalUnitIndex = 1;
 	
 	private boolean isDiscreteSnapshotSimulation;
 	private SnapshotDecisionLocation snapshotDecisionLocation;
@@ -186,6 +194,56 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	// --- From here, PERSISTED runtime information -----------------
 	// --------------------------------------------------------------
 	/**
+	 * Gets the network calculation interval length.
+	 * @return the network calculation interval length
+	 */
+	public long getNetworkCalculationIntervalLength() {
+		return networkCalculationIntervalLength;
+	}
+	/**
+	 * Sets the network calculation interval length.
+	 * @param networkCalculationIntervalLength the new network calculation interval length
+	 */
+	public void setNetworkCalculationIntervalLength(long networkCalculationIntervalLength) {
+		this.networkCalculationIntervalLength = networkCalculationIntervalLength;
+	}
+	
+	/**
+	 * Gets the network calculation interval unit index.
+	 * @return the network calculation interval unit index
+	 */
+	public int getNetworkCalculationIntervalUnitIndex() {
+		return networkCalculationIntervalUnitIndex;
+	}
+	/**
+	 * Sets the network calculation interval unit index.
+	 * @param networkCalculationIntervalUnitIndex the new network calculation interval unit index
+	 */
+	public void setNetworkCalculationIntervalUnitIndex(int networkCalculationIntervalUnitIndex) {
+		this.networkCalculationIntervalUnitIndex = networkCalculationIntervalUnitIndex;
+	}
+	
+	
+	/**
+	 * Returns the kind of state transmission.
+	 * @return the state transmission
+	 */
+	public StateTransmission getStateTransmission() {
+		if (stateTransmission==null) {
+			stateTransmission = StateTransmission.Reduced;
+		}
+		return stateTransmission;
+	}
+	/**
+	 * Sets the kind of state transmission.
+	 * @param stateTransmission the new state transmission
+	 */
+	public void setStateTransmission(StateTransmission stateTransmission) {
+		this.stateTransmission = stateTransmission;
+	}
+	
+	
+	/**
 	 * Gets the simulation interval length.
 	 * @return the simulation interval length
 	 */
@@ -215,36 +273,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.simulationIntervalUnitIndex = simulationIntervalUnitIndex;
 	}
 
-	
-	/**
-	 * Gets the network calculation interval length.
-	 * @return the network calculation interval length
-	 */
-	public long getNetworkCalculationIntervalLength() {
-		return networkCalculationIntervalLength;
-	}
-	/**
-	 * Sets the network calculation interval length.
-	 * @param networkCalculationIntervalLength the new network calculation interval length
-	 */
-	public void setNetworkCalculationIntervalLength(long networkCalculationIntervalLength) {
-		this.networkCalculationIntervalLength = networkCalculationIntervalLength;
-	}
-	
-	/**
-	 * Gets the network calculation interval unit index.
-	 * @return the network calculation interval unit index
-	 */
-	public int getNetworkCalculationIntervalUnitIndex() {
-		return networkCalculationIntervalUnitIndex;
-	}
-	/**
-	 * Sets the network calculation interval unit index.
-	 * @param networkCalculationIntervalUnitIndex the new network calculation interval unit index
-	 */
-	public void setNetworkCalculationIntervalUnitIndex(int networkCalculationIntervalUnitIndex) {
-		this.networkCalculationIntervalUnitIndex = networkCalculationIntervalUnitIndex;
-	}
 	
 	
 	/**
@@ -489,6 +517,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		// --- Continuous time model ----------------------
 		copy.setNetworkCalculationIntervalLength(this.getNetworkCalculationIntervalLength());
 		copy.setNetworkCalculationIntervalUnitIndex(this.getNetworkCalculationIntervalUnitIndex());
+		copy.setStateTransmission(this.getStateTransmission());
 		copy.setEnergyTransmissionConfiguration(this.getEnergyTransmissionConfiguration().getCopy());
 
 		// --- Discrete time model ------------------------
@@ -553,6 +582,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		// --- Continuous time model ----------------------
 		if (hyGridComp.getNetworkCalculationIntervalLength()!=this.getNetworkCalculationIntervalLength()) return false;
 		if (hyGridComp.getNetworkCalculationIntervalUnitIndex()!= this.getNetworkCalculationIntervalUnitIndex()) return false;
+		if (hyGridComp.getStateTransmission()!=this.getStateTransmission()) return false;
 		if (hyGridComp.getEnergyTransmissionConfiguration().equals(this.getEnergyTransmissionConfiguration())==false) return false;
 
 		// ------------------------------------------------

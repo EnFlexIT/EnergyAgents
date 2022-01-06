@@ -17,6 +17,7 @@ import de.enflexit.eom.awb.stateStream.SystemStateDispatcher;
 import de.enflexit.eom.awb.stateStream.SystemStateDispatcherAgentConnector;
 import energy.EomController;
 import energy.FixedVariableList;
+import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
@@ -44,7 +45,7 @@ import energygroup.evaluation.IOSelectTreeAction;
 public class EomModelStateInputStream extends AbstractStateInputStream {
 
 	protected boolean debug = false;
-	protected String debugNetworkComponentID = "LV3.101 Bus 1";
+	protected String debugNetworkComponentID = "n10";
 	
 	private SystemStateDispatcherAgentConnector dispatchConnector;
 	private AbstractStateQueueKeeper stateQueueKeeper;
@@ -301,17 +302,33 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 				switch (this.getIoSimulated().getTimeModelType()) {
 				case TimeModelDiscrete:
 					st = new ScheduleTransformerDiscreteTime(scheduleToCheck, this.getIoSimulated().getTimeModelDiscrete().getTimeStart(), this.getIoSimulated().getTimeModelDiscrete().getStep());	
+					transformedSchedule = st.getTransformedSchedule();
 					break;
+					
 				case TimeModelContinuous:
-					st = new ScheduleTransformerKeyValue(scheduleToCheck, this.getIoSimulated().getEnergyTransmissionConfiguration());
+					// --- Check state transmission type ----------------------
+					switch (this.getIoSimulated().getStateTransmissionConfiguration()) {
+					case AsDefined:
+						transformedSchedule = SerialClone.clone(scheduleToCheck);
+						break;
+
+					case Reduced:
+						st = new ScheduleTransformerKeyValue(scheduleToCheck, this.getIoSimulated().getEnergyTransmissionConfiguration());
+						transformedSchedule = st.getTransformedSchedule();
+						break;
+					}
 					break;
 				}
-				transformedSchedule = st.getTransformedSchedule();
 				
 			} catch (Exception ex) {
 				System.err.println("[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] Error while transforming the Schedule to prepare for the execution:");
 				ex.printStackTrace();
 			}
+		}
+		
+		if (this.isDebug()==true) {
+			String displayText = "System States before transformation: " + scheduleToCheck.getNumberOfStates() + ", System States ater transformation: " + transformedSchedule.getNumberOfStates();
+			System.out.println("[" + this.getClass().getSimpleName() + "][" + this.getNetworkComponent().getId() + "] " + displayText);
 		}
 		return transformedSchedule;
 	}
@@ -718,21 +735,28 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		if (schedule==null) return null;
 		
 		TechnicalSystemStateEvaluation tsse4Time = null;
-		TechnicalSystemStateEvaluation tsseWork = schedule.getTechnicalSystemStateList().get(0);
+		TechnicalSystemStateEvaluation tsseWork = null;
+		int iMax = schedule.getTechnicalSystemStateList().size()-1;
 		
 		int iStart = -1;
 		if (this.indexLastStateAccess==null) {
-			iStart = schedule.getTechnicalSystemStateList().size()-1;
+			iStart = iMax;
 		} else {
 			iStart = this.indexLastStateAccess;
 		}
 		if (iStart<0) return null;
-		if (iStart>=schedule.getTechnicalSystemStateList().size()) iStart = schedule.getTechnicalSystemStateList().size()-1;
+		if (iStart>=schedule.getTechnicalSystemStateList().size()) iStart = iMax;
 		
+		// --- Check start time of state --------------------------------------
 		tsseWork = schedule.getTechnicalSystemStateList().get(iStart);
-		if (tsseWork.getGlobalTime()>simulationTime) {
-			// --- Restart search from list end ------------------------------- 
-			iStart = schedule.getTechnicalSystemStateList().size()-1;
+		if ((tsseWork.getGlobalTime() - tsseWork.getStateTime()) > simulationTime) {
+			// --- Restart search from list end (timely begin of Schedule) ---- 
+			iStart = iMax;
+			// --- Check if the first state is before simulation time ---------
+			tsseWork = schedule.getTechnicalSystemStateList().get(iStart);
+			if ((tsseWork.getGlobalTime() - tsseWork.getStateTime()) > simulationTime) {
+				return null;
+			}
 		}
 		
 		for (int i=iStart; i>=0; i--) {
@@ -873,6 +897,13 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 				EomModelStateInputStream.this.getIoSimulated().setMeasurementsFromSystem(ioSettings);
 				// --- Inform manager -------------------------------
 				EomModelStateInputStream.this.getIoSimulated().getSimulationConnector().sendManagerNotification(tsse);
+				// --- Some debug output, if configured -------------
+				if (EomModelStateInputStream.this.isDebug()==true) {
+					String displayText = "Trigger time: " + GlobalInfo.getInstance().getDateTimeAsString(triggerTime, "dd.MM.yyyy hh:mm:ss") + " => ";
+					displayText += "TSSE time: " + GlobalInfo.getInstance().getDateTimeAsString(tsse.getGlobalTime() - tsse.getStateTime(), "dd.MM.yyyy hh:mm:ss,SSS");
+					displayText += " to " + GlobalInfo.getInstance().getDateTimeAsString(tsse.getGlobalTime(), "hh:mm:ss,SSS");
+					System.out.println("\n[" + TimeTrigger.class.getSimpleName() + "][" + EomModelStateInputStream.this.getNetworkComponent().getId() + "] " + displayText);
+				}
 				return null;
 			}
 			/* (non-Javadoc)
@@ -883,6 +914,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 				EomModelStateInputStream.this.getIoSimulated().getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
 			}
 		});	
+		this.inputTimeTrigger.setDebug(this.isDebug());
 		this.inputTimeTrigger.setMillisecondsToStopTimeTrigger(this.getIoSimulated().getTimeModelContinuous().getTimeStop());
 		this.inputTimeTrigger.executeInNewThread(this.getIoSimulated().getEnergyAgent().getLocalName() + "_IO");
 	}
@@ -984,7 +1016,8 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 			public void setTimeTriggerFinalized() {
 				EomModelStateInputStream.this.getIoSimulated().getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
 			}
-		});	
+		});
+		this.inputTimeTrigger.setDebug(this.isDebug());
 		this.inputTimeTrigger.setMillisecondsToStopTimeTrigger(this.getIoSimulated().getTimeModelContinuous().getTimeStop());
 		this.inputTimeTrigger.executeInNewThread(this.getIoSimulated().getEnergyAgent().getLocalName() + "_IO");
 	}

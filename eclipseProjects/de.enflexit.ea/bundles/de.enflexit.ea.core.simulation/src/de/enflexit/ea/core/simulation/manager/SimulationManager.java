@@ -29,6 +29,7 @@ import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.performance.PerformanceMeasurements;
+import de.enflexit.common.swing.TimeZoneDateFormat;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
@@ -72,7 +73,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 
 	private static final long serialVersionUID = 2816217651269067503L;
 	
-	private static final String dateFormat = "hh:mm:ss-SSS";
+	private static final String DATE_FORMAT = "hh:mm:ss-SSS";
 	private SimpleDateFormat sdf;
 
 	private boolean isDebugDiscreteSimulationSchedule = false;
@@ -355,12 +356,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 	}
 	/**
-	 * Returns a SimpleDateFormat that can be used for debugging.
+	 * Returns the local DateFormat that will be used for debugging.
 	 * @return the date formatter
 	 */
 	private SimpleDateFormat getDateFormatter() {
 		if (sdf==null) {
-			sdf = new SimpleDateFormat(dateFormat);
+			sdf = new TimeZoneDateFormat(DATE_FORMAT, this.getTimeModel().getZoneId());
 		}
 		return sdf;
 	}

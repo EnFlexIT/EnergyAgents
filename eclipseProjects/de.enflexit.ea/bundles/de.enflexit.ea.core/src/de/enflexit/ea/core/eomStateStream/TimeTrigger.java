@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import agentgui.simulationService.time.TimeModelContinuous;
+import energy.GlobalInfo;
 import energy.optionModel.Schedule;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
@@ -23,6 +24,8 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
  */
 public class TimeTrigger {
 
+	private boolean debug;
+	
 	private Thread ttThread;
 	private TimeTriggerListener ttListener;
 	
@@ -89,6 +92,24 @@ public class TimeTrigger {
 		this.ttListener = ttListener;
 		this.initialize();
 	}
+	
+	
+	/**
+	 * Checks if the current execution is for debugging purposes.
+	 * @return true, if is debug
+	 */
+	private boolean isDebug() {
+		return debug;
+	}
+	/**
+	 * Sets to print debug output to console.
+	 * @param debug the new debug
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	
 	/**
 	 * Gets the event times out of the specified {@link Schedule}.
 	 * @param schedule the schedule
@@ -182,7 +203,7 @@ public class TimeTrigger {
 		Runnable ttRunnable = new Runnable() {
 			@Override
 			public void run() {
-				scheduleEvents();
+				TimeTrigger.this.scheduleEvents();
 			}
 		};
 		// --- Execute in a new Thread ----------
@@ -213,10 +234,14 @@ public class TimeTrigger {
 	
 	/**
 	 * Schedules the events that were specified by the list of event times through the constructor.
+	 * Represents the actual {@link Thread#run()} implementation.
 	 */
 	private void scheduleEvents() {
 		
 		Long timeForNextEvent = this.getNextEventTime(this.getTime());
+		if (this.isDebug()==true) System.out.println("[" + this.getClass().getSimpleName() + "] First time event at: " + GlobalInfo.getInstance().getDateTimeAsString(timeForNextEvent, "dd.MM.yyyy - hh:mm:ss,SSS"));
+		
+		// --- Do the thread run loop -------------------------------
 		while (timeForNextEvent!=null) {
 
 			// --- If a maximum time is defined, check that ---------
@@ -248,16 +273,21 @@ public class TimeTrigger {
 				// --- Trigger the listener -------------------------
 				if (this.ttListener!=null) {
 					// --- Get monitor values for the trigger -------
-					//long beforeEvent = this.getTime();
+					long beforeEvent = this.getTime();
+					
+					// --- Fire the TimeTriggerListener -------------
 					this.setNextEventTime(this.ttListener.fireTimeTrigger(timeForNextEvent));
-					//long afterEvent = this.getTime();
-					//beforeEvent = Math.abs(timeForNextEvent-beforeEvent);
-					//afterEvent = Math.abs(timeForNextEvent-afterEvent);
-					//System.out.println( "=> Time difference between event time and simulated or real time: before fire event: " + beforeEvent + " ms - after fire event: " + afterEvent + " ms");
+					
+					long afterEvent = this.getTime();
+					beforeEvent = Math.abs(timeForNextEvent - beforeEvent);
+					afterEvent = Math.abs(timeForNextEvent - afterEvent);
+					if (this.isDebug()==true) System.out.println("[" + this.getClass().getSimpleName() + "] Time difference between event time and simulated or real time: before fire event: " + beforeEvent + " ms - after fire event: " + afterEvent + " ms");
 				}
 			}
 			// --- Get the next event time --------------------------
 			timeForNextEvent = this.getNextEventTime(this.getTime());
+			if (this.isDebug()==true) System.out.println("[" + this.getClass().getSimpleName() + "] Next time event at: " + GlobalInfo.getInstance().getDateTimeAsString(timeForNextEvent, "dd.MM.yyyy - hh:mm:ss,SSS"));
+			
 		} // --- end while ---
 		
 		// --- Inform that this TimeTrigger is finalized ------------

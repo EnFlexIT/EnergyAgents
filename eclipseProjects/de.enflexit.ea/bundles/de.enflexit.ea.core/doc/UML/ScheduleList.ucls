@@ -48,65 +48,65 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <generalization id="6">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <association id="7">    
+  <association id="6">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="8" name="technicalSystemStateList"/>      
-      <multiplicity id="9" minimum="0" maximum="2147483647">        
+      <attribute id="7" name="technicalSystemStateList">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="8" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="386" y="-117"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="10">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="11" name="parent">        
-        <position height="18" width="41" x="770" y="441"/>      
+  <association id="9">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="10" name="technicalSystemStateEvaluation">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="12" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-283" y="162"/>      
+      <multiplicity id="11" minimum="0" maximum="1">        
+        <position height="0" width="0" x="386" y="-117"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="13">    
+  <association id="12">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="14" name="schedules">        
+      <attribute id="13" name="schedules">        
         <position height="0" width="0" x="0" y="76"/>      
       </attribute>      
-      <multiplicity id="15" minimum="0" maximum="2147483647">        
+      <multiplicity id="14" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="76"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="16">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <association id="17">    
+  <association id="15">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="18" name="children">        
+      <attribute id="16" name="children">        
         <position height="18" width="48" x="769" y="417"/>      
       </attribute>      
-      <multiplicity id="19" minimum="0" maximum="2147483647">        
+      <multiplicity id="17" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="-283" y="162"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="20">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="21" name="technicalSystemStateEvaluation"/>      
-      <multiplicity id="22" minimum="0" maximum="1">        
-        <position height="0" width="0" x="386" y="-117"/>      
+  <generalization id="18">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="19">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="20" name="parent">        
+        <position height="18" width="41" x="770" y="441"/>      
+      </attribute>      
+      <multiplicity id="21" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-283" y="162"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    

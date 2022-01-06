@@ -13,13 +13,15 @@ public abstract class AbstractIOReal extends CyclicBehaviour implements EnergyAg
 	private static final long serialVersionUID = -872510444824256293L;
 	
 	protected long timeOffset = 0;
-
+	private AbstractEnergyAgent energyAgent;
 	
 	/**
 	 * Instantiates a new abstract IO real.
 	 * @param agent the agent instance
 	 */
 	public AbstractIOReal(AbstractEnergyAgent energyAgent) {
+		super(energyAgent);
+		this.energyAgent = energyAgent;
 	}
 	
 	/**
@@ -41,4 +43,19 @@ public abstract class AbstractIOReal extends CyclicBehaviour implements EnergyAg
 		return System.currentTimeMillis() - this.timeOffset;
 	}
 
+	/**
+	 * Returns the current instance of the energy agent, if needed.
+	 * @return the energy agent
+	 */
+	public AbstractEnergyAgent getEnergyAgent() {
+		return this.energyAgent;
+	}
+	/**
+	 * Gets the internal data model.
+	 * @return the internal data model
+	 */
+	public AbstractInternalDataModel getInternalDataModel() {
+		return this.getEnergyAgent().getInternalDataModel();
+	}
+	
 }

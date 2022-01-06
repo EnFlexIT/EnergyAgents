@@ -13,6 +13,7 @@ import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.StateTransmission;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
@@ -254,6 +255,17 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 		return this.getInternalDataModel().getHyGridAbstractEnvironmentModel().getExecutionDataBase();
 	}
 	
+	/**
+	 * Returns the kind of {@link StateTransmission} define in the {@link HyGridAbstractEnvironmentModel}.
+	 * @return the StateTransmission configuration
+	 */
+	public StateTransmission getStateTransmissionConfiguration() {
+		HyGridAbstractEnvironmentModel hyGridSettings = this.getHyGridAbstractEnvironmentModel();
+		if (hyGridSettings!=null) {
+			return hyGridSettings.getStateTransmission();
+		}
+		return null;
+	}
 	/**
 	 * Returns the HyGrid energy transmission configuration as {@link ScheduleTransformerKeyValueConfiguration}.
 	 * @return the energy transmission configuration

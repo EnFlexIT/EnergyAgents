@@ -51,6 +51,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration.Upda
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.StateTransmission;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import energy.optionModel.ScheduleLengthRestriction;
@@ -74,7 +75,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	
 	private JPanel jPanelMain;
 	
-	private JLabel jLabelHeaderPowerTransmission;
+	private JRadioButton jRadioButtonPowerTransmissionReduced;
 	private JLabel jLabelTransWatt;
 	private JLabel jLabelTransPercent;
 	private JLabel jLabelTransHeaderLiveBit;
@@ -125,6 +126,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JTextField jTextFieldCentralDecisionClass;
 	private JButton jButtonCentralDecisionClass;
 	private JPanel jPanelSnapshotCentralDecision;
+	private JRadioButton jRadioButtonPowerTransmissionAsDefined;
 
 	
 	/**
@@ -176,8 +178,8 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		HyGridAbstractEnvironmentModel hyGridDM = this.getHyGridAbstractEnvironmentModel();
 		
 		// --- Set simulation interval length ---
-		this.loadSimulationIntervalLength(hyGridDM);
 		this.loadNetworkCalculationIntervalLength(hyGridDM);
+		this.loadSimulationIntervalLength(hyGridDM);
 		
 		if (this.currProject.getTimeModelClass()!=null && this.currProject.getTimeModelClass().equals(TimeModelDiscrete.class.getName())==true) {
 			this.getJCheckBoxSnapshotSimulation().setSelected(hyGridDM.isDiscreteSnapshotSimulation());
@@ -199,6 +201,10 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			this.getJTextFieldCentralDecisionClass().setText(null);
 			this.getJTextFieldCentralDecisionClass().setToolTipText(null);
 		}
+		
+		// --- Set the StateTransmission --------
+		this.getJRadioButtonPowerTransmissionAsDefined().setSelected(hyGridDM.getStateTransmission()==StateTransmission.AsDefined);
+		this.getJRadioButtonPowerTransmissionReduced().setSelected(hyGridDM.getStateTransmission()==StateTransmission.Reduced);
 		
 		// --- Set the simulation data base -----
 		switch (hyGridDM.getExecutionDataBase()) {
@@ -259,9 +265,16 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		HyGridAbstractEnvironmentModel hyGridDMOld = hyGridDM.getCopy(); 
 				
 		// --- Save Simulation Interval length ------------
-		this.saveSimulationIntervalLength(hyGridDM);
 		this.saveNetworkCalculationIntervalLength(hyGridDM);
+		this.saveSimulationIntervalLength(hyGridDM);
 
+		// --- Set State Transmission ---------------------
+		if (this.getJRadioButtonPowerTransmissionAsDefined().isSelected()==true) {
+			hyGridDM.setStateTransmission(StateTransmission.AsDefined);
+		} else if (this.getJRadioButtonPowerTransmissionReduced().isSelected()==true) {
+			hyGridDM.setStateTransmission(StateTransmission.Reduced);
+		}
+		
 		// --- Values for snapshot simulations ------------
 		String centralDecisionClass = this.getJTextFieldCentralDecisionClass().getText();
 		if (centralDecisionClass.isEmpty()==true) centralDecisionClass = null;
@@ -378,8 +391,6 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		jLabelInterval.setText(Language.translate(jLabelInterval.getText(), Language.EN));
 		jLabelNetCalcInterval.setText(Language.translate(jLabelNetCalcInterval.getText(), Language.EN));
-		
-		jLabelHeaderPowerTransmission.setText(Language.translate(jLabelHeaderPowerTransmission.getText(), Language.EN));
 		jRadioButtonTransByAbsolute.setText(Language.translate(jRadioButtonTransByAbsolute.getText(), Language.EN));
 		jRadioButtonTransByPercent.setText(Language.translate(jRadioButtonTransByPercent.getText(), Language.EN));
 		jLabelTransLiveBit.setText(Language.translate(jLabelTransLiveBit.getText(), Language.EN));
@@ -412,6 +423,10 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			ButtonGroup bgTimeModel = new ButtonGroup();
 			bgTimeModel.add(this.getJRadioButtonTimeModelDiscrete());
 			bgTimeModel.add(this.getJRadioButtonTimeModelContinuous());
+			
+			ButtonGroup bgStateTrasnsmission = new ButtonGroup();
+			bgStateTrasnsmission.add(this.getJRadioButtonPowerTransmissionAsDefined());
+			bgStateTrasnsmission.add(this.getJRadioButtonPowerTransmissionReduced());
 			
 			ButtonGroup bgDiscreteSnapshot = new ButtonGroup();
 			bgDiscreteSnapshot.add(this.getJRadioButtonSnapshotDecentral());
@@ -520,8 +535,8 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			GridBagLayout gbl_jPanelContinousSettings = new GridBagLayout();
 			gbl_jPanelContinousSettings.columnWidths = new int[]{0, 0, 0, 0};
 			gbl_jPanelContinousSettings.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelContinousSettings.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-			gbl_jPanelContinousSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelContinousSettings.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+			gbl_jPanelContinousSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 
 			GridBagConstraints gbc_jRadioButtonTimeModelContinuous = new GridBagConstraints();
 			gbc_jRadioButtonTimeModelContinuous.anchor = GridBagConstraints.WEST;
@@ -539,65 +554,76 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jTextFieldNetCalcInterval.gridx = 1;
 			gbc_jTextFieldNetCalcInterval.gridy = 1;
 			
+			GridBagConstraints gbc_jRadioButtonPowerTransmissionAsDefined = new GridBagConstraints();
+			gbc_jRadioButtonPowerTransmissionAsDefined.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonPowerTransmissionAsDefined.gridwidth = 3;
+			gbc_jRadioButtonPowerTransmissionAsDefined.insets = new Insets(10, 0, 0, 0);
+			gbc_jRadioButtonPowerTransmissionAsDefined.gridx = 0;
+			gbc_jRadioButtonPowerTransmissionAsDefined.gridy = 2;
+			
 			GridBagConstraints gbc_jComboBoxNetCalcIntervalWidthUnit = new GridBagConstraints();
 			gbc_jComboBoxNetCalcIntervalWidthUnit.insets = new Insets(5, 0, 0, 0);
 			gbc_jComboBoxNetCalcIntervalWidthUnit.anchor = GridBagConstraints.WEST;
 			gbc_jComboBoxNetCalcIntervalWidthUnit.gridx = 2;
 			gbc_jComboBoxNetCalcIntervalWidthUnit.gridy = 1;
 			GridBagConstraints gbc_jRadioButtonTransByAbsolute = new GridBagConstraints();
-			GridBagConstraints gbc_jLabelHeaderPowerTransmission = new GridBagConstraints();
-			gbc_jLabelHeaderPowerTransmission.insets = new Insets(5, 0, 0, 0);
-			gbc_jLabelHeaderPowerTransmission.anchor = GridBagConstraints.WEST;
-			gbc_jLabelHeaderPowerTransmission.gridx = 0;
-			gbc_jLabelHeaderPowerTransmission.gridy = 2;
-	
-			gbc_jRadioButtonTransByAbsolute.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTransByAbsolute.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jRadioButtonTransByAbsolute.insets = new Insets(0, 20, 0, 0);
+			GridBagConstraints gbc_jRadioButtonPowerTransmissionReduced = new GridBagConstraints();
+			gbc_jRadioButtonPowerTransmissionReduced.insets = new Insets(5, 0, 0, 0);
+			gbc_jRadioButtonPowerTransmissionReduced.gridwidth = 3;
+			gbc_jRadioButtonPowerTransmissionReduced.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonPowerTransmissionReduced.gridx = 0;
+			gbc_jRadioButtonPowerTransmissionReduced.gridy = 3;
 			gbc_jRadioButtonTransByAbsolute.gridx = 0;
-			gbc_jRadioButtonTransByAbsolute.gridy = 3;
+			gbc_jRadioButtonTransByAbsolute.gridy = 4;
 			GridBagConstraints gbc_jTextFieldTransWatt = new GridBagConstraints();
 			gbc_jTextFieldTransWatt.insets = new Insets(0, 5, 0, 0);
 			gbc_jTextFieldTransWatt.anchor = GridBagConstraints.WEST;
 			gbc_jTextFieldTransWatt.gridx = 1;
-			gbc_jTextFieldTransWatt.gridy = 3;
+			gbc_jTextFieldTransWatt.gridy = 4;
 			GridBagConstraints gbc_jLabelTransWatt = new GridBagConstraints();
 			gbc_jLabelTransWatt.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTransWatt.gridx = 2;
-			gbc_jLabelTransWatt.gridy = 3;
+			gbc_jLabelTransWatt.gridy = 4;
 
 			GridBagConstraints gbc_jRadioButtonTransByPercent = new GridBagConstraints();
-			gbc_jRadioButtonTransByPercent.anchor = GridBagConstraints.WEST;
+			gbc_jRadioButtonTransByPercent.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jRadioButtonTransByPercent.insets = new Insets(0, 20, 0, 0);
 			gbc_jRadioButtonTransByPercent.gridx = 0;
-			gbc_jRadioButtonTransByPercent.gridy = 4;
+			gbc_jRadioButtonTransByPercent.gridy = 5;
 			GridBagConstraints gbc_jTextFieldTransPercent = new GridBagConstraints();
 			gbc_jTextFieldTransPercent.insets = new Insets(0, 5, 0, 0);
 			gbc_jTextFieldTransPercent.anchor = GridBagConstraints.WEST;
 			gbc_jTextFieldTransPercent.gridx = 1;
-			gbc_jTextFieldTransPercent.gridy = 4;
+			gbc_jTextFieldTransPercent.gridy = 5;
 			GridBagConstraints gbc_jLabelTransPercent = new GridBagConstraints();
 			gbc_jLabelTransPercent.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTransPercent.gridx = 2;
-			gbc_jLabelTransPercent.gridy = 4;
+			gbc_jLabelTransPercent.gridy = 5;
 			
 			GridBagConstraints gbc_jLabelTransHeaderLiveBit = new GridBagConstraints();
+			gbc_jLabelTransHeaderLiveBit.insets = new Insets(0, 20, 0, 0);
 			gbc_jLabelTransHeaderLiveBit.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTransHeaderLiveBit.gridx = 0;
-			gbc_jLabelTransHeaderLiveBit.gridy = 5;
+			gbc_jLabelTransHeaderLiveBit.gridy = 6;
 			GridBagConstraints gbc_jTextFieldTransLiveBit = new GridBagConstraints();
 			gbc_jTextFieldTransLiveBit.insets = new Insets(0, 5, 0, 0);
 			gbc_jTextFieldTransLiveBit.anchor = GridBagConstraints.WEST;
 			gbc_jTextFieldTransLiveBit.gridx = 1;
-			gbc_jTextFieldTransLiveBit.gridy = 5;
+			gbc_jTextFieldTransLiveBit.gridy = 6;
 			GridBagConstraints gbc_jLabelTransLiveBit = new GridBagConstraints();
 			gbc_jLabelTransLiveBit.anchor = GridBagConstraints.WEST;
 			gbc_jLabelTransLiveBit.gridx = 2;
-			gbc_jLabelTransLiveBit.gridy = 5;
+			gbc_jLabelTransLiveBit.gridy = 6;
 
 			jPanelContinousSettings.setLayout(gbl_jPanelContinousSettings);
 			jPanelContinousSettings.add(getJRadioButtonTimeModelContinuous(), gbc_jRadioButtonTimeModelContinuous);
 			jPanelContinousSettings.add(getJLabelNetCalcInterval(), gbc_jLabelNetCalcInterval);
 			jPanelContinousSettings.add(getJTextFieldNetCalcInterval(), gbc_jTextFieldNetCalcInterval);
 			jPanelContinousSettings.add(getJComboBoxNetCalcIntervalWidthUnit(), gbc_jComboBoxNetCalcIntervalWidthUnit);
-			jPanelContinousSettings.add(getJLabelHeaderPowerTransmission(), gbc_jLabelHeaderPowerTransmission);
+			jPanelContinousSettings.add(getJRadioButtonPowerTransmissionAsDefined(), gbc_jRadioButtonPowerTransmissionAsDefined);
+			jPanelContinousSettings.add(getJRadioButtonPowerTransmissionReduced(), gbc_jRadioButtonPowerTransmissionReduced);
 			jPanelContinousSettings.add(getJRadioButtonTransByAbsolute(), gbc_jRadioButtonTransByAbsolute);
 			jPanelContinousSettings.add(getJTextFieldTransWatt(), gbc_jTextFieldTransWatt);
 			jPanelContinousSettings.add(getJLabelLabelTransWatt(), gbc_jLabelTransWatt);
@@ -648,19 +674,31 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		}
 		return jComboBoxNetCalcIntervalWidthUnit;
 	}
-	private JLabel getJLabelHeaderPowerTransmission() {
-		if (jLabelHeaderPowerTransmission==null) {
-			jLabelHeaderPowerTransmission = new JLabel();
-			jLabelHeaderPowerTransmission.setText("Transmission of power signals");
-			jLabelHeaderPowerTransmission.setFont(new Font("Dialog", Font.BOLD, 13));
+	
+	private JRadioButton getJRadioButtonPowerTransmissionAsDefined() {
+		if (jRadioButtonPowerTransmissionAsDefined == null) {
+			jRadioButtonPowerTransmissionAsDefined = new JRadioButton();
+			jRadioButtonPowerTransmissionAsDefined.setText("State-Transmission of power signals as defined");
+			jRadioButtonPowerTransmissionAsDefined.setFont(new Font("Dialog", Font.BOLD, 13));
+			jRadioButtonPowerTransmissionAsDefined.setEnabled(true);
+			jRadioButtonPowerTransmissionAsDefined.addActionListener(this);
 		}
-		return jLabelHeaderPowerTransmission;
+		return jRadioButtonPowerTransmissionAsDefined;
+	}
+	private JRadioButton getJRadioButtonPowerTransmissionReduced() {
+		if (jRadioButtonPowerTransmissionReduced==null) {
+			jRadioButtonPowerTransmissionReduced = new JRadioButton();
+			jRadioButtonPowerTransmissionReduced.setText("Reduced State-Transmission of power signals ...");
+			jRadioButtonPowerTransmissionReduced.setFont(new Font("Dialog", Font.BOLD, 13));
+			jRadioButtonPowerTransmissionReduced.addActionListener(this);
+		}
+		return jRadioButtonPowerTransmissionReduced;
 	}
 	private JRadioButton getJRadioButtonTransByAbsolute() {
 		if (jRadioButtonTransByAbsolute == null) {
 			jRadioButtonTransByAbsolute = new JRadioButton();
 			jRadioButtonTransByAbsolute.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonTransByAbsolute.setText("Depending on watts (absolute)");
+			jRadioButtonTransByAbsolute.setText("... depending on watts (absolute)");
 			jRadioButtonTransByAbsolute.addActionListener(this);
 		}
 		return jRadioButtonTransByAbsolute;
@@ -687,7 +725,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		if (jRadioButtonTransByPercent == null) {
 			jRadioButtonTransByPercent = new JRadioButton();
 			jRadioButtonTransByPercent.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jRadioButtonTransByPercent.setText("Depending on delta watts (percent)");
+			jRadioButtonTransByPercent.setText("... depending on delta watts (percent)");
 			jRadioButtonTransByPercent.addActionListener(this);
 		}
 		return jRadioButtonTransByPercent;
@@ -772,7 +810,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jComboBoxIntervalWidthUnit.gridy = 1;
 			
 			GridBagConstraints gbc_jCheckBoxSnapshotSimulation = new GridBagConstraints();
-			gbc_jCheckBoxSnapshotSimulation.insets = new Insets(5, 0, 0, 0);
+			gbc_jCheckBoxSnapshotSimulation.insets = new Insets(10, 0, 0, 0);
 			gbc_jCheckBoxSnapshotSimulation.anchor = GridBagConstraints.WEST;
 			gbc_jCheckBoxSnapshotSimulation.gridx = 0;
 			gbc_jCheckBoxSnapshotSimulation.gridy = 2;
@@ -1311,6 +1349,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private void enableControls() {
 		
 		boolean isTimeModelDiscrete = this.getJRadioButtonTimeModelDiscrete().isSelected();
+		boolean isStateTransmissionReduced = this.getJRadioButtonPowerTransmissionReduced().isSelected();
 		boolean isSnapshotSimulation = this.getJCheckBoxSnapshotSimulation().isSelected();
 		boolean isSnapshotSimulationCentralDecision = this.getJRadioButtonSnapshotCentral().isSelected();
 		
@@ -1329,19 +1368,20 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		this.getJTextFieldNetCalcInterval().setEnabled(! isTimeModelDiscrete);
 		this.getJComboBoxNetCalcIntervalWidthUnit().setEnabled(! isTimeModelDiscrete);
 		
-		this.getJLabelHeaderPowerTransmission().setEnabled(! isTimeModelDiscrete);
-		this.getJRadioButtonTransByAbsolute().setEnabled(! isTimeModelDiscrete);
-		this.getJRadioButtonTransByPercent().setEnabled(! isTimeModelDiscrete);
+		this.getJRadioButtonPowerTransmissionAsDefined().setEnabled(! isTimeModelDiscrete);
+		this.getJRadioButtonPowerTransmissionReduced().setEnabled(! isTimeModelDiscrete);
+		this.getJRadioButtonTransByAbsolute().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		this.getJRadioButtonTransByPercent().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 		
-		this.getJLabelLabelTransWatt().setEnabled(! isTimeModelDiscrete);
-		this.getJTextFieldTransWatt().setEnabled(! isTimeModelDiscrete);
+		this.getJLabelLabelTransWatt().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		this.getJTextFieldTransWatt().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 		
-		this.getJLabelTransPercent().setEnabled(! isTimeModelDiscrete);
-		this.getJTextFieldTransPercent().setEnabled(! isTimeModelDiscrete);
+		this.getJLabelTransPercent().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		this.getJTextFieldTransPercent().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 		
-		this.getJLabelTransHeaderLiveBit().setEnabled(! isTimeModelDiscrete);
-		this.getJTextFieldTransLiveBit().setEnabled(! isTimeModelDiscrete);
-		this.getJLabelTransLiveBit().setEnabled(! isTimeModelDiscrete);
+		this.getJLabelTransHeaderLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		this.getJTextFieldTransLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		this.getJLabelTransLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 	}
 	
 	/**
@@ -1413,6 +1453,13 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 				this.enableControls();
 				this.loadFormToDataModel();
 				
+			} else if (ae.getSource()==this.getJRadioButtonPowerTransmissionAsDefined()) {
+				this.enableControls();
+				this.loadFormToDataModel();
+			} else if (ae.getSource()==this.getJRadioButtonPowerTransmissionReduced()) {
+				this.enableControls();
+				this.loadFormToDataModel();
+				
 			} else if (ae.getSource()==this.getJCheckBoxSnapshotSimulation()) {
 				this.loadFormToDataModel();
 				this.enableControls();
@@ -1451,5 +1498,6 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			
 		}
 	}
+	
 	
 }  
