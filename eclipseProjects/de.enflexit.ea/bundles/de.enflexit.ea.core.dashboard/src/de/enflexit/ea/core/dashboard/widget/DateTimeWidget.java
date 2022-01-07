@@ -1,7 +1,9 @@
 package de.enflexit.ea.core.dashboard.widget;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.enflexit.common.swing.TimeZoneDateFormat;
+import energy.GlobalInfo;
 
 /**
  * A JTextfield-based widget for displaying date and/or time data.  
@@ -12,7 +14,7 @@ public class DateTimeWidget extends SimpleTextFieldWidget {
 	private static final long serialVersionUID = 7282968634051694155L;
 	private static final int DEFAULT_TEXTFIELD_WIDTH = 10;
 	
-	private SimpleDateFormat dateFormat;
+	private TimeZoneDateFormat dateFormat;
 	private String formatString;
 
 	/**
@@ -40,9 +42,9 @@ public class DateTimeWidget extends SimpleTextFieldWidget {
 	 * Gets the date format.
 	 * @return the date format
 	 */
-	private SimpleDateFormat getDateFormat() {
+	private TimeZoneDateFormat getDateFormat() {
 		if (dateFormat==null) {
-			dateFormat = new SimpleDateFormat(this.formatString);
+			dateFormat = new TimeZoneDateFormat(this.formatString, GlobalInfo.getInstance().getZoneId());
 		}
 		return dateFormat;
 	}

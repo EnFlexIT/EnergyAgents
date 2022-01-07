@@ -1,9 +1,10 @@
 package de.enflexit.ea.core.monitoring;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.enflexit.common.swing.TimeZoneDateFormat;
 import energy.FixedVariableList;
+import energy.GlobalInfo;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -17,17 +18,17 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
  */
 public class MonitoringListenerForConsoleOutput implements MonitoringListener {
 
-	String dateFormatDefinition = "dd.MM.yy HH:mm:ss:SSS";
+	private String dateFormatDefinition = "dd.MM.yy HH:mm:ss:SSS";
 	
-	private DateFormat dateFormat;
+	private TimeZoneDateFormat dateFormat;
 	
 	/**
 	 * Gets the date format.
 	 * @return the date format
 	 */
-	private DateFormat getDateFormat(){
-		if(this.dateFormat == null){
-			this.dateFormat = new SimpleDateFormat(dateFormatDefinition);
+	private TimeZoneDateFormat getDateFormat(){
+		if (this.dateFormat == null){
+			this.dateFormat = new TimeZoneDateFormat(dateFormatDefinition, GlobalInfo.getInstance().getZoneId());
 		}
 		return this.dateFormat;
 	}

@@ -1,6 +1,5 @@
 package de.enflexit.ea.core.aggregation;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -24,6 +23,7 @@ import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
+import de.enflexit.common.swing.TimeZoneDateFormat;
 import de.enflexit.ea.core.aggregation.fallback.FallbackSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
@@ -426,7 +426,7 @@ public abstract class AbstractAggregationHandler {
 		this.timeFormat = timeFormat;
 	}
 	/**
-	 * Return the time format that can be used by a {@link SimpleDateFormat} for example.
+	 * Return the time format that can be used by a {@link TimeZoneDateFormat} for example.
 	 * @return the time format
 	 */
 	public String getTimeFormat() {

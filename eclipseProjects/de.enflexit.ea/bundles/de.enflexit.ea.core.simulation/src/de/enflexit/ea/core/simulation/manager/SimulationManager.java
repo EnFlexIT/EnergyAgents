@@ -1,6 +1,5 @@
 package de.enflexit.ea.core.simulation.manager;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,7 +73,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private static final long serialVersionUID = 2816217651269067503L;
 	
 	private static final String DATE_FORMAT = "hh:mm:ss-SSS";
-	private SimpleDateFormat sdf;
+	private TimeZoneDateFormat sdf;
 
 	private boolean isDebugDiscreteSimulationSchedule = false;
 	
@@ -359,7 +358,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Returns the local DateFormat that will be used for debugging.
 	 * @return the date formatter
 	 */
-	private SimpleDateFormat getDateFormatter() {
+	private TimeZoneDateFormat getDateFormatter() {
 		if (sdf==null) {
 			sdf = new TimeZoneDateFormat(DATE_FORMAT, this.getTimeModel().getZoneId());
 		}

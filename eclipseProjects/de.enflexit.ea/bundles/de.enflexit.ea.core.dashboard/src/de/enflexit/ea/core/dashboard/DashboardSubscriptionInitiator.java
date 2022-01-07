@@ -1,8 +1,7 @@
 package de.enflexit.ea.core.dashboard;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
+import de.enflexit.common.swing.TimeZoneDateFormat;
+import energy.GlobalInfo;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -16,7 +15,7 @@ public class DashboardSubscriptionInitiator extends SubscriptionInitiator {
 
 	private static final long serialVersionUID = -3362886788353990119L;
 	
-	private DateFormat dateFormat;
+	private TimeZoneDateFormat dateFormat;
 	
 	private DashboardController dashboardController;
 	
@@ -52,9 +51,9 @@ public class DashboardSubscriptionInitiator extends SubscriptionInitiator {
 		}
 	}
 	
-	public DateFormat getDateFormat() {
+	public TimeZoneDateFormat getDateFormat() {
 		if (dateFormat==null) {
-			dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+			dateFormat = new TimeZoneDateFormat("dd.MM.yyyy HH:mm", GlobalInfo.getInstance().getZoneId());
 		}
 		return dateFormat;
 	}
