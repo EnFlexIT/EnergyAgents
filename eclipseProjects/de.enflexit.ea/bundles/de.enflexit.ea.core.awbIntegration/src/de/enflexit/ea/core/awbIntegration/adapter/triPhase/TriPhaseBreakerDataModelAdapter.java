@@ -3,7 +3,6 @@ package de.enflexit.ea.core.awbIntegration.adapter.triPhase;
 import java.util.Vector;
 
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
@@ -17,8 +16,6 @@ public class TriPhaseBreakerDataModelAdapter extends NetworkComponentAdapter4Ont
 	
 	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
-	
-	private TriPhaseBreakerStorageHandler storageHandler;
 	
 	public TriPhaseBreakerDataModelAdapter(GraphEnvironmentController graphController) {
 		super(graphController);
@@ -51,18 +48,5 @@ public class TriPhaseBreakerDataModelAdapter extends NetworkComponentAdapter4Ont
 		}
 		return this.ontologyClassReferences;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology#getDataModelStorageHandler()
-	 */
-	@Override
-	protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
-		if (storageHandler==null) {
-			storageHandler = new TriPhaseBreakerStorageHandler(this, this.getPartModelID());
-		}
-		return storageHandler;
-	}
-	
-	
 
 }

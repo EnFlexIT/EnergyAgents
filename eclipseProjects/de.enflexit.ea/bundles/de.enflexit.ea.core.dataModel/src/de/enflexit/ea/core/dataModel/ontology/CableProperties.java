@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class CableProperties extends EdgeComponentProperties{ 
-
-   /**
-* Protege name: dim
-   */
-   private String dim;
-   public void setDim(String value) { 
-    this.dim=value;
-   }
-   public String getDim() {
-     return this.dim;
-   }
 
    /**
 * Protege name: linearResistance
@@ -45,40 +34,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: maxCurrent
-   */
-   private UnitValue maxCurrent;
-   public void setMaxCurrent(UnitValue value) { 
-    this.maxCurrent=value;
-   }
-   public UnitValue getMaxCurrent() {
-     return this.maxCurrent;
-   }
-
-   /**
-* Protege name: din
-   */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
-   }
-   public String getDin() {
-     return this.din;
-   }
-
-   /**
-   * The linear capacitance of this medium voltage cable.
-* Protege name: linearCapacitance
-   */
-   private UnitValue linearCapacitance;
-   public void setLinearCapacitance(UnitValue value) { 
-    this.linearCapacitance=value;
-   }
-   public UnitValue getLinearCapacitance() {
-     return this.linearCapacitance;
-   }
-
-   /**
 * Protege name: length
    */
    private UnitValue length;
@@ -99,6 +54,51 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public UnitValue getLinearConductance() {
      return this.linearConductance;
+   }
+
+   /**
+   * The linear capacitance of this medium voltage cable.
+* Protege name: linearCapacitance
+   */
+   private UnitValue linearCapacitance;
+   public void setLinearCapacitance(UnitValue value) { 
+    this.linearCapacitance=value;
+   }
+   public UnitValue getLinearCapacitance() {
+     return this.linearCapacitance;
+   }
+
+   /**
+* Protege name: dim
+   */
+   private String dim;
+   public void setDim(String value) { 
+    this.dim=value;
+   }
+   public String getDim() {
+     return this.dim;
+   }
+
+   /**
+* Protege name: din
+   */
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
+   }
+   public String getDin() {
+     return this.din;
+   }
+
+   /**
+* Protege name: maxCurrent
+   */
+   private UnitValue maxCurrent;
+   public void setMaxCurrent(UnitValue value) { 
+    this.maxCurrent=value;
+   }
+   public UnitValue getMaxCurrent() {
+     return this.maxCurrent;
    }
 
 }

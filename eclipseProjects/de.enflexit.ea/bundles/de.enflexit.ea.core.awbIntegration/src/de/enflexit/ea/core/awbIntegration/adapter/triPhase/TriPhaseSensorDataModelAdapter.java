@@ -4,15 +4,11 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
-import org.awb.env.networkModel.adapter.dataModel.DataModelStorageHandlerOntology;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
-import agentgui.ontology.TimeSeriesChartSettings;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.dataModel.ontology.Sensor;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSensorState;
 import de.enflexit.eom.awb.adapter.EomDataModelAdapterOntology;
@@ -133,8 +129,6 @@ public class TriPhaseSensorDataModelAdapter extends EomDataModelAdapterOntology 
 	 */
 	private class TriPhaseSensorDataModelAdapterOntology extends NetworkComponentAdapter4Ontology {
 		
-		TriPhaseSensorStorageHandlerOntology storageHandler;
-
 		/**
 		 * Instantiates a new tri phase sensor data model adapter ontology.
 		 *
@@ -159,88 +153,8 @@ public class TriPhaseSensorDataModelAdapter extends EomDataModelAdapterOntology 
 		public String[] getOntologyClassReferences() {
 			return TriPhaseSensorDataModelAdapter.this.getOntologyClassReferences();
 		}
-
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology#getDataModelStorageHandler()
-		 */
-		@Override
-		protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
-			if (this.storageHandler==null) {
-				this.storageHandler = new TriPhaseSensorStorageHandlerOntology(this, this.getPartModelID());
-			}
-			return this.storageHandler;
-		}
 		
 	}
 	
-	/**
-	 * A specialized StorageHandler for the ontology part, required for converting the old data model to the new structure. 
-	 * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
-	 */
-	private class TriPhaseSensorStorageHandlerOntology extends DataModelStorageHandlerOntology {
-		
-		private boolean debug = false;
-		
-		private final String newOntoXmlStringStart = "<SensorProperties";	// Final whitespace is important, as SensorProperties should not be matched!
-		private final String oldOntoClassReference = Sensor.class.getName();
-
-		public TriPhaseSensorStorageHandlerOntology(NetworkComponentAdapter4Ontology ontologyAdapter, String partModelID) {
-			super(ontologyAdapter, partModelID);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.awb.env.networkModel.dataModel.DataModelStorageHandlerOntology#createInstancesFromOntologyXmlVector(java.util.Vector)
-		 */
-		@Override
-		protected Object[] createInstancesFromOntologyXmlVector(Vector<String> ontologyXmlVector) {
-			String firstXmlString = ontologyXmlVector.get(0);
-			if (firstXmlString!=null && firstXmlString.startsWith(newOntoXmlStringStart)==false) {
-				// --- Old style data model -> convert ------------------------
-				if (this.debug==true) {
-					System.out.println("[" + this.getClass().getSimpleName() + "] Data model for component " + TriPhaseSensorDataModelAdapter.this.getNetworkComponent().getId() + " contains a Sensor instance, converting to SensorProperties and SensorState");
-				}
-				
-				Object[] instances = new Object[TriPhaseSensorDataModelAdapter.this.getOntologyClassReferences().length];
-				
-				Sensor oldSensor = (Sensor) this.getInstanceOfXML(firstXmlString, oldOntoClassReference, HyGridOntology.getInstance());
-				SensorProperties newSensor = this.getSensorPropertiesFromSensor(oldSensor);
-				instances[0] = newSensor;
-				
-				instances[1] = new TriPhaseSensorState();
-				
-				TimeSeriesChart tsc = new TimeSeriesChart();
-				tsc.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
-				instances[2] = tsc;
-				
-				return instances;
-				
-			} else {
-				// --- New style data model already ---------------------------
-				return super.createInstancesFromOntologyXmlVector(ontologyXmlVector);
-			}
-		}
-
-		/**
-		 * Converts a {@link Sensor} instance to a {@link SensorProperties} instance
-		 * @param sensor the sensor
-		 * @return the sensor properties
-		 */
-		private SensorProperties getSensorPropertiesFromSensor(Sensor sensor) {
-			SensorProperties sensorProperties = new SensorProperties();
-			sensorProperties.setDim(sensor.getDim());
-			sensorProperties.setDin(sensor.getDin());
-			sensorProperties.setLength(sensor.getLength());
-			sensorProperties.setLinearCapacitance(sensor.getLinearCapacitance());
-			sensorProperties.setLinearConductance(sensor.getLinearConductance());
-			sensorProperties.setLinearReactance(sensor.getLinearReactance());
-			sensorProperties.getLinearReactance().setUnit("Ω\\km");
-			sensorProperties.setLinearResistance(sensor.getLinearResistance());
-			sensorProperties.getLinearResistance().setUnit("Ω\\km");
-			sensorProperties.setMaxCurrent(sensor.getMaxCurrent());
-			sensorProperties.setSensorID(sensor.getSensorID());
-			sensorProperties.setMeasureLocation(sensor.getMeasureLocation());
-			return sensorProperties;
-		}
-	}
 	
 }

@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TriPhaseCableState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class TriPhaseCableState extends CableState{ 
 
@@ -144,17 +144,6 @@ public class TriPhaseCableState extends CableState{
 		return this.getThirdPhase().getCosPhi();
 	}
    /**
-* Protege name: phase2
-   */
-   private UniPhaseCableState phase2;
-   public void setPhase2(UniPhaseCableState value) { 
-    this.phase2=value;
-   }
-   public UniPhaseCableState getPhase2() {
-     return this.phase2;
-   }
-
-   /**
 * Protege name: phase1
    */
    private UniPhaseCableState phase1;
@@ -174,6 +163,17 @@ public class TriPhaseCableState extends CableState{
    }
    public UniPhaseCableState getPhase3() {
      return this.phase3;
+   }
+
+   /**
+* Protege name: phase2
+   */
+   private UniPhaseCableState phase2;
+   public void setPhase2(UniPhaseCableState value) { 
+    this.phase2=value;
+   }
+   public UniPhaseCableState getPhase2() {
+     return this.phase2;
    }
 
 }

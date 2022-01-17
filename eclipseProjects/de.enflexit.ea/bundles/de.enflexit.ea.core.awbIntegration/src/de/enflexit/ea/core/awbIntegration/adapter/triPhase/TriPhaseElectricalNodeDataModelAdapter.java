@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
@@ -27,8 +26,6 @@ public class TriPhaseElectricalNodeDataModelAdapter extends NetworkComponentAdap
 	
 	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
-
-	private TriPhaseElectricalNodeStorageHandler storageHandler;
 
 	/**
 	 * Instantiates a new TriPhaseElectricalNodeDataModelAdapter.
@@ -81,18 +78,5 @@ public class TriPhaseElectricalNodeDataModelAdapter extends NetworkComponentAdap
 	private boolean isTransformerNode() {
 		return NetworkComponentHelper.isTransformer(this.getGraphNode(), this.graphController.getNetworkModel());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology#getDataModelStorageHandler()
-	 */
-	@Override
-	protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
-		if (this.storageHandler==null) {
-			this.storageHandler = new TriPhaseElectricalNodeStorageHandler(this, this.getPartModelID());
-		}
-		return this.storageHandler;
-	}
-
-	
 
 }

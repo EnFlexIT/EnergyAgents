@@ -7,21 +7,9 @@ import jade.core.*;
 /**
 * Protege name: PipeState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class PipeState extends EdgeComponentState{ 
-
-   /**
-   * Surrounding temperature
-* Protege name: surroundingTemperature
-   */
-   private UnitValue surroundingTemperature;
-   public void setSurroundingTemperature(UnitValue value) { 
-    this.surroundingTemperature=value;
-   }
-   public UnitValue getSurroundingTemperature() {
-     return this.surroundingTemperature;
-   }
 
    /**
 * Protege name: temperatureIn
@@ -32,6 +20,28 @@ public class PipeState extends EdgeComponentState{
    }
    public UnitValue getTemperatureIn() {
      return this.temperatureIn;
+   }
+
+   /**
+* Protege name: velocityOut
+   */
+   private UnitValue velocityOut;
+   public void setVelocityOut(UnitValue value) { 
+    this.velocityOut=value;
+   }
+   public UnitValue getVelocityOut() {
+     return this.velocityOut;
+   }
+
+   /**
+* Protege name: pressureOut
+   */
+   private UnitValue pressureOut;
+   public void setPressureOut(UnitValue value) { 
+    this.pressureOut=value;
+   }
+   public UnitValue getPressureOut() {
+     return this.pressureOut;
    }
 
    /**
@@ -57,25 +67,15 @@ public class PipeState extends EdgeComponentState{
    }
 
    /**
-* Protege name: pressureOut
+   * Surrounding temperature
+* Protege name: surroundingTemperature
    */
-   private UnitValue pressureOut;
-   public void setPressureOut(UnitValue value) { 
-    this.pressureOut=value;
+   private UnitValue surroundingTemperature;
+   public void setSurroundingTemperature(UnitValue value) { 
+    this.surroundingTemperature=value;
    }
-   public UnitValue getPressureOut() {
-     return this.pressureOut;
-   }
-
-   /**
-* Protege name: velocityOut
-   */
-   private UnitValue velocityOut;
-   public void setVelocityOut(UnitValue value) { 
-    this.velocityOut=value;
-   }
-   public UnitValue getVelocityOut() {
-     return this.velocityOut;
+   public UnitValue getSurroundingTemperature() {
+     return this.surroundingTemperature;
    }
 
    /**

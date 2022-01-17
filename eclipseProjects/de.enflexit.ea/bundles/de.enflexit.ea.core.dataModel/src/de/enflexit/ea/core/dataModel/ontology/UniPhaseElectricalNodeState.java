@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseElectricalNodeState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class UniPhaseElectricalNodeState extends ElectricalNodeState{ 
 
@@ -113,17 +113,6 @@ public double getSCalculated() {
  return this.getVoltageAbsNotNull().getValue() * this.getCurrentNotNull().getValue(); 
 }
    /**
-* Protege name: voltageImag
-   */
-   private UnitValue voltageImag;
-   public void setVoltageImag(UnitValue value) { 
-    this.voltageImag=value;
-   }
-   public UnitValue getVoltageImag() {
-     return this.voltageImag;
-   }
-
-   /**
 * Protege name: voltageAbs
    */
    private UnitValue voltageAbs;
@@ -132,39 +121,6 @@ public double getSCalculated() {
    }
    public UnitValue getVoltageAbs() {
      return this.voltageAbs;
-   }
-
-   /**
-* Protege name: P
-   */
-   private UnitValue p;
-   public void setP(UnitValue value) { 
-    this.p=value;
-   }
-   public UnitValue getP() {
-     return this.p;
-   }
-
-   /**
-* Protege name: current
-   */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
-   }
-   public UnitValue getCurrent() {
-     return this.current;
-   }
-
-   /**
-* Protege name: Q
-   */
-   private UnitValue q;
-   public void setQ(UnitValue value) { 
-    this.q=value;
-   }
-   public UnitValue getQ() {
-     return this.q;
    }
 
    /**
@@ -190,6 +146,39 @@ public double getSCalculated() {
    }
 
    /**
+* Protege name: Q
+   */
+   private UnitValue q;
+   public void setQ(UnitValue value) { 
+    this.q=value;
+   }
+   public UnitValue getQ() {
+     return this.q;
+   }
+
+   /**
+* Protege name: voltageImag
+   */
+   private UnitValue voltageImag;
+   public void setVoltageImag(UnitValue value) { 
+    this.voltageImag=value;
+   }
+   public UnitValue getVoltageImag() {
+     return this.voltageImag;
+   }
+
+   /**
+* Protege name: P
+   */
+   private UnitValue p;
+   public void setP(UnitValue value) { 
+    this.p=value;
+   }
+   public UnitValue getP() {
+     return this.p;
+   }
+
+   /**
 * Protege name: cosPhi
    */
    private float cosPhi;
@@ -198,6 +187,17 @@ public double getSCalculated() {
    }
    public float getCosPhi() {
      return this.cosPhi;
+   }
+
+   /**
+* Protege name: current
+   */
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
+   }
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
 }

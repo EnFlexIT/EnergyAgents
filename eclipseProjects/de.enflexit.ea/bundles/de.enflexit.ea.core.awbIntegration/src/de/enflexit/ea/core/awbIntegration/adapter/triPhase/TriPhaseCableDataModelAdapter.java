@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
-import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
@@ -26,8 +25,6 @@ public class TriPhaseCableDataModelAdapter extends NetworkComponentAdapter4Ontol
 	
 	private Vector<Class<? extends Ontology>> ontologyBaseClasses = null;
 	private String[] ontologyClassReferences = null;
-	
-	private TriPhaseCableStoragerHandler storageHandler;
 	
 	/**
 	 * Instantiates a new TriPhaseCableDataModelAdapter.
@@ -63,17 +60,6 @@ public class TriPhaseCableDataModelAdapter extends NetworkComponentAdapter4Ontol
 			this.ontologyClassReferences[2] = TimeSeriesChart.class.getName();			
 		}
 		return this.ontologyClassReferences;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology#getDataModelStorageHandler()
-	 */
-	@Override
-	protected AbstractDataModelStorageHandler getDataModelStorageHandler() {
-		if (storageHandler==null) {
-			storageHandler = new TriPhaseCableStoragerHandler(this, this.getPartModelID());
-		}
-		return storageHandler;
 	}
 	
 }

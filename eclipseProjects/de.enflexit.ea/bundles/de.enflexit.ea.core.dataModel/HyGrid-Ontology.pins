@@ -1,4 +1,4 @@
-; Fri Feb 26 14:52:40 CET 2021
+; Mon Jan 17 16:00:44 CET 2022
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -11,19 +11,11 @@
 
 	(%3AJADE-IGNORE FALSE))
 
-([Cable] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
 ([CableProperties] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
 ([CableState] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([CableWithBreaker] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -194,7 +186,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\20_GIT\\04_EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
+	(%3ALOCATION "D:\\git\\EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
 	(%3AONTOLOGYNAME "HyGrid")
 	(%3APACKAGE "de.enflexit.ea.core.dataModel.ontology")
 	(%3ASUPPORT "j2se"))
@@ -225,10 +217,6 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([RequestValues] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
-
-([Sensor] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

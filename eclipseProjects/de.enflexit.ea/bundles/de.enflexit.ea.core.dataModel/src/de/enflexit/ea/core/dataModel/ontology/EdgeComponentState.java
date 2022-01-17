@@ -8,7 +8,7 @@ import jade.core.*;
    * This class describes the dynamic (run time) properties of an edge component in a network model
 * Protege name: EdgeComponentState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class EdgeComponentState extends DynamicComponentState{ 
 

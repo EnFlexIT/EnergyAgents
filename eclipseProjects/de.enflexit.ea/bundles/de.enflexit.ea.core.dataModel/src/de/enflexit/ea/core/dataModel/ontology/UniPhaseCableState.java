@@ -7,19 +7,19 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseCableState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class UniPhaseCableState extends CableState{ 
 
    /**
-* Protege name: currentReal
+* Protege name: currentImag
    */
-   private UnitValue currentReal;
-   public void setCurrentReal(UnitValue value) { 
-    this.currentReal=value;
+   private UnitValue currentImag;
+   public void setCurrentImag(UnitValue value) { 
+    this.currentImag=value;
    }
-   public UnitValue getCurrentReal() {
-     return this.currentReal;
+   public UnitValue getCurrentImag() {
+     return this.currentImag;
    }
 
    /**
@@ -31,50 +31,6 @@ public class UniPhaseCableState extends CableState{
    }
    public UnitValue getLossesP() {
      return this.lossesP;
-   }
-
-   /**
-* Protege name: utilization
-   */
-   private float utilization;
-   public void setUtilization(float value) { 
-    this.utilization=value;
-   }
-   public float getUtilization() {
-     return this.utilization;
-   }
-
-   /**
-* Protege name: current
-   */
-   private UnitValue current;
-   public void setCurrent(UnitValue value) { 
-    this.current=value;
-   }
-   public UnitValue getCurrent() {
-     return this.current;
-   }
-
-   /**
-* Protege name: P
-   */
-   private UnitValue p;
-   public void setP(UnitValue value) { 
-    this.p=value;
-   }
-   public UnitValue getP() {
-     return this.p;
-   }
-
-   /**
-* Protege name: currentImag
-   */
-   private UnitValue currentImag;
-   public void setCurrentImag(UnitValue value) { 
-    this.currentImag=value;
-   }
-   public UnitValue getCurrentImag() {
-     return this.currentImag;
    }
 
    /**
@@ -100,6 +56,28 @@ public class UniPhaseCableState extends CableState{
    }
 
    /**
+* Protege name: currentReal
+   */
+   private UnitValue currentReal;
+   public void setCurrentReal(UnitValue value) { 
+    this.currentReal=value;
+   }
+   public UnitValue getCurrentReal() {
+     return this.currentReal;
+   }
+
+   /**
+* Protege name: P
+   */
+   private UnitValue p;
+   public void setP(UnitValue value) { 
+    this.p=value;
+   }
+   public UnitValue getP() {
+     return this.p;
+   }
+
+   /**
 * Protege name: cosPhi
    */
    private float cosPhi;
@@ -108,6 +86,28 @@ public class UniPhaseCableState extends CableState{
    }
    public float getCosPhi() {
      return this.cosPhi;
+   }
+
+   /**
+* Protege name: utilization
+   */
+   private float utilization;
+   public void setUtilization(float value) { 
+    this.utilization=value;
+   }
+   public float getUtilization() {
+     return this.utilization;
+   }
+
+   /**
+* Protege name: current
+   */
+   private UnitValue current;
+   public void setCurrent(UnitValue value) { 
+    this.current=value;
+   }
+   public UnitValue getCurrent() {
+     return this.current;
    }
 
 }

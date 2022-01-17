@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: PipeSurroundingEarth
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class PipeSurroundingEarth extends PipeSurrounding{ 
 

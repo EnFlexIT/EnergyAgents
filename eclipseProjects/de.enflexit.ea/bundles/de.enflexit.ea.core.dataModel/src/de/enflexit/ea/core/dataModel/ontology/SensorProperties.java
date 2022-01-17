@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: SensorProperties
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class SensorProperties extends CableProperties{ 
-
-   /**
-* Protege name: sensorID
-   */
-   private String sensorID;
-   public void setSensorID(String value) { 
-    this.sensorID=value;
-   }
-   public String getSensorID() {
-     return this.sensorID;
-   }
 
    /**
 * Protege name: measureLocation
@@ -31,6 +20,17 @@ public class SensorProperties extends CableProperties{
    }
    public String getMeasureLocation() {
      return this.measureLocation;
+   }
+
+   /**
+* Protege name: sensorID
+   */
+   private String sensorID;
+   public void setSensorID(String value) { 
+    this.sensorID=value;
+   }
+   public String getSensorID() {
+     return this.sensorID;
    }
 
 }

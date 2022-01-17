@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: TwinPipeState
 * @author ontology bean generator
-* @version 2021/02/26, 14:45:40
+* @version 2022/01/17, 15:51:08
 */
 public class TwinPipeState extends EdgeComponentState{ 
-
-   /**
-* Protege name: returnPipeState
-   */
-   private HeatPipeState returnPipeState;
-   public void setReturnPipeState(HeatPipeState value) { 
-    this.returnPipeState=value;
-   }
-   public HeatPipeState getReturnPipeState() {
-     return this.returnPipeState;
-   }
 
    /**
 * Protege name: supplyPipeState
@@ -31,6 +20,17 @@ public class TwinPipeState extends EdgeComponentState{
    }
    public HeatPipeState getSupplyPipeState() {
      return this.supplyPipeState;
+   }
+
+   /**
+* Protege name: returnPipeState
+   */
+   private HeatPipeState returnPipeState;
+   public void setReturnPipeState(HeatPipeState value) { 
+    this.returnPipeState=value;
+   }
+   public HeatPipeState getReturnPipeState() {
+     return this.returnPipeState;
    }
 
 }
