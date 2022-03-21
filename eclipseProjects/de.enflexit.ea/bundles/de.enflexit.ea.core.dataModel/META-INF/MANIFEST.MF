@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Data And Communication Models
 Bundle-SymbolicName: de.enflexit.ea.core.dataModel
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.2.1.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.dataCommunication
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.ea.core.dataModel,
@@ -27,9 +27,10 @@ Export-Package: de.enflexit.ea.core.dataModel,
 Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
  de.enflexit.eom.core,
- de.enflexit.jaxb,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
  org.eclipse.osgi
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation
