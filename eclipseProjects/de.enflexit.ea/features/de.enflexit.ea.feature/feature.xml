@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.ea.feature"
       label="Energy Agent - Life Cycle Feature"
-      version="1.4.0.qualifier"
+      version="1.4.1.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.ea.core"
       os="linux,macosx,win32"
@@ -28,20 +28,20 @@
    <requires>
       <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate"/>
-      <import plugin="de.enflexit.oidc"/>
+      <import plugin="de.enflexit.eom.core" version="2.1.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.eom.awbAdapter"/>
       <import plugin="de.enflexit.eom.database"/>
       <import plugin="org.agentgui.core"/>
-      <import plugin="org.agentgui.lib.jung"/>
-      <import plugin="org.awb.env.networkModel"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.equinox.preferences"/>
-      <import plugin="de.enflexit.jaxb"/>
-      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.agentgui.lib.jade" version="4.5.1" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.eom.core" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.awb.env.networkModel"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.agentgui.lib.jung"/>
+      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.preferences"/>
       <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="de.enflexit.geography"/>
+      <import plugin="jakarta.xml.bind"/>
    </requires>
 
    <plugin
