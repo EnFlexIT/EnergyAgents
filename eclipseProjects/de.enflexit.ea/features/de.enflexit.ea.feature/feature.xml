@@ -26,22 +26,9 @@
          name="Energy Option Model"/>
 
    <requires>
-      <import plugin="de.enflexit.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.db.hibernate"/>
-      <import plugin="de.enflexit.eom.core" version="2.1.0" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.eom.awbAdapter"/>
-      <import plugin="de.enflexit.eom.database"/>
-      <import plugin="org.agentgui.core"/>
-      <import plugin="org.agentgui.lib.jade" version="4.5.1" match="greaterOrEqual"/>
-      <import plugin="org.awb.env.networkModel"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.agentgui.lib.jung"/>
-      <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.preferences"/>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="de.enflexit.geography"/>
-      <import plugin="jakarta.xml.bind"/>
+      <import feature="org.agentgui.feature" version="2.2.3.qualifier"/>
+      <import feature="de.enflexit.common.feature" version="2.1.9.qualifier"/>
+      <import feature="de.enflexit.eom.feature" version="2.5.2.qualifier"/>
    </requires>
 
    <plugin
