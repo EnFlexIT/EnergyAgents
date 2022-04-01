@@ -29,8 +29,9 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  org.agentgui.core,
  org.agentgui.lib.jade,
- org.agentgui.lib.jung,
  org.awb.env.networkModel,
  org.eclipse.osgi
-Import-Package: javax.xml.bind,
+Import-Package: edu.uci.ics.jung.graph,
+ edu.uci.ics.jung.graph.util,
+ javax.xml.bind,
  javax.xml.bind.annotation
