@@ -610,7 +610,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		long slrDurationComp = UnitConverter.convertDurationToMilliseconds(slrComp.getDuration());
 		long slrDurationThis = UnitConverter.convertDurationToMilliseconds(slrThis.getDuration());
 		if (slrDurationComp!=slrDurationThis) return false;
-		if (slrComp.getIdScheduleLengthRestriction()!=slrThis.getIdScheduleLengthRestriction()) return false;
 		if (slrComp.getMaxNumberOfSystemStates()!=slrThis.getMaxNumberOfSystemStates()) return false;
 		
 		
