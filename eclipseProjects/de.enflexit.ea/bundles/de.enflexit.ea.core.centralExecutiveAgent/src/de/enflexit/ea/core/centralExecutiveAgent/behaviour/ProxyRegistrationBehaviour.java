@@ -4,6 +4,7 @@ import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.ontology.ProxyAgentRegistrationRequest;
 import de.enflexit.ea.core.dataModel.ontology.RemoteAgentRegistrationRequest;
 import de.enflexit.ea.core.dataModel.ontology.TestbedAgentManagement;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import jade.content.ContentElement;
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;
@@ -69,7 +70,7 @@ public class ProxyRegistrationBehaviour extends OneShotBehaviour {
 					// --- Add the AID to the directory -------------
 					cea.getInternalDataModel().addRemoteAgentAID(sender);
 					// --- Add the AID to the phone book ------------
-					cea.getInternalDataModel().getPhoneBook().addAgentAID(sender);
+					cea.getInternalDataModel().getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(sender));
 				
 				} else if (action instanceof ProxyAgentRegistrationRequest) {
 					// ----------------------------------------------

@@ -26,6 +26,7 @@ import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.ontology.RemoteAgentInformation;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import jade.core.AID;
 import jade.core.NotFoundException;
 import jade.core.Profile;
@@ -49,7 +50,7 @@ public class InternalDataModel {
 	private NetworkComponent networkComponentOfCEA;
 	private CeaConfigModel ceaConfigModel;
 
-	private PhoneBook phoneBook;
+	private PhoneBook<PhoneBookEntry> phoneBook;
 	
 	private String trustStoreFile;
 	private String trustStorePassword;
@@ -161,12 +162,12 @@ public class InternalDataModel {
 	 * Gets the phone book.
 	 * @return the phone book
 	 */
-	public PhoneBook getPhoneBook() {
+	public PhoneBook<PhoneBookEntry> getPhoneBook() {
 		if (phoneBook==null) {
-			phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile));
+			phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), PhoneBookEntry.class);
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook();
+				phoneBook = new PhoneBook<>();
 				System.out.println("[" + this.cea.getLocalName() + "] Created temporary phonebook!");
 			}
 		}
@@ -185,7 +186,7 @@ public class InternalDataModel {
 	 * @param aid the AID
 	 */
 	public void addAidToPhoneBook(AID aid) {
-		this.getPhoneBook().addAgentAID(aid);
+		this.getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(aid));
 	}
 	
 	

@@ -50,7 +50,7 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 			cea.getInternalDataModel().getPhoneBook().addPhoneBookEntry((PhoneBookEntry) contentObject);
 		} else {
 			// --- If not, just add the AID -------------------------
-			cea.getInternalDataModel().getPhoneBook().addAgentAID(this.phoneBookRegistrationRequest.getSender());
+			cea.getInternalDataModel().getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(this.phoneBookRegistrationRequest.getSender()));
 		}
 		
 		// --- Send a confirmation message --------------------------

@@ -83,7 +83,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	
 	private FixedVariableList fixedVariableListMeasurements;
 	
-	private PhoneBook phoneBook;
+	private PhoneBook<PhoneBookEntry> phoneBook;
 	
 	private AID centralAgentAID;
 	private CeaConfigModel ceaConfigModel;
@@ -280,16 +280,16 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * Returns the agent's local phone book.
 	 * @return the phone book
 	 */
-	public PhoneBook getPhoneBook() {
+	public PhoneBook<PhoneBookEntry> getPhoneBook() {
 		if (phoneBook==null) {
 			// --- For the real application of the energy agent -----
 			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile));
+				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), PhoneBookEntry.class);
 			}
 			// --- Backup solution, or in all other modes -----------
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook();
+				phoneBook = new PhoneBook<>();
 				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
 					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
 				}
@@ -310,7 +310,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * @param aid the AID
 	 */
 	public void addAidToPhoneBook(AID aid) {
-		this.getPhoneBook().addAgentAID(aid);
+		this.getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(aid));
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	

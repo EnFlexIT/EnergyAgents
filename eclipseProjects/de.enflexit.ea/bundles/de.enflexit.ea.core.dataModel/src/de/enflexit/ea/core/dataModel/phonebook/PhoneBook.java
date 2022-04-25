@@ -28,7 +28,7 @@ import jade.core.AID;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement
-public class PhoneBook implements Serializable {
+public class PhoneBook<T extends PhoneBookEntry> implements Serializable {
 	
 	private static final long serialVersionUID = 6718209842107620111L;
 
@@ -36,13 +36,13 @@ public class PhoneBook implements Serializable {
 	private File phoneBookFile;  
 	
 	@XmlElementWrapper(name = "phoneBookEntries")
-	private TreeMap<String, PhoneBookEntry> internalPhoneBook;
+	private TreeMap<String, T> internalPhoneBook;
 	
 	/**
 	 * Gets the internal phone book.
 	 * @return the internal phone book
 	 */
-	private TreeMap<String, PhoneBookEntry> getInternalPhoneBook() {
+	private TreeMap<String, T> getInternalPhoneBook() {
 		if (internalPhoneBook==null) {
 			internalPhoneBook = new TreeMap<>();
 		}
@@ -57,28 +57,28 @@ public class PhoneBook implements Serializable {
 	public AID getAgentAID(String localName) {
 		if (localName==null || localName.isEmpty()==true) return null;
 		AID aid = null;
-		PhoneBookEntry phoneBookEntry = this.getInternalPhoneBook().get(localName);
+		T phoneBookEntry = this.getInternalPhoneBook().get(localName);
 		if (phoneBookEntry!=null) {
 			aid = phoneBookEntry.getAID();
 		}
 		return aid;
 	}
 	
-	/**
-	 * Adds an agent's AID to the phone book.
-	 * @param agentAID the agent AID
-	 */
-	public void addAgentAID(AID agentAID) {
-		
-		PhoneBookEntry phoneBookEntry = this.getInternalPhoneBook().get(agentAID.getLocalName());
-		// --- If there is no phone book entry for this agent yet yet, create one -------
-		if (phoneBookEntry==null) {
-			phoneBookEntry = new PhoneBookEntry();
-			this.getInternalPhoneBook().put(agentAID.getLocalName(), phoneBookEntry);
-		}
-		phoneBookEntry.setAID(agentAID);
-		this.save();
-	}
+//	/**
+//	 * Adds an agent's AID to the phone book.
+//	 * @param agentAID the agent AID
+//	 */
+//	public void addAgentAID(AID agentAID) {
+//		
+//		T phoneBookEntry = this.getInternalPhoneBook().get(agentAID.getLocalName());
+//		// --- If there is no phone book entry for this agent yet yet, create one -------
+//		if (phoneBookEntry==null) {
+//			phoneBookEntry = new PhoneBookEntry();
+//			this.getInternalPhoneBook().put(agentAID.getLocalName(), phoneBookEntry);
+//		}
+//		phoneBookEntry.setAID(agentAID);
+//		this.save();
+//	}
 	
 	/**
 	 * Gets a phone book entry to the phone book.
@@ -93,7 +93,7 @@ public class PhoneBook implements Serializable {
 	 * Adds a phone book entry to the phone book.
 	 * @param phoneBookEntry the phone book entry
 	 */
-	public void addPhoneBookEntry(PhoneBookEntry phoneBookEntry) {
+	public void addPhoneBookEntry(T phoneBookEntry) {
 		this.getInternalPhoneBook().put(phoneBookEntry.getAID().getLocalName(), phoneBookEntry);
 		this.save();
 	}
@@ -190,12 +190,12 @@ public class PhoneBook implements Serializable {
 	 * @param phoneBookFile the phone book file
 	 * @return the phone book
 	 */
-	public static PhoneBook loadPhoneBook(File phoneBookFile) {
+	public static <T extends PhoneBookEntry> PhoneBook<T> loadPhoneBook(File phoneBookFile, Class<T> classInstance) {
 		
-		PhoneBook pb = null;
+		PhoneBook<T> pb = null;
 		if (phoneBookFile.exists()==false) {
 			// --- Create a new PhoneBook -----------------
-			pb = new PhoneBook();
+			pb = new PhoneBook<>();
 			pb.setPhoneBookFile(phoneBookFile);
 			if (pb.save()==false) {
 				System.err.println("[" + PhoneBook.class.getSimpleName() + "] Could not create PhoneBook file!");
@@ -209,7 +209,7 @@ public class PhoneBook implements Serializable {
 				FileReader fileReader = null;
 				try {
 					fileReader = new FileReader(phoneBookFile);
-					JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class);
+					JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class, classInstance);
 					Unmarshaller um = pbc.createUnmarshaller();
 					pb = (PhoneBook) um.unmarshal(fileReader);
 					pb.setPhoneBookFile(phoneBookFile);
@@ -234,13 +234,13 @@ public class PhoneBook implements Serializable {
 	 * Saves the current phone book.
 	 */
 	public boolean save() {
-		return this.saveAs(this.phoneBookFile);
+		return PhoneBook.saveAs(this, this.phoneBookFile);
 	}
 	/**
 	 * Saves the current PhoneBook instance to the specified file
 	 * @param phoneBookFile the phone book file
 	 */
-	public boolean saveAs(File phoneBookFile) {
+	public static <T extends PhoneBookEntry> boolean saveAs(PhoneBook<T> phoneBook, File phoneBookFile) {
 		
 		boolean successful = false;
 		if (phoneBookFile!=null && DirectoryHelper.isAvailableDirectory(phoneBookFile)==true) {
@@ -248,14 +248,14 @@ public class PhoneBook implements Serializable {
 			FileWriter fileWriter = null;
 			try {
 				// --- Save the PhoneBook to file ---------
-				JAXBContext pbc = JAXBContext.newInstance(this.getClass());
+				JAXBContext pbc = JAXBContext.newInstance(phoneBook.getClass());
 				Marshaller pbm = pbc.createMarshaller();
 				pbm.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 				pbm.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 				// --- Write to XML-File ------------------
 				fileWriter = new FileWriter(phoneBookFile);
-				pbm.marshal(this, fileWriter);
+				pbm.marshal(phoneBook, fileWriter);
 				successful = true;
 				
 			} catch (JAXBException | IOException ex) {

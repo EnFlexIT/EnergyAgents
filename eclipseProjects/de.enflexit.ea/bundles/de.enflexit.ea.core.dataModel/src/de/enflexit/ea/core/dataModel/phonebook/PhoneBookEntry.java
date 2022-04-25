@@ -5,7 +5,6 @@ import java.util.Vector;
 
 import jade.core.AID;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class defines the set of data that is kept in the phone book about an agent. 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
@@ -19,6 +18,18 @@ public class PhoneBookEntry implements Serializable {
 	private String componentType;
 	private Vector<String> mtpAddresses;
 
+	/**
+	 * Instantiates a new phone book entry.
+	 */
+	public PhoneBookEntry() { }
+	/**
+	 * Instantiates a new phone book entry.
+	 * @param aid the aid
+	 */
+	public PhoneBookEntry(AID aid) {
+		this.setAID(aid);
+	}
+	
 	/**
 	 * Gets the aid.
 	 * @return the aid
