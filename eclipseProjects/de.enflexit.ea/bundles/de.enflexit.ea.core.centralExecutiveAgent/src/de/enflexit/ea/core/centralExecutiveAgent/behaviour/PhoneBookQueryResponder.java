@@ -8,6 +8,7 @@ import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBookQuery;
+import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
@@ -32,6 +33,15 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder {
 	 */
 	public PhoneBookQueryResponder(CentralExecutiveAgent centralExecutiveAgent) {
 		super(centralExecutiveAgent, getMessageTemplate());
+	}
+	
+	/**
+	 * Instantiates a new phone book request responder.
+	 * @param centralExecutiveAgent the central executive agent
+	 */
+	public PhoneBookQueryResponder(Agent agent, PhoneBook phoneBook) {
+		super(agent, getMessageTemplate());
+		this.phoneBook = phoneBook;
 	}
 	
 	/**
