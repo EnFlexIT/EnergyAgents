@@ -31,6 +31,12 @@ import jade.core.AID;
 public class PhoneBook<T extends PhoneBookEntry> implements Serializable {
 	
 	private static final long serialVersionUID = 6718209842107620111L;
+	
+	public static enum ConversationID {
+		PHONEBOOK_REGISTRATION,
+		PHONEBOOK_QUERY_SIMPLE,
+		PHONEBOOK_QUERY_COMPLEX
+	}
 
 	@XmlTransient
 	private File phoneBookFile;  
@@ -63,22 +69,6 @@ public class PhoneBook<T extends PhoneBookEntry> implements Serializable {
 		}
 		return aid;
 	}
-	
-//	/**
-//	 * Adds an agent's AID to the phone book.
-//	 * @param agentAID the agent AID
-//	 */
-//	public void addAgentAID(AID agentAID) {
-//		
-//		T phoneBookEntry = this.getInternalPhoneBook().get(agentAID.getLocalName());
-//		// --- If there is no phone book entry for this agent yet yet, create one -------
-//		if (phoneBookEntry==null) {
-//			phoneBookEntry = new PhoneBookEntry();
-//			this.getInternalPhoneBook().put(agentAID.getLocalName(), phoneBookEntry);
-//		}
-//		phoneBookEntry.setAID(agentAID);
-//		this.save();
-//	}
 	
 	/**
 	 * Gets a phone book entry to the phone book.
@@ -211,6 +201,7 @@ public class PhoneBook<T extends PhoneBookEntry> implements Serializable {
 					fileReader = new FileReader(phoneBookFile);
 					JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class, classInstance);
 					Unmarshaller um = pbc.createUnmarshaller();
+					Object loadedObject = um.unmarshal(fileReader);
 					pb = (PhoneBook) um.unmarshal(fileReader);
 					pb.setPhoneBookFile(phoneBookFile);
 

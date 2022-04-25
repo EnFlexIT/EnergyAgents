@@ -16,8 +16,6 @@ public class CeaConfigModel implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 2173789533665654027L;
 
-	public static final String CLASS_NAME_OF_CENTRAL_EXECUTIVE_AGENT = "hygrid.agent.centralExecutiveAgent.CentralExecutiveAgent";
-	
 	protected boolean startSecondMTP;
 	
 	protected MtpProtocol mtpProtocol;
