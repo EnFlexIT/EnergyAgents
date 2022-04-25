@@ -1,6 +1,7 @@
 package de.enflexit.ea.core;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -29,7 +30,6 @@ import energy.schedule.ScheduleController;
 import energygroup.GroupController;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
-import jade.util.leap.Serializable;
 
 
 /**
