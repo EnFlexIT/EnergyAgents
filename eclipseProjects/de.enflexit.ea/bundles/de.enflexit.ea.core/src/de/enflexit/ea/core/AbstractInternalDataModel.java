@@ -10,6 +10,7 @@ import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.common.Observable;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
+import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.DirectoryHelper;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
@@ -393,7 +394,7 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 		for (int i = 0; i < netCompVector.size(); i++) {
 			NetworkComponent netComp = netCompVector.get(i);
 			String agentClassName = this.getNetworkModel().getAgentClassName(netComp);
-			if (agentClassName!=null && agentClassName.equals(CeaConfigModel.CLASS_NAME_OF_CENTRAL_EXECUTIVE_AGENT)) {
+			if (agentClassName!=null && agentClassName.equals(CentralExecutiveAgent.class.getName())) {
 				// --- Found the required NetworkComponent ------
 				agentIdCea = netComp.getId();
 				break;

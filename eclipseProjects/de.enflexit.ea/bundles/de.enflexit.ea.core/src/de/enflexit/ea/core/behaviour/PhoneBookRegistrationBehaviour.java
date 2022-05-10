@@ -28,7 +28,7 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 	private static final long RETRY_TIME_SIMULATION = 5000;
 	private static final long MAXIMUM_WAIT = 5000;
 	
-	private AID agentAID;
+	private AID phoneBookMaintainerAID;
 	private PhoneBookEntry myPhoneBookEntry;
 	private String typeString;
 	
@@ -39,14 +39,14 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 	 * @param centralAgentAID the {@link CentralExecutiveAgent}'s {@link AID}
 	 * @param retryOnFailure if true, the agent will wait for the result and schedule another try on failure
 	 */
-	public PhoneBookRegistrationBehaviour(AID centralAgentAID, boolean retryOnFailure) {
-		this.agentAID = centralAgentAID;
-		this.myPhoneBookEntry = ((AbstractEnergyAgent)myAgent).getInternalDataModel().getMyPhoneBookEntry();
+	public PhoneBookRegistrationBehaviour(AbstractEnergyAgent energyAgent, AID centralAgentAID, boolean retryOnFailure) {
+		this.phoneBookMaintainerAID = centralAgentAID;
+		this.myPhoneBookEntry = energyAgent.getInternalDataModel().getMyPhoneBookEntry();
 		this.retryOnFailure = retryOnFailure;
 	}
 	
-	public PhoneBookRegistrationBehaviour(AID agentAID, PhoneBookEntry myPhoneBookEntry, String typeString, boolean retryOnFailure) {
-		this.agentAID = agentAID;
+	public PhoneBookRegistrationBehaviour(Agent agent, AID phoneBookMaintainerAID, PhoneBookEntry myPhoneBookEntry, String typeString, boolean retryOnFailure) {
+		this.phoneBookMaintainerAID = phoneBookMaintainerAID;
 		this.typeString = typeString;
 		this.myPhoneBookEntry = this.createMyPhoneBookEntry();
 		this.retryOnFailure = retryOnFailure;
@@ -59,12 +59,12 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 	public void action() {
 		
 		// --- In case that no CEA was specified ------------------------------
-		if (this.agentAID==null) return;
+		if (this.phoneBookMaintainerAID==null) return;
 		
 		try {
 			// --- Create and send the registration message -----------------------
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM_REF);
-			message.addReceiver(this.agentAID);
+			message.addReceiver(this.phoneBookMaintainerAID);
 			message.setConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
 			message.setContentObject(this.myPhoneBookEntry);
 			this.myAgent.send(message);
@@ -83,7 +83,7 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 			// --- If there was no reply or no confirmation, try again --------
 			if (reply==null || reply.getPerformative()!=ACLMessage.CONFIRM) {
 				//System.out.println(myAgent.getLocalName() + ": Phonebook registration failed, trying again after " + RETRY_TIME_SIMULATION/1000 + " seconds");
-				this.myAgent.addBehaviour(new RetryRegistrationBehaviour(this.myAgent, this.agentAID, RETRY_TIME_SIMULATION));
+				this.myAgent.addBehaviour(new RetryRegistrationBehaviour(this.myAgent, this.phoneBookMaintainerAID, RETRY_TIME_SIMULATION));
 				
 			} else {
 				// --- Set the CeaConfigModel to the internal data model ? ----
@@ -147,7 +147,8 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 		 */
 		@Override
 		protected void onWake() {
-			this.myAgent.addBehaviour(new PhoneBookRegistrationBehaviour(ceaAID, true));
+			//TODO make non-energyagent compatible
+//			this.myAgent.addBehaviour(new PhoneBookRegistrationBehaviour(ceaAID, true));
 		}
 		
 	}

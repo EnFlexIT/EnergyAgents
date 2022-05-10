@@ -170,7 +170,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 */
 	protected final void onEnvironmentModelSet() {
 		// --- Register at the central phone book if necessary --------------------------
-		this.addBehaviour(new PhoneBookRegistrationBehaviour(this.getInternalDataModel().getCentralAgentAID(), true));
+		this.addBehaviour(new PhoneBookRegistrationBehaviour(this, this.getInternalDataModel().getCentralAgentAID(), true));
 		// --- Call the individual setup method for energy agents ----------------------- 
 		this.setupEnergyAgent();	
 	}

@@ -26,3 +26,4 @@ Export-Package: de.enflexit.ea.core,
  de.enflexit.ea.core.testbed,
  de.enflexit.ea.core.testbed.proxy
 Automatic-Module-Name: net.agenthygrid.core
+Import-Package: de.enflexit.ea.core.centralExecutiveAgent
