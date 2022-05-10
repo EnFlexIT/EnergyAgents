@@ -26,6 +26,8 @@
 		<module>de.enflexit.ea.electricity</module>
 		<module>de.enflexit.ea.electricity.powerFlowCalculation</module>
 		<module>de.enflexit.ea.electricity.powerFlowEstimation</module>
+		<module>de.enflexit.ea.electricity.sensor</module>
+		<module>de.enflexit.ea.electricity.transformer</module>
 		<module>de.enflexit.ea.lib.matrixCalculations</module>
 		<module>de.enflexit.ea.ops</module>
 		<module>de.enflexit.ea.prosumer</module>

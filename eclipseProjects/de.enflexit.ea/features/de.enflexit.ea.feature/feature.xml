@@ -143,4 +143,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="de.enflexit.ea.electricity.sensor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.ea.electricity.transformer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
