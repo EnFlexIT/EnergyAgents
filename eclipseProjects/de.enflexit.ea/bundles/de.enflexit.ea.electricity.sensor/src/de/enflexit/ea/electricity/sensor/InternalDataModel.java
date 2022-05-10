@@ -5,7 +5,6 @@ import de.enflexit.ea.core.AbstractInternalDataModel;
 import energy.FixedVariableList;
 import jade.core.Agent;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class InternalDataModel represents the whole internal data model of the corresponding agent.
  * 

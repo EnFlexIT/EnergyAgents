@@ -2,20 +2,15 @@ package de.enflexit.ea.electricity.sensor.lvSensor;
 
 import java.util.Vector;
 
-import org.awb.env.networkModel.NetworkComponent;
-
 import de.enflexit.common.Observer;
 import de.enflexit.ea.core.AbstractIOReal;
 import de.enflexit.ea.core.AbstractIOSimulated;
-import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.ontology.LongValue;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.sensor.AbstractSensorAgent;
 import energy.FixedVariableList;
 import energy.optionModel.FixedDouble;
-import hygrid.modbusTCP.ModbusCommunicationInterface;
-import hygrid.modbusTCP.ModbusConfiguration;
 
 /**
  * Represents a SensorAgent that measures current and voltage.
@@ -42,23 +37,6 @@ public class LVSensorAgent extends AbstractSensorAgent implements Observer {
 		// --- Add message sending behaviour ------------------------
 		this.addBehaviour(getSensorSendingBehaviour());
 
-		// --- Check, if operating mode is Real ---------------------
-		if (this.getAgentOperatingMode() == AgentOperatingMode.TestBedReal || this.getAgentOperatingMode() == AgentOperatingMode.RealSystem) {
-
-			if (ModbusCommunicationInterface.getInstance().isAcquisitionRunning()==false) {
-				// --- Find ModbusGateway Component and set modbusConfiguration
-				Vector<NetworkComponent> netCompVector = this.getInternalDataModel().getNetworkModel().getNetworkComponentVectorSorted();
-				for (int i = 0; i < netCompVector.size(); i++) {
-					NetworkComponent networkComponent = netCompVector.get(i);
-					if (networkComponent.getType().equals("ModbusGateway")) {
-						
-						ModbusConfiguration modbusConfig = (ModbusConfiguration) networkComponent.getDataModel();
-						ModbusCommunicationInterface.getInstance().startAcquisition(modbusConfig);
-	
-					}
-				}
-			}
-		}
 	}
 	
 	/**

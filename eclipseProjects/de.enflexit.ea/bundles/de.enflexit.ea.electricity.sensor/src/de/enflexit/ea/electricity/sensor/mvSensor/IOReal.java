@@ -11,11 +11,6 @@ public class IOReal extends de.enflexit.ea.electricity.sensor.IOReal implements 
 
 	private static final long serialVersionUID = 3659353219575016108L;
 	
-//	private static final long CYCLE_TIME_MS = 5000;
-//	private static final long CYCLE_TIME_MS = 60000;
-	
-	private boolean debug = false;
-	
 	/**
 	 * Instantiates this behaviour.
 	 * @param agent  the agent

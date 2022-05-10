@@ -1,12 +1,8 @@
 package de.enflexit.ea.electricity.sensor.lvSensor;
 
-import java.util.List;
-
 import de.enflexit.ea.core.AbstractEnergyAgent;
-import hygrid.modbusTCP.ModbusRegistryEntry;
 import jade.core.Agent;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class InternalDataModel represents the whole internal data model of the corresponding agent.
  * 
@@ -41,7 +37,7 @@ public class InternalDataModel extends de.enflexit.ea.electricity.sensor.Interna
 	public static final String PF2= "PF123";
 	public static final String PF3= "PF123";
 	
-	private List<ModbusRegistryEntry> modbusRegistryList; 
+
 	private Float[] receivedRegisters;
 	
 	/**
@@ -50,22 +46,6 @@ public class InternalDataModel extends de.enflexit.ea.electricity.sensor.Interna
 	 */
 	public InternalDataModel(AbstractEnergyAgent myAgent) {
 		super(myAgent);
-	}
-	
-	/**
-	 * Gets the modbus registry list.
-	 * @return the modbus registry list
-	 */
-	public List<ModbusRegistryEntry> getModbusRegistryList() {
-		return modbusRegistryList;
-	}
-	
-	/**
-	 * Sets the modbus registry list.
-	 * @param modbusRegistryList the new modbus registry list
-	 */
-	public void setModbusRegistryList(List<ModbusRegistryEntry> modbusRegistryList) {
-		this.modbusRegistryList = modbusRegistryList;
 	}
 	
 	/**
