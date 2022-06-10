@@ -59,8 +59,8 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 	 * @return the graph element layout
 	 */
 	private GraphElementLayout getGraphElementLayoutForNode(GraphNode graphNode, NetworkModel networkModel, ColorSettingsCollection colorSettings) {
-		GraphElementLayout layout = graphNode.getGraphElementLayout(networkModel);
 		
+		GraphElementLayout layout = graphNode.getGraphElementLayout(networkModel);
 		if (layout!=null) {
 			// --- If the defined color is set to black or white, do not adjust the color --------
 			Color currentColor = layout.getColor();

@@ -93,7 +93,6 @@ public class LiveMonitoringSubscriptionResponder extends HygridSubscriptionRespo
 		}
 
 		// --- Check if there are any subscriptions -------
-		@SuppressWarnings("unchecked")
 		Vector<Subscription> subscriptions = this.getSubscriptions();
 		if (subscriptions.size()>0) {
 			
@@ -141,8 +140,8 @@ public class LiveMonitoringSubscriptionResponder extends HygridSubscriptionRespo
 	 * @return the encoded tsse
 	 */
 	private String encodeTsseAsBase64(TechnicalSystemStateEvaluation tsse) {
-		String tsseBase64 = null;
 		
+		String tsseBase64 = null;
 		ByteArrayOutputStream baos = null;
 		ObjectOutputStream oos = null;
 		try {
@@ -162,15 +161,12 @@ public class LiveMonitoringSubscriptionResponder extends HygridSubscriptionRespo
 				if (baos!=null) {
 					baos.close();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
 			}
 		}
-		
 		return tsseBase64;
 	}
-
 
 
 	/* (non-Javadoc)

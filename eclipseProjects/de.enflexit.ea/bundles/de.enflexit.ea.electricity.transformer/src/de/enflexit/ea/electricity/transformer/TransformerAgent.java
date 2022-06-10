@@ -1,7 +1,6 @@
 package de.enflexit.ea.electricity.transformer;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
@@ -18,11 +17,9 @@ import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.ontology.FlexibilityOffer;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
-import jade.content.Concept;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.domain.FIPANames;
@@ -38,16 +35,10 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	
 	private static final long serialVersionUID = -2493803948645554649L;
 
-	private boolean debug = false;
-	
 	private InternalDataModel internalDataModel;
-	private double nominalSlackVoltage = 230.94;
 	
 	private MeasurementSubscriptionInitiator subscriptionInitiatorBehaviour;
 	private PhoneBookQueryInitiator phonequeryInitiator;
-
-	private int cnpReplyTime = 2000;
-	private TransformerCNPInitiator myCNPInitiator;
 
 	
 	/* (non-Javadoc)
@@ -234,216 +225,10 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	@Override
 	public void handleIncomingMessage(ACLMessage message) {
 		
-		System.out.println(this.getClass().getSimpleName() + " " + this.getLocalName() + ": Receiving message from " + message.getSender().getLocalName());
-
 		if (message != null) {
-
-			//TODO Check conversation ID?
+			System.out.println(this.getClass().getSimpleName() + " " + this.getLocalName() + ": Receiving message from " + message.getSender().getLocalName());
 			
-			// --- Check if the message uses an ontology ------------
-			if (message.getLanguage()!=null && message.getOntology()!=null) {
-				
-				Action action;
-				try {
-					action = (Action) this.getContentManager().extractContent(message);
-					Concept concept = action.getAction();
-					if (concept instanceof FlexibilityOffer) {
-						// --- Voltage adjustment request
-						FlexibilityOffer voltageAdjustmentRequest = (FlexibilityOffer) concept;
-						this.handleRequestedVoltageAdjustment(voltageAdjustmentRequest, message.getSender());
-					}
-				} catch (UngroundedException e1) {
-					e1.printStackTrace();
-				} catch (CodecException e1) {
-					e1.printStackTrace();
-				} catch (OntologyException e1) {
-					e1.printStackTrace();
-				}
-			}
-
 		}
-		
-	}
-
-	/**
-	 * Handle requested voltage adjustment.
-	 *
-	 * @param flexibilityOffer the flexibility offer
-	 * @param sender the sender
-	 * @throws UngroundedException the ungrounded exception
-	 * @throws CodecException the codec exception
-	 * @throws OntologyException the ontology exception
-	 */
-	private void handleRequestedVoltageAdjustment(FlexibilityOffer flexibilityOffer, AID sender) {
-		
-		double requestedVoltageAdjustment= flexibilityOffer.getPossibleVoltageAdjustment();
-		String districtAgentRequest= sender.getLocalName();
-
-		// --- Setting new Measurement
-		this.internalDataModel.setRequestedVoltageAdjustment(requestedVoltageAdjustment);
-		
-		if (debug==true) {
-			long timestamp = this.getEnergyAgentIO().getTime();
-			String timeString = new SimpleDateFormat("HH:mm:ss").format(new Date(timestamp));
-    		System.out.println(this.getLocalName()+" received request for voltage adjustment from " + districtAgentRequest + " at "+ timeString);
-    	}
-		
-		// --- Start searching possible Setpoints
-		double possibleVoltageAdjustment = this.findPossibleVoltageAdjustment(requestedVoltageAdjustment);
-		this.getInternalDataModel().setPossibleVoltageAdjustment(possibleVoltageAdjustment);
-		
-		// --- Get aid list of all district Agents
-		Vector<AID> aidsOfDistrictAgents = this.getInternalDataModel().getAidsOfDistrictAgents();
-		
-		// --- Define actuator goal 
-		ActuatorGoal actuatorGoal = ActuatorGoal.VOLTAGE_ADJUSTMENT;
-		
-		// --- Start CNP ----
-		try {
-			this.startCNP(aidsOfDistrictAgents,actuatorGoal, possibleVoltageAdjustment);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * Starts the Contract Net Protocol.
-	 *
-	 * @param ResponderAIDs the vector with the AIDs of receiver
-	 * @param content the content of the cfp
-	 * @throws IOException 
-	 */
-	public void startCNP(Vector<AID> aidsOfDistrictAgents, ActuatorGoal actuatorGoal,double necessaryVoltageAdjustment) throws IOException {
-
-		// --- create new cfp messages
-		Vector<ACLMessage> vCFPMessage = null;
-		try {
-			vCFPMessage = this.prepareCFP(aidsOfDistrictAgents, actuatorGoal , necessaryVoltageAdjustment, this.cnpReplyTime);
-		} catch (CodecException e) {
-			e.printStackTrace();
-		} catch (OntologyException e) {
-			e.printStackTrace();
-		}
-		
-		//start CNP by creating instance of Initiator
-		if (this.myCNPInitiator != null) {
-			this.removeBehaviour(myCNPInitiator);
-			this.myCNPInitiator = null;
-		}
-		
-		if (vCFPMessage!=null) {
-			myCNPInitiator = new TransformerCNPInitiator(this, vCFPMessage);
-			this.addBehaviour(myCNPInitiator);
-			
-		} else {
-			System.err.println("Unable to create CNP for transformer step");
-		}
-	}
-	
-	/*
-	 * This method calculates the necessary voltage adjustment depending on the requestedVolageAdjustment
-	 */
-	private double findPossibleVoltageAdjustment(double requestedVoltageAdjustment) {
-		
-		double possibleVoltageAdjustment =0;
-		
-		int transformerStep =this.evaluateActualOperationState(requestedVoltageAdjustment);
-		this.getInternalDataModel().setTransformerStep(transformerStep);
-		possibleVoltageAdjustment= this.calculateSlackVoltage(transformerStep);
-		
-		return possibleVoltageAdjustment;
-	}
-	
-	/**
-	 * This method calculates the slackVoltage depending on the transformer step
-	 * @param transfromerStep
-	 * @return
-	 */
-	private double calculateSlackVoltage(int transfromerStep) {
-		double slackVoltage=0;
-		
-		switch (transfromerStep) {
-		
-		case 0: // Default State
-			slackVoltage= this.nominalSlackVoltage;
-			break;
-		case 1: // +2.5%
-			slackVoltage= this.nominalSlackVoltage*(1.025);
-			break;
-		case 2: // +5%
-			slackVoltage= this.nominalSlackVoltage*(1.05);
-			break;
-		case 3: // +7.5%
-			slackVoltage= this.nominalSlackVoltage*(1.075);
-			break;
-		case 4: // 10%
-			slackVoltage= this.nominalSlackVoltage*(1.1);
-			break;
-		case -1: // -2.5%
-			slackVoltage= this.nominalSlackVoltage*(0.975);
-			break;	
-		case -2: // -5%
-			slackVoltage= this.nominalSlackVoltage*(0.95);
-			break;
-		case -3: // -7.5%
-			slackVoltage= this.nominalSlackVoltage*(0.925);
-			break;
-		case -4: // -10%
-			slackVoltage= this.nominalSlackVoltage*(0.9);
-			break;
-		default:
-			slackVoltage= this.nominalSlackVoltage;
-	} // --- End of switch Case
-		return slackVoltage;
-	}
-	/**
-	 * This method evaluate the necessary OperationState of basis of the voltage deviation
-	 * @param uDev
-	 * @return
-	 */
-	private int evaluateActualOperationState(double uDev) {
-		
-		int selectedOperationState=0;
-		
-		// --- Check if transformer should reduce or increase slack voltage
-		if (uDev> 0){
-			// ---Reduce slack voltage
-			if (uDev> 10*230.94/100){
-				// -10% step 
-				selectedOperationState=-4;
-				
-			} else if (uDev>7.5*230.94/100) {
-				// -7.5% step 
-				selectedOperationState=-3;
-				
-			} else if (uDev>5*230.94/100) {
-				// -5% step 
-				selectedOperationState=-2;
-				
-			} else if (uDev>2.5*230.94/100) {
-				// -2.5% step 
-				selectedOperationState=-1;
-			}
-			
-		} else {
-			// --- Increase slack Voltage
-			if (uDev< 10*230.94/100){
-				// +10% step 
-				selectedOperationState=4;
-			} else if (uDev<7.5*230.94/100) {
-				// +7.5% step 
-				selectedOperationState=3;
-			} else if (uDev<5*230.94/100) {
-				// +5% step 
-				selectedOperationState=2;
-				
-			} else if (uDev<2.5*230.94/100) {
-				// +2.5% step 
-				selectedOperationState=1;
-			}
-		}
-		return selectedOperationState;
 	}
 	
 	/**

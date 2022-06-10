@@ -116,7 +116,7 @@ public class SwitchableEomAdapter extends EomAdapter implements ACLMessageForwar
 		message.addReceiver(this.getMyAgentAID());
 		
 		try {
-			message.setContentObject(new Boolean(operating));
+			message.setContentObject(Boolean.valueOf(operating));
 		} catch (IOException e1) {
 			System.err.println("Error setting content object for switch on/off message");
 			e1.printStackTrace();

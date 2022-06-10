@@ -168,7 +168,7 @@ public class ColorSettingsIntervalBased implements Serializable, Comparable<Colo
 	@Override
 	public int compareTo(ColorSettingsIntervalBased otherColorSettings) {
 		// --- Compare based on the lower bound ------
-		return new Double(this.getLowerBound()).compareTo(otherColorSettings.getLowerBound());
+		return Double.valueOf(this.getLowerBound()).compareTo(otherColorSettings.getLowerBound());
 	}
 	
 	/**

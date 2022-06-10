@@ -141,7 +141,7 @@ public class UpdatePropagationBehaviour extends SimpleBehaviour {
 		
 		try {
 			// --- Get the phonebook with all known agents ---------- 
-			PhoneBook pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
+			PhoneBook<PhoneBookEntry> pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
 			List<PhoneBookEntry> phoneBookEntries = pb.getPhoneBookEntries();
 			for (int i = 0; i < phoneBookEntries.size(); i++) {
 				

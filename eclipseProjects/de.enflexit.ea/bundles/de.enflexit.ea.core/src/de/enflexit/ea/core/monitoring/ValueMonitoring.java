@@ -42,6 +42,7 @@ public class ValueMonitoring extends AbstractEvaluationCalculation {
 	 * Gets the real time group evaluation strategy.
 	 * @return the real time group evaluation strategy
 	 */
+	@SuppressWarnings("unused")
 	private AbstractGroupEvaluationStrategyRT getRealTimeGroupEvaluationStrategy() {
 		if (rtGroupEvaluationStrategy==null) {
 			rtGroupEvaluationStrategy = (AbstractGroupEvaluationStrategyRT) this.getOptionModelController().getEvaluationStrategyRT();

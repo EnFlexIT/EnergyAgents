@@ -25,7 +25,7 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder {
 	
 	private static final long serialVersionUID = 3929966505865961443L;
 
-	private PhoneBook phoneBook;
+	private PhoneBook<PhoneBookEntry> phoneBook;
 
 	/**
 	 * Instantiates a new phone book request responder.
@@ -39,7 +39,7 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder {
 	 * Instantiates a new phone book request responder.
 	 * @param centralExecutiveAgent the central executive agent
 	 */
-	public PhoneBookQueryResponder(Agent agent, PhoneBook phoneBook) {
+	public PhoneBookQueryResponder(Agent agent, PhoneBook<PhoneBookEntry> phoneBook) {
 		super(agent, getMessageTemplate());
 		this.phoneBook = phoneBook;
 	}
@@ -70,8 +70,8 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder {
 	 */
 	@Override
 	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-		ACLMessage reply = null;
 		
+		ACLMessage reply = null;
 		try {
 			PhoneBookQuery pbQuery = (PhoneBookQuery) request.getContentObject();
 			
@@ -123,7 +123,7 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder {
 	 * Gets the phone book.
 	 * @return the phone book
 	 */
-	private PhoneBook getPhoneBook() {
+	private PhoneBook<PhoneBookEntry> getPhoneBook() {
 		if (phoneBook==null) {
 			phoneBook = ((CentralExecutiveAgent)myAgent).getInternalDataModel().getPhoneBook();
 		}

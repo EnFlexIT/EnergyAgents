@@ -1271,7 +1271,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		long step;
 		long stepInUnit;
 		if (stepString==null || stepString.equals("")) {
-			step = new Long(0);
+			step = Long.valueOf(0);
 		} else {
 			stepInUnit = Long.parseLong(stepString);
 			step = stepInUnit * timeUnit.getFactorToMilliseconds();
@@ -1318,7 +1318,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		long step;
 		long stepInUnit;
 		if (stepString==null || stepString.equals("")) {
-			step = new Long(0);
+			step = Long.valueOf(0);
 		} else {
 			stepInUnit = Long.parseLong(stepString);
 			step = stepInUnit * timeUnit.getFactorToMilliseconds();

@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Electricity - Power Flow Calculation
 Bundle-SymbolicName: de.enflexit.ea.electricity.powerFlowCalculation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Marcel Ludwig, Jan Mehlich (BUW)
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.lib.powerFlowCalculation,
  de.enflexit.ea.lib.powerFlowCalculation.classLoadService,
  de.enflexit.ea.lib.powerFlowCalculation.parameter

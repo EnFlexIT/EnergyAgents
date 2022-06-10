@@ -202,7 +202,7 @@ public class PhoneBook<T extends PhoneBookEntry> implements Serializable {
 					JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class, classInstance);
 					Unmarshaller um = pbc.createUnmarshaller();
 					Object loadedObject = um.unmarshal(fileReader);
-					pb = (PhoneBook) um.unmarshal(fileReader);
+					pb = (PhoneBook) loadedObject;
 					pb.setPhoneBookFile(phoneBookFile);
 
 				} catch (FileNotFoundException | JAXBException ex) {

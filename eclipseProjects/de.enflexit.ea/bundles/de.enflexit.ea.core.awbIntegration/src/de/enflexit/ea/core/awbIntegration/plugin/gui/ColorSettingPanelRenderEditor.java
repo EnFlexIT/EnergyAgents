@@ -117,7 +117,7 @@ public class ColorSettingPanelRenderEditor extends AbstractCellEditor implements
     	} else if (initialValue==Double.MAX_VALUE) {
     		initialString = POSITIVE_INFINITY;
     	} else {
-    		initialString = new Double(initialValue).toString();
+    		initialString = Double.valueOf(initialValue).toString();
     	}
     	
     	JTextField textField = new JTextField(initialString);

@@ -8,9 +8,6 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
-import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
-import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
 import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculationPV;
@@ -20,7 +17,6 @@ import de.enflexit.ea.lib.powerFlowCalculation.parameter.PowerPerNode;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.AbstractGridStateEstimation;
 import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
 import energy.domain.DefaultDomainModelElectricity.Phase;
-import energy.optionModel.FixedDouble;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 
@@ -142,6 +138,7 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	 * @return
 	 */
 	private HashMap<String,MeasuredBranchCurrent> estimateBranchCurrents() {
+		
 		HashMap<String,MeasuredBranchCurrent> estimatedBranchCurrents = new HashMap<>();
 		String nSensorName = null;
 		double current=0;
@@ -160,14 +157,9 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 				}
 			}
 			
-			
-			
-			if(this.getActualPhase().equals(Phase.L1)==true)
-				current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL1().getCurrent().getValue();
-			if(this.getActualPhase().equals(Phase.L2)==true)
-				current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL2().getCurrent().getValue();
-			if(this.getActualPhase().equals(Phase.L3)==true)
-				current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL3().getCurrent().getValue();
+			if (this.getActualPhase().equals(Phase.L1)==true) current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL1().getCurrent().getValue();
+			if (this.getActualPhase().equals(Phase.L2)==true) current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL2().getCurrent().getValue();
+			if (this.getActualPhase().equals(Phase.L3)==true) current = currentMeasurement.get(nSensorName).getElectricalNodeState().getL3().getCurrent().getValue();
 			MeasuredBranchCurrent measuredBranchCurrent = new MeasuredBranchCurrent();
 			measuredBranchCurrent.setSensorName(nSensorName);
 			measuredBranchCurrent.setCurrent(current);
@@ -177,59 +169,58 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 		}
 		
 		// District agent n33
-				if(keySet.size()==8) {
-					double currentN17=0;
-					double currentN18=0;
-					double currentN19=0;
-					double currentN20=0;
-					double currentN21=0;
-					double currentN31=0;
-					if(this.getActualPhase().equals(Phase.L1)==true) {
-						currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL1().getCurrent().getValue();
-						currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL1().getCurrent().getValue();
-						currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL1().getCurrent().getValue();
-						currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL1().getCurrent().getValue();
-						currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL1().getCurrent().getValue();
-						currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL1().getCurrent().getValue();
-						
-					}
-					if(this.getActualPhase().equals(Phase.L2)==true) {
-						currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL2().getCurrent().getValue();
-						currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL2().getCurrent().getValue();
-						currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL2().getCurrent().getValue();
-						currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL2().getCurrent().getValue();
-						currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL2().getCurrent().getValue();
-						currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL2().getCurrent().getValue();
-					}
-					if(this.getActualPhase().equals(Phase.L3)==true) {
-						currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL3().getCurrent().getValue();
-						currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL3().getCurrent().getValue();
-						currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL3().getCurrent().getValue();
-						currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL3().getCurrent().getValue();
-						currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL3().getCurrent().getValue();
-						currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL3().getCurrent().getValue();
-					}	
-						
-					double currentN24= currentN17+currentN18+currentN19+currentN20+currentN21+currentN31;
-					String cableName = "n24";
-					// --- Get nFromNode and nToNode from Sensor
-					NetworkComponent netComp = this.getDistrictAgentModel().getNetworkModel().getNetworkComponent(cableName);
-					Vector<NetworkComponent> neighbouredNetworkComponnents = this.getDistrictAgentModel().getNetworkModel().getNeighbourNetworkComponents(netComp);
-					Vector<NetworkComponent> neighbouredNodes = new Vector<>();
-					for(int a=0;a<neighbouredNetworkComponnents.size();a++) {
-						if (neighbouredNetworkComponnents.get(a).getType().equals("Sensor")==false&&neighbouredNetworkComponnents.get(a).getType().equals("Cable")==false) {
-							neighbouredNodes.add(neighbouredNetworkComponnents.get(a));
-						}
-					}
-					
-					MeasuredBranchCurrent measuredBranchCurrent = new MeasuredBranchCurrent();
-					measuredBranchCurrent.setSensorName(cableName);
-					measuredBranchCurrent.setCurrent(currentN24);
-					measuredBranchCurrent.setnFromNodeComponentName(neighbouredNodes.get(0).getId());
-					measuredBranchCurrent.setnToNodeComponentName(neighbouredNodes.get(1).getId());
-					estimatedBranchCurrents.put(cableName, measuredBranchCurrent);
-				}
+		if(keySet.size()==8) {
+			double currentN17=0;
+			double currentN18=0;
+			double currentN19=0;
+			double currentN20=0;
+			double currentN21=0;
+			double currentN31=0;
+			if(this.getActualPhase().equals(Phase.L1)==true) {
+				currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL1().getCurrent().getValue();
+				currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL1().getCurrent().getValue();
+				currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL1().getCurrent().getValue();
+				currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL1().getCurrent().getValue();
+				currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL1().getCurrent().getValue();
+				currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL1().getCurrent().getValue();
 				
+			}
+			if(this.getActualPhase().equals(Phase.L2)==true) {
+				currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL2().getCurrent().getValue();
+				currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL2().getCurrent().getValue();
+				currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL2().getCurrent().getValue();
+				currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL2().getCurrent().getValue();
+				currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL2().getCurrent().getValue();
+				currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL2().getCurrent().getValue();
+			}
+			if(this.getActualPhase().equals(Phase.L3)==true) {
+				currentN17= currentMeasurement.get("n17").getElectricalNodeState().getL3().getCurrent().getValue();
+				currentN18= currentMeasurement.get("n18").getElectricalNodeState().getL3().getCurrent().getValue();
+				currentN19= currentMeasurement.get("n19").getElectricalNodeState().getL3().getCurrent().getValue();
+				currentN20= currentMeasurement.get("n20").getElectricalNodeState().getL3().getCurrent().getValue();
+				currentN21= currentMeasurement.get("n21").getElectricalNodeState().getL3().getCurrent().getValue();
+				currentN31= currentMeasurement.get("n31").getElectricalNodeState().getL3().getCurrent().getValue();
+			}	
+				
+			double currentN24= currentN17+currentN18+currentN19+currentN20+currentN21+currentN31;
+			String cableName = "n24";
+			// --- Get nFromNode and nToNode from Sensor
+			NetworkComponent netComp = this.getDistrictAgentModel().getNetworkModel().getNetworkComponent(cableName);
+			Vector<NetworkComponent> neighbouredNetworkComponnents = this.getDistrictAgentModel().getNetworkModel().getNeighbourNetworkComponents(netComp);
+			Vector<NetworkComponent> neighbouredNodes = new Vector<>();
+			for(int a=0;a<neighbouredNetworkComponnents.size();a++) {
+				if (neighbouredNetworkComponnents.get(a).getType().equals("Sensor")==false&&neighbouredNetworkComponnents.get(a).getType().equals("Cable")==false) {
+					neighbouredNodes.add(neighbouredNetworkComponnents.get(a));
+				}
+			}
+			
+			MeasuredBranchCurrent measuredBranchCurrent = new MeasuredBranchCurrent();
+			measuredBranchCurrent.setSensorName(cableName);
+			measuredBranchCurrent.setCurrent(currentN24);
+			measuredBranchCurrent.setnFromNodeComponentName(neighbouredNodes.get(0).getId());
+			measuredBranchCurrent.setnToNodeComponentName(neighbouredNodes.get(1).getId());
+			estimatedBranchCurrents.put(cableName, measuredBranchCurrent);
+		}
 		return estimatedBranchCurrents;
 	}
 	
@@ -412,20 +403,18 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	}
 	
 	private HashMap<String,Double> createHashMapFromVector(Vector<Double> vector) {
-		HashMap<String,Double> hashMap = new HashMap<String,Double>();
 		
+		HashMap<String,Double> hashMap = new HashMap<String,Double>();
 		for(int i=0;i<vector.size();i++) {
 			String networkComponent = this.getDistrictAgentModel().getNodeNumberToNetworkComponentId().get(i);
 			hashMap.put(networkComponent, vector.get(i));
-			
 		}
-		
 		return hashMap;
 	}
 	
 	private HashMap<String,Double> createHashMapFromLoadPerNode(Vector<PowerPerNode> loadPerNode, String kindOfPower) {
-		HashMap<String,Double> hashMap = new HashMap<String,Double>();
 		
+		HashMap<String,Double> hashMap = new HashMap<String,Double>();
 		for(int i=0;i<loadPerNode.size();i++) {
 			String networkComponent = this.getDistrictAgentModel().getNodeNumberToNetworkComponentId().get(loadPerNode.get(i).getnNode());
 			if(kindOfPower.equals("P")) {
@@ -433,9 +422,7 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 			else {
 				hashMap.put(networkComponent, loadPerNode.get(i).getComplexPowerPerPhase().getImag());	
 			}
-			
 		}
-		
 		return hashMap;
 	}
 	
@@ -455,13 +442,9 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	
 		if (nFirstSensorName != null) {
 			// --- Getting voltage form sensor 1
-			
-			if(this.getActualPhase().equals(Phase.L1)==true) 
-				voltageSensor2 =currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL1().getVoltageAbs().getValue();
-			if(this.getActualPhase().equals(Phase.L2)==true)
-				voltageSensor2 =currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL2().getVoltageAbs().getValue();
-			if(this.getActualPhase().equals(Phase.L3)==true)
-				voltageSensor2 =currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL3().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L1)==true) voltageSensor2=currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL1().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L2)==true) voltageSensor2=currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL2().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L3)==true) voltageSensor2=currentMeasurement.get(nFirstSensorName).getElectricalNodeState().getL3().getVoltageAbs().getValue();
 		}
 	
 		// --- Finding second Sensor
@@ -469,13 +452,9 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	
 		if (nSecondSensorName != null) {
 			// --- Getting voltage form sensor 2
-			
-			if(this.getActualPhase().equals(Phase.L1)==true) 
-				voltageSensor2 =currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL1().getVoltageAbs().getValue();
-			if(this.getActualPhase().equals(Phase.L2)==true)
-				voltageSensor2 =currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL2().getVoltageAbs().getValue();
-			if(this.getActualPhase().equals(Phase.L3)==true)
-				voltageSensor2 =currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL3().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L1)==true) voltageSensor2 = currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL1().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L2)==true) voltageSensor2 =currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL2().getVoltageAbs().getValue();
+			if (this.getActualPhase().equals(Phase.L3)==true) voltageSensor2 =currentMeasurement.get(nSecondSensorName).getElectricalNodeState().getL3().getVoltageAbs().getValue();
 			
 		} else {
 			System.err.println("Problem: Delta Voltage Calculation");
@@ -678,8 +657,8 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	 * @return
 	 */
 	private Vector<PowerPerNode> vLinearPowerReplachement() {
+		
 		Vector<PowerPerNode> vecLoadPerNode = new Vector<PowerPerNode>();
-	
 		int nActualNode;
 	
 		// --- Checking if there are loadNodes
@@ -1021,87 +1000,7 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 		this.setPowerLosses(complexPowerLosses);
 	}
 	
-	/**
-	 * This method transform tsse into electrical measurement
-	 * @param tsse
-	 * @return
-	 */
-	private ElectricalMeasurement transformTSSEintoElectricalMeasurement(TechnicalSystemStateEvaluation tsse) {
-		
-		
-		FixedDouble fvVoltageL1 = null;
-		FixedDouble fvVoltageL2 = null;
-		FixedDouble fvVoltageL3 = null;
-		
-		FixedDouble fvCurrentL1 = null;
-		FixedDouble fvCurrentL2 = null;
-		FixedDouble fvCurrentL3 = null;
 	
-		FixedDouble fvCosPhiL1 = null;
-		FixedDouble fvCosPhiL2 = null;
-		FixedDouble fvCosPhiL3 = null;
-	
-		for (int i = 0; i < tsse.getIOlist().size(); i++) {
-			
-			FixedDouble fdIoValue = (FixedDouble) tsse.getIOlist().get(i);
-			switch (fdIoValue.getVariableID()) {
-			case VOLTAGE_L1:
-				fvVoltageL1 = fdIoValue;
-				break;
-			case VOLTAGE_L2:
-				fvVoltageL2 = fdIoValue;
-				break;
-			case VOLTAGE_L3:
-				fvVoltageL3 = fdIoValue;
-				break;
-			case CURRENT_L1:
-				fvCurrentL1 = fdIoValue;
-				break;
-			case CURRENT_L2:
-				fvCurrentL2 = fdIoValue;
-				break;
-			case CURRENT_L3:
-				fvCurrentL3 = fdIoValue;
-				break;
-			case COSPHI_L1:
-				fvCosPhiL1 = fdIoValue;
-				break;
-			case COSPHI_L2:
-				fvCosPhiL2 = fdIoValue;
-				break;
-			case COSPHI_L3:
-				fvCosPhiL3 = fdIoValue;
-				break;
-			}
-		}
-		
-		UniPhaseElectricalNodeState uniPhaseElectricalNodeStateL1 = new UniPhaseElectricalNodeState();
-		UniPhaseElectricalNodeState uniPhaseElectricalNodeStateL2 = new UniPhaseElectricalNodeState();
-		UniPhaseElectricalNodeState uniPhaseElectricalNodeStateL3 = new UniPhaseElectricalNodeState();
-		
-		
-		uniPhaseElectricalNodeStateL1.setVoltageAbs(new UnitValue((float)fvVoltageL1.getValue(), "V"));
-		uniPhaseElectricalNodeStateL2.setVoltageAbs(new UnitValue((float)fvVoltageL2.getValue(), "V"));
-		uniPhaseElectricalNodeStateL3.setVoltageAbs(new UnitValue((float)fvVoltageL3.getValue(), "V"));
-		
-		uniPhaseElectricalNodeStateL1.setCurrent(new UnitValue((float)fvCurrentL1.getValue(), "A"));
-		uniPhaseElectricalNodeStateL2.setCurrent(new UnitValue((float)fvCurrentL2.getValue(), "A"));
-		uniPhaseElectricalNodeStateL3.setCurrent(new UnitValue((float)fvCurrentL3.getValue(), "A"));
-		
-		uniPhaseElectricalNodeStateL1.setCosPhi((float)fvCosPhiL1.getValue());
-		uniPhaseElectricalNodeStateL2.setCosPhi((float)fvCosPhiL2.getValue());
-		uniPhaseElectricalNodeStateL3.setCosPhi((float)fvCosPhiL3.getValue());
-		
-		TriPhaseElectricalNodeState triphaseElectricalNodeState = new TriPhaseElectricalNodeState();
-		triphaseElectricalNodeState.setL1(uniPhaseElectricalNodeStateL1);
-		triphaseElectricalNodeState.setL2(uniPhaseElectricalNodeStateL2);
-		triphaseElectricalNodeState.setL3(uniPhaseElectricalNodeStateL3);
-		
-		ElectricalMeasurement electricalMeasurement = new ElectricalMeasurement();
-		electricalMeasurement.setElectricalNodeState(triphaseElectricalNodeState);
-		
-		return electricalMeasurement;
-	}
 	
 	public Complex getPowerLosses() {
 		return powerLosses;
@@ -1127,35 +1026,11 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	public void setRelPowerOfREFPV(double relPowerOfREFPV) {
 		this.relPowerOfREFPV = relPowerOfREFPV;
 	}
-
 	
-	/**
-	 * This method creates an hasmap from tsse list
-	 * @param lastSensorStates
-	 * @return
-	 */
-	private HashMap<String, ElectricalMeasurement> createHashMapFromTSSEList(HashMap<String, TechnicalSystemStateEvaluation> lastSensorStates){
-		// --- Hasmap of electrical measurement  --------------------------
-		HashMap<String, ElectricalMeasurement> currentMeasurement= new HashMap<>();
-		ArrayList<String> keySet = new ArrayList<>(lastSensorStates.keySet());
-		
-		// --- Transform tsse into current Measurement ---------------------
-		for(int a=0; a<lastSensorStates.size();a++) {
-			String sensorId = keySet.get(a);
-			
-			// --- Filter REFPV tsse
-			if(sensorId.equals(REFPV)==false) {
-				TechnicalSystemStateEvaluation tsse = lastSensorStates.get(sensorId);
-				ElectricalMeasurement electricalMeasurement = this.transformTSSEintoElectricalMeasurement(tsse);
-				currentMeasurement.put(sensorId, electricalMeasurement);
-			}
-		}
-		return currentMeasurement;
-	}
+	
 	/* (non-Javadoc)
 	 * @see net.agenthygrid.estimation.decentralEstimation.AbstractGridStateEstimation#isEstimationSuccessful()
 	 */
-	
 	public boolean isEstimationSuccessful() {
 		return estimationSuccessful;
 	}
@@ -1169,10 +1044,8 @@ public class GridStateEstimation extends AbstractGridStateEstimation {
 	}
 
 	@Override
-	public void doEstimationPerPhase(Phase phase, HashMap<String, TechnicalSystemStateEvaluation> lastSensorStates,
-			double relPowerOfRefPV, long evaluationEndTime) {
+	public void doEstimationPerPhase(Phase phase, HashMap<String, TechnicalSystemStateEvaluation> lastSensorStates, double relPowerOfRefPV, long evaluationEndTime) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 }

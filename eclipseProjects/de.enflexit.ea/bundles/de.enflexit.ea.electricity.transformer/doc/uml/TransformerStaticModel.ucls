@@ -24,8 +24,8 @@
     </display>  
   </class>  
   <class id="3" language="java" name="de.enflexit.ea.electricity.transformer.eomDataModel.TransformerStaticDataModel" 
-    project="net.agenthygrid.transformer" 
-    file="/net.agenthygrid.transformer/src/hygrid/agent/transformer/eomDataModel/TransformerStaticDataModel.java" 
+    project="de.enflexit.ea.electricity.transformer" 
+    file="/de.enflexit.ea.electricity.transformer/src/de/enflexit/ea/electricity/transformer/eomDataModel/TransformerStaticDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="193" y="348"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -35,8 +35,8 @@
     </display>  
   </class>  
   <class id="4" language="java" name="de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel" 
-    project="net.agenthygrid.transformer" 
-    file="/net.agenthygrid.transformer/src/hygrid/agent/transformer/eomDataModel/TransformerDataModel.java" 
+    project="de.enflexit.ea.electricity.transformer" 
+    file="/de.enflexit.ea.electricity.transformer/src/de/enflexit/ea/electricity/transformer/eomDataModel/TransformerDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="638" y="397"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -46,8 +46,8 @@
     </display>  
   </class>  
   <class id="5" language="java" name="de.enflexit.ea.electricity.transformer.eomDataModel.JDialogTransformerDataModel" 
-    project="net.agenthygrid.transformer" 
-    file="/net.agenthygrid.transformer/src/hygrid/agent/transformer/eomDataModel/JDialogTransformerDataModel.java" 
+    project="de.enflexit.ea.electricity.transformer" 
+    file="/de.enflexit.ea.electricity.transformer/src/de/enflexit/ea/electricity/transformer/eomDataModel/JDialogTransformerDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="638" y="309"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

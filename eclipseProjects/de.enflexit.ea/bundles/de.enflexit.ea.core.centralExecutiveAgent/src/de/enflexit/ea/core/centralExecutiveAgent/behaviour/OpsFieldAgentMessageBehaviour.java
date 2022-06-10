@@ -2,6 +2,7 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
+import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import de.enflexit.ea.core.dataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
@@ -46,7 +47,7 @@ public class OpsFieldAgentMessageBehaviour extends OneShotBehaviour {
 	 * Return the CEA's phone book.
 	 * @return the phone book
 	 */
-	private PhoneBook getPhoneBook() {
+	private PhoneBook<PhoneBookEntry> getPhoneBook() {
 		return this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
 	}
 	

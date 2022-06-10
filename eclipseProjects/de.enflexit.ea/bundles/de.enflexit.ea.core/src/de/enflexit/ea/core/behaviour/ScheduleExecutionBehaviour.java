@@ -72,6 +72,7 @@ public class ScheduleExecutionBehaviour extends CyclicBehaviour {
 			// --- In case of a continuous time model, check when the ---------
 			// --- needed system state has to be set --------------------------
 
+			@SuppressWarnings("unused")
 			long timeStamp = this.agentIO.getTime();
 			// TODO
 			

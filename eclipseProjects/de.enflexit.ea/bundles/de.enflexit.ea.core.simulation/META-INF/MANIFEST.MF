@@ -6,7 +6,7 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.simulation
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.core.simulation.classFilter,
  de.enflexit.ea.core.simulation.classLoadService,
  de.enflexit.ea.core.simulation.decisionControl,

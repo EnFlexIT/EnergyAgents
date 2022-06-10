@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Project and Setup Validation
 Bundle-SymbolicName: de.enflexit.ea.core.validation;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.core.validation
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/eaCoreValidationService.xml
 Require-Bundle: de.enflexit.api,

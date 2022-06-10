@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Electricity - Power Flow Estimation
 Bundle-SymbolicName: de.enflexit.ea.electricity.powerFlowEstimation
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.estimation
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.ea.electricity.powerFlowCalculation,

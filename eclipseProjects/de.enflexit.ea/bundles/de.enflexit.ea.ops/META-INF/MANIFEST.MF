@@ -9,7 +9,7 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/opsValidationService.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
  org.agentgui.core,

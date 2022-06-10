@@ -24,6 +24,7 @@ public class CeaConnectorInternalDataModel implements Serializable {
 
 	private static final long serialVersionUID = 5020295051309425320L;
 	
+	@SuppressWarnings("unused")
 	private CeaConnectorAgent ceaConnectorAgent;
 	
 	private NetworkModel networkModel;

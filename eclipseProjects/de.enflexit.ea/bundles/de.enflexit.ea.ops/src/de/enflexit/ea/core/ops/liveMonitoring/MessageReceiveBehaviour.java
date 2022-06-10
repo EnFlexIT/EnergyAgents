@@ -19,6 +19,7 @@ public class MessageReceiveBehaviour extends CyclicBehaviour {
 	private Vector<MessageTemplate> ignoreList;
 	private MessageTemplate messageTemplate;
 
+	@SuppressWarnings("unused")
 	private LiveMonitoringAgent liveMonitoringAgent;
 	
 	/**

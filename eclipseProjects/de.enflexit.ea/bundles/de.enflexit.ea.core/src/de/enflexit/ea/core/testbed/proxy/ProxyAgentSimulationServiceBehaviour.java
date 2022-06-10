@@ -45,7 +45,7 @@ public class ProxyAgentSimulationServiceBehaviour extends SimulationServiceBehav
 	public void setPauseSimulation(boolean isPauseSimulation) {
 		try {
 			System.out.println(myAgent.getLocalName() + ": Simulation paused: " + isPauseSimulation);
-			ACLMessage message = this.createMessage(ProxyAgent.CONVERSATION_ID_PAUSE_SIMULATION, new Boolean(isPauseSimulation));
+			ACLMessage message = this.createMessage(ProxyAgent.CONVERSATION_ID_PAUSE_SIMULATION, Boolean.valueOf(isPauseSimulation));
 			myAgent.send(message);
 		} catch (IOException e) {
 			System.err.println(myAgent.getLocalName() + ": Error sending pause notification to " + remoteAgentAID.getName());

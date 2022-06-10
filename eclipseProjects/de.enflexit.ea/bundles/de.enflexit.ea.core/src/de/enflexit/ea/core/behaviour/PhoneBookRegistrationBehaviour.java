@@ -129,6 +129,7 @@ public class PhoneBookRegistrationBehaviour extends OneShotBehaviour {
 		
 		private static final long serialVersionUID = 1648437300205920042L;
 
+		@SuppressWarnings("unused")
 		private AID ceaAID;
 
 		/**
