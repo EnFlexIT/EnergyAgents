@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target includeMode="feature" name="de.enflexit.energyAgent.target" sequenceNumber="104">
+<locations>
+ 
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="de.enflexit.eom.feature.feature.group" version="0.0.0"/>
+		<repository location="https://p2.enflex.it/eom/snapshots/"/>
+	</location>
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-Core                -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+		<!-- Supported JDBC Driver -->
+
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-WS part             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Integration of latest Jersey version comptible to Jetty -->
+	<location type="Target" uri="${file_uri:${project_loc:org.agentgui.target}}/org.agentgui.target.target"/>
+</locations>
+</target>
