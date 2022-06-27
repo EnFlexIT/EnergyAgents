@@ -19,6 +19,6 @@
 		<!-- From here, dependencies for the AWB-WS part             -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- Integration of latest Jersey version comptible to Jetty -->
-	<location type="Target" uri="${file_uri:${project_loc:org.agentgui.target}}/org.agentgui.target.target"/>
+	<location type="Target" uri="${file_uri:${project_loc:de.enflexit.awb.target}}/de.enflexit.awb.target.target"/>
 </locations>
 </target>
