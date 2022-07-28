@@ -16,6 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import energy.optionModel.gui.components.DateTimeWidget;
 
 /**
@@ -55,18 +57,21 @@ public class SimulationDataExportConfigurationDialog extends JDialog implements 
 	 * Initialize GUI components
 	 */
 	private void initialize(){
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_dateTimeWidget = new GridBagConstraints();
 		gbc_dateTimeWidget.fill = GridBagConstraints.HORIZONTAL;
 		gbc_dateTimeWidget.insets = new Insets(5, 5, 5, 0);
 		gbc_dateTimeWidget.gridx = 0;
 		gbc_dateTimeWidget.gridy = 0;
 		getContentPane().add(getDateTimeWidget(), gbc_dateTimeWidget);
+		
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
 		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
 		gbc_jPanelButtons.gridx = 0;
@@ -74,9 +79,10 @@ public class SimulationDataExportConfigurationDialog extends JDialog implements 
 		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 		
 		this.setTitle("Data Export - single step");
-		this.pack();
-		this.setLocationRelativeTo(null);
 		this.setModal(true);
+		this.pack();
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+
 		this.setVisible(true);
 	}
 	
