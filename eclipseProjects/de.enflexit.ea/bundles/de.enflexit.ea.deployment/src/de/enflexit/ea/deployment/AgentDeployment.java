@@ -105,7 +105,7 @@ public class AgentDeployment implements DeploymentListener {
 	public void deploySelectedAgents(List<NetworkComponent> networkComponents) {
 		
 		List<NetworkComponent> activeComponents = this.removePassiveComponents(networkComponents);
-		AgentDeploymentDialog deploymentDialog = new AgentDeploymentDialog(activeComponents, this.getProject());
+		AgentDeploymentDialog deploymentDialog = new AgentDeploymentDialog(Application.getMainWindow(), activeComponents, this.getProject());
 		deploymentDialog.setVisible(true);
 
 		if (deploymentDialog.isCanceled()==false) {

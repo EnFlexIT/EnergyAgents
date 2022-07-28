@@ -7,12 +7,15 @@ import javax.swing.JOptionPane;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import agentgui.core.application.Language;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
 import de.enflexit.eom.database.gui.ScheduleListSelectionRangePanel;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -40,7 +43,8 @@ public class FieldDataRequestDialog extends JDialog implements ActionListener{
 	/**
 	 * Instantiates a new field data request dialog.
 	 */
-	public FieldDataRequestDialog() {
+	public FieldDataRequestDialog(Frame owner) {
+		super(owner);
 		this.initialize();
 	}
 	
@@ -91,7 +95,8 @@ public class FieldDataRequestDialog extends JDialog implements ActionListener{
 		
 		this.setSize(800, 400);
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
+		
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
 	/**

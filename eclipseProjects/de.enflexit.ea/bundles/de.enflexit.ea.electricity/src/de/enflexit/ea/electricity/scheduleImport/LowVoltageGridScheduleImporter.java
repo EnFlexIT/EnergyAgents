@@ -89,7 +89,7 @@ public class LowVoltageGridScheduleImporter extends AbstractElectricalNetworkSch
 	 */
 	@Override
 	public void importDataFromFile(File importFile) {
-		ElectricityScheduleImportConfigurationDialog configurationDialog = new ElectricityScheduleImportConfigurationDialog(this);
+		ElectricityScheduleImportConfigurationDialog configurationDialog = new ElectricityScheduleImportConfigurationDialog(Application.getMainWindow(), this);
 		if(configurationDialog.isCanceled() == false){
 				
 			// --- Import schedules from the CSV file ---------
