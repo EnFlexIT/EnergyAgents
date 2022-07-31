@@ -10,7 +10,7 @@ import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
 import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
 import de.enflexit.ea.core.dataModel.opsOntology.LongValue;
 import de.enflexit.ea.core.dataModel.opsOntology.ScheduleRangeDefinition;
-import de.enflexit.eom.database.DatabaseBundleInfo;
+import de.enflexit.eom.database.EomDatabaseConnection;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;
 import de.enflexit.eom.database.ScheduleListSelection;
 import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
@@ -287,7 +287,7 @@ public class DatabaseRequestThread extends Thread {
 		}
 
 		// --- Create the query object, set required parameters ---------------
-		Session session = DatabaseBundleInfo.getNewDatabaseSession();
+		Session session = EomDatabaseConnection.getInstance().getNewDatabaseSession();
 		@SuppressWarnings("unchecked")
 		Query<Long> query = session.createQuery(hqlStatement);
 		query.setParameter("idSchedule", scheduleID);

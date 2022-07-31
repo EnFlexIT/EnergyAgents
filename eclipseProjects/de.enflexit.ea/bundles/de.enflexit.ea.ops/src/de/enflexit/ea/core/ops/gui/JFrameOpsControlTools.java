@@ -22,7 +22,7 @@ import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.ea.core.ops.OpsControllerEvent;
 import de.enflexit.ea.core.ops.OpsControllerListener;
 import de.enflexit.ea.core.ops.fieldDataRequest.gui.FieldDataRequestDialog;
-import de.enflexit.eom.database.DatabaseBundleInfo;
+import de.enflexit.eom.database.EomDatabaseConnection;
 
 /**
  * The Class JFrameOpsControlTools provide the menus and the toolbar to control the OPS interaction.
@@ -426,7 +426,7 @@ public class JFrameOpsControlTools implements ActionListener, OpsControllerListe
 				JFrameOpsControlTools.this.getJMenuCeaInteraction().setEnabled(isConnected);
 				
 				// --- Database requests require CEA connection and database connection -----------
-				boolean dbAvailable = (DatabaseBundleInfo.getSessionFactoryMonitor().getSessionFactoryState()==SessionFactoryState.Created);
+				boolean dbAvailable = (EomDatabaseConnection.getInstance().getSessionFactoryMonitor().getSessionFactoryState()==SessionFactoryState.Created);
 				JFrameOpsControlTools.this.getJMenuItemRequestFieldData().setEnabled(isConnected&&dbAvailable);
 				JFrameOpsControlTools.this.getJButtonFieldDataRequest().setEnabled(isConnected&&dbAvailable);
 				

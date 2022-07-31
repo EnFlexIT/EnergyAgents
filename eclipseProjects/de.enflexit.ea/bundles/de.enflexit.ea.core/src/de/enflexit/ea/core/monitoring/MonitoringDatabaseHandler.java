@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.enflexit.db.hibernate.SessionFactoryMonitor;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
-import de.enflexit.eom.database.DatabaseBundleInfo;
+import de.enflexit.eom.database.EomDatabaseConnection;
 import de.enflexit.eom.database.DatabaseStorageHandler_ScheduleList;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemStateEvaluation;
@@ -52,7 +52,7 @@ public class MonitoringDatabaseHandler {
 	 * @return the session factory monitor
 	 */
 	public static synchronized SessionFactoryMonitor getSessionFactoryMonitor() {
-		return DatabaseBundleInfo.getSessionFactoryMonitor();
+		return EomDatabaseConnection.getInstance().getSessionFactoryMonitor();
 	}
 	/**
 	 * Gets the session factory state.
