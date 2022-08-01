@@ -317,7 +317,7 @@ public class JFrameOpsControlTools implements ActionListener, OpsControllerListe
 	 */
 	private FieldDataRequest prepareDataRequest() {
 		FieldDataRequest dataRequest = null;
-		FieldDataRequestDialog requestDialog = new FieldDataRequestDialog();
+		FieldDataRequestDialog requestDialog = new FieldDataRequestDialog(Application.getMainWindow());
 		requestDialog.setVisible(true);
 		if (requestDialog.isCanceled()==false) {
 			dataRequest = new FieldDataRequest();

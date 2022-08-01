@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,6 +22,8 @@ import java.util.Date;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import energy.helper.UnitConverter;
 import energy.optionModel.gui.components.DateTimeWidget;
 import energy.optionModel.gui.components.TimeUnitComboBox;
@@ -62,7 +65,8 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 	 * Constructor
 	 * @param csvImporter The {@link LoadProfileCsvImporter} instance for this dialog
 	 */
-	public ElectricityScheduleImportConfigurationDialog(AbstractElectricalNetworkScheduleImporter csvImporter){
+	public ElectricityScheduleImportConfigurationDialog(Frame owner, AbstractElectricalNetworkScheduleImporter csvImporter){
+		super(owner);
 		this.csvImporter = csvImporter;
 		this.initialize();
 	}
@@ -126,7 +130,7 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 		
 		this.pack();
-		this.setLocationRelativeTo(null);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setTitle("Load Profile Import Settings");
 		this.setModal(true);

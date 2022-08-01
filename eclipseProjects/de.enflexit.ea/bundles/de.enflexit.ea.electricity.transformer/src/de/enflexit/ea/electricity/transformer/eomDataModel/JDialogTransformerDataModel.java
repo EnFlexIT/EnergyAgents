@@ -16,6 +16,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import energy.optionModel.gui.sysVariables.AbstractStaticModel;
 import energy.optionModel.gui.sysVariables.AbstractStaticModelDialog;
 
@@ -78,6 +80,8 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 		gbc_jPanelButtons.gridx = 0;
 		gbc_jPanelButtons.gridy = 1;
 		this.getContentPane().add(this.getJPanelButtons(), gbc_jPanelButtons);
+		
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
 	

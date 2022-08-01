@@ -3,6 +3,7 @@ package de.enflexit.ea.deployment.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -48,6 +49,8 @@ import agentgui.core.project.Project;
 import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -117,8 +120,8 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	 * @param AgentID The ID of the agent to be deployed
 	 * @param project The current project
 	 */
-	public AgentDeploymentDialog(List<NetworkComponent> components, Project project) {
-		this(components, project, null);
+	public AgentDeploymentDialog(Frame owner, List<NetworkComponent> components, Project project) {
+		this(owner, components, project, null);
 	}
 	
 	/**
@@ -127,7 +130,8 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	 * @param project the project
 	 * @param deploymentSettings the deployment settings. If null, the default settings from the project will be used
 	 */
-	public AgentDeploymentDialog(List<NetworkComponent> components, Project project, DeploymentSettings deploymentSettings) {
+	public AgentDeploymentDialog(Frame owner, List<NetworkComponent> components, Project project, DeploymentSettings deploymentSettings) {
+		super(owner);
 		this.componentsToDeploy = components;
 		this.project = project;
 		if (deploymentSettings==null) {
@@ -179,7 +183,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 		});
 
 		this.setSize(900, 800);
-		this.setLocationRelativeTo(null);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setModal(true);
 	}
 	
