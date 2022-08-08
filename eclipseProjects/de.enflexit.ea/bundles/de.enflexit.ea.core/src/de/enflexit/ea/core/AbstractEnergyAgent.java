@@ -284,19 +284,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 				operatingMode = AgentOperatingMode.Simulation;
 			} else {
 				
-				if (this.getClass().getSimpleName().equals("ModBusAgent")) {
-					/*
-					 *  No idea why, but without this delay, if a modbus agent is part of 
-					 *  the deployment group, the setup extension is null for all agents.
-					 */
-					//TODO figure out why and find a proper solution
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				
 				// --- Possible other cases - check the SetupExtension ------------------
 				SetupExtension setEx = this.getInternalDataModel().getHyGridAbstractEnvironmentModel().getSetupExtension();
 				if (setEx!=null) {
