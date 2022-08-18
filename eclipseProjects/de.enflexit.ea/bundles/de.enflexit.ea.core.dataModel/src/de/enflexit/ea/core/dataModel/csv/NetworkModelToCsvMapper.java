@@ -22,6 +22,7 @@ import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
+
 /**
  * The Class NetworkModelMapper maps the Agent.GUI internal {@link NetworkModel}
  * to a CSV file corresponding structure. It can be used for the preparation of
@@ -533,6 +534,7 @@ public class NetworkModelToCsvMapper {
 						CableWithBreakerProperties cwBreaker = (CableWithBreakerProperties) cable;
 						if (this.isOpenBreaker(cwBreaker.getBreakerBegin())==true) continue;
 						if (this.isOpenBreaker(cwBreaker.getBreakerEnd())==true) continue;
+						if (dLengthLine==0) dLengthLine = 0.001;
 						
 					}
 					

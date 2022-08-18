@@ -9,25 +9,21 @@ import Jama.Matrix;
 public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 
 	private boolean debugPrintVectorSizes = false;
-	
 	private boolean errorShown = false;
 	
 	private double[][] dX;
 
 	/**
-	 * Does the power flow calculation by using the specified active and reactive
-	 * power.
-	 * 
-	 * @param nodePowerPairs the HashMap of nodeID to {@link ActiveReactivePowerPair}
+	 * Does the power flow calculation by using the specified active and reactive power.
 	 */
 	public boolean calculate() {
+		
 		try {
 			// --- Print vector size information ------------------------
 			this.debugPrintVectorInformation();
 			
 			// --- Check if all nodal powers are given
-			if (!this.checkNumberOfNodalPowers()) return false;
-			
+			if (this.checkNumberOfNodalPowers()==false) return false;
 			
 			// --- Do the the network calculation -----------------------
 			return this.calculatePF();
@@ -38,26 +34,25 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 		return false;
 	}
 	
-
+	/**
+	 * Check number of nodal powers.
+	 * @return true, if successful
+	 */
 	private boolean checkNumberOfNodalPowers() {
 		
 		if (this.getNodalPowerReal().size() == this.getnNumNodes() && this.getNodalPowerImag().size() == this.getnNumNodes()) {
 			this.errorShown = false;	// Reset error reminder
 			return true;
+			
 		} else {
-
 			// --- Show error message only once ---------------------
-			if (errorShown==false) {
-				int missingActivePowers = this.getnNumNodes() - this.getNodalPowerReal().size();
+			if (this.errorShown==false) {
+				int missingActivePowers   = this.getnNumNodes() - this.getNodalPowerReal().size();
 				int missingReactivePowers = this.getnNumNodes() - this.getNodalPowerImag().size();
-				
-				System.err.println("Error in electrical PowerFlowCalculation: Not Enough Nodal Powers are given for a valid Calculation with a slack voltage of " + (int) this.getdSlackNodeVoltage() + "V.");
-				System.err.println(missingActivePowers + " active powers and " + missingReactivePowers + " reactive powers are missing for a total of " + this.getnNumNodes() + " Nodes.");
-				
+				System.err.println("[" + this.getClass().getSimpleName() + "] Not Enough Nodal Powers are given for a valid Calculation with a slack voltage of " + (int) this.getdSlackNodeVoltage() + "V.");
+				System.err.println("[" + this.getClass().getSimpleName() + "] => " + missingActivePowers + " active powers and " + missingReactivePowers + " reactive powers are missing for a total of " + this.getnNumNodes() + " Nodes.");
 				this.errorShown = true;
 			}
-			
-			
 			return false;
 		}
 	}
@@ -71,8 +66,8 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 		if (debugPrintVectorSizes==false) return;
 		
 		String vectorSizes = "=> Vector Sizes: ";
-//		vectorSizes += " " + this.debugGetVectorSizeDescription("YKK_real", this.YKK_real);
-//		vectorSizes += " " + this.debugGetVectorSizeDescription("YKK_imag", this.YKK_imag);
+		vectorSizes += " " + this.debugGetVectorSizeDescription("YKK_real", this.getYkkReal());
+		vectorSizes += " " + this.debugGetVectorSizeDescription("YKK_imag", this.getYkkImag());
 		
 		vectorSizes += " " + this.debugGetVectorSizeDescription("nodalVoltageReal", this.getNodalVoltageReal());
 		vectorSizes += " " + this.debugGetVectorSizeDescription("nodalVoltageImag", this.getNodalVoltageImag());
@@ -144,6 +139,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 	 * @return the double[][] uK
 	 */
 	private boolean calculatePF() {
+		
 		// H,L,M,N to build Jacobian matrix J
 		double[][] H = new double[this.getnNumNodes()][this.getnNumNodes()];
 		double[][] L = new double[this.getnNumNodes()][this.getnNumNodes()];

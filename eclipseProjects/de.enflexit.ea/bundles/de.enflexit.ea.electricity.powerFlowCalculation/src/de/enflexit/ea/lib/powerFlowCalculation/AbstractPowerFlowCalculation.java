@@ -65,29 +65,28 @@ public abstract class AbstractPowerFlowCalculation {
 	 * Set Nodal Power by powerFlowParameter
 	 */
 	public void setNodalPower(){
+		
 		Vector<Double> nodalPowerReal= new Vector<Double>();
 		Vector<Double> nodalPowerImag= new Vector<Double>();
 			
-			// --- Set new power values to power flow parameters --------
-			double[][] matNodeSetup = this.powerFlowParameter.getdMatNodeSetup();
-			for (int i = 0; i < matNodeSetup.length; i++) {
+		// --- Set new power values to power flow parameters --------
+		double[][] matNodeSetup = this.powerFlowParameter.getdMatNodeSetup();
+		for (int i = 0; i < matNodeSetup.length; i++) {
 
-				Double nodeNo = matNodeSetup[i][0];
-				ActiveReactivePowerPair powerPair = nodePowerPairs.get(nodeNo.intValue());
-				double activePower = 0.0;
-				double reactivePower = 0.0;
-				if (powerPair != null) {
-					activePower = powerPair.getActivePowerInWatt();
-					reactivePower = powerPair.getReactivePowerInWatt();
-				}
-				matNodeSetup[i][1] = activePower;
-				matNodeSetup[i][2] = reactivePower;
-				nodalPowerReal.add(activePower);
-				nodalPowerImag.add(reactivePower);
+			Double nodeNo = matNodeSetup[i][0];
+			ActiveReactivePowerPair powerPair = nodePowerPairs.get(nodeNo.intValue());
+			double activePower = 0.0;
+			double reactivePower = 0.0;
+			if (powerPair != null) {
+				activePower = powerPair.getActivePowerInWatt();
+				reactivePower = powerPair.getReactivePowerInWatt();
 			}
-
-			this.setNodalPower(nodalPowerReal, nodalPowerImag);
-
+			matNodeSetup[i][1] = activePower;
+			matNodeSetup[i][2] = reactivePower;
+			nodalPowerReal.add(activePower);
+			nodalPowerImag.add(reactivePower);
+		}
+		this.setNodalPower(nodalPowerReal, nodalPowerImag);
 	}
 	/**
 	 * Set Nodal Power by Vector<Double>
@@ -104,6 +103,7 @@ public abstract class AbstractPowerFlowCalculation {
 	 * @param nodePowerPairs
 	 */
 	public void setNodalPower(HashMap<Integer, ActiveReactivePowerPair> nodePowerPairs) {
+		
 		List<Integer> keySet = new ArrayList<Integer>(nodePowerPairs.keySet());
 		nodalPowerReal = new Vector<>();
 		nodalPowerImag = new Vector<>();
@@ -124,9 +124,7 @@ public abstract class AbstractPowerFlowCalculation {
 	
 	/**
 	 * Prints the specified double array.
-	 * 
-	 * @param array2Print
-	 *            the array2 print
+	 * @param array2Print the array2 print
 	 */
 	protected void printArray(double[][] array2Print) {
 		for (int a = 0; a < array2Print.length; a++) {

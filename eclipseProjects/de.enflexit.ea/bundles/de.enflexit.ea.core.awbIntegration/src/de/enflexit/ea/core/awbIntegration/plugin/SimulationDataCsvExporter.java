@@ -44,7 +44,7 @@ public class SimulationDataCsvExporter {
 	private NetworkModel networkModel;
 	private DomainClustering domainClustering;
 	
-	private NetworkModelToCsvMapper mapper12;
+	private NetworkModelToCsvMapper mapper;
 	
 	private File basicCsvFilePath;	// The different CSV files will be derived from this base file path 
 	
@@ -184,14 +184,14 @@ public class SimulationDataCsvExporter {
 	 * @return the current network model to csv mapper
 	 */
 	private NetworkModelToCsvMapper getCurrentNetworkModelToCsvMapper() {
-		return this.mapper12;
+		return this.mapper;
 	}
 	/**
 	 * Sets the current network model to csv mapper.
 	 * @param csvMapper the new current network model to csv mapper
 	 */
 	private void setCurrentNetworkModelToCsvMapper(NetworkModelToCsvMapper csvMapper) {
-		this.mapper12 = csvMapper;
+		this.mapper = csvMapper;
 	}
 	
 	/**

@@ -24,6 +24,7 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 
 /**
  * {@link GraphElementLayoutService} implementation for tri-phase low voltage distribution grids.
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
 public class TriPhaseElectricalNetworkGraphElementLayoutService implements GraphElementLayoutService {
@@ -97,7 +98,9 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 				
 				// --- Decide which color to use ----------------------------
 				Color newColor = null;
-				if (minColor==null && maxColor!=null) {
+				if (minColor==null && maxColor==null) {
+					// --- Nothing to do here ---
+				} else if (minColor==null && maxColor!=null) {
 					newColor = maxColor;
 				} else if (minColor!=null && maxColor==null) {
 					newColor = minColor;
@@ -115,7 +118,6 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 				}
 			}
 		}
-		
 		return layout;
 	}
 
