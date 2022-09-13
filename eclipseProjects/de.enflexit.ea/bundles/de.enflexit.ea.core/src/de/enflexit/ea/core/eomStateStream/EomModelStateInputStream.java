@@ -274,7 +274,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	/**
 	 * Waits for the end of an evaluation process.
 	 */
-	private void waitForEvaluationProcess(EvaluationProcess ep) {
+	protected void waitForEvaluationProcess(EvaluationProcess ep) {
 		while (ep.isRunning()==true) {
 			try {
 				Thread.sleep(50);
@@ -440,7 +440,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * Sets the last index state access.
 	 * @param newIndex the new index last state access
 	 */
-	private void setIndexLastStateAccess(Integer newIndex) {
+	protected void setIndexLastStateAccess(Integer newIndex) {
 		this.indexLastStateAccess = newIndex;
 	}
 	
@@ -448,14 +448,14 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * Returns the current real time strategy, if any.
 	 * @return the real time strategy
 	 */
-	private AbstractEvaluationStrategy getRealTimeStrategy() {
+	protected AbstractEvaluationStrategy getRealTimeStrategy() {
 		return realTimeStrategy;
 	}
 	/**
 	 * Sets the current real time strategy.
 	 * @param realTimeStrategy the new real time strategy
 	 */
-	private void setRealTimeStrategy(AbstractEvaluationStrategy realTimeStrategy) {
+	protected void setRealTimeStrategy(AbstractEvaluationStrategy realTimeStrategy) {
 		this.realTimeStrategy = realTimeStrategy;
 	}
 	
@@ -463,14 +463,14 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * Returns the real time strategy controller that is either an {@link OptionModelController} or a {@link GroupController}.
 	 * @return the real time strategy controller
 	 */
-	private EomController getRealTimeStrategyController() {
+	protected EomController getRealTimeStrategyController() {
 		return realTimeStrategyController;
 	}
 	/**
 	 * Sets the real time strategy controller that is either an {@link OptionModelController} or a {@link GroupController}..
 	 * @param realTimeStrategyController the new real time strategy controller
 	 */
-	private void setRealTimeStrategyController(EomController realTimeStrategyController) {
+	protected void setRealTimeStrategyController(EomController realTimeStrategyController) {
 		this.realTimeStrategyController = realTimeStrategyController;
 	}
 	
