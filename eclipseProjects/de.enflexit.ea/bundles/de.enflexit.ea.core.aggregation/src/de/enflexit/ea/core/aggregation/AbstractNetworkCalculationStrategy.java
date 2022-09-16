@@ -13,7 +13,6 @@ import agentgui.core.project.Project;
 import de.enflexit.ea.core.dataModel.ontology.EdgeComponentState;
 import de.enflexit.ea.core.dataModel.ontology.NodeComponentState;
 import energy.OptionModelController;
-import energy.evaluation.EvaluationProcess;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
 import energy.helper.TechnicalSystemStateHelper;
@@ -373,13 +372,10 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 		}
 	}
 	
-	/**
-	 * Gets the AddResultTreeAction that enables to remind the sub results and to place
-	 * them in the {@link EvaluationProcess}.
-	 * 
-	 * @return the adds the result tree action
+	/* (non-Javadoc)
+	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#getAddResultTreeAction()
 	 */
-	private AddResultTreeAction getAddResultTreeAction() {
+	protected AddResultTreeAction getAddResultTreeAction() {
 		if (addResultTreeAction==null) {
 			addResultTreeAction = new AddResultTreeAction(this.getGroupController(), this);
 		}
