@@ -41,12 +41,17 @@ import energy.optionModel.GoodFlow;
  * found in the NetworkModel) and energy or good flows with a value of 0. 
  * 
  * @author Christian Derksen - DAWIS - ICB University of Duisburg - Essen
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class NoSystemScheduleListCreator {
 
+	/** The network model. */
 	private NetworkModel networkModel;
+	
+	/** The time model date based. */
 	private TimeModelDateBased timeModelDateBased;
 	
+	/** The network elements without eom model. */
 	private List<DataModelNetworkElement> networkElementsWithoutEomModel;
 	
 	
@@ -76,7 +81,14 @@ public class NoSystemScheduleListCreator {
 				// --- Create the ScheduleList ----------------------
 				ScheduleList sl = this.createScheduleList(networkElement.getId());
 				Schedule schedule = this.createSchedule();
-				List<InterfaceSetting> interfaceSettings = this.createInterfaceSetting(networkElement);
+				
+				// --- Try to get existing interface settings -------
+				List<InterfaceSetting> interfaceSettings = this.getInterfaceSettingsFromNetworkElement(networkElement);
+				if (interfaceSettings==null) {
+					// --- Create new settings if not successful ----
+					interfaceSettings = this.createInterfaceSetting(networkElement);
+				}
+				
 				List<AbstractUsageOfInterface> uoiList = this.createUsageOfInterfaces(interfaceSettings);
 				TechnicalSystemStateEvaluation tsse = this.createTechnicalSystemStateEvaluation();
 				
@@ -96,23 +108,45 @@ public class NoSystemScheduleListCreator {
 		}
 	}
 	
+	/**
+	 * Gets the network model.
+	 *
+	 * @return the network model
+	 */
 	public NetworkModel getNetworkModel() {
 		return networkModel;
 	}
+	
+	/**
+	 * Sets the network model.
+	 *
+	 * @param networkModel the new network model
+	 */
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
 	}
 	
+	/**
+	 * Gets the time model.
+	 *
+	 * @return the time model
+	 */
 	public TimeModelDateBased getTimeModel() {
 		return timeModelDateBased;
 	}
+	
+	/**
+	 * Sets the time model.
+	 *
+	 * @param dbTimeModel the new time model
+	 */
 	public void setTimeModel(TimeModelDateBased dbTimeModel) {
 		this.timeModelDateBased = dbTimeModel;
 	}
 	
 	/**
 	 * Will search the current NetworkModel and check for network elements that are configured to use the 
-	 * EOM, but where no model is specified yet.
+	 * EOM, but where no model is specified yet, or a schedule list is configured but empty.
 	 * @return the network elements without eom model
 	 */
 	private List<DataModelNetworkElement> getNetworkElementsWithoutEomModel() {
@@ -121,10 +155,16 @@ public class NoSystemScheduleListCreator {
 			
 			List<DataModelNetworkElement> allElements = this.getNetworkModel().getDataModelNetworkElementList();
 			for (int i = 0; i < allElements.size(); i++) {
-				// --- Check each DataModelNetworkElement ----------- 
+				// --- Check each DataModelNetworkElement ---------------------
 				DataModelNetworkElement networkElement = allElements.get(i);
 				if (networkElement.getDataModel()==null && this.isEomDataModelNetworkElement(networkElement)==true) {
 					networkElementsWithoutEomModel.add(networkElement);
+				} else if (networkElement.getDataModel()!=null && networkElement.getDataModel() instanceof ScheduleList) {
+					// --- Also include elements with empty schedule lists ----
+					ScheduleList sl = (ScheduleList) networkElement.getDataModel();
+					if (sl.getSchedules().size()==0) {
+						networkElementsWithoutEomModel.add(networkElement);
+					}
 				}
 			}
 		}
@@ -203,17 +243,7 @@ public class NoSystemScheduleListCreator {
 			for (int i = 0; i < eomNeighbors.size(); i++) {
 				NetworkComponent neighbor = eomNeighbors.get(i);
 				// --- Get interface settings from the actual neighbor NetworkComponent -----
-				List<InterfaceSetting> intSettingsNeighbor = null;
-				if (neighbor.getDataModel() instanceof  ScheduleList) {
-					ScheduleList sl = (ScheduleList) neighbor.getDataModel();
-					intSettingsNeighbor = this.getInterfaceSettingFromScheduleList(sl);
-				} else if (neighbor.getDataModel() instanceof TechnicalSystem) {
-					TechnicalSystem ts = (TechnicalSystem) neighbor.getDataModel();
-					intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystem(ts);
-				} else if (neighbor.getDataModel() instanceof TechnicalSystemGroup) {
-					TechnicalSystemGroup tsg = (TechnicalSystemGroup) neighbor.getDataModel();
-					intSettingsNeighbor = this.getInterfaceSettingFromTechnicalSystemGroup(tsg);
-				}
+				List<InterfaceSetting> intSettingsNeighbor = this.getInterfaceSettingsFromNetworkElement(neighbor);
 				
 				// --- Merge new InterfaceSetting into the result list ----------------------
 				if (intSettingsNeighbor!=null && intSettingsNeighbor.size()>0) {
@@ -227,6 +257,24 @@ public class NoSystemScheduleListCreator {
 			}
 		}
 		return isList;
+	}
+	
+	/**
+	 * Gets the interface settings from a network element.
+	 * @param networkElement the network element
+	 * @return the interface settings from network element
+	 */
+	private List<InterfaceSetting> getInterfaceSettingsFromNetworkElement(DataModelNetworkElement networkElement){ if (networkElement.getDataModel() instanceof  ScheduleList) {
+			ScheduleList sl = (ScheduleList) networkElement.getDataModel();
+			return this.getInterfaceSettingFromScheduleList(sl);
+		} else if (networkElement.getDataModel() instanceof TechnicalSystem) {
+			TechnicalSystem ts = (TechnicalSystem) networkElement.getDataModel();
+			return this.getInterfaceSettingFromTechnicalSystem(ts);
+		} else if (networkElement.getDataModel() instanceof TechnicalSystemGroup) {
+			TechnicalSystemGroup tsg = (TechnicalSystemGroup) networkElement.getDataModel();
+			return this.getInterfaceSettingFromTechnicalSystemGroup(tsg);
+		}
+		return null;
 	}
 	/**
 	 * Checks if the specified type of InterfaceSetting is already in the list. 
@@ -401,6 +449,8 @@ public class NoSystemScheduleListCreator {
 	// ----------------------------------------------------------------------------------	
 	/**
 	 * Creates the ScheduleList.
+	 *
+	 * @param id the id
 	 * @return the schedule list
 	 */
 	private ScheduleList createScheduleList(String id) {
