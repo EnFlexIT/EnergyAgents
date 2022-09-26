@@ -2,6 +2,8 @@ package de.enflexit.ea.core.behaviour;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.jade.behaviour.AbstractTimingBehaviour;
@@ -32,7 +34,6 @@ public abstract class AbstractTimingBehaviourForEnergyAgent extends AbstractTimi
 		super(energyAgent, startAt, interval, executionTiming);
 	}
 
-	
 	/**
 	 * Instantiates a new abstract timing behaviour for energy agents, based on the specified interval and offset durations. 
 	 * For example, an interval of 10 and an offset 2 minutes means the action is scheduled every ten minutes at xx:02, xx:12 etc.
@@ -44,7 +45,32 @@ public abstract class AbstractTimingBehaviourForEnergyAgent extends AbstractTimi
 	 * @param executionTiming specifies if the should start at or be finished until the interval times.tionTiming the execution timing
 	 */
 	public AbstractTimingBehaviourForEnergyAgent(AbstractEnergyAgent energyAgent, Duration interval, Duration offset, ExecutionTiming executionTiming) {
-		super(energyAgent, interval, offset, executionTiming);
+		this(energyAgent, calculateStartInstant(energyAgent, interval, offset), offset, executionTiming);
+	}
+	
+	/**
+	 * Calculates the start instant for the timing behaviour based on the simulation time and the specified interval and offset.
+	 * @param energyAgent the fcpa executing the behaviour
+	 * @param interval the interval
+	 * @param offset the offset
+	 * @return the start instant
+	 */
+	private static Instant calculateStartInstant(AbstractEnergyAgent energyAgent, Duration interval, Duration offset) {
+		long simulationTime = energyAgent.getEnergyAgentIO().getTime();
+		ZonedDateTime startAt = Instant.ofEpochMilli(simulationTime).atZone(ZoneId.systemDefault());
+		if(interval.getSeconds() >= 1 ) {
+			startAt = startAt.withSecond(0);
+		}
+		if(interval.toMinutes()>= 1) {
+			startAt = startAt.withMinute(0);
+		}
+		if(interval.toHours()>= 1) {
+			startAt = startAt.withHour(0);
+		}
+		if(offset != null) {
+			startAt = startAt.plusNanos(offset.toNanos());
+		}
+		return startAt.toInstant();
 	}
 	
 	/* (non-Javadoc)
