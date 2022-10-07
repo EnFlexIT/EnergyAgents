@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.EdgeResult" table="edgeresult">
+        
+		<composite-id>
+	        <key-property name="idScenarioResult" type="int">
+	            <column name="idScenarioResult" />
+	        </key-property>
+	        <key-property name="idEdge" type="string">
+	            <column name="idEdge" />
+	        </key-property>
+	        <key-property name="timestamp" type="java.util.Calendar">
+	            <column name="timestamp" />
+	        </key-property>
+		</composite-id>
+		
+        <property name="utilization" type="java.lang.Double">
+            <column name="utilization" />
+        </property>
+        <property name="lossesP" type="java.lang.Double">
+            <column name="lossesP" />
+        </property>
+        <property name="lossesQ" type="java.lang.Double">
+            <column name="lossesQ" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

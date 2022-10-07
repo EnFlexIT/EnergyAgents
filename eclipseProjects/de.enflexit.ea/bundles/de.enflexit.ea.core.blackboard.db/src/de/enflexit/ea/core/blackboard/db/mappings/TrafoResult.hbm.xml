@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.TrafoResult" table="traforesult">
+        
+		<composite-id>
+	        <key-property name="idScenarioResult" type="int">
+	            <column name="idScenarioResult" />
+	        </key-property>
+	        <key-property name="idTrafo" type="string">
+	            <column name="idTrafo" />
+	        </key-property>
+	        <key-property name="timestamp" type="java.util.Calendar">
+	            <column name="timestamp" />
+	        </key-property>
+		</composite-id>
+		
+        <property name="voltageReal" type="java.lang.Double">
+            <column name="voltageReal" />
+        </property>
+        <property name="voltageComplex" type="java.lang.Double">
+            <column name="voltageComplex" />
+        </property>
+        <property name="voltageViolations" type="java.lang.Double">
+            <column name="voltageViolations" />
+        </property>
+        
+        <property name="residualLoadP" type="java.lang.Double">
+            <column name="residualLoadP" />
+        </property>
+        <property name="residualLoadQ" type="java.lang.Double">
+            <column name="residualLoadQ" />
+        </property>
+        
+        <property name="trafoUtilization" type="java.lang.Double">
+            <column name="trafoUtilization" />
+        </property>
+        
+        <property name="trafoLossesP" type="java.lang.Double">
+            <column name="trafoLossesP" />
+        </property>
+        <property name="trafoLossesQ" type="java.lang.Double">
+            <column name="trafoLossesQ" />
+        </property>
+        
+        <property name="tapPos" type="int">
+            <column name="tapPos" />
+        </property> 
+        
+    </class>
+</hibernate-mapping>
