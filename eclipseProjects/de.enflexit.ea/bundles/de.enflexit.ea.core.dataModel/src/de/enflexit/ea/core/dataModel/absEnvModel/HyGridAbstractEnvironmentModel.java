@@ -54,6 +54,7 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
     "networkCalculationIntervalUnitIndex",
     "stateTransmission",
     "executionDataBase",
+    "saveRuntimeInformationToDatabase",
     "energyTransmissionConfiguration",
     "displayUpdateConfiguration",
     "graphElementLayoutSettingsPersisted",
@@ -104,6 +105,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	private String snapshotCentralDecisionClass;
 	
 	private ExecutionDataBase executionDataBase;
+	private boolean saveRuntimeInformationToDatabase;
 	
 	private ScheduleTransformerKeyValueConfiguration energyTransmissionConfiguration;
 	private DisplayUpdateConfiguration displayUpdateConfiguration;
@@ -337,6 +339,21 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	public void setExecutionDataBase(ExecutionDataBase executionDataBase) {
 		this.executionDataBase = executionDataBase;
 	}
+		
+	/**
+	 * Checks if runtime information are to be save to database.
+	 * @return true, if is save runtime information to database
+	 */
+	public boolean isSaveRuntimeInformationToDatabase() {
+		return saveRuntimeInformationToDatabase;
+	}
+	/**
+	 * Sets the save runtime information to database.
+	 * @param saveRuntimeInformationToDatabase the new save runtime information to database
+	 */
+	public void setSaveRuntimeInformationToDatabase(boolean saveRuntimeInformationToDatabase) {
+		this.saveRuntimeInformationToDatabase = saveRuntimeInformationToDatabase;
+	}
 	
 	/**
 	 * Sets the energy transmission configuration.
@@ -530,7 +547,8 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		// --- Data handling ------------------------------
 		copy.setExecutionDataBase(this.getExecutionDataBase());
 		copy.setScheduleLengthRestriction(SerialClone.clone(this.getScheduleLengthRestriction()));
-
+		copy.setSaveRuntimeInformationToDatabase(this.isSaveRuntimeInformationToDatabase());
+		
 		// --- Visualization settings ---------------------
 		copy.setDisplayUpdateConfiguration(this.getDisplayUpdateConfiguration().getCopy());
 		copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
@@ -612,6 +630,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		if (slrDurationComp!=slrDurationThis) return false;
 		if (slrComp.getMaxNumberOfSystemStates()!=slrThis.getMaxNumberOfSystemStates()) return false;
 		
+		if (hyGridComp.isSaveRuntimeInformationToDatabase()!=this.isSaveRuntimeInformationToDatabase()) return false;
 		
 		// ------------------------------------------------
 		// --- Visualization settings ---------------------
