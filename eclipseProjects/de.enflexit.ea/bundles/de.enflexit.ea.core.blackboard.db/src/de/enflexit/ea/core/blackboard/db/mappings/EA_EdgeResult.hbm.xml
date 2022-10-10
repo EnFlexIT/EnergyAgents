@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.EdgeResult" table="ea_edgeresult">
+        
+		<composite-id>
+	        <key-many-to-one foreign-key="fk_idExecution_edge" name="idExecution" class="de.enflexit.ea.core.blackboard.db.dataModel.DataOverview" column="idExecution"/>
+	        <key-property name="idEdge" type="string">
+	            <column name="idEdge" />
+	        </key-property>
+	        <key-property name="timestamp" type="java.util.Calendar">
+	            <column name="timestamp" />
+	        </key-property>
+		</composite-id>
+
+		<property name="currentL1Real" type="java.lang.Double">
+            <column name="currentL1Real" />
+        </property>
+        <property name="currentL1Complex" type="java.lang.Double">
+            <column name="currentL1Complex" />
+        </property>
+        <property name="lossesL1P" type="java.lang.Double">
+            <column name="lossesL1P" />
+        </property>
+        <property name="lossesL1Q" type="java.lang.Double">
+            <column name="lossesL1Q" />
+        </property>
+
+		<property name="currentL2Real" type="java.lang.Double">
+            <column name="currentL2Real" />
+        </property>
+        <property name="currentL2Complex" type="java.lang.Double">
+            <column name="currentL2Complex" />
+        </property>
+        <property name="lossesL2P" type="java.lang.Double">
+            <column name="lossesL2P" />
+        </property>
+        <property name="lossesL2Q" type="java.lang.Double">
+            <column name="lossesL2Q" />
+        </property>
+
+		<property name="currentL3Real" type="java.lang.Double">
+            <column name="currentL3Real" />
+        </property>
+        <property name="currentL3Complex" type="java.lang.Double">
+            <column name="currentL3Complex" />
+        </property>
+        <property name="lossesL3P" type="java.lang.Double">
+            <column name="lossesL3P" />
+        </property>
+        <property name="lossesL3Q" type="java.lang.Double">
+            <column name="lossesL3Q" />
+        </property>
+
+
+		<property name="currentReal" type="java.lang.Double">
+            <column name="currentReal" />
+        </property>
+        <property name="currentComplex" type="java.lang.Double">
+            <column name="currentComplex" />
+        </property>
+        <property name="lossesP" type="java.lang.Double">
+            <column name="lossesP" />
+        </property>
+        <property name="lossesQ" type="java.lang.Double">
+            <column name="lossesQ" />
+        </property>
+        
+        <property name="utilization" type="java.lang.Double">
+            <column name="utilization" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

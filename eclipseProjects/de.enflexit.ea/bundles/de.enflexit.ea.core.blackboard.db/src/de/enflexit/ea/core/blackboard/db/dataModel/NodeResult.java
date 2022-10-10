@@ -6,20 +6,27 @@ public class NodeResult  extends AbstractStateResult {
 
 	private static final long serialVersionUID = 1151410790396704632L;
 	
-	private int idScenarioResult;	
+	private int idExecution;	
 	private String idNode;	
 	private Calendar timestamp;
+	
+	private double voltageL1Real;
+	private double voltageL1Complex;
+	private double voltageL2Real;
+	private double voltageL2Complex;
+	private double voltageL3Real;
+	private double voltageL3Complex;
 	
 	private double voltageReal;
 	private double voltageComplex;
 	private double voltageViolations;
 
 	
-	public int getIdScenarioResult() {
-		return idScenarioResult;
+	public int getIdExecution() {
+		return idExecution;
 	}
-	public void setIdScenarioResult(int idScenarioResult) {
-		this.idScenarioResult = idScenarioResult;
+	public void setIdExecution(int idExecution) {
+		this.idExecution = idExecution;
 	}
 
 	public String getIdNode() {
@@ -34,6 +41,51 @@ public class NodeResult  extends AbstractStateResult {
 	}
 	public void setTimestamp(Calendar timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	
+	public double getVoltageL1Real() {
+		return voltageL1Real;
+	}
+	public void setVoltageL1Real(double voltageL1Real) {
+		this.voltageL1Real = voltageL1Real;
+	}
+	
+	public double getVoltageL1Complex() {
+		return voltageL1Complex;
+	}
+	public void setVoltageL1Complex(double voltageL1Complex) {
+		this.voltageL1Complex = voltageL1Complex;
+	}
+	
+	
+	public double getVoltageL2Real() {
+		return voltageL2Real;
+	}
+	public void setVoltageL2Real(double voltageL2Real) {
+		this.voltageL2Real = voltageL2Real;
+	}
+	
+	public double getVoltageL2Complex() {
+		return voltageL2Complex;
+	}
+	public void setVoltageL2Complex(double voltageL2Complex) {
+		this.voltageL2Complex = voltageL2Complex;
+	}
+	
+	
+	public double getVoltageL3Real() {
+		return voltageL3Real;
+	}
+	public void setVoltageL3Real(double voltageL3Real) {
+		this.voltageL3Real = voltageL3Real;
+	}
+	
+	public double getVoltageL3Complex() {
+		return voltageL3Complex;
+	}
+	public void setVoltageL3Complex(double voltageL3Complex) {
+		this.voltageL3Complex = voltageL3Complex;
 	}
 	
 	
@@ -68,7 +120,7 @@ public class NodeResult  extends AbstractStateResult {
 		if (compObejct==null || !(compObejct instanceof NodeResult)) return false;
 		NodeResult nrComp = (NodeResult) compObejct;
 		
-		if (nrComp.getIdScenarioResult()!=this.getIdScenarioResult()) return false;
+		if (nrComp.getIdExecution()!=this.getIdExecution()) return false;
 		
 		String idComp = nrComp.getIdNode();
 		String idLocal = this.getIdNode();
@@ -97,7 +149,7 @@ public class NodeResult  extends AbstractStateResult {
 	@Override
 	public int hashCode() {
 		
-		String hashCodeString = "" + this.getIdScenarioResult();
+		String hashCodeString = "" + this.getIdExecution();
 		
 		if (this.getIdNode()==null) {
 			hashCodeString += "null";
@@ -121,10 +173,19 @@ public class NodeResult  extends AbstractStateResult {
 	public String getSQLInsertValueArray() {
 		
 		String valueString = "(";
-		valueString += this.getIdScenarioResult() + ",";
+		valueString += this.getIdExecution() + ",";
 		valueString += "'" + this.getIdNode() + "',";
 		valueString += "'" + AbstractStateResult.getTimeStampAsSQLString(this.getTimestamp()) + "',";
 		
+		valueString += this.getVoltageL1Real() + ",";
+		valueString += this.getVoltageL1Complex() + ",";
+		
+		valueString += this.getVoltageL2Real() + ",";
+		valueString += this.getVoltageL2Complex() + ",";
+		
+		valueString += this.getVoltageL3Real() + ",";
+		valueString += this.getVoltageL3Complex() + ",";
+				
 		valueString += this.getVoltageReal() + ",";
 		valueString += this.getVoltageComplex() + ",";
 		valueString += this.getVoltageViolations() + ")";		

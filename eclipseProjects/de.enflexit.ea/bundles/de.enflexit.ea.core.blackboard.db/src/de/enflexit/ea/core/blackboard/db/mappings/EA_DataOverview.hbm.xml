@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.DataOverview" table="ea_data_overview">
+        
+         <id name="idExecution" type="int">
+            <column name="idExecution" />
+            <generator class="native" />
+        </id>
+        
+		<property name="executer" type="java.lang.String" not-null="true">
+            <column name="executer" length="100"/>
+        </property>
+        <property name="executionTime" type="java.util.Calendar" not-null="true">
+	    	<column name="executionTime" />
+		</property>
+		
+		<property name="projectName" type="java.lang.String" not-null="true">
+            <column name="projectName" length="100"/>
+        </property>
+		
+		<property name="setupName" type="java.lang.String" not-null="true">
+            <column name="setupName" length="100"/>
+        </property>
+	 	<property name="setupTimeFrom" type="java.util.Calendar">
+	    	<column name="setupTimeFrom" />
+		</property>
+		<property name="setupTimeTo" type="java.util.Calendar">
+	    	<column name="setupTimeTo" />
+		</property>
+
+    </class>
+</hibernate-mapping>

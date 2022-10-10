@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.NodeResult" table="ea_noderesult">
+        
+		<composite-id>
+	        <key-many-to-one foreign-key="fk_idExecution_node" name="idExecution" class="de.enflexit.ea.core.blackboard.db.dataModel.DataOverview" column="idExecution"/>
+	        <key-property name="idNode" type="string">
+	            <column name="idNode" />
+	        </key-property>
+	        <key-property name="timestamp" type="java.util.Calendar">
+	            <column name="timestamp" />
+	        </key-property>
+		</composite-id>
+
+        <property name="voltageL1Real" type="java.lang.Double">
+            <column name="voltageL1Real" />
+        </property>
+        <property name="voltageL1Complex" type="java.lang.Double">
+            <column name="voltageL1Complex" />
+        </property>
+
+		<property name="voltageL2Real" type="java.lang.Double">
+            <column name="voltageL2Real" />
+        </property>
+        <property name="voltageL2Complex" type="java.lang.Double">
+            <column name="voltageL2Complex" />
+        </property>
+        
+        <property name="voltageL3Real" type="java.lang.Double">
+            <column name="voltageL3Real" />
+        </property>
+        <property name="voltageL3Complex" type="java.lang.Double">
+            <column name="voltageL3Complex" />
+        </property>
+        
+        <property name="voltageReal" type="java.lang.Double">
+            <column name="voltageReal" />
+        </property>
+        <property name="voltageComplex" type="java.lang.Double">
+            <column name="voltageComplex" />
+        </property>
+        <property name="voltageViolations" type="java.lang.Double">
+            <column name="voltageViolations" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

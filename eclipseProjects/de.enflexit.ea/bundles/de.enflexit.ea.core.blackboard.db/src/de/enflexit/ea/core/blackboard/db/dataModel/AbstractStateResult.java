@@ -44,47 +44,4 @@ public abstract class AbstractStateResult implements Serializable {
 		return timeStampString;
 	}
 	
-//	public Date getDateFromString(String dateString) {
-//		
-//		// --- Early exit? ------------------------------------------
-//		if (dateString==null || dateString.isEmpty()==true) return null;
-//			
-//		try {
-//			
-//			boolean debugTimeConversion = false;
-//			
-//			Date dateSB = this.getDateFormatter().parse(dateString);
-//			Date dateInternal = dateSB;
-//			if (TIME_ZONE_INTERNAL.equals(TIME_ZONE_TO_SAVE_IN)==false) {
-//				// --- Convert to internal time zone ----------------
-//				long sbRawOffSet = TimeZone.getTimeZone(TIME_ZONE_TO_SAVE_IN).getRawOffset();
-//				long intRawOffSet = TimeZone.getTimeZone(TIME_ZONE_INTERNAL).getRawOffset(); 
-//				
-//				long sbTime = dateSB.getTime();
-//				long internalTime = sbTime + TimeZone.getTimeZone("UTC+1").getRawOffset();
-//
-//				Calendar internalCal1 = Calendar.getInstance(TimeZone.getTimeZone("UTC+1"));
-//				internalCal1.setTimeInMillis(internalTime);
-//				dateInternal = internalCal1.getTime();
-//				
-//				// --- Debug time conversion? -----------------------
-//				if (debugTimeConversion==true) {
-//					long startDebugPrintFrom = 1459036800000l;
-//					long stopDebugPrintFrom  = 1459044000000l;
-//					if (sbTime>= startDebugPrintFrom && sbTime<= stopDebugPrintFrom) {
-//						System.out.println("Date String: " + dateString);
-//						DisplayHelper.systemOutPrintlnGlobalTime(dateSB.getTime(), "SimBenchTime: [" + TIME_ZONE_TO_SAVE_IN + "] ", "");
-//						DisplayHelper.systemOutPrintlnGlobalTime(dateInternal.getTime(), "Internal Time [" + TIME_ZONE_INTERNAL + "]: ", "");
-//					}
-//				}
-//			}
-//			return dateInternal;
-//			
-//		} catch (ParseException pEx) {
-//			System.err.println("[" + this.getClass().getSimpleName() + "] Error while parsing '" + dateString + "' to Date insatnce:");
-//			pEx.printStackTrace();
-//		}
-//		return null;
-//	}
-	
 }

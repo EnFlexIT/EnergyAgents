@@ -2,12 +2,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 
 <hibernate-mapping>
-    <class name="de.enflexit.ea.core.blackboard.db.dataModel.TrafoResult" table="traforesult">
+    <class name="de.enflexit.ea.core.blackboard.db.dataModel.TrafoResult" table="ea_traforesult">
         
 		<composite-id>
-	        <key-property name="idScenarioResult" type="int">
-	            <column name="idScenarioResult" />
-	        </key-property>
+			<key-many-to-one foreign-key="fk_idExecution_trafo" name="idExecution" class="de.enflexit.ea.core.blackboard.db.dataModel.DataOverview" column="idExecution"/>
 	        <key-property name="idTrafo" type="string">
 	            <column name="idTrafo" />
 	        </key-property>

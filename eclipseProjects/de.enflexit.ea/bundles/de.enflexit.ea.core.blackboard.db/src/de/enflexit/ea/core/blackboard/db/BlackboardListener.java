@@ -55,7 +55,7 @@ public class BlackboardListener implements BlackboardListenerService {
 	private final double voltageBoundaryLow  = voltageBase - voltageBoundaryStep;
 	
 	
-	private Integer idScenarioResult;
+	private Integer idExecution;
 
 	private NetworkModel networkModel;
 	
@@ -64,7 +64,6 @@ public class BlackboardListener implements BlackboardListenerService {
 	private List<String> transformerList;
 	
 	private DatabaseHandler dbHandler;
-	private Boolean trafoResultContainsTapPosition;
 	
 	
 	/* (non-Javadoc)
@@ -75,7 +74,7 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		// --- Reset local variables ------------
 		this.networkModel = null;
-		this.idScenarioResult = null;
+		this.idExecution = null;
 		
 		this.nodeElementList = null;
 		this.edgeElementList = null;
@@ -83,18 +82,17 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		this.getDatabaseHandler().stopNetworkStateSaveThread();
 		this.dbHandler = null;
-		this.trafoResultContainsTapPosition = null;
 	}
 	
 	/**
 	 * Returns the current ID scenario result.
 	 * @return the ID scenario result
 	 */
-	private int getIDScenarioResult() {
-		if (idScenarioResult==null) {
-			idScenarioResult = 1; 
+	private int getIDExecution() {
+		if (idExecution==null) {
+			idExecution = this.getDatabaseHandler().getNewExecutionID("AWB-Simulator");
 		}
-		return idScenarioResult; 
+		return idExecution; 
 	}
 	
 	/* (non-Javadoc)
@@ -108,8 +106,8 @@ public class BlackboardListener implements BlackboardListenerService {
 		// ----------------------------------------------------------
 		// --- Check if data has be written to the database ---------
 		if (blackboard.getAggregationHandler().getHyGridAbstractEnvironmentModel().isSaveRuntimeInformationToDatabase()==false) return;
-		// --- Check it the idScenarioResult was set ----------------
-		if (this.getIDScenarioResult()<=0) return;
+		// --- Check it the idExecution was set ----------------
+		if (this.getIDExecution()<=0) return;
 		// --- Only work on final blackboard states -----------------
 		if (blackboard.getBlackboardState()==null || blackboard.getBlackboardState()!=BlackboardState.Final) return;
 		
@@ -251,7 +249,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			
 			// --- Create TrafoResult -------------------------------
 			TrafoResult trafoResult = new TrafoResult();
-			trafoResult.setIdScenarioResult(this.getIDScenarioResult());
+			trafoResult.setIdExecution(this.getIDExecution());
 			trafoResult.setIdTrafo(trafoID);
 			trafoResult.setTimestamp(calendar);
 			
@@ -266,22 +264,11 @@ public class BlackboardListener implements BlackboardListenerService {
 			trafoResult.setTrafoLossesQ(trafoLossesQ);
 			
 			trafoResult.setTapPos(tapPosition);
-			trafoResult.setSaveTapPos(this.isTrafoResultContainsTapPosition());
 			
 			// --- Add to list ------------------------
 			trafoResultList.add(trafoResult);
 		}
 		return trafoResultList;
-	}
-	/**
-	 * Checks if the transformer tap position is to save.
-	 * @return true, if is save transformer tap position
-	 */
-	private boolean isTrafoResultContainsTapPosition() {
-		if (trafoResultContainsTapPosition==null) {
-			trafoResultContainsTapPosition = this.getDatabaseHandler().containsTableColumn(new TrafoResult(), "tapPos");
-		}
-		return trafoResultContainsTapPosition;
 	}
 	
 	/**
@@ -293,7 +280,10 @@ public class BlackboardListener implements BlackboardListenerService {
 	private String getGraphNodeID(String transformerID) {
 		NetworkComponent netComp = this.getNetworkModel().getNetworkComponent(transformerID);
 		GraphNode graphNode = this.getNetworkModel().getGraphNodeFromDistributionNode(netComp);
-		return graphNode.getId();
+		if (graphNode!=null) {
+			return graphNode.getId();
+		}
+		return null;
 	}
 	
 	/**
@@ -311,30 +301,61 @@ public class BlackboardListener implements BlackboardListenerService {
 		for (int i = 0; i < edgeElementList.size(); i++) {
 			String edgeID = edgeElementList.get(i);
 			CableState cableState = edgeStates.get(edgeID);
-			if (cableState instanceof TriPhaseCableState) {
-				
-				TriPhaseCableState tpcs = (TriPhaseCableState) cableState;
-				UniPhaseCableState upcsL1 = tpcs.getPhase1();
-				// --- Not required, since we're in symmetric case ------------
-				//UniPhaseCableState upcsL2 = tpcs.getPhase2();
-				//UniPhaseCableState upcsL3 = tpcs.getPhase3();
-
-				double dP = upcsL1.getLossesP().getValue() * 3;
-				double dQ = upcsL1.getLossesQ().getValue() * 3;
-				
+			
+			if (cableState!=null) {
 				// --- Create EdgeResult --------------------------------------
 				EdgeResult edgeResult = new EdgeResult();
-				edgeResult.setIdScenarioResult(this.getIDScenarioResult());
+				edgeResult.setIdExecution(this.getIDExecution());
 				edgeResult.setIdEdge(edgeID);
 				edgeResult.setTimestamp(calendar);
 
-				edgeResult.setUtilization(upcsL1.getUtilization());
-				edgeResult.setLossesP(dP);
-				edgeResult.setLossesQ(dQ);
-				
+				if (cableState instanceof UniPhaseCableState) {
+					// --- => UniPhaseCableState ------------------------------
+					UniPhaseCableState upcs = (UniPhaseCableState) cableState;
+					edgeResult.setCurrentReal(upcs.getCurrentReal().getValue());
+					edgeResult.setCurrentComplex(upcs.getCurrentImag().getValue());
+					edgeResult.setLossesP(upcs.getLossesP().getValue());
+					edgeResult.setLossesQ(upcs.getLossesQ().getValue());
+					edgeResult.setUtilization(upcs.getUtilization());
+					
+				} else if (cableState instanceof TriPhaseCableState) {
+					// --- => TriPhaseCableState ------------------------------
+					TriPhaseCableState tpcs = (TriPhaseCableState) cableState;
+					UniPhaseCableState upcsL1 = tpcs.getPhase1();
+					UniPhaseCableState upcsL2 = tpcs.getPhase2();
+					UniPhaseCableState upcsL3 = tpcs.getPhase3();
+					
+					edgeResult.setCurrentL1Real(upcsL1.getCurrentReal().getValue());
+					edgeResult.setCurrentL1Complex(upcsL1.getCurrentImag().getValue());
+					edgeResult.setLossesL1P(upcsL1.getLossesP().getValue());
+					edgeResult.setLossesL1Q(upcsL1.getLossesQ().getValue());
+					
+					edgeResult.setCurrentL2Real(upcsL2.getCurrentReal().getValue());
+					edgeResult.setCurrentL2Complex(upcsL2.getCurrentImag().getValue());
+					edgeResult.setLossesL2P(upcsL2.getLossesP().getValue());
+					edgeResult.setLossesL2Q(upcsL2.getLossesQ().getValue());
+					
+					edgeResult.setCurrentL3Real(upcsL3.getCurrentReal().getValue());
+					edgeResult.setCurrentL3Complex(upcsL3.getCurrentImag().getValue());
+					edgeResult.setLossesL3P(upcsL3.getLossesP().getValue());
+					edgeResult.setLossesL3Q(upcsL3.getLossesQ().getValue());
+					
+					double iReal = upcsL1.getCurrentReal().getValue() + upcsL2.getCurrentReal().getValue() + upcsL3.getCurrentReal().getValue();
+					double iImag = upcsL1.getCurrentImag().getValue() + upcsL2.getCurrentImag().getValue() + upcsL3.getCurrentImag().getValue();
+					double dP = upcsL1.getLossesP().getValue() + upcsL2.getLossesP().getValue() + upcsL3.getLossesP().getValue();
+					double dQ = upcsL1.getLossesQ().getValue() + upcsL2.getLossesQ().getValue() + upcsL3.getLossesQ().getValue();
+					
+					edgeResult.setCurrentReal(iReal);
+					edgeResult.setCurrentComplex(iImag);
+					edgeResult.setLossesP(dP);
+					edgeResult.setLossesQ(dQ);
+					edgeResult.setUtilization(upcsL1.getUtilization());
+					
+				}
 				// --- Add to list ----------------------------------
 				edgeResultList.add(edgeResult);
 			}
+			
 		}
 		return edgeResultList;
 	}
@@ -352,34 +373,65 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		List<String> nodeElementList = this.getNodeElementList();
 		for (int i = 0; i < nodeElementList.size(); i++) {
-			String nodeID = nodeElementList.get(i);
-			ElectricalNodeState elNodeState = graphNodeStates.get(nodeID);
-			if (elNodeState instanceof TriPhaseElectricalNodeState) {
-				
-				TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
-				UniPhaseElectricalNodeState upensL1 = tens.getL1();
-				// --- Not required, since we're in symmetric case ------------
-				//UniPhaseElectricalNodeState upensL2 = tens.getL2();
-				//UniPhaseElectricalNodeState upensL3 = tens.getL3();
-				
-				double voltageReal = this.getVoltageReal(upensL1);
-				double voltageComplex = this.getVoltageComplex(upensL1);
-				int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
 
+			// --- Get the ID reminded ---------------------------------------- 
+			String remindedID = nodeElementList.get(i); // --- may be a NetworkComponent ID ---
+			ElectricalNodeState elNodeState = graphNodeStates.get(remindedID);
+			if (elNodeState==null) {
+				String graphNodeID = this.getGraphNodeID(remindedID);
+				if (graphNodeID!=null) {
+					elNodeState = graphNodeStates.get(graphNodeID);
+				}
+			}
+			
+			if (elNodeState!=null) {
 				// --- Create NodeResult --------------------------------------
 				NodeResult nodeResult = new NodeResult();
-				nodeResult.setIdScenarioResult(this.getIDScenarioResult());
-				nodeResult.setIdNode(nodeID);
+				nodeResult.setIdExecution(this.getIDExecution());
+				nodeResult.setIdNode(remindedID);
 				nodeResult.setTimestamp(calendar);
-
-				nodeResult.setVoltageReal(voltageReal);
-				nodeResult.setVoltageComplex(voltageComplex);
-				nodeResult.setVoltageViolations(voltageViolation);
 				
+				// --- Get the electrical node state --------------------------
+				if (elNodeState instanceof UniPhaseElectricalNodeState) {
+					// --- => UniPhaseElectricalNodeState ---------------------
+					UniPhaseElectricalNodeState upens = (UniPhaseElectricalNodeState) elNodeState;
+					
+					nodeResult.setVoltageReal(upens.getVoltageRealNotNull().getValue());
+					nodeResult.setVoltageComplex(upens.getVoltageImagNotNull().getValue());
+					
+					int voltageViolation = this.getVoltageViolation(nodeResult.getVoltageReal(), nodeResult.getVoltageComplex());
+					nodeResult.setVoltageViolations(voltageViolation);
+					
+				} else if (elNodeState instanceof TriPhaseElectricalNodeState) {
+					// --- => TriPhaseElectricalNodeState ---------------------
+					TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
+					UniPhaseElectricalNodeState upensL1 = tens.getL1();
+					UniPhaseElectricalNodeState upensL2 = tens.getL2();
+					UniPhaseElectricalNodeState upensL3 = tens.getL3();
+					
+					double voltageReal = this.getVoltageReal(upensL1);
+					double voltageComplex = this.getVoltageComplex(upensL1);
+					int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
+					
+					nodeResult.setVoltageL1Real(upensL1.getVoltageRealNotNull().getValue());
+					nodeResult.setVoltageL1Complex(upensL1.getVoltageImagNotNull().getValue());
+					
+					nodeResult.setVoltageL2Real(upensL2.getVoltageRealNotNull().getValue());
+					nodeResult.setVoltageL2Complex(upensL2.getVoltageImagNotNull().getValue());
+					
+					nodeResult.setVoltageL3Real(upensL3.getVoltageRealNotNull().getValue());
+					nodeResult.setVoltageL3Complex(upensL3.getVoltageImagNotNull().getValue());
+					
+					nodeResult.setVoltageReal(voltageReal);
+					nodeResult.setVoltageComplex(voltageComplex);
+					nodeResult.setVoltageViolations(voltageViolation);
+					
+				}
 				// --- Add to list --------------------------------------------
 				nodeResultList.add(nodeResult);
 			}
-		}
+			
+		} // --- end for ---
 		return nodeResultList;
 	}
 	
@@ -465,6 +517,8 @@ public class BlackboardListener implements BlackboardListenerService {
 					this.getNodeElementList().add(netComp.getId());
 					break;
 				case "Cable":
+				case "Sensor":
+				case "Breaker":
 					this.getEdgeElementList().add(netComp.getId());
 					break;
 				case "Transformer":

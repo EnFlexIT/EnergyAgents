@@ -6,7 +6,7 @@ public class TrafoResult  extends AbstractStateResult {
 
 	private static final long serialVersionUID = 1151410790396704632L;
 	
-	private int idScenarioResult;	
+	private int idExecution;	
 	private String idTrafo;	
 	private Calendar timestamp;
 	
@@ -20,14 +20,13 @@ public class TrafoResult  extends AbstractStateResult {
 	private double trafoLossesQ;
 	
 	private int tapPos;
-	private transient boolean saveTapPos;
 	
 	
-	public int getIdScenarioResult() {
-		return idScenarioResult;
+	public int getIdExecution() {
+		return idExecution;
 	}
-	public void setIdScenarioResult(int idScenarioResult) {
-		this.idScenarioResult = idScenarioResult;
+	public void setIdExecution(int idExecution) {
+		this.idExecution = idExecution;
 	}
 	
 	public String getIdTrafo() {
@@ -108,13 +107,6 @@ public class TrafoResult  extends AbstractStateResult {
 		this.tapPos = tapPos;
 	}
 	
-	public boolean isSaveTapPos() {
-		return saveTapPos;
-	}
-	public void setSaveTapPos(boolean saveTapPos) {
-		this.saveTapPos = saveTapPos;
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -125,7 +117,7 @@ public class TrafoResult  extends AbstractStateResult {
 		if (compObejct==null || !(compObejct instanceof TrafoResult)) return false;
 		TrafoResult trComp = (TrafoResult) compObejct;
 		
-		if (trComp.getIdScenarioResult()!=this.getIdScenarioResult()) return false;
+		if (trComp.getIdExecution()!=this.getIdExecution()) return false;
 		
 		String idComp = trComp.getIdTrafo();
 		String idLocal = this.getIdTrafo();
@@ -153,7 +145,7 @@ public class TrafoResult  extends AbstractStateResult {
 	@Override
 	public int hashCode() {
 		
-		String hashCodeString = "" + this.getIdScenarioResult();
+		String hashCodeString = "" + this.getIdExecution();
 		
 		if (this.getIdTrafo()==null) {
 			hashCodeString += "null";
@@ -176,7 +168,7 @@ public class TrafoResult  extends AbstractStateResult {
 	public String getSQLInsertValueArray() {
 		
 		String valueString = "(";
-		valueString += this.getIdScenarioResult() + ",";
+		valueString += this.getIdExecution() + ",";
 		valueString += "'" + this.getIdTrafo() + "',";
 		valueString += "'" + AbstractStateResult.getTimeStampAsSQLString(this.getTimestamp()) + "',";
 		
@@ -190,16 +182,10 @@ public class TrafoResult  extends AbstractStateResult {
 		valueString += this.getTrafoUtilization() + ",";
 		
 		valueString += this.getTrafoLossesP() + ",";
-		valueString += this.getTrafoLossesQ();
+		valueString += this.getTrafoLossesQ() + ",";
 		
-		// --- Check if we have to write the tap position -----------
-		if (this.isSaveTapPos()==true) {
-			valueString += "," + this.getTapPos();
-		}
+		valueString += this.getTapPos() + ")";
 
-		// --- Finalize SQL values ----------------------------------
-		valueString += ")";
-		
 		return valueString;
 	}
 	
