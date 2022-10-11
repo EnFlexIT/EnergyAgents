@@ -37,6 +37,7 @@ import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
+import de.enflexit.ea.core.planning.Planner;
 import energy.FixedVariableList;
 import energy.optionModel.FixedVariable;
 import energy.optionModel.ScheduleList;
@@ -72,6 +73,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	protected DefaultMessageReceiveBehaviour defaultMessageReceiveBehaviour;
 
 	private ControlBehaviourRT controlBehaviourRT;
+	private Planner planner;
 	
 	private ThreadedBehaviourFactory threadedBehaviourFactory;
 	private Behaviour threadedMonitoringBehaviour;
@@ -518,6 +520,18 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	public boolean isExecutedControlBehaviourRT() {
 		if (this.controlBehaviourRT==null || this.controlBehaviourRT.getAgent()==null) return false;
 		return true;
+	}
+	
+	
+	/**
+	 * Returns the energy agents planner instance.
+	 * @return the planner
+	 */
+	public Planner getPlanner() {
+		if (planner==null) {
+			planner = new Planner(this);
+		}
+		return planner;
 	}
 	
 	

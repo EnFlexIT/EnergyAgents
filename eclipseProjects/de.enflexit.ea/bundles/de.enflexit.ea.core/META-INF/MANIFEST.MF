@@ -24,6 +24,7 @@ Export-Package: de.enflexit.ea.core,
  de.enflexit.ea.core.databaseRequest,
  de.enflexit.ea.core.eomStateStream,
  de.enflexit.ea.core.monitoring,
+ de.enflexit.ea.core.planning,
  de.enflexit.ea.core.testbed,
  de.enflexit.ea.core.testbed.proxy
 Automatic-Module-Name: net.agenthygrid.core
