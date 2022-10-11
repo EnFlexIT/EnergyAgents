@@ -1,16 +1,12 @@
 package de.enflexit.ea.core.behaviour;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
-import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 
 /**
  * Default implementation of a message receive behaviour for {@link AbstractEnergyAgent}s. It allows to 

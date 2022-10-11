@@ -276,7 +276,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 		return this.fixedVariableListMeasurements;
 	}
 	
-	
 	/**
 	 * Returns the agent's local phone book.
 	 * @return the phone book

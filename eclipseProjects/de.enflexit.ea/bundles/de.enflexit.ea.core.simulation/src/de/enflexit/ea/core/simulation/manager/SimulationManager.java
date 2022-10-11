@@ -1453,5 +1453,11 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			return timeToSleep;
 		}
 	}
+	
+	@Override
+	public boolean join() {
+		// TODO Auto-generated method stub
+		return super.join();
+	}
 
 }
