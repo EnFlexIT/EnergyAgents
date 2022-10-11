@@ -171,16 +171,7 @@ public class DefaultMessageReceiveBehaviour extends CyclicBehaviour {
 				// ------------------------------------------------------------
 				// --- Messages with known conversation IDs / actions ---------
 				// ------------------------------------------------------------
-				if (msg.getConversationId().equals(ConversationID.PHONEBOOK_QUERY_SIMPLE.toString())) {
-					// --- Handle simple phone book query replies -------------
-					this.handleSimplePhoneBookQueryReply(msg);
-					
-				} else if (msg.getConversationId().equals(ConversationID.PHONEBOOK_QUERY_COMPLEX.toString())) {
-					
-					// --- Handle complex phone book query replies ------------
-					this.handleComplexPhoneBookQueryReply(msg);
-					
-				} else if (msg.getConversationId().equals(ConversationID.OPS_UPDATE_ON_SITE_INSTALLATIONS.toString()) && msg.getPerformative()==ACLMessage.PROPAGATE) {
+				if (msg.getConversationId().equals(ConversationID.OPS_UPDATE_ON_SITE_INSTALLATIONS.toString()) && msg.getPerformative()==ACLMessage.PROPAGATE) {
 					// --- Immediately start the update behaviour -------------
 					this.getEnergyAgent().startPlatformUpdateBehaviourNow();
 					invokeEnergyAgentsMessageReceiveMethod = false;
@@ -207,46 +198,5 @@ public class DefaultMessageReceiveBehaviour extends CyclicBehaviour {
 		}
 	}
 
-	/**
-	 * Handle phone book query reply.
-	 * @param msg the query reply from the the CEA
-	 */
-	private void handleSimplePhoneBookQueryReply(ACLMessage msg) {
-		
-		// --- Extract the AID from the message ---------------------
-		AID aid = null;
-		if (msg.getPerformative()==ACLMessage.INFORM_REF) {
-			try {
-				aid = (AID) msg.getContentObject();
-			} catch (UnreadableException unrEx) {
-				System.err.println(myAgent.getLocalName() + ": Error extracting AID from the CEA reply");
-				unrEx.printStackTrace();
-			}
-		}
-		
-		// --- Add to the agent's local phone book if successful ----
-		if (aid!=null) {
-			this.getEnergyAgent().getInternalDataModel().addAidToPhoneBook(aid);
-		} else {
-			System.err.println(myAgent.getLocalName() + ": CEA phone book query failed");
-		}
-	}
-	
-	private void handleComplexPhoneBookQueryReply(ACLMessage msg) {
-		if (msg.getPerformative()==ACLMessage.INFORM_REF) {
-			try {
-				@SuppressWarnings("unchecked")
-				ArrayList<PhoneBookEntry> entriesList = (ArrayList<PhoneBookEntry>) msg.getContentObject();
-				if (entriesList!=null && entriesList.size()>0) {
-					this.getEnergyAgent().getInternalDataModel().addEntriesToPhoneBook(entriesList);
-				} else {
-					System.err.println(myAgent.getLocalName() + ": Phone book reply was empty!");
-				}
-			} catch (UnreadableException e) {
-				System.err.println(myAgent.getLocalName() + ": Error extracting content from phone book reply");
-				e.printStackTrace();
-			}
-		}
-	}
 
 }

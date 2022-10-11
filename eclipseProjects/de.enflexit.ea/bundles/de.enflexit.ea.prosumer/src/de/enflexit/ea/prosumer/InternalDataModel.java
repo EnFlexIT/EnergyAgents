@@ -2,13 +2,14 @@ package de.enflexit.ea.prosumer;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 
 /**
  * The Class InternalDataModel represents the whole internal data model of the corresponding agent.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class InternalDataModel extends AbstractInternalDataModel {
+public class InternalDataModel extends AbstractInternalDataModel<AbstractPhoneBookEntry> {
 
 	private static final long serialVersionUID = 8589606262871989270L;
 

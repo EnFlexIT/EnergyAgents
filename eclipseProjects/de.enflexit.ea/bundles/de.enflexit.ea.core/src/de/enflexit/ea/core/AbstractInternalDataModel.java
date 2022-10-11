@@ -20,9 +20,9 @@ import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroupsHelper;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import de.enflexit.ea.core.monitoring.IOListFilterForLogging;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBook;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.optionModel.TechnicalSystem;
@@ -39,7 +39,7 @@ import jade.lang.acl.ACLMessage;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractInternalDataModel extends Observable implements Serializable {
+public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 8589606262871989270L;
 	
@@ -83,8 +83,8 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	private ControlledSystemType controlledSystemType = ControlledSystemType.None;
 	
 	private FixedVariableList fixedVariableListMeasurements;
-	
-	private PhoneBook<PhoneBookEntry> phoneBook;
+
+	private PhoneBook<GenericPhoneBookEntry> phoneBook;
 	
 	private AID centralAgentAID;
 	private CeaConfigModel ceaConfigModel;
@@ -281,11 +281,11 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * Returns the agent's local phone book.
 	 * @return the phone book
 	 */
-	public PhoneBook<PhoneBookEntry> getPhoneBook() {
+	public PhoneBook<GenericPhoneBookEntry> getPhoneBook() {
 		if (phoneBook==null) {
 			// --- For the real application of the energy agent -----
 			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), PhoneBookEntry.class);
+//				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), GenericPhoneBookEntry.class);
 			}
 			// --- Backup solution, or in all other modes -----------
 			if (phoneBook==null) {
@@ -304,23 +304,23 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * @return the agent's AID, null if not found
 	 */
 	public AID getAidFromPhoneBook(String localName) {
-		return this.getPhoneBook().getAgentAID(localName);
+		return this.getPhoneBook().getAidForLocalName(localName);
 	}
-	/**
-	 * Adds an AID to the phone book.
-	 * @param aid the AID
-	 */
-	public void addAidToPhoneBook(AID aid) {
-		this.getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(aid));
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
-	}
+//	/**
+//	 * Adds an AID to the phone book.
+//	 * @param aid the AID
+//	 */
+//	public void addAidToPhoneBook(AID aid) {
+//		this.getPhoneBook().addPhoneBookEntry(new PhoneBookEntry(aid));
+//		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
+//	}
 	
 	/**
 	 * Adds a single entry to phone book.
 	 * @param entry the entry
 	 */
-	public void addEntryToPhoneBook(PhoneBookEntry entry) {
-		this.getPhoneBook().addPhoneBookEntry(entry);
+	public void addEntryToPhoneBook(GenericPhoneBookEntry entry) {
+		this.getPhoneBook().addEntry(entry);
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	
@@ -328,33 +328,31 @@ public abstract class AbstractInternalDataModel extends Observable implements Se
 	 * Adds a list of entries to phone book.
 	 * @param entries the entries
 	 */
-	public void addEntriesToPhoneBook(List<PhoneBookEntry> entries) {
-		for (int i=0; i<entries.size(); i++) {
-			this.getPhoneBook().addPhoneBookEntry(entries.get(i));
-		}
+	public void addEntriesToPhoneBook(List<GenericPhoneBookEntry> entries) {
+		this.getPhoneBook().addEntries(entries);
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	
-	/**
-	 * Removes an AID from the phone book.
-	 * @param aid the aid
-	 */
-	public void removeAIDFromPhoneBook(AID aid) {
-		this.getPhoneBook().removeAgentAID(aid);
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
-	}
-	
-	/**
-	 * Gets the agent's own phone book entry.
-	 * @return the agent's own phone book entry
-	 */
-	public PhoneBookEntry getMyPhoneBookEntry() {
-		PhoneBookEntry ownPhoneBookEntry = new PhoneBookEntry();
-		ownPhoneBookEntry.setAID(energyAgent.getAID());
-		ownPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
-		ownPhoneBookEntry.setControllable(false);
-		return ownPhoneBookEntry;
-	}
+//	/**
+//	 * Removes an AID from the phone book.
+//	 * @param aid the aid
+//	 */
+//	public void removeAIDFromPhoneBook(AID aid) {
+//		this.getPhoneBook().removeAgentAID(aid);
+//		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
+//	}
+//	
+//	/**
+//	 * Gets the agent's own phone book entry.
+//	 * @return the agent's own phone book entry
+//	 */
+//	public PhoneBookEntry getMyPhoneBookEntry() {
+//		PhoneBookEntry ownPhoneBookEntry = new PhoneBookEntry();
+//		ownPhoneBookEntry.setAID(energyAgent.getAID());
+//		ownPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
+//		ownPhoneBookEntry.setControllable(false);
+//		return ownPhoneBookEntry;
+//	}
 	
 	/**
 	 * Returns the {@link CeaConfigModel} if available. This is used to set the update behaviour 

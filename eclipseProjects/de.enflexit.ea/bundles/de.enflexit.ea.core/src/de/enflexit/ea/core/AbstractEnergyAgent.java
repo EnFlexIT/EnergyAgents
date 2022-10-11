@@ -22,7 +22,6 @@ import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.behaviour.DefaultMessageReceiveBehaviour;
 import de.enflexit.ea.core.behaviour.LiveMonitoringSubscriptionResponder;
 import de.enflexit.ea.core.behaviour.O2ABehaviour;
-import de.enflexit.ea.core.behaviour.PhoneBookRegistrationBehaviour;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -170,7 +169,8 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 */
 	protected final void onEnvironmentModelSet() {
 		// --- Register at the central phone book if necessary --------------------------
-		this.addBehaviour(new PhoneBookRegistrationBehaviour(this, this.getInternalDataModel().getCentralAgentAID(), true));
+		//TODO apply the new registration protocol
+//		this.addBehaviour(new PhoneBookRegistrationBehaviour(this, this.getInternalDataModel().getCentralAgentAID(), true));
 		// --- Call the individual setup method for energy agents ----------------------- 
 		this.setupEnergyAgent();	
 	}

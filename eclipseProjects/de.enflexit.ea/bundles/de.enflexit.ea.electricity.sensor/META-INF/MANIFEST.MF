@@ -15,12 +15,13 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/hygridValidationService.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.enflexit.common,
- org.agentgui.core,
- org.agentgui.lib.jade,
- org.awb.env.networkModel,
  de.enflexit.eom.core,
  de.enflexit.ea.core,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.blackboard,
  de.enflexit.ea.core.validation,
- de.enflexit.ea.electricity
+ de.enflexit.ea.electricity,
+ de.enflexit.jade.tools,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel

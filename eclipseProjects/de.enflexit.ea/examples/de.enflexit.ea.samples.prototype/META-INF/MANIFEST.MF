@@ -11,6 +11,7 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
+ de.enflexit.jade.tools,
  org.agentgui.core,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
