@@ -212,9 +212,12 @@ public class CentralExecutiveAgent extends Agent {
 	 */
 	private void startPhoneBookQueryResponder() {
 		if (phoneBookQueryResponder==null) {
+			// --- Make sure phone book queries are ignored by the default message receive behaviour
+			this.getMessageReceiveBehaviour().addMessageTemplateToIgnoreList(PhoneBookQueryResponder.getMessageTemplate());
+			
+			// --- Start the responder behaviour ------------------------------
 			phoneBookQueryResponder = new PhoneBookQueryResponder<EnergyAgentPhoneBookEntry>(this, this.getInternalDataModel().getPhoneBook());
 			this.addBehaviour(phoneBookQueryResponder);
-			this.getMessageReceiveBehaviour().addMessageTemplateToIgnoreList(phoneBookQueryResponder.getMessageTemplate());
 		}
 	}
 	

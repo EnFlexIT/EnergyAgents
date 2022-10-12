@@ -3,6 +3,10 @@ package de.enflexit.ea.core.dataModel.phoneBook;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;
 
+/**
+ * {@link PhoneBookSearchFilter} implementation for {@link EnergyAgentPhoneBookEntry}s.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter<EnergyAgentPhoneBookEntry> {
 
 	private static final long serialVersionUID = 595932542434110722L;
