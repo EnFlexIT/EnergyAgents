@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.dataModel.phoneBook;
 
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;
 
@@ -7,7 +8,7 @@ import jade.core.AID;
  * {@link PhoneBookSearchFilter} implementation for {@link EnergyAgentPhoneBookEntry}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter<EnergyAgentPhoneBookEntry> {
+public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter {
 
 	private static final long serialVersionUID = 595932542434110722L;
 	
@@ -52,7 +53,11 @@ public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter<E
 	 * @see de.enflexit.jade.phonebook.search.PhoneBookSearchFilter#matches(de.enflexit.jade.phonebook.AbstractPhoneBookEntry)
 	 */
 	@Override
-	public boolean matches(EnergyAgentPhoneBookEntry entry) {
+	public boolean matches(AbstractPhoneBookEntry entry) {
+		
+		// --- Can't be a match if of the wrong class -----
+		if (entry instanceof EnergyAgentPhoneBookEntry == false) return false;
+		
 		// --- If the AID filter was set, check for match -----------
 		if (this.getAgentAID()!=null) {
 			if (entry.getAgentAID()==null || entry.getAgentAID().equals(this.getAgentAID())==false) {
@@ -71,7 +76,8 @@ public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter<E
 		}
 		// --- If the component type filter was set, check for a match
 		if (this.getComponentType()!=null) {
-			if (entry.getComponentType()==null || entry.getComponentType().equals(this.getComponentType())==false) {
+			EnergyAgentPhoneBookEntry eaEntry = (EnergyAgentPhoneBookEntry) entry;
+			if (eaEntry.getComponentType()==null || eaEntry.getComponentType().equals(this.getComponentType())==false) {
 				// --- Check failed -> no match ---------------------
 				return false;
 			}

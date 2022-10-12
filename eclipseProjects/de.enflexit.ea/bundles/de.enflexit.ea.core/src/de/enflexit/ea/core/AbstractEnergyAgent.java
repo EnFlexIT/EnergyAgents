@@ -33,10 +33,11 @@ import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.deployment.StartArgument;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import energy.FixedVariableList;
 import energy.optionModel.FixedVariable;
 import energy.optionModel.ScheduleList;
@@ -63,7 +64,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 
 	private static final long serialVersionUID = -6729957368366493537L;
 	
-	
 	private AgentOperatingMode operatingMode;
 	
 	private EnergyAgentIO agentIOBehaviour;
@@ -85,7 +85,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Returns the internal data model of this agent.
 	 * @return the internal data model
 	 */
-	public abstract AbstractInternalDataModel getInternalDataModel();
+	public abstract AbstractInternalDataModel<? extends AbstractPhoneBookEntry> getInternalDataModel();
 	
 
 	/* (non-Javadoc)
@@ -166,12 +166,13 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	}
 	
 	/**
-	 * On environment model set (for Nils).
+	 * This method is called after the environment model is set.
 	 */
 	protected final void onEnvironmentModelSet() {
 		// --- Register at the central phone book if necessary --------------------------
-		//TODO apply the new registration protocol
-//		this.addBehaviour(new PhoneBookRegistrationBehaviour(this, this.getInternalDataModel().getCentralAgentAID(), true));
+		//TODO add listener?
+		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, this.getInternalDataModel().getMyPhoneBookEntry(), this.getInternalDataModel().getCentralPhoneBookMaintainerAID(), true);
+		this.addBehaviour(phoneBookRegistrationInitiator);
 		// --- Call the individual setup method for energy agents ----------------------- 
 		this.setupEnergyAgent();	
 	}

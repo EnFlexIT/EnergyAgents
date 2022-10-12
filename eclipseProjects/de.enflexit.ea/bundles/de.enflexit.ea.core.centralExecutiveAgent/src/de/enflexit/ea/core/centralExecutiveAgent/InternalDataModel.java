@@ -50,7 +50,7 @@ public class InternalDataModel {
 	private NetworkComponent networkComponentOfCEA;
 	private CeaConfigModel ceaConfigModel;
 
-	private PhoneBook<EnergyAgentPhoneBookEntry> phoneBook;
+	private PhoneBook phoneBook;
 	
 	private String trustStoreFile;
 	private String trustStorePassword;
@@ -162,12 +162,12 @@ public class InternalDataModel {
 	 * Gets the phone book.
 	 * @return the phone book
 	 */
-	public PhoneBook<EnergyAgentPhoneBookEntry> getPhoneBook() {
+	public PhoneBook getPhoneBook() {
 		if (phoneBook==null) {
 			phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), EnergyAgentPhoneBookEntry.class);
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook<>();
+				phoneBook = new PhoneBook();
 				System.out.println("[" + this.cea.getLocalName() + "] Created temporary phonebook!");
 			}
 		}

@@ -13,7 +13,6 @@ import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.ontology.FlexibilityOffer;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookSearchFilter;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryInitiator;
 import jade.content.lang.Codec.CodecException;
@@ -277,7 +276,7 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	private void startPhoneBookQueryForLocalName(String localName){
 		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
 		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
-		PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry> queryInitiator = new PhoneBookQueryInitiator<>(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
+		PhoneBookQueryInitiator queryInitiator = new PhoneBookQueryInitiator(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
 		this.addBehaviour(queryInitiator);
 	}
 }

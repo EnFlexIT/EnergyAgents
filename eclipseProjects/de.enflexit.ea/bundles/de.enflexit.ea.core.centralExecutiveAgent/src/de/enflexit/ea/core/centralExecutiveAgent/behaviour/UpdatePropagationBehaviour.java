@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.behaviours.SimpleBehaviour;
@@ -142,8 +141,8 @@ public class UpdatePropagationBehaviour extends SimpleBehaviour {
 		
 		try {
 			// --- Get the phonebook with all known agents ---------- 
-			PhoneBook<EnergyAgentPhoneBookEntry> pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
-			List<EnergyAgentPhoneBookEntry> phoneBookEntries = pb.getEntries();
+			PhoneBook pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
+			List<AbstractPhoneBookEntry> phoneBookEntries = pb.getEntries();
 			for (int i = 0; i < phoneBookEntries.size(); i++) {
 				
 				// --- Get the single PhonebookEntry ----------------

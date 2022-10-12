@@ -323,7 +323,7 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	 * @see de.enflexit.ea.core.AbstractInternalDataModel#loadPhoneBookFromFile(java.io.File)
 	 */
 	@Override
-	protected PhoneBook<EnergyAgentPhoneBookEntry> loadPhoneBookFromFile(File phoneBookFile) {
+	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
 		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
 	}
 

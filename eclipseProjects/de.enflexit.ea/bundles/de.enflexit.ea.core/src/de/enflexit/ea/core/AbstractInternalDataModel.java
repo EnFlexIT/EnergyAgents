@@ -20,6 +20,7 @@ import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroupsHelper;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
+import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.monitoring.IOListFilterForLogging;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
@@ -41,7 +42,7 @@ import jade.lang.acl.ACLMessage;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends Observable implements Serializable, PhoneBookListener<GenericPhoneBookEntry> {
+public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends EnergyAgentPhoneBookEntry> extends Observable implements Serializable, PhoneBookListener {
 
 	private static final long serialVersionUID = 8589606262871989270L;
 	
@@ -86,7 +87,8 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	
 	private FixedVariableList fixedVariableListMeasurements;
 
-	private PhoneBook<GenericPhoneBookEntry> phoneBook;
+	private PhoneBook phoneBook;
+	private EnergyAgentPhoneBookEntry myPhoneBookEntry;
 	
 	private AID centralAgentAID;
 	private CeaConfigModel ceaConfigModel;
@@ -282,7 +284,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	 * Returns the agent's local phone book.
 	 * @return the phone book
 	 */
-	public PhoneBook<GenericPhoneBookEntry> getPhoneBook() {
+	public PhoneBook getPhoneBook() {
 		if (phoneBook==null) {
 			// --- For the real application of the energy agent -----
 			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
@@ -294,7 +296,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 			// --- Backup solution, or in all other modes -----------
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook<>();
+				phoneBook = new PhoneBook(this.energyAgent.getAID());
 				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
 					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
 				}
@@ -308,7 +310,9 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	 * with generic types, this must be implemented individually. 
 	 * @return the phone book
 	 */
-	protected abstract PhoneBook<GenericPhoneBookEntry> loadPhoneBookFromFile(File phoneBookFile);
+	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
+		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
+	}
 	
 	/**
 	 * Gets an AID from the phone book.
@@ -317,6 +321,21 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	 */
 	public AID getAidFromPhoneBook(String localName) {
 		return this.getPhoneBook().getAidForLocalName(localName);
+	}
+	
+	/**
+	 * Gets the my phone book entry.
+	 * @return the my phone book entry
+	 */
+	public EnergyAgentPhoneBookEntry getMyPhoneBookEntry() {
+		if (myPhoneBookEntry==null) {
+			myPhoneBookEntry = new EnergyAgentPhoneBookEntry();
+			myPhoneBookEntry.setAgentAID(this.energyAgent.getAID());
+			if (this.getNetworkComponent()!=null) {
+				myPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
+			}
+		}
+		return myPhoneBookEntry;
 	}
 	
 	/**
@@ -332,7 +351,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	 * Adds a list of entries to phone book.
 	 * @param entries the entries
 	 */
-	public void addEntriesToPhoneBook(List<GenericPhoneBookEntry> entries) {
+	public void addEntriesToPhoneBook(List<AbstractPhoneBookEntry> entries) {
 		this.getPhoneBook().addEntries(entries);
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
@@ -428,6 +447,12 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 		this.centralAgentAID = centralAgentAID;
 	}
 	
+	/**
+	 * Returns the AID of the agent that maintains the central phone book.
+	 * In this default implementation this is the CEA, override this method
+	 * to provide a different maintainer AID.
+	 * @return the central phone book maintainer AID
+	 */
 	public AID getCentralPhoneBookMaintainerAID() {
 		return this.getCentralAgentAID();
 	}
@@ -480,12 +505,12 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 	public void setFieldDataRequestMessage(ACLMessage fieldDataRequestMessage) {
 		this.fieldDataRequestMessage = fieldDataRequestMessage;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.jade.phonebook.PhoneBookListener#notifyEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
 	 */
 	@Override
-	public void notifyEvent(PhoneBookEvent<GenericPhoneBookEntry> event) {
+	public void notifyEvent(PhoneBookEvent event) {
 		// --- Added for backwards compatibility ----------
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
