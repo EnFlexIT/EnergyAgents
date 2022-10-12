@@ -284,7 +284,10 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 		if (phoneBook==null) {
 			// --- For the real application of the energy agent -----
 			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-//				phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), GenericPhoneBookEntry.class);
+				File phoneBookFile = this.getFileOrDirectory(DirectoryType.PhoneBookFile);
+				if (phoneBookFile.exists()) {
+					phoneBook = this.loadPhoneBookFromFile(phoneBookFile);
+				}
 			}
 			// --- Backup solution, or in all other modes -----------
 			if (phoneBook==null) {
@@ -297,6 +300,14 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends Ab
 		}
 		return phoneBook;
 	}
+	
+	/**
+	 * Loads the energy agent's phone book from the default file. Since unmarshalling does not work 
+	 * with generic types, this must be implemented individually. 
+	 * @return the phone book
+	 */
+	protected abstract PhoneBook<GenericPhoneBookEntry> loadPhoneBookFromFile(File phoneBookFile);
+	
 	/**
 	 * Gets an AID from the phone book.
 	 * @param localName the local name of the agent to look up
