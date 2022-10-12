@@ -51,7 +51,8 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 		NETWORK_MODEL,
 		NETWORK_COMPONENT,
 		MEASUREMENTS_FROM_SYSTEM,
-		PHONE_BOOK
+		PHONE_BOOK,
+		OWN_PHONEBOOK_ENTRY_UPDATED
 	}
 	
 	/** The Enumeration of ControlledSystemType's. */
@@ -88,7 +89,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	private FixedVariableList fixedVariableListMeasurements;
 
 	private PhoneBook phoneBook;
-	private EnergyAgentPhoneBookEntry myPhoneBookEntry;
+	protected EnergyAgentPhoneBookEntry myPhoneBookEntry;
 	
 	private AID centralAgentAID;
 	private CeaConfigModel ceaConfigModel;
@@ -336,6 +337,11 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 			}
 		}
 		return myPhoneBookEntry;
+	}
+	
+	public void setMyPhoneBookEntry(EnergyAgentPhoneBookEntry myPhoneBookEntry) {
+		this.myPhoneBookEntry = myPhoneBookEntry;
+		this.setChangedAndNotify(CHANGED.OWN_PHONEBOOK_ENTRY_UPDATED);
 	}
 	
 	/**
