@@ -1,5 +1,6 @@
 package de.enflexit.ea.core;
 
+import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**
@@ -54,7 +55,7 @@ public abstract class AbstractIOReal extends CyclicBehaviour implements EnergyAg
 	 * Gets the internal data model.
 	 * @return the internal data model
 	 */
-	public AbstractInternalDataModel getInternalDataModel() {
+	public AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry> getInternalDataModel() {
 		return this.getEnergyAgent().getInternalDataModel();
 	}
 	

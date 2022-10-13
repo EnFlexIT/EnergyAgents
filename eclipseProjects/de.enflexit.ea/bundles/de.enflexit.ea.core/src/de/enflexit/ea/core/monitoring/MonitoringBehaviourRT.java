@@ -12,6 +12,7 @@ import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.EnergyAgentIO;
+import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
@@ -68,7 +69,7 @@ public class MonitoringBehaviourRT extends CyclicBehaviour implements Observer {
 	 * Gets the internal data model of the energy agent.
 	 * @return the internal data model
 	 */
-	private AbstractInternalDataModel getInternalDataModel() {
+	private AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry> getInternalDataModel() {
 		return this.energyAgent.getInternalDataModel();
 	}
 	/**

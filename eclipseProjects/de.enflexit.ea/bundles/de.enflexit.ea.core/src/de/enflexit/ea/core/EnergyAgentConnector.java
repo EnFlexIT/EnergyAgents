@@ -1,5 +1,6 @@
 package de.enflexit.ea.core;
 
+import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.calculations.AbstractEvaluationCalculation;
@@ -18,7 +19,7 @@ import jade.core.Agent;
  * @see AbstractOptionModelCalculation
  * @see AbstractEvaluationCalculation
  */
-public class EnergyAgentConnector<EnergyAgent extends AbstractEnergyAgent, InternalDataModel extends AbstractInternalDataModel> {
+public class EnergyAgentConnector<EnergyAgent extends AbstractEnergyAgent, InternalDataModel extends AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry>> {
 
 	private OptionModelController omc;
 	
