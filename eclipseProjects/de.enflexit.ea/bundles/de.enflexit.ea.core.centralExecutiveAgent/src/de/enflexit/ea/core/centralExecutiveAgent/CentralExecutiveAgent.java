@@ -38,7 +38,7 @@ public class CentralExecutiveAgent extends Agent {
 	private PlatformUpdateBehaviour updateBehaviour;
 	
 	private MessageReceiveBehaviour messageReceiveBehaviour;
-	private PhoneBookQueryResponder phoneBookQueryResponder;
+	private PhoneBookQueryResponder<EnergyAgentPhoneBookEntry> phoneBookQueryResponder;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -216,7 +216,7 @@ public class CentralExecutiveAgent extends Agent {
 			this.getMessageReceiveBehaviour().addMessageTemplateToIgnoreList(PhoneBookQueryResponder.getMessageTemplate());
 			
 			// --- Start the responder behaviour ------------------------------
-			phoneBookQueryResponder = new PhoneBookQueryResponder(this, this.getInternalDataModel().getPhoneBook());
+			phoneBookQueryResponder = new PhoneBookQueryResponder<>(this, this.getInternalDataModel().getPhoneBook());
 			this.addBehaviour(phoneBookQueryResponder);
 		}
 	}

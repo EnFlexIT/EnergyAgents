@@ -1,6 +1,5 @@
 package de.enflexit.ea.core.dataModel.phoneBook;
 
-import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;
 
@@ -8,7 +7,7 @@ import jade.core.AID;
  * {@link PhoneBookSearchFilter} implementation for {@link EnergyAgentPhoneBookEntry}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter {
+public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter<EnergyAgentPhoneBookEntry> {
 
 	private static final long serialVersionUID = 595932542434110722L;
 	
@@ -53,10 +52,7 @@ public class EnergyAgentPhoneBookSearchFilter implements PhoneBookSearchFilter {
 	 * @see de.enflexit.jade.phonebook.search.PhoneBookSearchFilter#matches(de.enflexit.jade.phonebook.AbstractPhoneBookEntry)
 	 */
 	@Override
-	public boolean matches(AbstractPhoneBookEntry entry) {
-		
-		// --- Can't be a match if of the wrong class -----
-		if (entry instanceof EnergyAgentPhoneBookEntry == false) return false;
+	public boolean matches(EnergyAgentPhoneBookEntry entry) {
 		
 		// --- If the AID filter was set, check for match -----------
 		if (this.getAgentAID()!=null) {
