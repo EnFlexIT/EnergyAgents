@@ -432,6 +432,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	public GenericPhoneBookEntry getMyPhoneBookEntry() {
 		if (myPhoneBookEntry==null) {
 			try {
+				//TODO Figure out why this is not working for sensor agents ???
 				myPhoneBookEntry = this.getPhoneBookEntryClass().getDeclaredConstructor().newInstance();
 				myPhoneBookEntry.setAgentAID(this.energyAgent.getAID());
 				if (this.getNetworkComponent()!=null) {
@@ -440,6 +441,9 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException	| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getLocalName() + "] Error creatong new phone book entry instance");
 				e.printStackTrace();
+			} catch (AbstractMethodError ame) {
+				String errorMessage = "Could not create phone book entry, subclass method was not correctly located!"; 
+				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getClass().getSimpleName() + " " + this.energyAgent.getLocalName() + "] " + errorMessage);
 			}
 		}
 		return myPhoneBookEntry;
