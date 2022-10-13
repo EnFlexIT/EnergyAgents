@@ -1,11 +1,8 @@
 package de.enflexit.ea.electricity.sensor;
 
-import java.io.File;
-
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
-import de.enflexit.jade.phonebook.PhoneBook;
 import energy.FixedVariableList;
 import jade.core.Agent;
 
@@ -66,13 +63,12 @@ public abstract class InternalDataModel extends AbstractInternalDataModel<Energy
 	public void setMeasurementSubscriptionResponder(MeasurementSubscriptionResponder measurementSubscriptionResponder) {
 		this.measurementSubscriptionResponder = measurementSubscriptionResponder;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.AbstractInternalDataModel#loadPhoneBookFromFile(java.io.File)
+	 * @see de.enflexit.ea.core.AbstractInternalDataModel#getPhoneBookEntryClass()
 	 */
 	@Override
-	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
-		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
+	protected Class<EnergyAgentPhoneBookEntry> getPhoneBookEntryClass() {
+		return EnergyAgentPhoneBookEntry.class;
 	}
-	
 }

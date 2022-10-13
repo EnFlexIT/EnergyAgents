@@ -1,11 +1,8 @@
 package de.enflexit.ea.prosumer;
 
-import java.io.File;
-
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
-import de.enflexit.jade.phonebook.PhoneBook;
 
 /**
  * The Class InternalDataModel represents the whole internal data model of the corresponding agent.
@@ -24,12 +21,9 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 		super(myAgent);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.AbstractInternalDataModel#loadPhoneBookFromFile(java.io.File)
-	 */
 	@Override
-	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
-		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
+	protected Class<EnergyAgentPhoneBookEntry> getPhoneBookEntryClass() {
+		return EnergyAgentPhoneBookEntry.class;
 	}
 
 	// --- To be extended ---

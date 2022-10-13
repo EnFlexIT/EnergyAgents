@@ -13,14 +13,6 @@ public class EnergyAgentPhoneBookEntry extends AbstractPhoneBookEntry {
 	private String componentType;
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.jade.phonebook.AbstractPhoneBookEntry#getUniqueIdentifier()
-	 */
-	@Override
-	public String getUniqueIdentifier() {
-		return this.getAgentAID().getName();
-	}
-
-	/* (non-Javadoc)
 	 * @see de.enflexit.jade.phonebook.AbstractPhoneBookEntry#isValid()
 	 */
 	@Override

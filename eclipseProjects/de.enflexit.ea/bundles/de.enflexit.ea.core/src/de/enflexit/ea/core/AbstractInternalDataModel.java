@@ -2,6 +2,8 @@ package de.enflexit.ea.core;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -21,6 +23,7 @@ import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroupsHelper;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookSearchFilter;
 import de.enflexit.ea.core.monitoring.IOListFilterForLogging;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
@@ -89,7 +92,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	private FixedVariableList fixedVariableListMeasurements;
 
 	private PhoneBook phoneBook;
-	protected EnergyAgentPhoneBookEntry myPhoneBookEntry;
+	private GenericPhoneBookEntry myPhoneBookEntry;
 	
 	private AID centralAgentAID;
 	private CeaConfigModel ceaConfigModel;
@@ -281,87 +284,10 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 		return this.fixedVariableListMeasurements;
 	}
 	
-	/**
-	 * Returns the agent's local phone book.
-	 * @return the phone book
-	 */
-	public PhoneBook getPhoneBook() {
-		if (phoneBook==null) {
-			// --- For the real application of the energy agent -----
-			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-				File phoneBookFile = this.getFileOrDirectory(DirectoryType.PhoneBookFile);
-				if (phoneBookFile.exists()) {
-					phoneBook = this.loadPhoneBookFromFile(phoneBookFile);
-				}
-			}
-			// --- Backup solution, or in all other modes -----------
-			if (phoneBook==null) {
-				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook(this.energyAgent.getAID());
-				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
-				}
-			}
-		}
-		return phoneBook;
-	}
 	
-	/**
-	 * Loads the energy agent's phone book from the default file. Since unmarshalling does not work 
-	 * with generic types, this must be implemented individually. 
-	 * @return the phone book
-	 */
-	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
-		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
-	}
-	
-	/**
-	 * Gets an AID from the phone book.
-	 * @param localName the local name of the agent to look up
-	 * @return the agent's AID, null if not found
-	 */
-	public AID getAidFromPhoneBook(String localName) {
-		return this.getPhoneBook().getAidForLocalName(localName);
-	}
-	
-	/**
-	 * Gets the my phone book entry.
-	 * @return the my phone book entry
-	 */
-	public EnergyAgentPhoneBookEntry getMyPhoneBookEntry() {
-		if (myPhoneBookEntry==null) {
-			myPhoneBookEntry = new EnergyAgentPhoneBookEntry();
-			myPhoneBookEntry.setAgentAID(this.energyAgent.getAID());
-			if (this.getNetworkComponent()!=null) {
-				myPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
-			}
-		}
-		return myPhoneBookEntry;
-	}
-	
-	public void setMyPhoneBookEntry(EnergyAgentPhoneBookEntry myPhoneBookEntry) {
-		this.myPhoneBookEntry = myPhoneBookEntry;
-		this.setChangedAndNotify(CHANGED.OWN_PHONEBOOK_ENTRY_UPDATED);
-	}
-	
-	/**
-	 * Adds a single entry to phone book.
-	 * @param entry the entry
-	 */
-	public void addEntryToPhoneBook(GenericPhoneBookEntry entry) {
-		this.getPhoneBook().addEntry(entry);
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
-	}
-	
-	/**
-	 * Adds a list of entries to phone book.
-	 * @param entries the entries
-	 */
-	public void addEntriesToPhoneBook(List<AbstractPhoneBookEntry> entries) {
-		this.getPhoneBook().addEntries(entries);
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
-	}
-	
+	// -----------------------------------------------------
+	// --- Methods for handling the CEA --------------------
+	// -----------------------------------------------------
 	/**
 	 * Returns the {@link CeaConfigModel} if available. This is used to set the update behaviour 
 	 * for the platform (e.g for repository locations or the update interval)
@@ -453,6 +379,10 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 		this.centralAgentAID = centralAgentAID;
 	}
 	
+	
+	// -----------------------------------------------------
+	// --- Methods for handling the phone book -------------
+	// -----------------------------------------------------
 	/**
 	 * Returns the AID of the agent that maintains the central phone book.
 	 * In this default implementation this is the CEA, override this method
@@ -461,6 +391,97 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public AID getCentralPhoneBookMaintainerAID() {
 		return this.getCentralAgentAID();
+	}
+	
+	/**
+	 * Returns the agent's local phone book.
+	 * @return the phone book
+	 */
+	public PhoneBook getPhoneBook() {
+		if (phoneBook==null) {
+			// --- For the real application of the energy agent -----
+			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
+				File phoneBookFile = this.getFileOrDirectory(DirectoryType.PhoneBookFile);
+				if (phoneBookFile.exists()) {
+					phoneBook = PhoneBook.loadPhoneBook(phoneBookFile, this.getPhoneBookEntryClass());
+				}
+			}
+			// --- Backup solution, or in all other modes -----------
+			if (phoneBook==null) {
+				// --- Create temporary PhoneBook instance ---------- 
+				phoneBook = new PhoneBook(this.energyAgent.getAID());
+				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
+					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
+				}
+			}
+		}
+		return phoneBook;
+	}
+	
+	/**
+	 * Gets the phone book entry class.
+	 * @return the phone book entry class
+	 */
+	protected abstract Class<GenericPhoneBookEntry> getPhoneBookEntryClass();
+	
+	
+	/**
+	 * Gets the my phone book entry.
+	 * @return the my phone book entry
+	 */
+	public GenericPhoneBookEntry getMyPhoneBookEntry() {
+		if (myPhoneBookEntry==null) {
+			try {
+				myPhoneBookEntry = this.getPhoneBookEntryClass().getDeclaredConstructor().newInstance();
+				myPhoneBookEntry.setAgentAID(this.energyAgent.getAID());
+				if (this.getNetworkComponent()!=null) {
+					myPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
+				}
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException	| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getLocalName() + "] Error creatong new phone book entry instance");
+				e.printStackTrace();
+			}
+		}
+		return myPhoneBookEntry;
+	}
+	/**
+	 * Sets the my phone book entry.
+	 * @param myPhoneBookEntry the new my phone book entry
+	 */
+	public void setMyPhoneBookEntry(GenericPhoneBookEntry myPhoneBookEntry) {
+		this.myPhoneBookEntry = myPhoneBookEntry;
+		this.setChangedAndNotify(CHANGED.OWN_PHONEBOOK_ENTRY_UPDATED);
+	}
+	
+	/**
+	 * Adds a single entry to phone book.
+	 * @param entry the entry
+	 */
+	public void addEntryToPhoneBook(GenericPhoneBookEntry entry) {
+		this.getPhoneBook().addEntry(entry);
+		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
+	}
+	/**
+	 * Adds a list of entries to phone book.
+	 * @param entries the entries
+	 */
+	public void addEntriesToPhoneBook(List<GenericPhoneBookEntry> entries) {
+		this.getPhoneBook().addEntries(entries);
+		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public GenericPhoneBookEntry getPhoneBookEntry(String localName) {
+		ArrayList<AbstractPhoneBookEntry> searchResults = this.getPhoneBook().getEntries(EnergyAgentPhoneBookSearchFilter.matchLocalName(localName));
+		return (GenericPhoneBookEntry) searchResults.get(0);
+	}
+	/**
+	 * Gets an AID from the phone book.
+	 * @param localName the local name of the agent to look up
+	 * @return the agent's AID, null if not found
+	 */
+	public AID getAidFromPhoneBook(String localName) {
+		return this.getPhoneBook().getAidForLocalName(localName);
 	}
 	
 	

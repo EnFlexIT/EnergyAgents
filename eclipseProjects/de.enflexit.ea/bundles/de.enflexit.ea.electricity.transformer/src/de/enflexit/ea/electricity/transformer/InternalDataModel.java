@@ -1,6 +1,5 @@
 package de.enflexit.ea.electricity.transformer;
 
-import java.io.File;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -17,7 +16,6 @@ import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
-import de.enflexit.jade.phonebook.PhoneBook;
 import energy.FixedVariableList;
 import energy.helper.NumberHelper;
 import energy.optionModel.SystemVariableDefinitionStaticModel;
@@ -318,13 +316,13 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	public void setNewSetPointFromCNP(boolean newSetPointFromCNP) {
 		this.newSetPointFromCNP = newSetPointFromCNP;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see de.enflexit.ea.core.AbstractInternalDataModel#loadPhoneBookFromFile(java.io.File)
+	 * @see de.enflexit.ea.core.AbstractInternalDataModel#getPhoneBookEntryClass()
 	 */
 	@Override
-	protected PhoneBook loadPhoneBookFromFile(File phoneBookFile) {
-		return PhoneBook.loadPhoneBook(phoneBookFile, EnergyAgentPhoneBookEntry.class);
+	protected Class<EnergyAgentPhoneBookEntry> getPhoneBookEntryClass() {
+		return EnergyAgentPhoneBookEntry.class;
 	}
 
 }
