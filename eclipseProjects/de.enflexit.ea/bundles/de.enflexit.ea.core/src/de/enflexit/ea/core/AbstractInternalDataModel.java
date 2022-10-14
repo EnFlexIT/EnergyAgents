@@ -441,9 +441,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException	| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getLocalName() + "] Error creatong new phone book entry instance");
 				e.printStackTrace();
-			} catch (AbstractMethodError ame) {
-				String errorMessage = "Could not create phone book entry, subclass method was not correctly located!"; 
-				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getClass().getSimpleName() + " " + this.energyAgent.getLocalName() + "] " + errorMessage);
 			}
 		}
 		return myPhoneBookEntry;
