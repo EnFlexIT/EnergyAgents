@@ -1,9 +1,5 @@
 package de.enflexit.ea.electricity.transformer;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Vector;
-
 import de.enflexit.common.Observable;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOReal;
@@ -11,14 +7,9 @@ import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel.CHANGED;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
-import de.enflexit.ea.core.dataModel.ontology.FlexibilityOffer;
-import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookSearchFilter;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryInitiator;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.OntologyException;
-import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -73,8 +64,6 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	@Override
 	protected void setupEnergyAgent() {
 
-		this.startPhoneBookQueryForDistrictAgents();
-		
 		// --- Subscribe with the sensor of interest ----------------
 		AID sensorAID = this.getSensorAID();
 		if (sensorAID!=null) {
@@ -113,31 +102,6 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	public String getIDSensorToSubscribeTo() {
 		return this.getInternalDataModel().getIDSensorToSubscribeTo();
 	}
-	
-
-	
-	/**
-	 * Start phone book query for district agents.
-	 */
-	private void startPhoneBookQueryForDistrictAgents() {
-		
-//		try {
-//			
-//			AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
-//			if (ceaAID==null) return;
-//			
-//			ACLMessage queryMessage = PhoneBookQueryInitiator.getQueryMessageForComponentType(ceaAID, "DistrictAgent");
-//			
-//			if (phonequeryInitiator==null) {
-//				phonequeryInitiator = new PhoneBookQueryInitiator(this, queryMessage);
-//				this.addBehaviour(phonequeryInitiator);
-//			}
-//			
-//		} catch (IOException e) {
-//			System.err.println(this.getLocalName() + ": Error creating phone book query message!");
-//		}
-	}
-	
 	
 	/**
 	 * Start the subscription responder behaviour.
@@ -193,17 +157,6 @@ public class TransformerAgent extends AbstractEnergyAgent {
 					this.startSubscriptionInitiatorBehaviour();
 				}
 			}
-			
-			// --- Create list of aids from district Agents
-//			if (this.getInternalDataModel().getAidsOfDistrictAgents()==null) {	
-//				//TODO required?
-//				ArrayList<PhoneBookEntry> districtAgentList=this.getInternalDataModel().getPhoneBook().getEntriesByComponentType("DistrictAgent"); 
-//				Vector<AID> aidsOfDistrictAgents= new Vector<>();
-//				for (int i=0; i<districtAgentList.size(); i++) {
-//					aidsOfDistrictAgents.add(districtAgentList.get(i).getAID());
-//				}
-//				this.getInternalDataModel().setAidsOfDistrictAgents(aidsOfDistrictAgents);
-//			}
 		}
 	}
 	
@@ -220,55 +173,6 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	}
 	
 	/**
-	 * Prepare the CallForProposal message.
-	 * This has to be invoked before the instance of this class is created,
-	 * because a cfp-messages is needed for the constructor!
-	 *
-	 * @param ResponderAIDs the AIDs of all responder 
-	 * @param content the content of the message
-	 * @return cfpMessage the created ALCmessage  
-	 * ToDo: Check if String as Content is valid or ContentObject must be used
-	 * @throws IOException 
-	 */
-	public  Vector<ACLMessage> prepareCFP(Vector<AID> aidsOfDistrictAgents, ActuatorGoal actuatorGoal, double necessaryVoltageaAdjustment, int replyTime) throws CodecException, OntologyException {
-		//reset counter for actors
-		int nDistrictAgentsForCNP=  0 ;
-		//create new vector for all cfp messages
-		Vector<ACLMessage> vCFPs = new Vector<>();
-		FlexibilityOffer flexibilityOffer = new FlexibilityOffer();
-		flexibilityOffer.setPossibleVoltageAdjustment((float)necessaryVoltageaAdjustment);
-		
-		
-		if (flexibilityOffer!=null) {
-			for( int i=0; i<aidsOfDistrictAgents.size();i++) {
-				AID aid = aidsOfDistrictAgents.get(i);
-				ACLMessage cfpMessage = new ACLMessage(ACLMessage.CFP);
-				cfpMessage.addReceiver(aid);
-				
-				// --- Number of involved District Agents 
-				nDistrictAgentsForCNP++;
-				
-				//set protocol
-				cfpMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-				cfpMessage.setOntology(HyGridOntology.getInstance().getName());
-				cfpMessage.setLanguage(new SLCodec().getName());
-				
-				//set content
-				cfpMessage.setContent(actuatorGoal.name());
-				Action content = new Action(this.getAID(), flexibilityOffer);
-				getContentManager().fillContent(cfpMessage, content);
-				
-				//setReplyTime
-				cfpMessage.setReplyByDate(new Date(System.currentTimeMillis() + replyTime));
-				vCFPs.add(cfpMessage);
-			}
-		}
-		this.getInternalDataModel().setnDistrictAgentsForCNP(nDistrictAgentsForCNP);
-		
-		return vCFPs;
-	}
-	
-	/**
 	 * Starts a {@link PhoneBookQueryInitiator} that requests info about the agent 
 	 * with the specified local name from the CEA.
 	 * @param localName the local name
@@ -276,7 +180,7 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	private void startPhoneBookQueryForLocalName(String localName){
 		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
 		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
-		PhoneBookQueryInitiator queryInitiator = new PhoneBookQueryInitiator(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
+		PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry> queryInitiator = new PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry>(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
 		this.addBehaviour(queryInitiator);
 	}
 }
