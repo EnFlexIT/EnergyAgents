@@ -1,9 +1,8 @@
 package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
 import de.enflexit.ea.core.dataModel.visualizationMessaging.FieldVisualizationMessagingHelper;
+import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -47,7 +46,7 @@ public class OpsFieldAgentMessageBehaviour extends OneShotBehaviour {
 	 * Return the CEA's phone book.
 	 * @return the phone book
 	 */
-	private PhoneBook<PhoneBookEntry> getPhoneBook() {
+	private PhoneBook getPhoneBook() {
 		return this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
 	}
 	
@@ -102,7 +101,7 @@ public class OpsFieldAgentMessageBehaviour extends OneShotBehaviour {
 		String[] receiverLocalArry = receiverLocalNames.split(",");
 		for (int i = 0; i < receiverLocalArry.length; i++) {
 			// ---- Get the AID of the receiver -----------
-			AID receiver = this.getPhoneBook().getAgentAID(receiverLocalArry[i]);
+			AID receiver = this.getPhoneBook().getAidForLocalName(receiverLocalArry[i]);
 			if (receiver==null) continue;
 			// --- Send inner message to field agent ------ 
 			ACLMessage innerAclMsg = this.getInnerMessage();

@@ -47,12 +47,6 @@ public class MessageReceiveBehaviour extends CyclicBehaviour {
 					} else if (msg.getConversationId().equals(ConversationID.NETWORK_MODEL_REQUEST.toString())) {
 						this.myAgent.addBehaviour(new EnvironmentModelRequestBehaviour(msg));
 						
-					} else if (msg.getConversationId().equals(ConversationID.PHONEBOOK_REGISTRATION.toString()) && msg.getPerformative()==ACLMessage.INFORM_REF) {
-						this.myAgent.addBehaviour(new PhoneBookRegistrationBehaviour(msg));
-						
-					} else if (msg.getConversationId().equals(ConversationID.PHONEBOOK_QUERY_SIMPLE.toString()) && msg.getPerformative()==ACLMessage.QUERY_REF) {
-						this.myAgent.addBehaviour(new PhoneBookQueryBehaviour(msg));
-						
 					} else if (msg.getConversationId().equals(ConversationID.OPS_CONNECTING_REQUEST.toString()) && msg.getPerformative()==ACLMessage.REQUEST) {
 						this.myAgent.addBehaviour(new OpsConnectingRequestBehaviour(msg));
 						

@@ -1,7 +1,6 @@
 package de.enflexit.ea.electricity.transformer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
@@ -10,13 +9,12 @@ import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOReal;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel.CHANGED;
-import de.enflexit.ea.core.behaviour.PhoneBookQueryBehaviour;
-import de.enflexit.ea.core.behaviour.PhoneBookQueryInitiator;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.ontology.FlexibilityOffer;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookSearchFilter;
+import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryInitiator;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;
@@ -38,7 +36,6 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	private InternalDataModel internalDataModel;
 	
 	private MeasurementSubscriptionInitiator subscriptionInitiatorBehaviour;
-	private PhoneBookQueryInitiator phonequeryInitiator;
 
 	
 	/* (non-Javadoc)
@@ -85,7 +82,7 @@ public class TransformerAgent extends AbstractEnergyAgent {
 			this.startSubscriptionInitiatorBehaviour();
 		} else {
 			System.out.println(this.getLocalName() + ": Sensor AID not locally available, requesting from the CEA");
-			this.startPhoneBookQueryBehaviour(this.getIDSensorToSubscribeTo());
+			this.startPhoneBookQueryForLocalName(this.getIDSensorToSubscribeTo());
 		}
 	}
 	/**
@@ -124,33 +121,23 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	 */
 	private void startPhoneBookQueryForDistrictAgents() {
 		
-		try {
-			
-			AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
-			if (ceaAID==null) return;
-			
-			ACLMessage queryMessage = PhoneBookQueryInitiator.getQueryMessageForComponentType(ceaAID, "DistrictAgent");
-			
-			if (phonequeryInitiator==null) {
-				phonequeryInitiator = new PhoneBookQueryInitiator(this, queryMessage);
-				this.addBehaviour(phonequeryInitiator);
-			}
-			
-		} catch (IOException e) {
-			System.err.println(this.getLocalName() + ": Error creating phone book query message!");
-		}
+//		try {
+//			
+//			AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
+//			if (ceaAID==null) return;
+//			
+//			ACLMessage queryMessage = PhoneBookQueryInitiator.getQueryMessageForComponentType(ceaAID, "DistrictAgent");
+//			
+//			if (phonequeryInitiator==null) {
+//				phonequeryInitiator = new PhoneBookQueryInitiator(this, queryMessage);
+//				this.addBehaviour(phonequeryInitiator);
+//			}
+//			
+//		} catch (IOException e) {
+//			System.err.println(this.getLocalName() + ": Error creating phone book query message!");
+//		}
 	}
 	
-	/**
-	 * Starts a phone book query behaviour to request an agent's AID from the CEA.
-	 * @param localName the local name of the agent to look up
-	 */
-	private void startPhoneBookQueryBehaviour(String localName) {
-		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
-		if (ceaAID!=null && localName!=null) {
-			this.addBehaviour(new PhoneBookQueryBehaviour(ceaAID, localName, true));
-		}
-	}
 	
 	/**
 	 * Start the subscription responder behaviour.
@@ -208,14 +195,15 @@ public class TransformerAgent extends AbstractEnergyAgent {
 			}
 			
 			// --- Create list of aids from district Agents
-			if (this.getInternalDataModel().getAidsOfDistrictAgents()==null) {	
-				ArrayList<PhoneBookEntry> districtAgentList=this.getInternalDataModel().getPhoneBook().getEntriesByComponentType("DistrictAgent"); 
-				Vector<AID> aidsOfDistrictAgents= new Vector<>();
-				for (int i=0; i<districtAgentList.size(); i++) {
-					aidsOfDistrictAgents.add(districtAgentList.get(i).getAID());
-				}
-				this.getInternalDataModel().setAidsOfDistrictAgents(aidsOfDistrictAgents);
-			}
+//			if (this.getInternalDataModel().getAidsOfDistrictAgents()==null) {	
+//				//TODO required?
+//				ArrayList<PhoneBookEntry> districtAgentList=this.getInternalDataModel().getPhoneBook().getEntriesByComponentType("DistrictAgent"); 
+//				Vector<AID> aidsOfDistrictAgents= new Vector<>();
+//				for (int i=0; i<districtAgentList.size(); i++) {
+//					aidsOfDistrictAgents.add(districtAgentList.get(i).getAID());
+//				}
+//				this.getInternalDataModel().setAidsOfDistrictAgents(aidsOfDistrictAgents);
+//			}
 		}
 	}
 	
@@ -278,5 +266,17 @@ public class TransformerAgent extends AbstractEnergyAgent {
 		this.getInternalDataModel().setnDistrictAgentsForCNP(nDistrictAgentsForCNP);
 		
 		return vCFPs;
+	}
+	
+	/**
+	 * Starts a {@link PhoneBookQueryInitiator} that requests info about the agent 
+	 * with the specified local name from the CEA.
+	 * @param localName the local name
+	 */
+	private void startPhoneBookQueryForLocalName(String localName){
+		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
+		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
+		PhoneBookQueryInitiator queryInitiator = new PhoneBookQueryInitiator(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
+		this.addBehaviour(queryInitiator);
 	}
 }

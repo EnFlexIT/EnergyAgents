@@ -19,6 +19,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
@@ -147,7 +148,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 * Gets the internal data model.
 	 * @return the internal data model
 	 */
-	public AbstractInternalDataModel getInternalDataModel() {
+	public AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry> getInternalDataModel() {
 		return this.getEnergyAgent().getInternalDataModel();
 	}
 	

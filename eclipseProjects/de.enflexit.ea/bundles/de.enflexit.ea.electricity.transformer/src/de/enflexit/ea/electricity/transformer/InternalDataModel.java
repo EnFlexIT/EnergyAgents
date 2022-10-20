@@ -14,11 +14,11 @@ import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
 import energy.FixedVariableList;
 import energy.helper.NumberHelper;
 import energy.optionModel.SystemVariableDefinitionStaticModel;
-import jade.core.AID;
 
 /**
  * This class represents the internal data model of the transformer
@@ -26,13 +26,12 @@ import jade.core.AID;
  * @author  Marcel Ludwig - EVT - University of Wuppertal (BUW)
  * @author Christian Derksen - DAWIS - University Duisburg-Essen
  */
-public class InternalDataModel extends AbstractInternalDataModel {
+public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhoneBookEntry> {
 
 	private static final long serialVersionUID = 3913554312467337020L;
 
 	public static String DOMAIN_ELECTRICITY_400V = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
 	public static String DOMAIN_ELECTRICITY_10KV = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV;
-	
 	
 	private GraphNode myGraphNode;
 	private TransformerDataModel transformerDataModel;
@@ -47,7 +46,7 @@ public class InternalDataModel extends AbstractInternalDataModel {
 	private FixedVariableList setpointsToSystem;
 	
 	private double requestedVoltageAdjustment = 0;
-	private Vector<AID> aidsOfDistrictAgents = null;
+//	private Vector<AID> aidsOfDistrictAgents = null;
 	private int nDistrictAgentsForCNP;
 	
 	private int acceptedVoltageAdjustment = 0;
@@ -271,12 +270,12 @@ public class InternalDataModel extends AbstractInternalDataModel {
 	}
 
 
-	public Vector<AID> getAidsOfDistrictAgents() {
-		return aidsOfDistrictAgents;
-	}
-	public void setAidsOfDistrictAgents(Vector<AID> aidsOfDistrictAgents) {
-		this.aidsOfDistrictAgents = aidsOfDistrictAgents;
-	}
+//	public Vector<AID> getAidsOfDistrictAgents() {
+//		return aidsOfDistrictAgents;
+//	}
+//	public void setAidsOfDistrictAgents(Vector<AID> aidsOfDistrictAgents) {
+//		this.aidsOfDistrictAgents = aidsOfDistrictAgents;
+//	}
 	
 	
 	public int getnDistrictAgentsForCNP() {
@@ -316,6 +315,14 @@ public class InternalDataModel extends AbstractInternalDataModel {
 	}
 	public void setNewSetPointFromCNP(boolean newSetPointFromCNP) {
 		this.newSetPointFromCNP = newSetPointFromCNP;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.AbstractInternalDataModel#getPhoneBookEntryClass()
+	 */
+	@Override
+	protected Class<EnergyAgentPhoneBookEntry> getPhoneBookEntryClass() {
+		return EnergyAgentPhoneBookEntry.class;
 	}
 
 }

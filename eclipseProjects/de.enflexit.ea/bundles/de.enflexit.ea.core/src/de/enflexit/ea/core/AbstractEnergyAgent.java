@@ -22,7 +22,6 @@ import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.behaviour.DefaultMessageReceiveBehaviour;
 import de.enflexit.ea.core.behaviour.LiveMonitoringSubscriptionResponder;
 import de.enflexit.ea.core.behaviour.O2ABehaviour;
-import de.enflexit.ea.core.behaviour.PhoneBookRegistrationBehaviour;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -38,6 +37,11 @@ import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
 import de.enflexit.ea.core.planning.Planner;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBookEvent;
+import de.enflexit.jade.phonebook.PhoneBookListener;
+import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
+import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
 import energy.FixedVariableList;
 import energy.optionModel.FixedVariable;
 import energy.optionModel.ScheduleList;
@@ -60,10 +64,9 @@ import jade.lang.acl.MessageTemplate;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractEnergyAgent extends Agent implements Observer {
+public abstract class AbstractEnergyAgent extends Agent implements Observer, PhoneBookListener {
 
 	private static final long serialVersionUID = -6729957368366493537L;
-	
 	
 	private AgentOperatingMode operatingMode;
 	
@@ -87,7 +90,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Returns the internal data model of this agent.
 	 * @return the internal data model
 	 */
-	public abstract AbstractInternalDataModel getInternalDataModel();
+	public abstract AbstractInternalDataModel<? extends AbstractPhoneBookEntry> getInternalDataModel();
 	
 
 	/* (non-Javadoc)
@@ -168,13 +171,24 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	}
 	
 	/**
-	 * On environment model set (for Nils).
+	 * This method is called after the environment model is set.
 	 */
 	protected final void onEnvironmentModelSet() {
 		// --- Register at the central phone book if necessary --------------------------
-		this.addBehaviour(new PhoneBookRegistrationBehaviour(this, this.getInternalDataModel().getCentralAgentAID(), true));
+		//TODO add listener?
+		this.startPhoneBookRegistration();
 		// --- Call the individual setup method for energy agents ----------------------- 
 		this.setupEnergyAgent();	
+	}
+	
+	/**
+	 * Starts the phone book registration.
+	 */
+	private void startPhoneBookRegistration() {
+		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, this.getInternalDataModel().getMyPhoneBookEntry(), this.getInternalDataModel().getCentralPhoneBookMaintainerAID(), true);
+		this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(MessageTemplate.MatchConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID));
+		phoneBookRegistrationInitiator.addPhoneBookListener(this);
+		this.addBehaviour(phoneBookRegistrationInitiator);
 	}
 	/**
 	 * This method can be overridden to perform agent-specific setup tasks.<br> 
@@ -836,6 +850,15 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 */
 	protected LiveMonitoringSubscriptionResponder getLiveMonitoringSubscriptionResponder(){
 		return this.liveMonitoringSubscriptionResponder;
+	}
+	
+	/**
+	 * Notifies the agent about phone book events.
+	 * @param event the event
+	 */
+	@Override
+	public void notifyEvent(PhoneBookEvent event) {
+		// --- Nothing here yet. Override this method to handle events in subclasses.
 	}
 	
 }

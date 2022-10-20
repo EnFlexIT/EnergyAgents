@@ -19,6 +19,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorInterface;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
@@ -61,7 +62,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private static final long serialVersionUID = -1460453061132067175L;
 
 	private AbstractEnergyAgent energyAgent;
-	private AbstractInternalDataModel internalDataModel;
+	private AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry> internalDataModel;
 	private EnergyAgentIO agentIOBehaviour;
 	
 	private ControlledSystemType typeOfControlledSystem;

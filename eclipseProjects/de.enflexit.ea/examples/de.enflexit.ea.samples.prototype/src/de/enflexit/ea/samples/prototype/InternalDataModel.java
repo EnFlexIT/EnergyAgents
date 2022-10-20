@@ -2,6 +2,7 @@ package de.enflexit.ea.samples.prototype;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 
 /**
  * The Class InternalDataModel represents the internal data model of the corresponding agent.
@@ -13,7 +14,7 @@ import de.enflexit.ea.core.AbstractInternalDataModel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class InternalDataModel extends AbstractInternalDataModel {
+public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhoneBookEntry> {
 
 
 	private static final long serialVersionUID = 3913554312467337020L;
@@ -26,6 +27,16 @@ public class InternalDataModel extends AbstractInternalDataModel {
 	 */
 	public InternalDataModel(AbstractEnergyAgent agent) {
 		super(agent);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.AbstractInternalDataModel#getPhoneBookEntryClass()
+	 */
+	@Override
+	protected Class<EnergyAgentPhoneBookEntry> getPhoneBookEntryClass() {
+		// TODO Auto-generated method stub
+		return EnergyAgentPhoneBookEntry.class;
 	}
 	
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBook;
-import de.enflexit.ea.core.dataModel.phonebook.PhoneBookEntry;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -141,17 +141,17 @@ public class UpdatePropagationBehaviour extends SimpleBehaviour {
 		
 		try {
 			// --- Get the phonebook with all known agents ---------- 
-			PhoneBook<PhoneBookEntry> pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
-			List<PhoneBookEntry> phoneBookEntries = pb.getPhoneBookEntries();
+			PhoneBook pb =  this.getCentralExecutiveAgent().getInternalDataModel().getPhoneBook();
+			List<AbstractPhoneBookEntry> phoneBookEntries = pb.getEntries();
 			for (int i = 0; i < phoneBookEntries.size(); i++) {
 				
 				// --- Get the single PhonebookEntry ----------------
-				PhoneBookEntry pbEntry = phoneBookEntries.get(i);
+				AbstractPhoneBookEntry pbEntry = phoneBookEntries.get(i);
 
 				// --- Create and send the update message -----------
-				if (pbEntry.getAID()!=null) {
+				if (pbEntry.getAgentAID()!=null) {
 					ACLMessage message = new ACLMessage(ACLMessage.PROPAGATE);
-					message.addReceiver(pbEntry.getAID());
+					message.addReceiver(pbEntry.getAgentAID());
 					message.setConversationId(ConversationID.OPS_UPDATE_ON_SITE_INSTALLATIONS.toString());
 					this.myAgent.send(message);
 				}

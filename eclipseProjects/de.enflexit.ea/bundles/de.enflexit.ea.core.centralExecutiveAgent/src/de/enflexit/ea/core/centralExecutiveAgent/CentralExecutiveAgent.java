@@ -7,7 +7,6 @@ import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.LiveMonitoringProxyRequestResponder;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.MessageReceiveBehaviour;
-import de.enflexit.ea.core.centralExecutiveAgent.behaviour.PhoneBookQueryResponder;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.RepositoryMirrorBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.StartMtpBehaviour;
@@ -15,6 +14,8 @@ import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
+import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryResponder;
 import jade.content.lang.sl.SLCodec;
 import jade.core.Agent;
 
@@ -37,7 +38,7 @@ public class CentralExecutiveAgent extends Agent {
 	private PlatformUpdateBehaviour updateBehaviour;
 	
 	private MessageReceiveBehaviour messageReceiveBehaviour;
-	private PhoneBookQueryResponder phoneBookQueryResponder;
+	private PhoneBookQueryResponder<EnergyAgentPhoneBookEntry> phoneBookQueryResponder;
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -211,9 +212,12 @@ public class CentralExecutiveAgent extends Agent {
 	 */
 	private void startPhoneBookQueryResponder() {
 		if (phoneBookQueryResponder==null) {
-			phoneBookQueryResponder = new PhoneBookQueryResponder(this);
-			this.addBehaviour(phoneBookQueryResponder);
+			// --- Make sure phone book queries are ignored by the default message receive behaviour
 			this.getMessageReceiveBehaviour().addMessageTemplateToIgnoreList(PhoneBookQueryResponder.getMessageTemplate());
+			
+			// --- Start the responder behaviour ------------------------------
+			phoneBookQueryResponder = new PhoneBookQueryResponder<>(this, this.getInternalDataModel().getPhoneBook());
+			this.addBehaviour(phoneBookQueryResponder);
 		}
 	}
 	

@@ -8,6 +8,7 @@ import agentgui.simulationService.time.TimeModelContinuous;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForSimulation;
 import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
@@ -20,7 +21,7 @@ import jade.lang.acl.MessageTemplate;
  */
 public class SimulationConnectorRemoteForIOReal extends SimulationConnectorRemote  {
 
-	private AbstractInternalDataModel internalDataModel;
+	private AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry> internalDataModel;
 	
 	/**
 	 * Instantiates a new simulation connector remote for IO real.
