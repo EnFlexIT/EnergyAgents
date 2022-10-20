@@ -25,7 +25,7 @@ import de.enflexit.ea.core.dataModel.DirectoryHelper;
 import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.ontology.RemoteAgentInformation;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.AID;
 import jade.core.NotFoundException;

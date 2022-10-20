@@ -1,4 +1,4 @@
-package de.enflexit.ea.core.dataModel.phoneBook;
+package de.enflexit.ea.core.dataModel.phonebook;
 
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;

@@ -2,7 +2,7 @@ package de.enflexit.ea.prosumer;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 
 /**
  * The Class InternalDataModel represents the whole internal data model of the corresponding agent.

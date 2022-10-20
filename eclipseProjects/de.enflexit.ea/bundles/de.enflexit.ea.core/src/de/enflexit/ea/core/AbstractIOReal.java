@@ -1,6 +1,6 @@
 package de.enflexit.ea.core;
 
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookEntry;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**

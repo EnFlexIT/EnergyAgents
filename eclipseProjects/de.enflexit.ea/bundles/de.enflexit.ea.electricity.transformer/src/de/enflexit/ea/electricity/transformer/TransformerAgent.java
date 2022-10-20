@@ -13,7 +13,7 @@ import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.ontology.FlexibilityOffer;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
-import de.enflexit.ea.core.dataModel.phoneBook.EnergyAgentPhoneBookSearchFilter;
+import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookSearchFilter;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryInitiator;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
