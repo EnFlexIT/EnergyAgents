@@ -538,7 +538,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 * @see de.enflexit.jade.phonebook.PhoneBookListener#notifyEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
 	 */
 	@Override
-	public void notifyEvent(PhoneBookEvent event) {
+	public void handlePhoneBookEvent(PhoneBookEvent event) {
 		// --- Added for backwards compatibility ----------
 		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}

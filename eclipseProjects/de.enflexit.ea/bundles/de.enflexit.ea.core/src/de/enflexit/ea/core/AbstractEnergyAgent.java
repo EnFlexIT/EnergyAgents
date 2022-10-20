@@ -857,7 +857,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	 * @param event the event
 	 */
 	@Override
-	public void notifyEvent(PhoneBookEvent event) {
+	public void handlePhoneBookEvent(PhoneBookEvent event) {
 		// --- Nothing here yet. Override this method to handle events in subclasses.
 	}
 	
