@@ -288,7 +288,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 			// --------------------------------------------------------------------------
 			String delatStepID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_DELTA_STEPS_CALL + this.getSubNetworkConfiguration().getID();
 			this.aggregationHandler.setPerformanceMeasurementStarted(delatStepID);
-			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, duration, rebuildDecisionGraph);
+			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, null, duration, rebuildDecisionGraph);
 			this.aggregationHandler.setPerformanceMeasurementFinalized(delatStepID);
 			if (deltaSteps.size()==0) {
 				System.err.println("No further 'deltaStepsPossible' => interrupt search!");
