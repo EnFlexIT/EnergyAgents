@@ -36,7 +36,8 @@ import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
 import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
-import de.enflexit.ea.core.planning.Planner;
+import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
+import de.enflexit.ea.core.planning.PlanningDispatcher;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBookEvent;
 import de.enflexit.jade.phonebook.PhoneBookListener;
@@ -51,6 +52,7 @@ import energy.optionModel.TechnicalSystemState;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
@@ -75,8 +77,8 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 
 	protected DefaultMessageReceiveBehaviour defaultMessageReceiveBehaviour;
 
+	private PlanningDispatcher planningDispatcher;
 	private ControlBehaviourRT controlBehaviourRT;
-	private Planner planner;
 	
 	private ThreadedBehaviourFactory threadedBehaviourFactory;
 	private Behaviour threadedMonitoringBehaviour;
@@ -175,21 +177,26 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	 */
 	protected final void onEnvironmentModelSet() {
 		// --- Register at the central phone book if necessary --------------------------
-		//TODO add listener?
 		this.startPhoneBookRegistration();
 		// --- Call the individual setup method for energy agents ----------------------- 
 		this.setupEnergyAgent();	
 	}
-	
 	/**
-	 * Starts the phone book registration.
+	 * Starts the phone book registration at the central phone book maintainer.
+	 * @see AbstractInternalDataModel#getCentralPhoneBookMaintainerAID()
 	 */
 	private void startPhoneBookRegistration() {
-		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, this.getInternalDataModel().getMyPhoneBookEntry(), this.getInternalDataModel().getCentralPhoneBookMaintainerAID(), true);
+		
+		AbstractPhoneBookEntry myPhoneBookEntry = this.getInternalDataModel().getMyPhoneBookEntry();
+		AID aidPhoneBookMaintainer = this.getInternalDataModel().getCentralPhoneBookMaintainerAID();
+		
+		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, myPhoneBookEntry, aidPhoneBookMaintainer, true);
 		this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(MessageTemplate.MatchConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID));
 		phoneBookRegistrationInitiator.addPhoneBookListener(this);
 		this.addBehaviour(phoneBookRegistrationInitiator);
 	}
+	
+	
 	/**
 	 * This method can be overridden to perform agent-specific setup tasks.<br> 
 	 * Use this instead of the regular {@link Agent#setup()} method of JADE agents.
@@ -309,7 +316,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 			}
 			// --- Use 'real' as backup solution ----------------------------------------
 			if (operatingMode==null) {
-				System.out.println("[" + this.getLocalName() + "] Use backup operating mode 'RealSystem'.");
+				this.print("Use backup operating mode 'RealSystem'.", false);
 				operatingMode = AgentOperatingMode.RealSystem;
 			}
 		}
@@ -497,7 +504,40 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		return simulationConnector;
 	}
 
-		
+	
+	/**
+	 * Returns the energy agents {@link PlanningDispatcher} instance.<br><br>
+	 * To work with the dispatcher, overwrite method {@link #getPlanningDispatcherManager()} 
+	 * and implement your own planning dispatcher listener.
+	 * 
+	 * @return the energy agents PlanningDispatcher instance
+	 */
+	public final PlanningDispatcher getPlanningDispatcher() {
+		if (planningDispatcher==null) {
+			// --- Get the planning dispatcher listener first ---------------------------
+			AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> pdl = this.getPlanningDispatcherManager();
+			if (pdl==null) {
+				String errDesc = "To use the energy agents planning dispatcher, a corresponding manager needs to be defined.\n";
+				errDesc += "=> Overwrite the method 'getPlanningDispatcherManager()' in your energy agent class to do so!" ;
+				this.print(errDesc, true);
+			} else {
+				planningDispatcher = new PlanningDispatcher(this, pdl);
+			}
+		}
+		return planningDispatcher;
+	}
+	/**
+	 * Has to return the planning dispatcher manager that belongs to the local {@link PlanningDispatcher}.<br>
+	 * By default, this method returns <code>null</code>. Overwrite this method and implement your own 
+	 * {@link AbstractPlanningDispatcherManager} to activate the planning capabilities of an energy agent.
+	 *  
+	 * @return the planning dispatcher manager (by default <code>null</code>
+	 */
+	public AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> getPlanningDispatcherManager() {
+		return null;
+	}
+	
+	
 	/**
 	 * Gets the real time control behaviour.
 	 * @return the ControlBehaviourRT
@@ -534,18 +574,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	public boolean isExecutedControlBehaviourRT() {
 		if (this.controlBehaviourRT==null || this.controlBehaviourRT.getAgent()==null) return false;
 		return true;
-	}
-	
-	
-	/**
-	 * Returns the energy agents planner instance.
-	 * @return the planner
-	 */
-	public Planner getPlanner() {
-		if (planner==null) {
-			planner = new Planner(this);
-		}
-		return planner;
 	}
 	
 	
@@ -711,14 +739,13 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		
 		// --- If there are monitoring or control strategies, reset them ------ 
 		if (this.monitoringBehaviourRT != null) {
-			System.out.println(this.getLocalName() + ": Resetting monitoring strategy");
+			this.print("Resetting monitoring strategy", false);
 			this.getMonitoringBehaviourRT().resetEvaluationProcess();
 		}
 		if (this.controlBehaviourRT != null) {
-			System.out.println(this.getLocalName() + ": Resetting control strategy");
+			this.print("Resetting control strategy", false);
 			this.getControlBehaviourRT().resetEvaluationProcess();
 		}
-			
 	}
 	
 	/**
@@ -854,11 +881,33 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	
 	/**
 	 * Notifies the agent about phone book events.
-	 * @param event the event
+	 * @param event the PhoneBookEvent
 	 */
 	@Override
 	public void handlePhoneBookEvent(PhoneBookEvent event) {
 		// --- Nothing here yet. Override this method to handle events in subclasses.
 	}
+	
+	/**
+	 * Prints the specified message as error or info to the console.
+	 *
+	 * @param message the message
+	 * @param isError the is error
+	 */
+	public void print(String message, boolean isError) {
+
+		if (message==null || message.isBlank()==true) return;
+		
+		String msgPrefix = "[" + this.getLocalName() + "] ";
+		String msgFinal  = msgPrefix + message; 
+		// --- Print to console -----------------------
+		if (isError==true) {
+			System.err.println(msgFinal);
+		} else {
+			System.out.println(msgFinal);
+		}
+	}
+	
+	
 	
 }
