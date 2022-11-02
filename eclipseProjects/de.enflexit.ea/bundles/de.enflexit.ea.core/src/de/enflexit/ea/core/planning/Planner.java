@@ -16,25 +16,34 @@ import energy.planning.EomPlannerListener;
  */
 public class Planner extends EomPlanner {
 
+	public static final String DEFAULT_NAME = "Configured Planning Strategies";
+
 	protected AbstractEnergyAgent energyAgent;
 	protected AbstractInternalDataModel<?> internalDataModel;
 	
+	protected String plannerName;
+
+	
 	/**
 	 * Instantiates a new planner instance for an energy agent.
+	 *
 	 * @param energyAgent the energy agent
+	 * @param plannerName the planner name
 	 */
-	public Planner(AbstractEnergyAgent energyAgent) {
-		this(energyAgent, null);
+	public Planner(AbstractEnergyAgent energyAgent, String plannerName) {
+		this(energyAgent, plannerName, null);
 	}
 	/**
 	 * Instantiates a new planner instance for the energy agent.
 	 *
 	 * @param energyAgent the energy agent
+	 * @param plannerName the planner name
 	 * @param pl the EomPlannerListener to register at the planner
 	 */
-	public Planner(AbstractEnergyAgent energyAgent, EomPlannerListener pl) {
+	public Planner(AbstractEnergyAgent energyAgent, String plannerName, EomPlannerListener pl) {
 		if (energyAgent==null) throw new NullPointerException("The energy agent instance is not allowed to be null!");
 		this.energyAgent = energyAgent;
+		this.plannerName = plannerName;
 		if (pl!=null) this.addPlannerListener(pl);
 		this.setControllingEntityName(this.energyAgent.getLocalName());
 		this.initialize();
@@ -42,13 +51,22 @@ public class Planner extends EomPlanner {
 	/**
 	 * Returns the internal data model of the current energy agent.
 	 * @return the internal data model
-	 */
+	 */                                                                                                  
 	private AbstractInternalDataModel<?> getInternalDataModel() {
 		if (internalDataModel==null) {
 			internalDataModel = this.energyAgent.getInternalDataModel(); 
 		}
 		return internalDataModel;
 	}
+
+	/**
+	 * Returns the currents planner name.
+	 * @return the planner name
+	 */
+	public String getPlannerName() {
+		return plannerName;
+	}
+	
 	/**
 	 * Initialize.
 	 */
@@ -71,13 +89,13 @@ public class Planner extends EomPlanner {
 			}
 			
 			// --- Notify about initialization ----------------------
-			this.notifyPlannerListener(new EomPlannerEvent(PlannerEventType.Initialized));
+			this.notifyPlannerListener(new EomPlannerEvent(PlannerEventType.Initialized, this));
 			
 		} catch (Exception ex) {
 			this.print("Planner initiation failed!", isDoDryRun());
 			ex.printStackTrace();
 			// --- Notify about failed initialization ---------------
-			this.notifyPlannerListener(new EomPlannerEvent(PlannerEventType.InitializationFailed));
+			this.notifyPlannerListener(new EomPlannerEvent(PlannerEventType.InitializationFailed, this));
 			
 		}
 	}

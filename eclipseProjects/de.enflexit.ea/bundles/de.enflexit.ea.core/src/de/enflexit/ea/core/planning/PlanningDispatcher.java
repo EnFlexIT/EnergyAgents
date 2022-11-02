@@ -1,0 +1,151 @@
+package de.enflexit.ea.core.planning;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.planning.PlanningDispatcherConfiguration.PlannerInformation;
+
+/**
+ * The Class PlanningDispatcher serves as central entity for an energy agent to
+ * plan and analyze the current situation of the system under control in the
+ * context of an application use case (e.g. Demand Response vs. local markets vs. 
+ * Virtual Power Plant and so on).
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class PlanningDispatcher {
+
+	private AbstractEnergyAgent energyAgent;
+	
+	private PlanningDispatcherConfiguration configuration;
+	private AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> dispatcherManager;
+	
+	
+	/**
+	 * Instantiates a new planning dispatcher.
+	 *
+	 * @param energyAgent the energy agent
+	 * @param dispatcherManager the dispatcher manager
+	 */
+	public PlanningDispatcher(AbstractEnergyAgent energyAgent, AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> dispatcherManager) {
+		this.energyAgent = energyAgent;
+		this.dispatcherManager = dispatcherManager;
+	}
+	
+	/**
+	 * Sets the PlanningDispatcherConfiguration for the dispatcher.
+	 * @param configuration the new configuration
+	 */
+	public void setConfiguration(PlanningDispatcherConfiguration configuration) {
+		this.configuration = configuration;
+	}
+	/**
+	 * Returns the configuration.
+	 * @return the configuration
+	 */
+	public PlanningDispatcherConfiguration getConfiguration() {
+		if (configuration==null) {
+			configuration = new PlanningDispatcherConfiguration();
+		}
+		return configuration;
+	}
+	/**
+	 * Returns the PlannerInformation for the specified planner.
+	 *
+	 * @param plannerName the planner name
+	 * @return the planner information
+	 */
+	public PlannerInformation getPlannerInformation(String plannerName) {
+		return this.getConfiguration().getPlannerInformation(plannerName);
+	}
+	
+	/**
+	 * Registers a planner instance for an EnergyAgent.
+	 *
+	 * @param plannerName the planner name (not allowed to be <code>null</code>)
+	 * @param strategyClassName the strategy class name to use for the planner (not allowed to be <code>null</code>)
+	 */
+	public void registerPlanner(String plannerName, String strategyClassName) {
+		this.registerPlanner(plannerName, new ArrayList<>(Arrays.asList(strategyClassName)));
+	}
+	/**
+	 * Registers a planner instance for an EnergyAgent.
+	 *
+	 * @param plannerName the planner name (not allowed to be <code>null</code>)
+	 * @param strategyClassNameList the strategy class name list (not allowed to be <code>null</code>)
+	 */
+	public void registerPlanner(String plannerName, List<String> strategyClassNameList) {
+		if (this.getConfiguration().registerPlanner(plannerName, strategyClassNameList)==false) {
+			this.print("To register a planner, a planner name and a list of evaluation strategies for the planning needs to be provided!", true);
+		}
+	}
+	
+	
+	/**
+	 * Starts the default planning, which means all strategies configured as planning strategies will be executed.
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	public void startPlanning(long planFrom, long planTo) {
+		this.startPlanning(null, planFrom, planTo);
+	}
+	/**
+	 * Starts the planning of the specified planner.
+	 *
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * be used; means that all strategies configured as planning strategies will be executed. 
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	public void startPlanning(String plannerName, long planFrom, long planTo) {
+		
+		if (plannerName==null || plannerName.isBlank()==true) {
+			plannerName = Planner.DEFAULT_NAME;
+			// --- Initiate the Planner and start the planning process --------
+			Planner planner = new Planner(this.energyAgent, plannerName, this.dispatcherManager);
+			planner.startPlanning(planFrom, planTo);
+			
+		} else {
+			
+			List<String> strategyClassNameList = this.getConfiguration().getStrategyClassNameList(plannerName);
+			if (strategyClassNameList!=null) {
+				// --- Initiate the Planner and start the planning process ----
+				Planner planner = new Planner(this.energyAgent, plannerName, this.dispatcherManager);
+				planner.startPlanning(planFrom, planTo, strategyClassNameList);
+				
+			} else {
+				this.print("No strategy classes were defined for the planning process '" + plannerName + "'!", true);
+			}
+		}
+		
+	}
+
+	
+	
+	
+	
+	
+	
+	/**
+	 * Prints the specified message as error or info to the console.
+	 *
+	 * @param message the message
+	 * @param isError the is error
+	 */
+	public void print(String message, boolean isError) {
+
+		if (message==null || message.isBlank()==true) return;
+		
+		String msgPrefix = "[" + this.getClass().getSimpleName() + "." + this.energyAgent.getLocalName() + "] ";
+		String msgFinal  = msgPrefix + message; 
+		// --- Print to console -----------------------
+		if (isError==true) {
+			System.err.println(msgFinal);
+		} else {
+			System.out.println(msgFinal);
+		}
+	}
+	
+}

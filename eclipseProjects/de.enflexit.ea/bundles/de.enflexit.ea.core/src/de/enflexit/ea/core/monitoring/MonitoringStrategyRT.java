@@ -72,7 +72,7 @@ public class MonitoringStrategyRT extends AbstractEvaluationStrategyRT {
 		while (this.evaluationNecessary(tsse)) {
 
 			// --- Get all possible subsequent steps and states -----
-			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, remainingEvaluationStepPeriod, true);
+			Vector<TechnicalSystemStateDeltaEvaluation> deltaSteps = this.getAllDeltaEvaluationsStartingFromTechnicalSystemState(tsse, null, remainingEvaluationStepPeriod, true);
 			if (deltaSteps.isEmpty()) {
 				System.err.println("Monitoring: No further delta steps possible => interrupt search!");
 				break;
