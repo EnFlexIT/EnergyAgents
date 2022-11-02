@@ -399,20 +399,20 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public PhoneBook getPhoneBook() {
 		if (phoneBook==null) {
-			// --- For the real application of the energy agent -----
+			
+			// --- Try to load the PhoneBook from file if in real system mode
 			if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
 				File phoneBookFile = this.getFileOrDirectory(DirectoryType.PhoneBookFile);
 				if (phoneBookFile.exists()) {
 					phoneBook = PhoneBook.loadPhoneBook(phoneBookFile, this.getPhoneBookEntryClass());
 				}
 			}
-			// --- Backup solution, or in all other modes -----------
+			
+			// --- Create a new local PhoneBook instance ------------ 
 			if (phoneBook==null) {
-				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook(this.energyAgent.getAID());
-				if (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem) {
-					System.out.println("[" + this.energyAgent.getLocalName() + "] Created temporary phonebook!");
-				}
+				// --- Only persist if in real system mode ----------
+				boolean doPersist = (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem);
+				phoneBook = new PhoneBook(this.energyAgent.getAID(), doPersist);
 			}
 		}
 		return phoneBook;
