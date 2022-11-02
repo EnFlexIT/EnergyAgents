@@ -167,7 +167,7 @@ public class InternalDataModel {
 			phoneBook = PhoneBook.loadPhoneBook(this.getFileOrDirectory(DirectoryType.PhoneBookFile), EnergyAgentPhoneBookEntry.class);
 			if (phoneBook==null) {
 				// --- Create temporary PhoneBook instance ---------- 
-				phoneBook = new PhoneBook();
+				phoneBook = new PhoneBook(this.cea.getAID());
 				System.out.println("[" + this.cea.getLocalName() + "] Created temporary phonebook!");
 			}
 		}
