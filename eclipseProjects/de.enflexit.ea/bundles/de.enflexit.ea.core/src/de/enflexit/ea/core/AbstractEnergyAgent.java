@@ -18,6 +18,7 @@ import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
+import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.behaviour.DefaultMessageReceiveBehaviour;
 import de.enflexit.ea.core.behaviour.LiveMonitoringSubscriptionResponder;
@@ -535,6 +536,17 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	 */
 	public AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> getPlanningDispatcherManager() {
 		return null;
+	}
+	/**
+	 * Checks if, at all, a planning is possible. Means, that either a TechnicalSystem or a TechnicalSystemGroup
+	 * needs to be under the control of the current energy agent.
+	 *  
+	 * @return true, if a planning is possible
+	 */
+	public boolean isPlanningPossible() {
+		boolean isTechnicalSystem = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystem;
+		boolean isTechnicalSystemGroup = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystemGroup;
+		return isTechnicalSystem || isTechnicalSystemGroup;
 	}
 	
 	

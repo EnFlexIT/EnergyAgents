@@ -127,18 +127,46 @@ public class PlanningDispatcherConfiguration {
 		private int planningDurationLength = 10;
 		
 		
+		/**
+		 * Returns the strategy class name list.
+		 * @return the strategy class name list
+		 */
 		public List<String> getStrategyClassNameList() {
 			return strategyClassNameList;
 		}
+		/**
+		 * Sets the strategy class name list.
+		 * @param strategyClassNameList the new strategy class name list
+		 */
 		public void setStrategyClassNameList(List<String> strategyClassNameList) {
 			this.strategyClassNameList = strategyClassNameList;
 		}
 		
+		/**
+		 * Returns the EomPlannerResult.
+		 * @return the eom planner result
+		 */
 		public EomPlannerResult getEomPlannerResult() {
 			return eomPlannerResult;
 		}
+		/**
+		 * Sets the EomPlannerResult
+		 * @param eomPlannerResult the new eom planner result
+		 */
 		public void setEomPlannerResult(EomPlannerResult eomPlannerResult) {
 			this.eomPlannerResult = eomPlannerResult;
+		}
+		/**
+		 * Appends the specified EomPlannerResult to the available one.
+		 * @param eomPlannerResult the eom planner result
+		 */
+		public void appendEomPlannerResult(EomPlannerResult eomPlannerResult) {
+			EomPlannerResult eomPR = this.getEomPlannerResult(); 
+			if (this.getEomPlannerResult()==null) {
+				this.setEomPlannerResult(eomPlannerResult);
+			} else {
+				eomPR.append(eomPlannerResult);
+			}
 		}
 		
 		
@@ -210,6 +238,22 @@ public class PlanningDispatcherConfiguration {
 			}
 			// --- Return average value -------------------
 			return this.getPlanningDurationSeconds().stream().collect(Collectors.averagingDouble(Double::doubleValue));
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			
+			String description = "";
+			if (this.getStrategyClassNameList()==null || this.getStrategyClassNameList().size()==0) {
+				description += Planner.DEFAULT_NAME;
+			} else {
+				description += String.join(", ", this.getStrategyClassNameList());
+			}
+			description += " - Last Duration: " + this.getLastPlanningDurationMillis() + " ms, Average (" + this.getPlanningDurationSeconds().size() + " x executed): " + this.getAveragePlanningDurationSeconds() + " s";
+			return description;
 		}
 		
 	}

@@ -83,13 +83,14 @@ public class PlanningDispatcher {
 	}
 	
 	
+	
 	/**
 	 * Starts the default planning, which means all strategies configured as planning strategies will be executed.
 	 * @param planFrom the time to plan from
 	 * @param planTo the time to plan to
 	 */
 	public void startPlanning(long planFrom, long planTo) {
-		this.startPlanning(null, planFrom, planTo);
+		this.startPlanningInThread(null, planFrom, planTo);
 	}
 	/**
 	 * Starts the planning of the specified planner.
@@ -100,6 +101,34 @@ public class PlanningDispatcher {
 	 * @param planTo the time to plan to
 	 */
 	public void startPlanning(String plannerName, long planFrom, long planTo) {
+		this.startPlanningInThread(plannerName, planFrom, planTo);
+	}
+	
+	/**
+	 * Internally: Starts the planning of the specified planner in a dedicated thread.
+	 *
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * be used; means that all strategies configured as planning strategies will be executed. 
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	private void startPlanningInThread(final String plannerName, final long planFrom, final long planTo) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				PlanningDispatcher.this.startPlanningInternally(plannerName, planFrom, planTo);
+			}
+		}, this.energyAgent.getLocalName() + "-PlanningExecution").start();
+	}
+	/**
+	 * Internally: Starts the planning of the specified planner.
+	 *
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * be used; means that all strategies configured as planning strategies will be executed. 
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	private void startPlanningInternally(String plannerName, long planFrom, long planTo) {
 		
 		if (plannerName==null || plannerName.isBlank()==true) {
 			plannerName = Planner.DEFAULT_NAME;
@@ -121,10 +150,6 @@ public class PlanningDispatcher {
 		}
 		
 	}
-
-	
-	
-	
 	
 	
 	

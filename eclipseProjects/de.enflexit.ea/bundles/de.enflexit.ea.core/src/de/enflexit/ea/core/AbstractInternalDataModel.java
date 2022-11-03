@@ -252,6 +252,8 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 		return controlledSystemType;
 	}
 	
+	
+	
 	/**
 	 * Returns the specified file or directory.<br> 
 	 * <b>Notice:</b> For the case {@link DirectoryType#SystemMonitoringFile}, the path and file name will be adjusted 
@@ -485,11 +487,19 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 		return this.getPhoneBook().getAidForLocalName(localName);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.jade.phonebook.PhoneBookListener#notifyEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
+	 */
+	@Override
+	public void handlePhoneBookEvent(PhoneBookEvent event) {
+		// --- Added for backwards compatibility ----------
+		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
+	}
+	
 	
 	// -----------------------------------------------------
 	// --- Methods for handling the logging mode -----------
 	// -----------------------------------------------------
-	
 	/**
 	 * Gets the logging mode.
 	 * @return the logging mode
@@ -532,15 +542,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public void setFieldDataRequestMessage(ACLMessage fieldDataRequestMessage) {
 		this.fieldDataRequestMessage = fieldDataRequestMessage;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.jade.phonebook.PhoneBookListener#notifyEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
-	 */
-	@Override
-	public void handlePhoneBookEvent(PhoneBookEvent event) {
-		// --- Added for backwards compatibility ----------
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	
 }
