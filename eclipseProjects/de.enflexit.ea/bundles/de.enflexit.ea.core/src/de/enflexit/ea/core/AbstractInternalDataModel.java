@@ -434,7 +434,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	public GenericPhoneBookEntry getMyPhoneBookEntry() {
 		if (myPhoneBookEntry==null) {
 			try {
-				//TODO Figure out why this is not working for sensor agents ???
 				myPhoneBookEntry = this.getPhoneBookEntryClass().getDeclaredConstructor().newInstance();
 				myPhoneBookEntry.setAgentAID(this.energyAgent.getAID());
 				if (this.getNetworkComponent()!=null) {
