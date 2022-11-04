@@ -79,6 +79,8 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	protected DefaultMessageReceiveBehaviour defaultMessageReceiveBehaviour;
 
 	private PlanningDispatcher planningDispatcher;
+	private boolean isPlanningDispatcherTerminated;
+	
 	private ControlBehaviourRT controlBehaviourRT;
 	
 	private ThreadedBehaviourFactory threadedBehaviourFactory;
@@ -215,6 +217,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		// --- Stop the log writer --------------------------------------------
 		this.stopSystemStateLogWriter();
 		this.stopMonitoringBehaviourRT();
+		this.terminatePlanningDispatcher();
 		
 		// --- Perform general take down actions ------------------------------
 		switch (this.getAgentOperatingMode()) {
@@ -506,6 +509,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	}
 
 	
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of the planning dispatcher -------------------------------
+	// ----------------------------------------------------------------------------------	
 	/**
 	 * Returns the energy agents {@link PlanningDispatcher} instance.<br><br>
 	 * To work with the dispatcher, overwrite method {@link #getPlanningDispatcherManager()} 
@@ -515,6 +521,12 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 	 */
 	public final PlanningDispatcher getPlanningDispatcher() {
 		if (planningDispatcher==null) {
+			// --- Check if PlanningDispatcher was terminated ---------------------------
+			if (this.isPlanningDispatcherTerminated==true) {
+				this.print("The planning dispatcher was terminated! To restart the dispatcher again, invoke #enablePlanningDispatcherAfterTermination() first.", true);
+				return null;
+			}
+			
 			// --- Get the planning dispatcher listener first ---------------------------
 			AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> pdl = this.getPlanningDispatcherManager();
 			if (pdl==null) {
@@ -549,7 +561,34 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		return isTechnicalSystem || isTechnicalSystemGroup;
 	}
 	
+	/**
+	 * Terminates the current planning dispatcher, as well as executed planning processes.
+	 */
+	private void terminatePlanningDispatcher() {
+		if (this.planningDispatcher!=null) {
+			this.isPlanningDispatcherTerminated = true;
+			this.planningDispatcher.terminate();
+			this.planningDispatcher = null;
+		}
+	}
+	/**
+	 * Checks if the planning dispatcher was terminated.
+	 * @return true, if is planning dispatcher terminated
+	 */
+	public final boolean isPlanningDispatcherTerminated() {
+		return isPlanningDispatcherTerminated;
+	}
+	/**
+	 * Enable planning dispatcher.
+	 */
+	public final void enablePlanningDispatcherAfterTermination() {
+		this.isPlanningDispatcherTerminated = false;
+	}
 	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of the real time control ---------------------------------
+	// ----------------------------------------------------------------------------------
 	/**
 	 * Gets the real time control behaviour.
 	 * @return the ControlBehaviourRT

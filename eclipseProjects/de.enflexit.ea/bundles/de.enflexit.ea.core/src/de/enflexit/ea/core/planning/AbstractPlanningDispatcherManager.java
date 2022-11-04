@@ -41,10 +41,13 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	private Agent energyAgent;
 	
 	/**
-	 * Instantiates a new planning dispatcher listener.
-	 * @param energyAgent the energy agent that controls this listener
+	 * Instantiates a new planning dispatcher manager.
+	 * @param energyAgent the energy agent that controls this dispatcher manager
 	 */
 	public AbstractPlanningDispatcherManager(Agent energyAgent) {
+		if (energyAgent == null) {
+			throw new NullPointerException("The Energy Agent instance is not allowed to null.");
+		}
 		this.setEnergyAgent(energyAgent);
 	}
 	/**
@@ -70,6 +73,14 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 		return this.getEnergyAgent().getPlanningDispatcher();
 	}
 	
+	/**
+	 * Checks if there is an invalid {@link PlanningDispatcher} state.
+	 * @return true, if is invalid planning dispatcher state
+	 */
+	private boolean isInvalidPlanningDispatcherState() {
+		return this.getEnergyAgent().isPlanningDispatcherTerminated()==true || this.getPlanningDispatcher()==null;
+		
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- General notifications of an EomPlanner -----------------------------
@@ -79,6 +90,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final void onPlannerEvent(EomPlannerEvent eomPlannerEvent) {
+		if (this.isInvalidPlanningDispatcherState()==true) return;
 		this.onPlannerEvent(this.getPlannerName(eomPlannerEvent.getEomPlanner()), (Planner)eomPlannerEvent.getEomPlanner(), eomPlannerEvent);
 	}
 	/**
@@ -100,6 +112,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final EvaluationStateListRequest onEvaluationStateListRequest(EvaluationStateListRequest eslr) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onEvaluationStateListRequest(this.getPlannerName(eslr), eslr);
 	}
 	/**
@@ -121,6 +134,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final ConfigIdRequest onConfigIdRequest(ConfigIdRequest cidr) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onConfigIdRequest(this.getPlannerName(cidr), cidr);
 	}
 	/**
@@ -138,6 +152,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final StateIdRequest onStateIdRequest(StateIdRequest sidr) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onStateIdRequest(this.getPlannerName(sidr), sidr);
 	}
 	/**
@@ -155,6 +170,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final SetPointListRequest onSetPointListRequest(SetPointListRequest splr) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onSetPointListRequest(this.getPlannerName(splr), splr);
 	}
 	/**
@@ -172,6 +188,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final StorageLoadListRequest onStorageLoadListRequest(StorageLoadListRequest sllr) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onStorageLoadListRequest(this.getPlannerName(sllr), sllr);
 	}
 	/**
@@ -193,6 +210,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final AbstractInputMeasurementRequest onAbstractInputMeasurementRequest(AbstractInputMeasurementRequest abstractInputMeasurementRequest) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onAbstractInputMeasurementRequest(this.getPlannerName(abstractInputMeasurementRequest), abstractInputMeasurementRequest);
 	}
 	/**
@@ -210,6 +228,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final InputMeasurementRequest onInputMeasurementRequest(InputMeasurementRequest inputMeasurementRequest) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return onInputMeasurementRequest(this.getPlannerName(inputMeasurementRequest), inputMeasurementRequest);
 	}
 	/**
@@ -228,6 +247,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final CostUnitRequest onCostUnitRequest(CostUnitRequest costUnitRequest) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onCostUnitRequest(this.getPlannerName(costUnitRequest), costUnitRequest);
 	}
 	/**
@@ -246,6 +266,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final AbstractCostFunctionRequest onAbstractCostFunctionRequest(AbstractCostFunctionRequest abstractCostFunctionRequest) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onAbstractCostFunctionRequest(this.getPlannerName(abstractCostFunctionRequest), abstractCostFunctionRequest);
 	}
 	/**
@@ -264,6 +285,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	@Override
 	public final CostFunctionDataSeriesRequest onCostFunctionDataSeriesRequest(CostFunctionDataSeriesRequest costFunctionDataSeriesRequest) {
+		if (this.isInvalidPlanningDispatcherState()==true) return null;
 		return this.onCostFunctionDataSeriesRequest(this.getPlannerName(costFunctionDataSeriesRequest), costFunctionDataSeriesRequest);
 	}
 	/**

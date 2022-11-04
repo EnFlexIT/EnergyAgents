@@ -2,6 +2,7 @@ package de.enflexit.ea.core.planning;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
@@ -22,6 +23,9 @@ public class PlanningDispatcher {
 	private PlanningDispatcherConfiguration configuration;
 	private AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> dispatcherManager;
 	
+	private HashMap<String, Planner> plannerHashMap;
+	
+	private boolean isDoTermination;
 	
 	/**
 	 * Instantiates a new planning dispatcher.
@@ -113,6 +117,12 @@ public class PlanningDispatcher {
 	 * @param planTo the time to plan to
 	 */
 	private void startPlanningInThread(final String plannerName, final long planFrom, final long planTo) {
+		
+		if (this.isDoTermination==true) {
+			this.print("The Planning Dispatcher is going to terminate and thus cannot start new planning processes!", true);
+			return;
+		}
+		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -130,28 +140,76 @@ public class PlanningDispatcher {
 	 */
 	private void startPlanningInternally(String plannerName, long planFrom, long planTo) {
 		
+		if (this.isDoTermination==true) {
+			this.print("The Planning Dispatcher is going to terminate and thus cannot start new planning processes!", true);
+			return;
+		}
+		
 		if (plannerName==null || plannerName.isBlank()==true) {
-			plannerName = Planner.DEFAULT_NAME;
-			// --- Initiate the Planner and start the planning process --------
-			Planner planner = new Planner(this.energyAgent, plannerName, this.dispatcherManager);
+			// --- Start the default planner ----------------------------------
+			Planner planner = this.getOrCreatePlanner(Planner.DEFAULT_NAME);
 			planner.startPlanning(planFrom, planTo);
 			
 		} else {
-			
+			// --- Starts the planner with its assigned strategy classes ------ 
 			List<String> strategyClassNameList = this.getConfiguration().getStrategyClassNameList(plannerName);
 			if (strategyClassNameList!=null) {
-				// --- Initiate the Planner and start the planning process ----
-				Planner planner = new Planner(this.energyAgent, plannerName, this.dispatcherManager);
+				Planner planner = this.getOrCreatePlanner(plannerName);
 				planner.startPlanning(planFrom, planTo, strategyClassNameList);
-				
 			} else {
 				this.print("No strategy classes were defined for the planning process '" + plannerName + "'!", true);
 			}
 		}
-		
 	}
 	
 	
+	/**
+	 * Returns the local reminder planner hash map.
+	 * @return the planner hash map
+	 */
+	private HashMap<String, Planner> getPlannerHashMap() {
+		if (plannerHashMap==null) {
+			plannerHashMap = new HashMap<>();
+		}
+		return plannerHashMap;
+	}
+	/**
+	 * Gets or creates the planner instance for the specified name.
+	 *
+	 * @param plannerName the planner name
+	 * @return the or create planner
+	 */
+	private Planner getOrCreatePlanner(String plannerName) {
+		Planner planner = this.getPlannerHashMap().get(plannerName);
+		if (planner==null) {
+			planner = new Planner(this.energyAgent, plannerName, this.dispatcherManager);
+			this.getPlannerHashMap().put(plannerName, planner);
+		}
+		return planner;
+	}
+	
+	/**
+	 * Stops running planning processes.
+	 */
+	public void terminate() {
+		
+		// --- Mark as 'in termination' -------------------
+		this.isDoTermination = true;
+		
+		// --- Kill planning processes --------------------
+		for (Planner planner : this.getPlannerHashMap().values()) {
+			try {
+				planner.stopPlanning();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		// --- Throw away local instances ----------------- 
+		this.energyAgent = null;
+		this.configuration = null;
+		this.dispatcherManager=null;
+		this.plannerHashMap = null;
+	}
 	
 	/**
 	 * Prints the specified message as error or info to the console.
