@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import agentgui.simulationService.time.StopWatch;
+import energy.helper.AppendDataInterface.AppendStrategy;
 import energy.planning.EomPlannerResult;
 
 /**
@@ -156,16 +157,36 @@ public class PlanningDispatcherConfiguration {
 		public void setEomPlannerResult(EomPlannerResult eomPlannerResult) {
 			this.eomPlannerResult = eomPlannerResult;
 		}
+		
 		/**
-		 * Appends the specified EomPlannerResult to the available one.
-		 * @param eomPlannerResult the eom planner result
+		 * Appends the specified EomPlannerResult to the available one in case that the result has the same identity
+		 * and by using an {@link AppendStrategy#OverwriteLocalAvailableData}.
+		 * @param eomPlannerResult the EomPlannerResult to append
 		 */
 		public void appendEomPlannerResult(EomPlannerResult eomPlannerResult) {
-			EomPlannerResult eomPR = this.getEomPlannerResult(); 
+			this.appendEomPlannerResult(eomPlannerResult, true, AppendStrategy.OverwriteLocalAvailableData);
+		}
+		/**
+		 * Appends the specified EomPlannerResult to the available one in case that the result has the same identity.
+		 *
+		 * @param eomPlannerResult the EomPlannerResult to append
+		 * @param appendStrategy the strategy to append new data if data with the same global time already exists (keep existing data or overwrite with new data)
+		 */
+		public void appendEomPlannerResult(EomPlannerResult eomPlannerResult, AppendStrategy appendStrategy) {
+			this.appendEomPlannerResult(eomPlannerResult, true, appendStrategy);
+		}
+		/**
+		 * Appends the specified EomPlannerResult to the available one.
+		 * 
+		 * @param eomPlannerResult the EomPlannerResult to append
+		 * @param failOnDifferentSystemIdentity the indicator to verify that both EomPlannerResult have the same system identity. If <code>true</code> and not equal, the method will throw an {@link IllegalArgumentException}.
+		 * @param appendStrategy the strategy to append new data if data with the same global time already exists (keep existing data or overwrite with new data)
+		 */
+		public void appendEomPlannerResult(EomPlannerResult eomPlannerResult, boolean failOnDifferentSystemIdentity, AppendStrategy appendStrategy) {
 			if (this.getEomPlannerResult()==null) {
 				this.setEomPlannerResult(eomPlannerResult);
 			} else {
-				eomPR.append(eomPlannerResult);
+				this.getEomPlannerResult().append(eomPlannerResult, failOnDifferentSystemIdentity, appendStrategy);
 			}
 		}
 		
