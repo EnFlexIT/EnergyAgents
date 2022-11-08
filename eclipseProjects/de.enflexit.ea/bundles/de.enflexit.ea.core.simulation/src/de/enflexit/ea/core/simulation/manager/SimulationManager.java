@@ -194,6 +194,14 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		super.takeDown();
 	}
 	
+	/* (non-Javadoc)
+	 * @see jade.core.Agent#join()
+	 */
+	@Override
+	public boolean join() {
+		return super.join();
+	}
+	
 	
 	/**
 	 * Registers the performance measurements of the simulation manager if the
@@ -1454,10 +1462,4 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 	}
 	
-	@Override
-	public boolean join() {
-		// TODO Auto-generated method stub
-		return super.join();
-	}
-
 }
