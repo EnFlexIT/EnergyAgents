@@ -540,7 +540,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		return planningDispatcher;
 	}
 	/**
-	 * Has to return the planning dispatcher manager that belongs to the local {@link PlanningDispatcher}.<br>
+	 * Has to return the planning dispatcher manager that belongs to the agents {@link PlanningDispatcher}.<br>
 	 * By default, this method returns <code>null</code>. Overwrite this method and implement your own 
 	 * {@link AbstractPlanningDispatcherManager} to activate the planning capabilities of an energy agent.
 	 *  

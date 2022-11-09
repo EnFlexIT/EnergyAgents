@@ -95,7 +95,7 @@ public class PlanningDispatcherConfiguration {
 		}
 	}
 	/**
-	 * Return the EomPlannerResult for the specified planner.
+	 * Return the current EomPlannerResult for the specified planner.
 	 *
 	 * @param plannerName the planner name
 	 * @return the planner result

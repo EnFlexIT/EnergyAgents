@@ -24,7 +24,7 @@ import energy.planning.requests.StorageLoadListRequest;
 import energy.planning.requests.CostUnitRequest.CostUnitDefinition;
 
 /**
- * The AbstractPlanningDispatcherManager serves as base class for individual listener
+ * The AbstractPlanningDispatcherManager serves as base class for the individual configuration and listener
  * to an energy agents {@link PlanningDispatcher}.<br><br>
  * 
  * The main task of that listener is to receive status information about the execution
@@ -34,6 +34,7 @@ import energy.planning.requests.CostUnitRequest.CostUnitDefinition;
  * Further, it is its task to provide required information to individual {@link Planner}, as 
  * for example the initial system states to be considered for a planning.  
  * 
+ * @see PlanningDispatcher
  * @see AbstractPlanningDispatcherEvent
  */
 public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEnergyAgent> implements EomPlannerListener {
@@ -64,6 +65,13 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	public Agent getEnergyAgent() {
 		return energyAgent;
 	}
+
+	
+	/**
+	 * Will be invoked to enable an individual planner registration.
+	 * @param planningDispatcher the planning dispatcher
+	 */
+	public abstract void registerPlanner(PlanningDispatcher planningDispatcher);
 	
 	/**
 	 * Returns the energy agents {@link PlanningDispatcher}.
@@ -72,14 +80,12 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	public PlanningDispatcher getPlanningDispatcher() {
 		return this.getEnergyAgent().getPlanningDispatcher();
 	}
-	
 	/**
 	 * Checks if there is an invalid {@link PlanningDispatcher} state.
 	 * @return true, if is invalid planning dispatcher state
 	 */
 	private boolean isInvalidPlanningDispatcherState() {
 		return this.getEnergyAgent().isPlanningDispatcherTerminated()==true || this.getPlanningDispatcher()==null;
-		
 	}
 	
 	// ------------------------------------------------------------------------

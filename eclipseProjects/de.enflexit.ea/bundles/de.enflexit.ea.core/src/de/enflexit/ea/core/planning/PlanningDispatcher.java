@@ -36,6 +36,7 @@ public class PlanningDispatcher {
 	public PlanningDispatcher(AbstractEnergyAgent energyAgent, AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> dispatcherManager) {
 		this.energyAgent = energyAgent;
 		this.dispatcherManager = dispatcherManager;
+		this.dispatcherManager.registerPlanner(this);
 	}
 	
 	/**
