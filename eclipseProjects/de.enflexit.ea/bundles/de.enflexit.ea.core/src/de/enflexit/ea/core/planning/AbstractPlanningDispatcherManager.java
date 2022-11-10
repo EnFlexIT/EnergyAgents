@@ -10,6 +10,7 @@ import energy.optionModel.TechnicalInterfaceConfiguration;
 import energy.planning.EomPlanner;
 import energy.planning.EomPlannerEvent;
 import energy.planning.EomPlannerListener;
+import energy.planning.EomPlannerResult;
 import energy.planning.requests.AbstractCostFunctionRequest;
 import energy.planning.requests.AbstractEomPlannerRequest;
 import energy.planning.requests.AbstractInputMeasurementRequest;
@@ -47,7 +48,7 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	public AbstractPlanningDispatcherManager(Agent energyAgent) {
 		if (energyAgent == null) {
-			throw new NullPointerException("The Energy Agent instance is not allowed to null.");
+			throw new NullPointerException("The Energy Agent instance is not allowed to be null!");
 		}
 		this.setEnergyAgent(energyAgent);
 	}
@@ -87,6 +88,41 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	private boolean isInvalidPlanningDispatcherState() {
 		return this.getEnergyAgent().isPlanningDispatcherTerminated()==true || this.getPlanningDispatcher()==null;
 	}
+	
+	
+	/**
+	 * Starts the default planning, which means all strategies configured as planning strategies will be executed.
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	public void startPlanning(long planFrom, long planTo) {
+		this.startPlanning(null, planFrom, planTo);
+	}
+	/**
+	 * Starts the planning of the specified planner.
+	 *
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * be used; means that all strategies configured as planning strategies will be executed. 
+	 * @param planFrom the time to plan from
+	 * @param planTo the time to plan to
+	 */
+	public void startPlanning(String plannerName, long planFrom, long planTo) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.startPlanning(plannerName, planFrom, planTo);
+		}
+	}
+
+	/**
+	 * Returns the current EomPlannerResult for the specified Planner.
+	 *
+	 * @param plannerName the planner name
+	 * @return the EomPlannerResult
+	 */
+	public EomPlannerResult getEomPlannerResult(String plannerName) {
+		return this.getPlanningDispatcher().getEomPlannerResult(plannerName);
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- General notifications of an EomPlanner -----------------------------

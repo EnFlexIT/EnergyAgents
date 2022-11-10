@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.planning.PlanningDispatcherConfiguration.PlannerInformation;
+import energy.planning.EomPlannerResult;
 
 /**
  * The Class PlanningDispatcher serves as central entity for an energy agent to
@@ -19,13 +20,13 @@ import de.enflexit.ea.core.planning.PlanningDispatcherConfiguration.PlannerInfor
 public class PlanningDispatcher {
 
 	private AbstractEnergyAgent energyAgent;
-	
-	private PlanningDispatcherConfiguration configuration;
+
 	private AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> dispatcherManager;
-	
+	private PlanningDispatcherConfiguration configuration;
+
 	private HashMap<String, Planner> plannerHashMap;
-	
 	private boolean isDoTermination;
+	
 	
 	/**
 	 * Instantiates a new planning dispatcher.
@@ -38,14 +39,6 @@ public class PlanningDispatcher {
 		this.dispatcherManager = dispatcherManager;
 		this.dispatcherManager.registerPlanner(this);
 	}
-	
-	/**
-	 * Sets the PlanningDispatcherConfiguration for the dispatcher.
-	 * @param configuration the new configuration
-	 */
-	public void setConfiguration(PlanningDispatcherConfiguration configuration) {
-		this.configuration = configuration;
-	}
 	/**
 	 * Returns the configuration.
 	 * @return the configuration
@@ -55,15 +48,6 @@ public class PlanningDispatcher {
 			configuration = new PlanningDispatcherConfiguration();
 		}
 		return configuration;
-	}
-	/**
-	 * Returns the PlannerInformation for the specified planner.
-	 *
-	 * @param plannerName the planner name
-	 * @return the planner information
-	 */
-	public PlannerInformation getPlannerInformation(String plannerName) {
-		return this.getConfiguration().getPlannerInformation(plannerName);
 	}
 	
 	/**
@@ -87,6 +71,28 @@ public class PlanningDispatcher {
 		}
 	}
 	
+	/**
+	 * Returns the PlannerInformation for the specified planner.
+	 *
+	 * @param plannerName the planner name
+	 * @return the planner information
+	 */
+	public PlannerInformation getPlannerInformation(String plannerName) {
+		return this.getConfiguration().getPlannerInformation(plannerName);
+	}
+	/**
+	 * Returns the current EomPlannerResult for the specified Planner.
+	 *
+	 * @param plannerName the planner name
+	 * @return the EomPlannerResult
+	 */
+	public EomPlannerResult getEomPlannerResult(String plannerName) {
+		PlannerInformation pi = this.getPlannerInformation(plannerName);
+		if (pi!=null) {
+			return pi.getEomPlannerResult();
+		}
+		return null;
+	}
 	
 	
 	/**
