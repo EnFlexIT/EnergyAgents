@@ -17,30 +17,104 @@
         <property name="voltageL1Real" type="java.lang.Double">
             <column name="voltageL1Real" />
         </property>
-        <property name="voltageL1Complex" type="java.lang.Double">
-            <column name="voltageL1Complex" />
+        <property name="voltageL1Imag" type="java.lang.Double">
+            <column name="voltageL1Imag" />
+        </property>
+        <property name="voltageL1Abs" type="java.lang.Double">
+            <column name="voltageL1Abs" />
         </property>
 
 		<property name="voltageL2Real" type="java.lang.Double">
             <column name="voltageL2Real" />
         </property>
-        <property name="voltageL2Complex" type="java.lang.Double">
-            <column name="voltageL2Complex" />
+        <property name="voltageL2Imag" type="java.lang.Double">
+            <column name="voltageL2Imag" />
+        </property>
+        <property name="voltageL2Abs" type="java.lang.Double">
+            <column name="voltageL2Abs" />
         </property>
         
         <property name="voltageL3Real" type="java.lang.Double">
             <column name="voltageL3Real" />
         </property>
-        <property name="voltageL3Complex" type="java.lang.Double">
-            <column name="voltageL3Complex" />
+        <property name="voltageL3Imag" type="java.lang.Double">
+            <column name="voltageL3Imag" />
         </property>
+		<property name="voltageL3Abs" type="java.lang.Double">
+            <column name="voltageL3Abs" />
+        </property>
+        
+
+		<property name="currentL1" type="java.lang.Double">
+            <column name="currentL1" />
+        </property>
+        <property name="currentL2" type="java.lang.Double">
+            <column name="currentL2" />
+        </property> 
+		<property name="currentL3" type="java.lang.Double">
+            <column name="currentL3" />
+        </property>
+        
+        <property name="cosPhiL1" type="java.lang.Double">
+            <column name="cosPhiL1" />
+        </property>
+        <property name="cosPhiL2" type="java.lang.Double">
+            <column name="cosPhiL2" />
+        </property> 
+		<property name="cosPhiL3" type="java.lang.Double">
+            <column name="cosPhiL3" />
+        </property>
+        
+        
+        <property name="powerP1" type="java.lang.Double">
+            <column name="powerP1" />
+        </property>
+        <property name="powerQ1" type="java.lang.Double">
+            <column name="powerQ1" />
+        </property>
+        
+         <property name="powerP2" type="java.lang.Double">
+            <column name="powerP2" />
+        </property>
+        <property name="powerQ2" type="java.lang.Double">
+            <column name="powerQ2" />
+        </property>
+        
+         <property name="powerP3" type="java.lang.Double">
+            <column name="powerP3" />
+        </property>
+        <property name="powerQ3" type="java.lang.Double">
+            <column name="powerQ3" />
+        </property>
+        
+        
         
         <property name="voltageReal" type="java.lang.Double">
             <column name="voltageReal" />
         </property>
-        <property name="voltageComplex" type="java.lang.Double">
-            <column name="voltageComplex" />
+        <property name="voltageImag" type="java.lang.Double">
+            <column name="voltageImag" />
         </property>
+		<property name="voltageAbs" type="java.lang.Double">
+            <column name="voltageAbs" />
+        </property>
+        
+		<property name="current" type="java.lang.Double">
+            <column name="current" />
+        </property>
+        <property name="cosPhi" type="java.lang.Double">
+            <column name="cosPhi" />
+        </property>
+        
+        <property name="powerP" type="java.lang.Double">
+            <column name="powerP" />
+        </property>
+        <property name="powerQ" type="java.lang.Double">
+            <column name="powerQ" />
+        </property>
+        
+        
+        
         <property name="voltageViolations" type="java.lang.Double">
             <column name="voltageViolations" />
         </property>

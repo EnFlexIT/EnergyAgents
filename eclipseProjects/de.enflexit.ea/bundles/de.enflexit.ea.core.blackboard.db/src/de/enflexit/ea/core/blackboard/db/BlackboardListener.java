@@ -205,6 +205,10 @@ public class BlackboardListener implements BlackboardListenerService {
 			TechnicalSystemStateEvaluation tsse = transformerTSSEs.get(trafoID);
 
 			// --- Values from electrical node state ----------------
+			UniPhaseElectricalNodeState upensL1 = null;
+			UniPhaseElectricalNodeState upensL2 = null;
+			UniPhaseElectricalNodeState upensL3 = null;
+			
 			double voltageReal = 0;
 			double voltageComplex = 0;
 			int voltageViolation = 0;
@@ -212,7 +216,9 @@ public class BlackboardListener implements BlackboardListenerService {
 			if (elNodeState instanceof TriPhaseElectricalNodeState) {
 				
 				TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
-				UniPhaseElectricalNodeState upensL1 = tens.getL1();
+				upensL1 = tens.getL1();
+				upensL2 = tens.getL2();
+				upensL3 = tens.getL3();
 				
 				voltageReal = this.getVoltageReal(upensL1);
 				voltageComplex = this.getVoltageComplex(upensL1);
@@ -252,9 +258,39 @@ public class BlackboardListener implements BlackboardListenerService {
 			trafoResult.setIdExecution(this.getIDExecution());
 			trafoResult.setIdTrafo(trafoID);
 			trafoResult.setTimestamp(calendar);
+
+			
+			trafoResult.setLvVoltageL1Real(upensL1==null ? 0 : upensL1.getVoltageRealNotNull().getValue());
+			trafoResult.setLvVoltageL1Imag(upensL1==null ? 0 : upensL1.getVoltageImagNotNull().getValue());
+			trafoResult.setLvVoltageL1Abs( upensL1==null ? 0 : upensL1.getVoltageAbsNotNull().getValue());
+			
+			trafoResult.setLvVoltageL2Real(upensL2==null ? 0 : upensL2.getVoltageRealNotNull().getValue());
+			trafoResult.setLvVoltageL2Imag(upensL2==null ? 0 : upensL2.getVoltageImagNotNull().getValue());
+			trafoResult.setLvVoltageL2Abs( upensL2==null ? 0 : upensL2.getVoltageAbsNotNull().getValue());
+			
+			trafoResult.setLvVoltageL3Real(upensL3==null ? 0 : upensL3.getVoltageRealNotNull().getValue());
+			trafoResult.setLvVoltageL3Imag(upensL3==null ? 0 : upensL3.getVoltageImagNotNull().getValue());
+			trafoResult.setLvVoltageL3Abs( upensL3==null ? 0 : upensL3.getVoltageAbsNotNull().getValue());
+			
+			trafoResult.setLvCurrentL1(upensL1==null ? 0 : upensL1.getCurrentNotNull().getValue());
+			trafoResult.setLvCurrentL2(upensL2==null ? 0 : upensL2.getCurrentNotNull().getValue());
+			trafoResult.setLvCurrentL3(upensL3==null ? 0 : upensL3.getCurrentNotNull().getValue());
+			
+			trafoResult.setLvCosPhiL1(upensL1==null ? 0 : upensL1.getCosPhi());
+			trafoResult.setLvCosPhiL2(upensL2==null ? 0 : upensL2.getCosPhi());
+			trafoResult.setLvCosPhiL3(upensL3==null ? 0 : upensL3.getCosPhi());
+			
+			trafoResult.setLvPowerP1(upensL1==null ? 0 : upensL1.getPNotNull().getValue());
+			trafoResult.setLvPowerQ1(upensL1==null ? 0 : upensL1.getQNotNull().getValue());
+			trafoResult.setLvPowerP2(upensL2==null ? 0 : upensL2.getPNotNull().getValue());
+			trafoResult.setLvPowerQ2(upensL2==null ? 0 : upensL2.getQNotNull().getValue());
+			trafoResult.setLvPowerP3(upensL3==null ? 0 : upensL3.getPNotNull().getValue());
+			trafoResult.setLvPowerQ3(upensL3==null ? 0 : upensL3.getQNotNull().getValue());
+
+			
 			
 			trafoResult.setVoltageReal(voltageReal);
-			trafoResult.setVoltageComplex(voltageComplex);
+			trafoResult.setVoltageImag(voltageComplex);
 			trafoResult.setVoltageViolations(voltageViolation);
 			
 			trafoResult.setResidualLoadP(residualLoadP);
@@ -313,9 +349,13 @@ public class BlackboardListener implements BlackboardListenerService {
 					// --- => UniPhaseCableState ------------------------------
 					UniPhaseCableState upcs = (UniPhaseCableState) cableState;
 					edgeResult.setCurrentReal(upcs.getCurrentReal().getValue());
-					edgeResult.setCurrentComplex(upcs.getCurrentImag().getValue());
+					edgeResult.setCurrentImag(upcs.getCurrentImag().getValue());
+					edgeResult.setCurrentAbs(upcs.getCurrent().getValue());
+					edgeResult.setCosPhi(upcs.getCosPhi());
 					edgeResult.setLossesP(upcs.getLossesP().getValue());
 					edgeResult.setLossesQ(upcs.getLossesQ().getValue());
+					edgeResult.setPowerP(upcs.getP().getValue());
+					edgeResult.setPowerQ(upcs.getQ().getValue());
 					edgeResult.setUtilization(upcs.getUtilization());
 					
 				} else if (cableState instanceof TriPhaseCableState) {
@@ -326,29 +366,49 @@ public class BlackboardListener implements BlackboardListenerService {
 					UniPhaseCableState upcsL3 = tpcs.getPhase3();
 					
 					edgeResult.setCurrentL1Real(upcsL1.getCurrentReal().getValue());
-					edgeResult.setCurrentL1Complex(upcsL1.getCurrentImag().getValue());
+					edgeResult.setCurrentL1Imag(upcsL1.getCurrentImag().getValue());
+					edgeResult.setCurrentL1Abs(upcsL1.getCurrent().getValue());
+					edgeResult.setCosPhiL1(upcsL1.getCosPhi());
 					edgeResult.setLossesL1P(upcsL1.getLossesP().getValue());
 					edgeResult.setLossesL1Q(upcsL1.getLossesQ().getValue());
-					
+					edgeResult.setPowerP1(upcsL1.getP().getValue());
+					edgeResult.setPowerQ1(upcsL1.getQ().getValue());
+
 					edgeResult.setCurrentL2Real(upcsL2.getCurrentReal().getValue());
-					edgeResult.setCurrentL2Complex(upcsL2.getCurrentImag().getValue());
+					edgeResult.setCurrentL2Imag(upcsL2.getCurrentImag().getValue());
+					edgeResult.setCurrentL2Abs(upcsL2.getCurrent().getValue());
+					edgeResult.setCosPhiL2(upcsL2.getCosPhi());
 					edgeResult.setLossesL2P(upcsL2.getLossesP().getValue());
 					edgeResult.setLossesL2Q(upcsL2.getLossesQ().getValue());
-					
+					edgeResult.setPowerP2(upcsL2.getP().getValue());
+					edgeResult.setPowerQ2(upcsL2.getQ().getValue());
+
 					edgeResult.setCurrentL3Real(upcsL3.getCurrentReal().getValue());
-					edgeResult.setCurrentL3Complex(upcsL3.getCurrentImag().getValue());
+					edgeResult.setCurrentL3Imag(upcsL3.getCurrentImag().getValue());
+					edgeResult.setCurrentL3Abs(upcsL3.getCurrent().getValue());
+					edgeResult.setCosPhiL3(upcsL3.getCosPhi());
 					edgeResult.setLossesL3P(upcsL3.getLossesP().getValue());
 					edgeResult.setLossesL3Q(upcsL3.getLossesQ().getValue());
+					edgeResult.setPowerP3(upcsL3.getP().getValue());
+					edgeResult.setPowerQ3(upcsL3.getQ().getValue());
 					
 					double iReal = upcsL1.getCurrentReal().getValue() + upcsL2.getCurrentReal().getValue() + upcsL3.getCurrentReal().getValue();
 					double iImag = upcsL1.getCurrentImag().getValue() + upcsL2.getCurrentImag().getValue() + upcsL3.getCurrentImag().getValue();
+					double iAbs  = Math.sqrt(Math.pow(iReal, 2) + Math.pow(iImag, 2));
+					
 					double dP = upcsL1.getLossesP().getValue() + upcsL2.getLossesP().getValue() + upcsL3.getLossesP().getValue();
 					double dQ = upcsL1.getLossesQ().getValue() + upcsL2.getLossesQ().getValue() + upcsL3.getLossesQ().getValue();
 					
+					double powerP = upcsL1.getP().getValue() + upcsL2.getP().getValue() + upcsL3.getP().getValue();
+					double powerQ = upcsL1.getQ().getValue() + upcsL2.getQ().getValue() + upcsL3.getQ().getValue();
+
 					edgeResult.setCurrentReal(iReal);
-					edgeResult.setCurrentComplex(iImag);
+					edgeResult.setCurrentImag(iImag);
+					edgeResult.setCurrentAbs(iAbs);
 					edgeResult.setLossesP(dP);
 					edgeResult.setLossesQ(dQ);
+					edgeResult.setPowerP(powerP);
+					edgeResult.setPowerQ(powerQ);
 					edgeResult.setUtilization(upcsL1.getUtilization());
 					
 				}
@@ -397,10 +457,18 @@ public class BlackboardListener implements BlackboardListenerService {
 					UniPhaseElectricalNodeState upens = (UniPhaseElectricalNodeState) elNodeState;
 					
 					nodeResult.setVoltageReal(upens.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageComplex(upens.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageImag(upens.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageAbs(upens.getVoltageAbsNotNull().getValue());
 					
-					int voltageViolation = this.getVoltageViolation(nodeResult.getVoltageReal(), nodeResult.getVoltageComplex());
+					nodeResult.setCurrent(upens.getCurrent().getValue());
+					nodeResult.setCosPhi(upens.getCosPhi());
+					
+					nodeResult.setPowerP(upens.getPCalculated());
+					nodeResult.setPowerQ(upens.getQCalculated());
+					
+					int voltageViolation = this.getVoltageViolation(nodeResult.getVoltageReal(), nodeResult.getVoltageImag());
 					nodeResult.setVoltageViolations(voltageViolation);
+					
 					
 				} else if (elNodeState instanceof TriPhaseElectricalNodeState) {
 					// --- => TriPhaseElectricalNodeState ---------------------
@@ -411,21 +479,44 @@ public class BlackboardListener implements BlackboardListenerService {
 					
 					double voltageReal = this.getVoltageReal(upensL1);
 					double voltageComplex = this.getVoltageComplex(upensL1);
-					int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
 					
 					nodeResult.setVoltageL1Real(upensL1.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL1Complex(upensL1.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL1Imag(upensL1.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL1Abs(upensL1.getVoltageAbsNotNull().getValue());
 					
 					nodeResult.setVoltageL2Real(upensL2.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL2Complex(upensL2.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL2Imag(upensL2.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL2Abs(upensL2.getVoltageAbsNotNull().getValue());
 					
 					nodeResult.setVoltageL3Real(upensL3.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL3Complex(upensL3.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL3Imag(upensL3.getVoltageImagNotNull().getValue());
+					nodeResult.setVoltageL3Abs(upensL3.getVoltageAbsNotNull().getValue());
 					
 					nodeResult.setVoltageReal(voltageReal);
-					nodeResult.setVoltageComplex(voltageComplex);
-					nodeResult.setVoltageViolations(voltageViolation);
+					nodeResult.setVoltageImag(voltageComplex);
 					
+					nodeResult.setCurrentL1(upensL1.getCurrent().getValue());
+					nodeResult.setCurrentL2(upensL2.getCurrent().getValue());
+					nodeResult.setCurrentL3(upensL3.getCurrent().getValue());
+					
+					nodeResult.setCosPhiL1(upensL1.getCosPhi());
+					nodeResult.setCosPhiL2(upensL2.getCosPhi());
+					nodeResult.setCosPhiL3(upensL3.getCosPhi());
+					
+					nodeResult.setPowerP1(upensL1.getPCalculated());
+					nodeResult.setPowerP2(upensL2.getPCalculated());
+					nodeResult.setPowerP3(upensL3.getPCalculated());
+
+					nodeResult.setPowerQ1(upensL1.getQCalculated());
+					nodeResult.setPowerQ2(upensL2.getQCalculated());
+					nodeResult.setPowerQ3(upensL3.getQCalculated());
+					
+					nodeResult.setPowerP(upensL1.getPCalculated() + upensL2.getPCalculated() + upensL3.getPCalculated());
+					nodeResult.setPowerQ(upensL1.getQCalculated() + upensL2.getQCalculated() + upensL3.getQCalculated());
+					
+					
+					int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
+					nodeResult.setVoltageViolations(voltageViolation);
 				}
 				// --- Add to list --------------------------------------------
 				nodeResultList.add(nodeResult);

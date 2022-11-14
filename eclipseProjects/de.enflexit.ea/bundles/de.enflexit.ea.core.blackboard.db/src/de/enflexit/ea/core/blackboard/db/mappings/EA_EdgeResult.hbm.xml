@@ -17,8 +17,14 @@
 		<property name="currentL1Real" type="java.lang.Double">
             <column name="currentL1Real" />
         </property>
-        <property name="currentL1Complex" type="java.lang.Double">
-            <column name="currentL1Complex" />
+        <property name="currentL1Imag" type="java.lang.Double">
+            <column name="currentL1Imag" />
+        </property>
+        <property name="currentL1Abs" type="java.lang.Double">
+            <column name="currentL1Abs" />
+        </property>
+        <property name="cosPhiL1" type="java.lang.Double">
+            <column name="cosPhiL1" />
         </property>
         <property name="lossesL1P" type="java.lang.Double">
             <column name="lossesL1P" />
@@ -26,12 +32,25 @@
         <property name="lossesL1Q" type="java.lang.Double">
             <column name="lossesL1Q" />
         </property>
+        <property name="powerP1" type="java.lang.Double">
+            <column name="powerP1" />
+        </property>
+        <property name="powerQ1" type="java.lang.Double">
+            <column name="powerQ1" />
+        </property>
+
 
 		<property name="currentL2Real" type="java.lang.Double">
             <column name="currentL2Real" />
         </property>
-        <property name="currentL2Complex" type="java.lang.Double">
-            <column name="currentL2Complex" />
+        <property name="currentL2Imag" type="java.lang.Double">
+            <column name="currentL2Imag" />
+        </property>
+        <property name="currentL2Abs" type="java.lang.Double">
+            <column name="currentL2Abs" />
+        </property>
+        <property name="cosPhiL2" type="java.lang.Double">
+            <column name="cosPhiL2" />
         </property>
         <property name="lossesL2P" type="java.lang.Double">
             <column name="lossesL2P" />
@@ -39,12 +58,25 @@
         <property name="lossesL2Q" type="java.lang.Double">
             <column name="lossesL2Q" />
         </property>
+        <property name="powerP2" type="java.lang.Double">
+            <column name="powerP2" />
+        </property>
+        <property name="powerQ2" type="java.lang.Double">
+            <column name="powerQ2" />
+        </property>
+
 
 		<property name="currentL3Real" type="java.lang.Double">
             <column name="currentL3Real" />
         </property>
-        <property name="currentL3Complex" type="java.lang.Double">
-            <column name="currentL3Complex" />
+        <property name="currentL3Imag" type="java.lang.Double">
+            <column name="currentL3Imag" />
+        </property>
+        <property name="currentL3Abs" type="java.lang.Double">
+            <column name="currentL3Abs" />
+        </property>
+        <property name="cosPhiL3" type="java.lang.Double">
+            <column name="cosPhiL3" />
         </property>
         <property name="lossesL3P" type="java.lang.Double">
             <column name="lossesL3P" />
@@ -52,13 +84,25 @@
         <property name="lossesL3Q" type="java.lang.Double">
             <column name="lossesL3Q" />
         </property>
+        <property name="powerP3" type="java.lang.Double">
+            <column name="powerP3" />
+        </property>
+        <property name="powerQ3" type="java.lang.Double">
+            <column name="powerQ3" />
+        </property>
 
 
 		<property name="currentReal" type="java.lang.Double">
             <column name="currentReal" />
         </property>
-        <property name="currentComplex" type="java.lang.Double">
-            <column name="currentComplex" />
+        <property name="currentImag" type="java.lang.Double">
+            <column name="currentImag" />
+        </property>
+        <property name="currentAbs" type="java.lang.Double">
+            <column name="currentAbs" />
+        </property>
+        <property name="cosPhi" type="java.lang.Double">
+            <column name="cosPhi" />
         </property>
         <property name="lossesP" type="java.lang.Double">
             <column name="lossesP" />
@@ -66,6 +110,13 @@
         <property name="lossesQ" type="java.lang.Double">
             <column name="lossesQ" />
         </property>
+        <property name="powerP" type="java.lang.Double">
+            <column name="powerP" />
+        </property>
+        <property name="powerQ" type="java.lang.Double">
+            <column name="powerQ" />
+        </property>
+        
         
         <property name="utilization" type="java.lang.Double">
             <column name="utilization" />

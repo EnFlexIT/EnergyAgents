@@ -14,11 +14,153 @@
 	        </key-property>
 		</composite-id>
 		
+		
+		<property name="hvVoltageL1Real" type="java.lang.Double">
+            <column name="hvVoltageL1Real" />
+        </property>
+        <property name="hvVoltageL1Imag" type="java.lang.Double">
+            <column name="hvVoltageL1Imag" />
+        </property>
+        <property name="hvVoltageL1Abs" type="java.lang.Double">
+            <column name="hvVoltageL1Abs" />
+        </property>
+
+		<property name="hvVoltageL2Real" type="java.lang.Double">
+            <column name="hvVoltageL2Real" />
+        </property>
+        <property name="hvVoltageL2Imag" type="java.lang.Double">
+            <column name="hvVoltageL2Imag" />
+        </property>
+        <property name="hvVoltageL2Abs" type="java.lang.Double">
+            <column name="hvVoltageL2Abs" />
+        </property>
+        
+        <property name="hvVoltageL3Real" type="java.lang.Double">
+            <column name="hvVoltageL3Real" />
+        </property>
+        <property name="hvVoltageL3Imag" type="java.lang.Double">
+            <column name="hvVoltageL3Imag" />
+        </property>
+		<property name="hvVoltageL3Abs" type="java.lang.Double">
+            <column name="hvVoltageL3Abs" />
+        </property>
+
+		<property name="hvCurrentL1" type="java.lang.Double">
+            <column name="hvCurrentL1" />
+        </property>
+        <property name="hvCurrentL2" type="java.lang.Double">
+            <column name="hvCurrentL2" />
+        </property> 
+		<property name="hvCurrentL3" type="java.lang.Double">
+            <column name="hvCurrentL3" />
+        </property>
+        
+        <property name="hvCosPhiL1" type="java.lang.Double">
+            <column name="hvCosPhiL1" />
+        </property>
+        <property name="hvCosPhiL2" type="java.lang.Double">
+            <column name="hvCosPhiL2" />
+        </property> 
+		<property name="hvCosPhiL3" type="java.lang.Double">
+            <column name="hvCosPhiL3" />
+        </property>
+        
+        <property name="hvPowerP1" type="java.lang.Double">
+            <column name="hvPowerP1" />
+        </property>
+        <property name="hvPowerQ1" type="java.lang.Double">
+            <column name="hvPowerQ1" />
+        </property>
+        <property name="hvPowerP2" type="java.lang.Double">
+            <column name="hvPowerP2" />
+        </property>
+        <property name="hvPowerQ2" type="java.lang.Double">
+            <column name="hvPowerQ2" />
+        </property>
+        <property name="hvPowerP3" type="java.lang.Double">
+            <column name="hvPowerP3" />
+        </property>
+        <property name="hvPowerQ3" type="java.lang.Double">
+            <column name="hvPowerQ3" />
+        </property>
+        
+		
+		
+		<property name="lvVoltageL1Real" type="java.lang.Double">
+            <column name="lvVoltageL1Real" />
+        </property>
+        <property name="lvVoltageL1Imag" type="java.lang.Double">
+            <column name="lvVoltageL1Imag" />
+        </property>
+        <property name="lvVoltageL1Abs" type="java.lang.Double">
+            <column name="lvVoltageL1Abs" />
+        </property>
+
+		<property name="lvVoltageL2Real" type="java.lang.Double">
+            <column name="lvVoltageL2Real" />
+        </property>
+        <property name="lvVoltageL2Imag" type="java.lang.Double">
+            <column name="lvVoltageL2Imag" />
+        </property>
+        <property name="lvVoltageL2Abs" type="java.lang.Double">
+            <column name="lvVoltageL2Abs" />
+        </property>
+        
+        <property name="lvVoltageL3Real" type="java.lang.Double">
+            <column name="lvVoltageL3Real" />
+        </property>
+        <property name="lvVoltageL3Imag" type="java.lang.Double">
+            <column name="lvVoltageL3Imag" />
+        </property>
+		<property name="lvVoltageL3Abs" type="java.lang.Double">
+            <column name="lvVoltageL3Abs" />
+        </property>
+
+		<property name="lvCurrentL1" type="java.lang.Double">
+            <column name="lvCurrentL1" />
+        </property>
+        <property name="lvCurrentL2" type="java.lang.Double">
+            <column name="lvCurrentL2" />
+        </property> 
+		<property name="lvCurrentL3" type="java.lang.Double">
+            <column name="lvCurrentL3" />
+        </property>
+        
+        <property name="lvCosPhiL1" type="java.lang.Double">
+            <column name="lvCosPhiL1" />
+        </property>
+        <property name="lvCosPhiL2" type="java.lang.Double">
+            <column name="lvCosPhiL2" />
+        </property> 
+		<property name="lvCosPhiL3" type="java.lang.Double">
+            <column name="lvCosPhiL3" />
+        </property>
+        
+        <property name="lvPowerP1" type="java.lang.Double">
+            <column name="lvPowerP1" />
+        </property>
+        <property name="lvPowerQ1" type="java.lang.Double">
+            <column name="lvPowerQ1" />
+        </property>
+        <property name="lvPowerP2" type="java.lang.Double">
+            <column name="lvPowerP2" />
+        </property>
+        <property name="lvPowerQ2" type="java.lang.Double">
+            <column name="lvPowerQ2" />
+        </property>
+        <property name="lvPowerP3" type="java.lang.Double">
+            <column name="lvPowerP3" />
+        </property>
+        <property name="lvPowerQ3" type="java.lang.Double">
+            <column name="lvPowerQ3" />
+        </property>
+		
+				
         <property name="voltageReal" type="java.lang.Double">
             <column name="voltageReal" />
         </property>
-        <property name="voltageComplex" type="java.lang.Double">
-            <column name="voltageComplex" />
+        <property name="voltageImag" type="java.lang.Double">
+            <column name="voltageImag" />
         </property>
         <property name="voltageViolations" type="java.lang.Double">
             <column name="voltageViolations" />
