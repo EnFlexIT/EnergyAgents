@@ -4,7 +4,6 @@ import de.enflexit.common.Observable;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOReal;
 import de.enflexit.ea.core.AbstractIOSimulated;
-import de.enflexit.ea.core.AbstractInternalDataModel.CHANGED;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
@@ -71,9 +70,21 @@ public class TransformerAgent extends AbstractEnergyAgent {
 			this.startSubscriptionInitiatorBehaviour();
 		} else {
 			System.out.println(this.getLocalName() + ": Sensor AID not locally available, requesting from the CEA");
-			this.startPhoneBookQueryForLocalName(this.getIDSensorToSubscribeTo());
+			this.startPhoneBookQueryForLocalName(this.getInternalDataModel().getIDSensorToSubscribeTo());
 		}
 	}
+	/**
+	 * Starts a {@link PhoneBookQueryInitiator} that requests info about the agent 
+	 * with the specified local name from the CEA.
+	 * @param localName the local name
+	 */
+	private void startPhoneBookQueryForLocalName(String localName){
+		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
+		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
+		PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry> queryInitiator = new PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry>(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
+		this.addBehaviour(queryInitiator);
+	}
+	
 	/**
 	 * Builds the sensor AID for the subscription message.
 	 * @return the sensor AID
@@ -81,7 +92,7 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	private AID getSensorAID() {
 		
 		AID sensorAID = null;
-		String sensorID = this.getIDSensorToSubscribeTo();
+		String sensorID = this.getInternalDataModel().getIDSensorToSubscribeTo();
 		
 		if (sensorID!=null) {
 			AgentOperatingMode operatingMode = this.getAgentOperatingMode();
@@ -96,24 +107,31 @@ public class TransformerAgent extends AbstractEnergyAgent {
 		return sensorAID;
 	}
 	/**
-	 * Returns the sensor ID to which this agent will subscribe sensor information.
-	 * @return the ID sensor to subscribe to
-	 */
-	public String getIDSensorToSubscribeTo() {
-		return this.getInternalDataModel().getIDSensorToSubscribeTo();
-	}
-	
-	/**
 	 * Start the subscription responder behaviour.
 	 */
-	private void startSubscriptionInitiatorBehaviour() {
-		
-		// --- Start the behaviour ------------------------
-		this.addBehaviour(this.getSubscriptionInitiatorBehaviour(this.prepareSubscriptionMessage()));
-		
-		// --- Make sure protocol messages are not consumed by the default message receive behaviour ---
-		MessageTemplate matchFipaSubscribe = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-		this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(matchFipaSubscribe);
+	public void startSubscriptionInitiatorBehaviour() {
+
+		// --- If the subscription initiator is not started yet, try to start it ----
+		if (this.subscriptionInitiatorBehaviour==null) {
+			AID sensorAID = this.getInternalDataModel().getAidFromPhoneBook(this.getInternalDataModel().getIDSensorToSubscribeTo());
+			if (sensorAID!=null) {
+
+				System.out.println(this.getLocalName() + ": Got the sensor AID from the CEA, starting the subscription");
+
+				// --- Define subscription message ------------------
+				ACLMessage subscriptionMessage = new ACLMessage(ACLMessage.SUBSCRIBE);
+				subscriptionMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
+				subscriptionMessage.setConversationId(GlobalHyGridConstants.CONVERSATION_ID_MEASUREMENT_SUBSCRIPTION);
+				subscriptionMessage.addReceiver(this.getSensorAID());
+				
+				// --- Start the behaviour --------------------------
+				this.addBehaviour(this.getSubscriptionInitiatorBehaviour(subscriptionMessage));
+				
+				// --- Make sure protocol messages are not consumed by the default message receive behaviour ---
+				MessageTemplate matchFipaSubscribe = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
+				this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(matchFipaSubscribe);
+			}
+		}
 		
 	}
 	/**
@@ -127,37 +145,13 @@ public class TransformerAgent extends AbstractEnergyAgent {
 		return subscriptionInitiatorBehaviour;
 	}
 	
-	/**
-	 * Prepare the subscription message.
-	 * @return the subscription message
-	 */
-	private ACLMessage prepareSubscriptionMessage() {
-		
-		ACLMessage subscriptionMessage = new ACLMessage(ACLMessage.SUBSCRIBE);
-		subscriptionMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-		subscriptionMessage.setConversationId(GlobalHyGridConstants.CONVERSATION_ID_MEASUREMENT_SUBSCRIPTION);
-		subscriptionMessage.addReceiver(this.getSensorAID());
-		return subscriptionMessage;
-	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.energyAgent.core.AbstractEnergyAgent#onObserverUpdate(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void onObserverUpdate(Observable observable, Object updateObject) {
-		
-		// --- Phone book update --------------------------
-		if (observable==this.getInternalDataModel() && updateObject==CHANGED.PHONE_BOOK) {
-			
-			// --- If the subscription initiator is not started yet, try to start it ----
-			if (this.subscriptionInitiatorBehaviour==null) {
-				AID sensorAID = this.getInternalDataModel().getAidFromPhoneBook(this.getIDSensorToSubscribeTo());
-				if (sensorAID!=null) {
-					System.out.println(this.getLocalName() + ": Got the sensor AID from the CEA, starting the subscription");
-					this.startSubscriptionInitiatorBehaviour();
-				}
-			}
-		}
+	
 	}
 	
 	/* (non-Javadoc)
@@ -172,15 +166,4 @@ public class TransformerAgent extends AbstractEnergyAgent {
 		}
 	}
 	
-	/**
-	 * Starts a {@link PhoneBookQueryInitiator} that requests info about the agent 
-	 * with the specified local name from the CEA.
-	 * @param localName the local name
-	 */
-	private void startPhoneBookQueryForLocalName(String localName){
-		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
-		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
-		PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry> queryInitiator = new PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry>(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
-		this.addBehaviour(queryInitiator);
-	}
 }

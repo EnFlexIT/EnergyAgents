@@ -14,8 +14,8 @@ import de.enflexit.common.Observable;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.DirectoryHelper;
-import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.DirectoryHelper.DirectoryType;
+import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
@@ -53,9 +53,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	public static enum CHANGED {
 		NETWORK_MODEL,
 		NETWORK_COMPONENT,
-		MEASUREMENTS_FROM_SYSTEM,
-		PHONE_BOOK,
-		OWN_PHONEBOOK_ENTRY_UPDATED
+		MEASUREMENTS_FROM_SYSTEM
 	}
 	
 	/** The Enumeration of ControlledSystemType's. */
@@ -416,9 +414,19 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 				boolean doPersist = (this.energyAgent.getAgentOperatingMode()==AgentOperatingMode.RealSystem);
 				phoneBook = new PhoneBook(this.energyAgent.getAID(), doPersist);
 			}
+			// --- Add as listener to own phonebook -----------------
+			if (phoneBook!=null) {
+				phoneBook.addPhoneBookListener(this);
+			}
 		}
 		return phoneBook;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.jade.phonebook.PhoneBookListener#handlePhoneBookEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
+	 */
+	@Override
+	public void handlePhoneBookEvent(PhoneBookEvent pbEvent) { }
 	
 	/**
 	 * Gets the phone book entry class.
@@ -439,6 +447,7 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 				if (this.getNetworkComponent()!=null) {
 					myPhoneBookEntry.setComponentType(this.getNetworkComponent().getType());
 				}
+				
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException	| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("[" + this.getClass().getSimpleName() + " of " + this.energyAgent.getLocalName() + "] Error creatong new phone book entry instance");
 				e.printStackTrace();
@@ -452,7 +461,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public void setMyPhoneBookEntry(GenericPhoneBookEntry myPhoneBookEntry) {
 		this.myPhoneBookEntry = myPhoneBookEntry;
-		this.setChangedAndNotify(CHANGED.OWN_PHONEBOOK_ENTRY_UPDATED);
 	}
 	
 	/**
@@ -461,7 +469,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public void addEntryToPhoneBook(GenericPhoneBookEntry entry) {
 		this.getPhoneBook().addEntry(entry);
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	/**
 	 * Adds a list of entries to phone book.
@@ -469,7 +476,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public void addEntriesToPhoneBook(List<GenericPhoneBookEntry> entries) {
 		this.getPhoneBook().addEntries(entries);
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -484,15 +490,6 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	 */
 	public AID getAidFromPhoneBook(String localName) {
 		return this.getPhoneBook().getAidForLocalName(localName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.jade.phonebook.PhoneBookListener#notifyEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
-	 */
-	@Override
-	public void handlePhoneBookEvent(PhoneBookEvent event) {
-		// --- Added for backwards compatibility ----------
-		this.setChangedAndNotify(CHANGED.PHONE_BOOK);
 	}
 	
 	

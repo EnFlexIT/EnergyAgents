@@ -40,8 +40,6 @@ import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestin
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.core.planning.PlanningDispatcher;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
-import de.enflexit.jade.phonebook.PhoneBookEvent;
-import de.enflexit.jade.phonebook.PhoneBookListener;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
 import energy.FixedVariableList;
@@ -67,7 +65,7 @@ import jade.lang.acl.MessageTemplate;
  * @author Nils Loose - DAWIS - ICB - University of Duisburg-Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractEnergyAgent extends Agent implements Observer, PhoneBookListener {
+public abstract class AbstractEnergyAgent extends Agent implements Observer {
 
 	private static final long serialVersionUID = -6729957368366493537L;
 	
@@ -194,8 +192,8 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		AID aidPhoneBookMaintainer = this.getInternalDataModel().getCentralPhoneBookMaintainerAID();
 		
 		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, myPhoneBookEntry, aidPhoneBookMaintainer, true);
+		phoneBookRegistrationInitiator.addPhoneBookListener(this.getInternalDataModel());
 		this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(MessageTemplate.MatchConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID));
-		phoneBookRegistrationInitiator.addPhoneBookListener(this);
 		this.addBehaviour(phoneBookRegistrationInitiator);
 	}
 	
@@ -930,14 +928,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer, Pho
 		return this.liveMonitoringSubscriptionResponder;
 	}
 	
-	/**
-	 * Notifies the agent about phone book events.
-	 * @param event the PhoneBookEvent
-	 */
-	@Override
-	public void handlePhoneBookEvent(PhoneBookEvent event) {
-		// --- Nothing here yet. Override this method to handle events in subclasses.
-	}
 	
 	/**
 	 * Prints the specified message as error or info to the console.

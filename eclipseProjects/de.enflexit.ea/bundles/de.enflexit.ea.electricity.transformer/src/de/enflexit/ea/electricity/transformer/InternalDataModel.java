@@ -1,5 +1,6 @@
 package de.enflexit.ea.electricity.transformer;
 
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -9,13 +10,15 @@ import org.awb.env.networkModel.helper.NeighborhoodSearch;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
-import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
+import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBookEvent;
+import de.enflexit.jade.phonebook.PhoneBookEvent.Type;
 import energy.FixedVariableList;
 import energy.helper.NumberHelper;
 import energy.optionModel.SystemVariableDefinitionStaticModel;
@@ -33,6 +36,9 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	public static String DOMAIN_ELECTRICITY_400V = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
 	public static String DOMAIN_ELECTRICITY_10KV = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV;
 	
+	private TransformerAgent transformerAgent;
+	
+	
 	private GraphNode myGraphNode;
 	private TransformerDataModel transformerDataModel;
 	
@@ -46,7 +52,6 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	private FixedVariableList setpointsToSystem;
 	
 	private double requestedVoltageAdjustment = 0;
-//	private Vector<AID> aidsOfDistrictAgents = null;
 	private int nDistrictAgentsForCNP;
 	
 	private int acceptedVoltageAdjustment = 0;
@@ -59,10 +64,11 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	
 	/**
 	 * Instantiates a new internal data model.
-	 * @param agent the agent
+	 * @param transformerAgent the transformer agent instance
 	 */
-	public InternalDataModel(AbstractEnergyAgent agent) {
-		super(agent);
+	public InternalDataModel(TransformerAgent transformerAgent) {
+		super(transformerAgent);
+		this.transformerAgent = transformerAgent;
 	}
 	
 	/**
@@ -269,14 +275,6 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 		this.requestedVoltageAdjustment = requestedVoltageAdjustment;
 	}
 
-
-//	public Vector<AID> getAidsOfDistrictAgents() {
-//		return aidsOfDistrictAgents;
-//	}
-//	public void setAidsOfDistrictAgents(Vector<AID> aidsOfDistrictAgents) {
-//		this.aidsOfDistrictAgents = aidsOfDistrictAgents;
-//	}
-	
 	
 	public int getnDistrictAgentsForCNP() {
 		return nDistrictAgentsForCNP;
@@ -325,4 +323,30 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 		return EnergyAgentPhoneBookEntry.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.AbstractInternalDataModel#handlePhoneBookEvent(de.enflexit.jade.phonebook.PhoneBookEvent)
+	 */
+	@Override
+	public void handlePhoneBookEvent(PhoneBookEvent pbEvent) {
+		
+		if (pbEvent.getType()==Type.REGISTRATION_DONE) {
+			// --- My own registration was done here ----------------
+			this.setMyPhoneBookEntry((EnergyAgentPhoneBookEntry) pbEvent.getFirstAffectedEntry());
+		
+		} else if (pbEvent.getType()==Type.ENTRIES_ADDED) {
+			// --- New or updated PhoneBook entries -----------------
+			List<? extends AbstractPhoneBookEntry> addedEntries = pbEvent.getAffectedEntries();
+			for (AbstractPhoneBookEntry pbEntry : addedEntries) {
+				if (pbEntry instanceof EnergyAgentPhoneBookEntry) {
+					EnergyAgentPhoneBookEntry peakPbEntry = (EnergyAgentPhoneBookEntry) pbEntry;
+					if (peakPbEntry.getAgentAID().getLocalName().equals(this.getIDSensorToSubscribeTo())==true) {
+						this.transformerAgent.startSubscriptionInitiatorBehaviour();
+						
+					}
+				}
+			}
+		}
+		
+	}
+	
 }
