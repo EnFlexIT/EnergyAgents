@@ -188,13 +188,14 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 */
 	private void startPhoneBookRegistration() {
 		
-		AbstractPhoneBookEntry myPhoneBookEntry = this.getInternalDataModel().getMyPhoneBookEntry();
 		AID aidPhoneBookMaintainer = this.getInternalDataModel().getCentralPhoneBookMaintainerAID();
-		
-		PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, myPhoneBookEntry, aidPhoneBookMaintainer, true);
-		phoneBookRegistrationInitiator.addPhoneBookListener(this.getInternalDataModel());
-		this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(MessageTemplate.MatchConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID));
-		this.addBehaviour(phoneBookRegistrationInitiator);
+		if (aidPhoneBookMaintainer!=null) {
+			AbstractPhoneBookEntry myPhoneBookEntry = this.getInternalDataModel().getMyPhoneBookEntry();
+			PhoneBookRegistrationInitiator phoneBookRegistrationInitiator = new PhoneBookRegistrationInitiator(this, myPhoneBookEntry, aidPhoneBookMaintainer, true);
+			phoneBookRegistrationInitiator.addPhoneBookListener(this.getInternalDataModel());
+			this.getDefaultMessageReceiveBehaviour().addMessageTemplateToIgnoreList(MessageTemplate.MatchConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID));
+			this.addBehaviour(phoneBookRegistrationInitiator);
+		}
 	}
 	
 	
