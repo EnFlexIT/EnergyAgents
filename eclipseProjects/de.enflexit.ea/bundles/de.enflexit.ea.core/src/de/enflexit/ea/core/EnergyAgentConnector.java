@@ -1,11 +1,12 @@
 package de.enflexit.ea.core;
 
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
+import energy.EomController;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.calculations.AbstractEvaluationCalculation;
 import energy.calculations.AbstractOptionModelCalculation;
-import jade.core.Agent;
+import energygroup.GroupController;
 
 /**
  * The Class EnergyAgentConnector can be used to connect specific option model calculations
@@ -21,14 +22,22 @@ import jade.core.Agent;
  */
 public class EnergyAgentConnector<EnergyAgent extends AbstractEnergyAgent, InternalDataModel extends AbstractInternalDataModel<? extends EnergyAgentPhoneBookEntry>> {
 
-	private OptionModelController omc;
+	private EomController eomController;
 	
 	/**
 	 * Instantiates a new abstract energy agent connector.
-	 * @param omc the OptionModelController that is under control of the current E
+	 * @param omc the OptionModelController that is under control of the current Energy Agent
 	 */
 	public EnergyAgentConnector(OptionModelController omc){
-		this.omc = omc;
+		this.eomController = omc;
+	}
+	
+	/**
+	 * Instantiates a new abstract energy agent connector.
+	 * @param gc the GroupCopntroll that is under control of the current  Energy Agent
+	 */
+	public EnergyAgentConnector(GroupController gc){
+		this.eomController = gc;
 	}
 	
 	/**
@@ -37,10 +46,10 @@ public class EnergyAgentConnector<EnergyAgent extends AbstractEnergyAgent, Inter
 	 */
 	@SuppressWarnings("unchecked")
 	public EnergyAgent getEnergyAgent() {
-		if (this.omc!=null && this.omc.getControllingAgent()!=null) {
-			Agent agent = omc.getControllingAgent();
-			if (agent instanceof AbstractEnergyAgent) {
-				return (EnergyAgent) agent;
+		if (this.eomController!=null && this.eomController.getControllingEntity()!=null) {
+			Object ce = this.eomController.getControllingEntity();
+			if (ce instanceof AbstractEnergyAgent) {
+				return (EnergyAgent) ce;
 			}
 		}
 		return null;

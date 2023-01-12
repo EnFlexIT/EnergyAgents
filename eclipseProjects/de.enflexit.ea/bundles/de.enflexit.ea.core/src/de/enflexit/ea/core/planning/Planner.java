@@ -77,10 +77,12 @@ public class Planner extends EomPlanner {
 			switch (this.getInternalDataModel().getTypeOfControlledSystem()) {
 			case TechnicalSystem:
 				this.getOptionModelController().setTechnicalSystem(this.getInternalDataModel().getOptionModelController().getTechnicalSystemCopy());
+				this.getOptionModelController().setControllingAgent(this.energyAgent);
 				break;
 				
 			case TechnicalSystemGroup:
 				this.getGroupController().setTechnicalSystemGroup(this.getInternalDataModel().getGroupController().getTechnicalSystemGroupCopy());
+				this.getGroupController().setControllingAgent(this.energyAgent);
 				break;
 				
 			case None:
