@@ -312,6 +312,13 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 				return;
 			}
 			
+			if (lvTotaCurrentRealL1.getValue()<0||lvTotaCurrentRealL2.getValue()<0||lvTotaCurrentRealL3.getValue()<0) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error: Received negative current values, can't handle that yet!");
+				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL1: " + lvTotaCurrentRealL1.getValue());
+				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL2: " + lvTotaCurrentRealL2.getValue());
+				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL3: " + lvTotaCurrentRealL3.getValue());
+			}
+			
 			// Calculate voltage drop on transformer
 			double dURealL1 = this.resistance_R * lvTotaCurrentRealL1.getValue() - this.reactance_X * lvTotaCurrentImagL1.getValue();
 			double dUImagL1 = this.reactance_X * lvTotaCurrentRealL1.getValue() + this.resistance_R * lvTotaCurrentImagL1.getValue();
