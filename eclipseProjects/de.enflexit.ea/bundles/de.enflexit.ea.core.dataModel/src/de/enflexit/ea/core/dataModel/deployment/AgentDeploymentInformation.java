@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.awb.env.networkModel.NetworkComponent;
 
 import agentgui.core.config.DeviceAgentDescription;
+import de.enflexit.common.StringHelper;
 
 /**
  * This class is used to handle the information that is required for deploying agents
@@ -127,9 +128,9 @@ public class AgentDeploymentInformation implements Serializable, Comparable<Agen
 		// --- Compare object type ------------------------
 		AgentDeploymentInformation adiComp = (AgentDeploymentInformation) compObj;
 		
-		if (this.isEqualString(adiComp.getAgentID(), this.getAgentID())==false) return false;
-		if (this.isEqualString(adiComp.getAgentClassName(), this.getAgentClassName())==false) return false;
-		if (this.isEqualString(adiComp.getComponentType(), this.getComponentType())==false) return false;
+		if (StringHelper.isEqualString(adiComp.getAgentID(), this.getAgentID())==false) return false;
+		if (StringHelper.isEqualString(adiComp.getAgentClassName(), this.getAgentClassName())==false) return false;
+		if (StringHelper.isEqualString(adiComp.getComponentType(), this.getComponentType())==false) return false;
 		
 		AgentOperatingMode aomComp = adiComp.getAgentOperatingMode();
 		AgentOperatingMode aomThis = this.getAgentOperatingMode();
@@ -142,22 +143,6 @@ public class AgentDeploymentInformation implements Serializable, Comparable<Agen
 		}
 		
 		return true;
-	}
-	/**
-	 * Checks for equal strings where also <code>null</code> will be considered. If both
-	 * parameters with null, the method return true.
-	 *
-	 * @param s1 the s 1
-	 * @param s2 the s 2
-	 * @return true, if is equal string
-	 */
-	private boolean isEqualString(String s1, String s2) {
-		if (s1==null && s2==null) {
-			return true;
-		} else if ((s1!=null && s2==null) || (s1==null && s2!=null)) {
-			return false;
-		} 
-		return s1.equals(s2);
 	}
 	
 	

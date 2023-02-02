@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import agentgui.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.common.StringHelper;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 
@@ -374,14 +375,14 @@ public class DeploymentSettings implements Serializable {
 			return (specifierEquals
 					&& this.getJadePort()==otherInstance.getJadePort()
 					&& this.getMtpPort()==otherInstance.getMtpPort()
-					&& this.isEqualString(this.getTargetOperatingSystem(), otherInstance.getTargetOperatingSystem())
+					&& StringHelper.isEqualString(this.getTargetOperatingSystem(), otherInstance.getTargetOperatingSystem())
 					&& this.isTargetSystemAutoIp()==otherInstance.isTargetSystemAutoIp()
-					&& this.isEqualString(this.getTargetSystemIpAddress(), otherInstance.getTargetSystemIpAddress())
+					&& StringHelper.isEqualString(this.getTargetSystemIpAddress(), otherInstance.getTargetSystemIpAddress())
 					&& this.isP2RepositoryEnabled()==otherInstance.isP2RepositoryEnabled()
-					&& this.isEqualString(this.getP2Repository(), otherInstance.getP2Repository())
+					&& StringHelper.isEqualString(this.getP2Repository(), otherInstance.getP2Repository())
 					&& this.isProjectRepositoryEnabled()==otherInstance.isProjectRepositoryEnabled()
-					&& this.isEqualString(this.getProjectRepository(), otherInstance.getProjectRepository())
-					&& this.isEqualString(this.getProjectTag(), otherInstance.getProjectTag())
+					&& StringHelper.isEqualString(this.getProjectRepository(), otherInstance.getProjectRepository())
+					&& StringHelper.isEqualString(this.getProjectTag(), otherInstance.getProjectTag())
 					&& this.isEqualObject(this.getDatabaseSettings(), otherInstance.getDatabaseSettings())
 					&& this.getDeploymentMode()==otherInstance.getDeploymentMode()
 			);
@@ -389,21 +390,7 @@ public class DeploymentSettings implements Serializable {
 			return false;
 		}
 	}
-	/**
-	 * Checks if the specified string are equal. In case that both strings are <code>null</code>, the method return true.
-	 *
-	 * @param s1 the s 1
-	 * @param s2 the s 2
-	 * @return true, if is equal string
-	 */
-	private boolean isEqualString(String s1, String s2) {
-		if (s1==null && s2==null) {
-			return true;
-		} else if ((s1!=null && s2==null) || (s1==null && s2!=null)) {
-			return false;
-		}
-		return s1.equals(s2);
-	}
+	
 	/**
 	 * Checks if the specified objects are equal. In case that both objects are <code>null</code>, the method return true.
 	 *

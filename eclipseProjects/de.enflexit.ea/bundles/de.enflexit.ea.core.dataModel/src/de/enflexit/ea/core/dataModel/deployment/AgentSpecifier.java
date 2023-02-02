@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import de.enflexit.common.StringHelper;
 import jade.core.AID;
 
 
@@ -201,30 +202,14 @@ public class AgentSpecifier
 		
 		AgentSpecifier otherInstance = (AgentSpecifier) compObject;
 		
-		return (this.isEqualString(this.getAgentName(), otherInstance.getAgentName())
-				&& this.isEqualString(this.getPlatformName(), otherInstance.getPlatformName())
-				&& this.isEqualString(this.getUrlOrIp(), otherInstance.getUrlOrIp())
+		return (StringHelper.isEqualString(this.getAgentName(), otherInstance.getAgentName())
+				&& StringHelper.isEqualString(this.getPlatformName(), otherInstance.getPlatformName())
+				&& StringHelper.isEqualString(this.getUrlOrIp(), otherInstance.getUrlOrIp())
 				&& this.getJadePort()==otherInstance.getJadePort()
 				&& this.getMtpPort()==otherInstance.getMtpPort()
-				&& this.isEqualString(this.getMtpType(), otherInstance.getMtpType())
+				&& StringHelper.isEqualString(this.getMtpType(), otherInstance.getMtpType())
 		);
 	}
-	/**
-	 * Checks if the specified string are equal. In case that both strings are <code>null</code>, the method return true.
-	 *
-	 * @param s1 the s 1
-	 * @param s2 the s 2
-	 * @return true, if is equal string
-	 */
-	private boolean isEqualString(String s1, String s2) {
-		if (s1==null && s2==null) {
-			return true;
-		} else if ((s1!=null && s2==null) || (s1==null && s2!=null)) {
-			return false;
-		}
-		return s1.equals(s2);
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()

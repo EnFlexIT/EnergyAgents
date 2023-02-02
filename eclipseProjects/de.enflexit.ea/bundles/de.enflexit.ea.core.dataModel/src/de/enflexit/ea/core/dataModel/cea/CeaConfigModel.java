@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import agentgui.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.common.StringHelper;
 
 /**
  * The Class CeaConfigModel represents the actual data model for the CEA configuration.
@@ -153,32 +154,21 @@ public class CeaConfigModel implements Serializable, Cloneable {
 		
 		if (this.isStartSecondMTP()!=comp.isStartSecondMTP()) return false;
 		if (this.getMtpProtocol().equals(comp.getMtpProtocol())==false) return false;
-		if (this.isEqualString(this.getUrlOrIp(), comp.getUrlOrIp())==false) return false;
+		if (StringHelper.isEqualString(this.getUrlOrIp(), comp.getUrlOrIp())==false) return false;
 		if (this.getMtpPort()!=comp.getMtpPort()) return false;
 		
-		if (this.isEqualString(this.getMirrorSourceP2Repository(), comp.getMirrorSourceP2Repository())==false) return false;
-		if (this.isEqualString(this.getMirrorDestinationP2Repository(), comp.getMirrorDestinationP2Repository())==false) return false;
-		if (this.isEqualString(this.getMirrorProviderURLP2Repository(), comp.getMirrorProviderURLP2Repository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorSourceP2Repository(), comp.getMirrorSourceP2Repository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorDestinationP2Repository(), comp.getMirrorDestinationP2Repository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorProviderURLP2Repository(), comp.getMirrorProviderURLP2Repository())==false) return false;
 
-		if (this.isEqualString(this.getMirrorSourceProjectRepository(), comp.getMirrorSourceProjectRepository())==false) return false;
-		if (this.isEqualString(this.getMirrorDestinationProjectRepository(), comp.getMirrorDestinationProjectRepository())==false) return false;
-		if (this.isEqualString(this.getMirrorProviderURLProjectRepository(), comp.getMirrorProviderURLProjectRepository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorSourceProjectRepository(), comp.getMirrorSourceProjectRepository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorDestinationProjectRepository(), comp.getMirrorDestinationProjectRepository())==false) return false;
+		if (StringHelper.isEqualString(this.getMirrorProviderURLProjectRepository(), comp.getMirrorProviderURLProjectRepository())==false) return false;
 
 		if (this.getMirrorInterval()!=comp.getMirrorInterval()) return false;
 		
 		return true;
 	}
-	/**
-	 * Checks if is equal string.
-	 *
-	 * @param string1 the string 1
-	 * @param string2 the string 2
-	 * @return true, if is equal
-	 */
-	private boolean isEqualString(String string1, String string2) {
-		if (string1==null & string2==null) return true;
-		if (string1==null & string2!=null || string1!=null & string2==null) return false;
-		return string1.equals(string2);
-	}
+	
 	
 }
