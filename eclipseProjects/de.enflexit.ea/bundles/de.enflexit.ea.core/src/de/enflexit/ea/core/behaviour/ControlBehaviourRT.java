@@ -13,8 +13,8 @@ import de.enflexit.common.Observer;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
-import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
+import de.enflexit.ea.core.EnergyAgentIO;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
@@ -27,7 +27,9 @@ import energy.EomController;
 import energy.FixedVariableList;
 import energy.FixedVariableListForAggregation;
 import energy.OptionModelController;
+import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
+import energy.evaluation.decision.AbstractDecisionSwitch;
 import energy.helper.DisplayHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
@@ -40,6 +42,7 @@ import energy.optionModel.SystemVariableDefinitionInteger;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import energy.optionModel.TechnicalSystemStateEvaluation;
+import energy.planning.EomPlannerResult;
 import energygroup.GroupController;
 import energygroup.GroupTreeNodeObject;
 import energygroup.evaluation.AbstractGroupEvaluationStrategy;
@@ -568,16 +571,16 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			return;
 		}
 		
-		// --- Get the new measurements, if any ---------------------
+		// --- Get the new measurements, if any -------------------------------
 		FixedVariableList measurements = this.internalDataModel.getMeasurementsFromSystem();
 		if (this.omc!=null && measurements!=null && this.getSetPointList()!=null && this.getSetPointList().size()!=0) {
 
-			// --- Execute individual evaluation strategy -----------
+			// --- Execute individual evaluation strategy ---------------------
 			TechnicalSystemStateEvaluation tsseLocal = null;
 			try {
 				if (this.isCentralControlledSnapshotSimulation()==false) {
 
-					// --- Get evaluation start and end time ------------
+					// --- Get evaluation start and end time ------------------
 					long evalStartTime = this.currentTime;
 					long evalEndTime = this.currentTime;
 					TimeModelDiscrete tmd = this.getTimeModelDiscrete();
@@ -587,13 +590,24 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					this.rtEvaluationStrategy.setEvaluationStartTime(evalStartTime);
 					this.rtEvaluationStrategy.setEvaluationEndTime(evalEndTime);
 					
-					// --- Check if we're in a running iteration --------
+					// --- Check if we're in a running iteration --------------
 					if (this.isDiscreteIterationStep()==true) {
-						// -- Revert evaluation to start time of step ---
+						// -- Revert evaluation to start time of step ---------
 						this.rtEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
 					}
 					
-					// --- Things to do for TechnicalSystems ------------
+					// --- Check for decision switch --------------------------
+					AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> ds = this.getDecisionSwitch();
+					if (ds!=null) {
+						// --- Check for planner usage ------------------------
+						EomPlannerResult eomPR = null;
+						if (this.energyAgent.getPlanningDispatcherManager()!=null && this.energyAgent.getPlanningDispatcher()!=null) {
+							eomPR = this.energyAgent.getPlanningDispatcherManager().getPlannerResultForRealTimeExecution();
+						}
+						ds.setEomPlannerResultForDecisions(eomPR);	
+					}
+					
+					// --- Things to do for TechnicalSystems ------------------
 					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
 					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
 					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
@@ -603,11 +617,11 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				ex.printStackTrace();
 			}
 
-			// --- If configured, set TSSE to environment model -----
+			// --- If configured, set TSSE to environment model ---------------
 			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 			this.sendDiscreteSimulationsStepToSimulationManager();
 
-			// --- Assign set points from tsse ----------------------
+			// --- Assign set points from tsse --------------------------------
 			this.setSetPointsFromTechnicalSystemStateEvaluation(tsseLocal);
 
 		}
@@ -689,7 +703,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			return;
 		}
 		
-		// --- Get the new measurements, if any ---------------------
+		// --- Get the new measurements, if any -------------------------------
 		FixedVariableList modelMeasurements = this.internalDataModel.getMeasurementsFromSystem();
 		if (modelMeasurements==null) {
 			return;
@@ -699,16 +713,16 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			System.err.println(msg);
 			return;
 		}
-		// --- Cast measurements ------------------------------------
+		// --- Cast measurements ----------------------------------------------
 		FixedVariableListForAggregation measurements = (FixedVariableListForAggregation) modelMeasurements; 
 		
-		// --- Check availability of required instances -------------
+		// --- Check availability of required instances -----------------------
 		if (this.gc!=null && this.omc!=null && measurements!=null) {
 
-			// --- Execute individual evaluation strategy -----------
+			// --- Execute individual evaluation strategy ---------------------
 			TechnicalSystemStateEvaluation tsseLocal = null;
 			try {
-				// --- Get evaluation start and end time ------------
+				// --- Get evaluation start and end time ----------------------
 				long evalStartTime = this.currentTime;
 				long evalEndTime = this.currentTime;
 				TimeModelDiscrete tmd = this.getTimeModelDiscrete();
@@ -718,13 +732,24 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.rtGroupEvaluationStrategy.setEvaluationStartTime(evalStartTime);
 				this.rtGroupEvaluationStrategy.setEvaluationEndTime(evalEndTime);
 				
-				// --- Check if we're in a running iteration --------
+				// --- Check if we're in a running iteration ------------------
 				if (this.isDiscreteIterationStep()==true) {
-					// -- Revert evaluation to start time of step ---
+					// -- Revert evaluation to start time of step -------------
 					this.rtGroupEvaluationStrategy.runEvaluationBackwardsTo(evalStartTime);
 				}
 
-				// --- Things to do for TechnicalSystemGroupss ------
+				// --- Check for decision switch ------------------------------
+				AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> ds = this.getDecisionSwitch();
+				if (ds!=null) {
+					// --- Check for planner usage ----------------------------
+					EomPlannerResult eomPR = null;
+					if (this.energyAgent.getPlanningDispatcherManager()!=null && this.energyAgent.getPlanningDispatcher()!=null) {
+						eomPR = this.energyAgent.getPlanningDispatcherManager().getPlannerResultForRealTimeExecution();
+					}
+					ds.setEomPlannerResultForDecisions(eomPR);	
+				}
+				
+				// --- Things to do for TechnicalSystemGroupss ----------------
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
@@ -733,11 +758,11 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				ex.printStackTrace();
 			}
 
-			// --- If configured, set TSSE to environment model -----
+			// --- If configured, set TSSE to environment model ---------------
 			this.sendControlBehaviourRTStateUpdateToEnvironmentModel(tsseLocal);
 			this.sendDiscreteSimulationsStepToSimulationManager();
 
-			// --- Assign set points from tsse ----------------------
+			// --- Assign set points from tsse --------------------------------
 			this.setSetPointsFromTechnicalSystemStateEvaluation(tsseLocal);
 			
 		}
@@ -831,4 +856,38 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		}
 	}
 
+	
+	// -------------------------------------------------------------------------------------------------------
+	// --- From here methods to interact with the AbstractDecisionSwitch of the real time control strategy ---
+	// -------------------------------------------------------------------------------------------------------
+	/**
+	 * Returns, if available, the real-time decision switch.
+	 * @return the decision switch
+	 */
+	public AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> getDecisionSwitch() {
+		if (this.rtEvaluationStrategy!=null) {
+			return this.rtEvaluationStrategy.getDecisionSwitch();
+		}
+		if (this.rtGroupEvaluationStrategy!=null) {
+			return this.rtEvaluationStrategy.getDecisionSwitch();
+		}
+		return null;
+	}
+	/**
+	 * Sets the decision switch priority.
+	 *
+	 * @param newPriority the new priority
+	 * @return true, if successful, otherwise false
+	 */
+	public boolean setDecisionSwitchPriority(int newPriority) {
+		
+		AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> ds =this.getDecisionSwitch();
+		if (ds!=null) {
+			ds.setCurrentPriorityLevel(newPriority);
+			return true;
+		}
+		return false;
+	}
+	
+	
 }

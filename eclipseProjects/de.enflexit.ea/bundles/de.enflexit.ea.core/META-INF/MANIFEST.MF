@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Core Bundle
 Bundle-SymbolicName: de.enflexit.ea.core
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 1.5.1.qualifier
 Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
  de.enflexit.eom.core,

@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.planning;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import energy.optionModel.AbstractCostFunction;
 import energy.optionModel.AbstractInputMeasurement;
 import energy.optionModel.CostFunctionDataSeries;
@@ -17,12 +18,12 @@ import energy.planning.requests.AbstractInputMeasurementRequest;
 import energy.planning.requests.ConfigIdRequest;
 import energy.planning.requests.CostFunctionDataSeriesRequest;
 import energy.planning.requests.CostUnitRequest;
+import energy.planning.requests.CostUnitRequest.CostUnitDefinition;
 import energy.planning.requests.EvaluationStateListRequest;
 import energy.planning.requests.InputMeasurementRequest;
 import energy.planning.requests.SetPointListRequest;
 import energy.planning.requests.StateIdRequest;
 import energy.planning.requests.StorageLoadListRequest;
-import energy.planning.requests.CostUnitRequest.CostUnitDefinition;
 
 /**
  * The AbstractPlanningDispatcherManager serves as base class for the individual configuration and listener
@@ -41,6 +42,8 @@ import energy.planning.requests.CostUnitRequest.CostUnitDefinition;
 public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEnergyAgent> implements EomPlannerListener {
 
 	private Agent energyAgent;
+	private EomPlannerResult plannerResultForRT;
+	
 	
 	/**
 	 * Instantiates a new planning dispatcher manager.
@@ -67,6 +70,32 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 		return energyAgent;
 	}
 
+	/**
+	 * Return an {@link EomPlannerResult} instance that can be used as requirement / specification 
+	 * for a real time execution and a corresponding real-time strategy.
+	 * 
+	 * @return the planner result to be used for real time control
+	 */
+	public EomPlannerResult getPlannerResultForRealTimeExecution() {
+		if (plannerResultForRT==null) {
+			// --- Get an empty ScheduleList corpus as EomPlannerResult -------
+			ControlledSystemType conSysType = this.energyAgent.getInternalDataModel().getTypeOfControlledSystem();
+			switch (conSysType) {
+			case None:
+				// --- Keep null as return value ------------------------------
+				System.err.println("[" + this.getClass().getSimpleName() + "] Neither a TechnicalSystem nor a TechnicalSystemGroup is under control of the current energy agent. - Consequently, no planner result for a real-time execution is available!");
+				break;
+			case TechnicalSystem:
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getOptionModelController().getEomPlannerResult(0, 0, true);
+				break;
+			case TechnicalSystemGroup:
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getGroupController().getEomPlannerResult(0, 0, true);
+				break;
+			}
+		}
+		return plannerResultForRT;
+	}
+	
 	
 	/**
 	 * Will be invoked to enable an individual planner registration.
