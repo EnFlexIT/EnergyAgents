@@ -869,7 +869,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			return this.rtEvaluationStrategy.getDecisionSwitch();
 		}
 		if (this.rtGroupEvaluationStrategy!=null) {
-			return this.rtEvaluationStrategy.getDecisionSwitch();
+			return this.rtGroupEvaluationStrategy.getDecisionSwitch();
 		}
 		return null;
 	}
