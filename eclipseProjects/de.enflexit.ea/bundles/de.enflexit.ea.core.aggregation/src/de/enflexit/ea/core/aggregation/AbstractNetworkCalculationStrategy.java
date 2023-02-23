@@ -375,7 +375,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 	/* (non-Javadoc)
 	 * @see energygroup.evaluation.AbstractGroupEvaluationStrategy#getAddResultTreeAction()
 	 */
-	protected AddResultTreeAction getAddResultTreeAction() {
+	public AddResultTreeAction getAddResultTreeAction() {
 		if (addResultTreeAction==null) {
 			addResultTreeAction = new AddResultTreeAction(this.getGroupController(), this);
 		}
