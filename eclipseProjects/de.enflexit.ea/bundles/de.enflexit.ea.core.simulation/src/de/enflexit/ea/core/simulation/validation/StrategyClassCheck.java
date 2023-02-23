@@ -2,6 +2,7 @@ package de.enflexit.ea.core.simulation.validation;
 
 import org.awb.env.networkModel.NetworkComponent;
 
+import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
@@ -131,8 +132,12 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 		String msgDescription = null;
 		MessageType msgType = MessageType.Error; // --- default ---
 		
-		if (evalStrategyClassName!=null && evalStrategyClassName.isEmpty()==false) {
-			// --- Check with respect to the current simulation type --------------------
+		if (evalStrategyClassName==null || evalStrategyClassName.isEmpty()==true) {
+			// --- No evaluation class could be found -----------------------------------
+			msgDescription = "No default evaluation strategy could be found for the EOM model of " + netCompDescription + ".";
+			
+		} else {
+			// --- Get instance of strategy ---------------------------------------------
 			AbstractEvaluationStrategy strategy = null;
 			if (isAggregation==false) {
 				strategy = this.getOptionModelController().createEvaluationStrategy(evalStrategyClassName);
@@ -140,89 +145,206 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				strategy = this.getGroupController().getGroupOptionModelController().createEvaluationStrategy(evalStrategyClassName);
 			}
 			
-			
 			if (strategy==null) {
 				// --- Error while initiating strategy class ----------------------------
 				msgDescription = "Error while initiating strategy class '" + evalStrategyClassName + "' for " + netCompDescription + ". See console for further information.";
 				
 			} else {
-				// --- Do the type check ------------------------------------------------
-				boolean isSnapShotSimulation = this.getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
-				SnapshotDecisionLocation sdl = this.getHyGridAbstractEnvironmentModel().getSnapshotDecisionLocation();
+				// ----------------------------------------------------------------------
+				// --- Check with respect to the current simulation type ----------------
+				// ----------------------------------------------------------------------
 				
-				if (isAggregation==false) {
-					// ------------------------------------------------------------------
-					// --- Check for TechnicalSystem instances --------------------------
-					// ------------------------------------------------------------------
-					if (sdl!=null) {
-						switch (sdl) {
-						case Decentral:
-							// --- Check for the right strategy type ------------------------
-							if (isSnapShotSimulation==true) {
-								if (!(strategy instanceof AbstractSnapshotStrategy)) {
-									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
-								}
-							} else {
-								if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
-									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
-								}
-							}
-							break;
-							
-						case Central:
-							// --- Ensure that the class is of type RT strategy -------------
-							if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
-								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
-							}
-							break;
-						}
-					}
-					
-					
-				} else {
-					// ------------------------------------------------------------------
-					// --- Check for TechnicalSystemGroup instances ---------------------
-					// ------------------------------------------------------------------
-					if (sdl!=null) {
-						switch (sdl) {
-						case Decentral:
-							// --- Check for the right strategy type ------------------------
-							if (isSnapShotSimulation==true) {
-								if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
-									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
-								}
-							} else {
-								if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
-									msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
-								}
-							}		
-							break;
-							
-						case Central:
-							// --- Ensure that the class is of type RT strategy -------------
-							if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
-								msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
-							}
-							break;
-						}
-					}
-					
+				// ------------------------------------
+				// --- => Continuous Simulations <= --- 
+				boolean isContinuousSimulation = (this.getProject().getTimeModelController().getTimeModel() instanceof TimeModelContinuous);
+				if (isContinuousSimulation==true) {
+					return this.getValidationMessageForContinuousSimulation(netCompDescription, msg, strategy, isAggregation);
+				}
+				
+				// ------------------------------------
+				// --- => Discrete Simulations <= -----
+				boolean isSnapShotSimulation = this.getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
+				if (isSnapShotSimulation==false) {
+					return this.getValidationMessageForDiscreteSimulation(netCompDescription, msg, strategy, isAggregation);
+				}
+				
+				// ------------------------------------
+				// --- => Snapshot Simulations <= -----
+				return this.getValidationMessageForSnapshotSimulation(netCompDescription, msgDescription, strategy, isAggregation);
+				
+			}
+		}
+		return this.getHyGridValidationMessage(msg, msgDescription, msgType);
+	}
+
+	/**
+	 * Gets the validation message for continuous simulation.
+	 *
+	 * @param netCompDescription the network component description
+	 * @param msg the short message
+	 * @param strategy the strategy
+	 * @param isAggregation the is aggregation
+	 * @return the validation message for continuous simulation
+	 */
+	private HyGridValidationMessage getValidationMessageForContinuousSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
+		
+		String msgDescription = null;
+		MessageType msgType = MessageType.Error;
+		
+		if (isAggregation==false) {
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystem instances --------------------------
+			// ------------------------------------------------------------------
+			if (strategy instanceof AbstractSnapshotStrategy) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for real time purposes!";
+			} else {
+				if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
+					msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+					msgType = MessageType.Information;
 				}
 			}
 			
 		} else {
-			// --- No evaluation class could be found -----------------------------------
-			msgDescription = "No default evaluation strategy could be found for the EOM model of " + netCompDescription + ".";
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystemGroup instances ---------------------
+			// ------------------------------------------------------------------
+			if (strategy instanceof AbstractGroupSnapshotStrategy) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for real time purposes!";
+			} else {
+				if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
+					msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+					msgType = MessageType.Information;
+				}
+			}
 		}
+		return this.getHyGridValidationMessage(msg, msgDescription, msgType);
+	}
+	
+	/**
+	 * Gets the validation message for discrete simulation.
+	 *
+	 * @param netCompDescription the the network component description
+	 * @param msg the short message
+	 * @param strategy the strategy
+	 * @param isAggregation the is aggregation
+	 * @return the validation message for discrete simulation
+	 */
+	private HyGridValidationMessage getValidationMessageForDiscreteSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
 		
+		String msgDescription = null;
+		MessageType msgType = MessageType.Error;
 		
-		// --- Prepare return value -----------------------------------------------------
-		HyGridValidationMessage hvm = null;
-		if (msgDescription!=null) {
-			hvm = new HyGridValidationMessage(msg, msgType);
-			hvm.setDescription(msgDescription);
+		if (isAggregation==false) {
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystem instances --------------------------
+			// ------------------------------------------------------------------
+			if (strategy instanceof AbstractSnapshotStrategy) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
+			} else if (strategy instanceof AbstractEvaluationStrategyRT) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
+			}
+		} else {
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystemGroup instances ---------------------
+			// ------------------------------------------------------------------
+			if (strategy instanceof AbstractGroupSnapshotStrategy) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
+			} else  if (strategy instanceof AbstractGroupEvaluationStrategyRT) {
+				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
+			}
 		}
-		return hvm;
+		return this.getHyGridValidationMessage(msg, msgDescription, msgType);
+	}
+
+	
+	/**
+	 * Gets the validation message for discrete simulation.
+	 *
+	 * @param netCompDescription the the network component description
+	 * @param msg the short message
+	 * @param strategy the strategy
+	 * @param isAggregation the is aggregation
+	 * @return the validation message for discrete simulation
+	 */
+	private HyGridValidationMessage getValidationMessageForSnapshotSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
+		
+		String msgDescription = null;
+		MessageType msgType = MessageType.Error;
+		
+		boolean isSnapShotSimulation = this.getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
+		SnapshotDecisionLocation sdl = this.getHyGridAbstractEnvironmentModel().getSnapshotDecisionLocation();
+		if (isAggregation==false) {
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystem instances --------------------------
+			// ------------------------------------------------------------------
+			if (sdl!=null) {
+				switch (sdl) {
+				case Decentral:
+					// --- Check for the right strategy type ------------------------
+					if (isSnapShotSimulation==true) {
+						if (!(strategy instanceof AbstractSnapshotStrategy)) {
+							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+						}
+					} else {
+						if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+						}
+					}
+					break;
+					
+				case Central:
+					// --- Ensure that the class is of type RT strategy -------------
+					if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
+						msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+					}
+					break;
+				}
+			}
+			
+			
+		} else {
+			// ------------------------------------------------------------------
+			// --- Check for TechnicalSystemGroup instances ---------------------
+			// ------------------------------------------------------------------
+			if (sdl!=null) {
+				switch (sdl) {
+				case Decentral:
+					// --- Check for the right strategy type ------------------------
+					if (isSnapShotSimulation==true) {
+						if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
+							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
+						}
+					} else {
+						if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+						}
+					}		
+					break;
+					
+				case Central:
+					// --- Ensure that the class is of type RT strategy -------------
+					if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
+						msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
+					}
+					break;
+				}
+			}
+		}
+		return this.getHyGridValidationMessage(msg, msgDescription, msgType);
+	}
+	
+	
+	/**
+	 * Gets the instance of a HyGridValidationMessage based on specified parameter.
+	 *
+	 * @param msg the short message 
+	 * @param msgDescription the message description (if <code>null</code>, this method returns <code>null</code>)
+	 * @param msgType the {@link MessageType}
+	 * @return the HyGridValidationMessage or <code>null</code>
+	 */
+	private HyGridValidationMessage getHyGridValidationMessage(String msg, String msgDescription , MessageType msgType) {
+		if (msgDescription==null || msgDescription.isBlank()) return null;
+		return new HyGridValidationMessage(msg, msgType, msgDescription);
 	}
 	
 }
