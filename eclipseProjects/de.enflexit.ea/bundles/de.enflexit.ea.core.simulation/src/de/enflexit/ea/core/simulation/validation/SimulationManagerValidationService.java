@@ -16,7 +16,6 @@ public class SimulationManagerValidationService implements HyGridValidationServi
 	 */
 	@Override
 	public ArrayList<HyGridValidationAdapter> getHyGridValidationChecks(boolean isHeadlessOperation) {
-		
 		ArrayList<HyGridValidationAdapter> validationChecks = new ArrayList<>();
 		validationChecks.add(new SiMaClassNameChecks());
 		validationChecks.add(new SiMaNotFoundCheck());

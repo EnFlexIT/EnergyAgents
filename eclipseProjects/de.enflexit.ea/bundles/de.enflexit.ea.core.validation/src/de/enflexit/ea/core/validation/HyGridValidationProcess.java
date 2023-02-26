@@ -1,8 +1,12 @@
 package de.enflexit.ea.core.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
@@ -58,7 +62,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 		Project,
 		Setup,
 		NetworkModel,
-		HyGridAbstractEnvironmentModel
+		HyGridAbstractEnvironmentModel,
+		EomModels;
 	}
 	
 	private boolean isAddTestMessages = false;
@@ -128,6 +133,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	private void doHyGridChecks() {
 		
 		long checkTimeStart = System.currentTimeMillis();
+		boolean debugCheckDetailSteps = false;
 		
 		// --- Inform listener about the execution ------------------
 		this.informHyGridValidationProcessListener(ListenerInformation.Executed, null);
@@ -158,36 +164,39 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 		// ----------------------------------------------------------
 		this.addTestMessages();
 		
+		if (debugCheckDetailSteps) this.addMessage("Prepared for checks in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + ".", MessageType.Information);
+		
 		// ----------------------------------------------------------
 		// --- Do the single entity checks --------------------------
 		// ----------------------------------------------------------
 		this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Project);
+		if (debugCheckDetailSteps) this.addMessage("Check done for " + SingleConfigurationEntity.Project.name() + " in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + " after execution.", MessageType.Information);
+		
 		this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.Setup);
+		if (debugCheckDetailSteps) this.addMessage("Check done for " + SingleConfigurationEntity.Setup.name() + " in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + " after execution.", MessageType.Information);
+		
 		this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.NetworkModel);
+		if (debugCheckDetailSteps) this.addMessage("Check done for " + SingleConfigurationEntity.NetworkModel.name() + " in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + " after execution.", MessageType.Information);
+		
 		this.checkSingleConfigurationEntity(validationList, SingleConfigurationEntity.HyGridAbstractEnvironmentModel);
+		if (debugCheckDetailSteps) this.addMessage("Check done for " + SingleConfigurationEntity.HyGridAbstractEnvironmentModel.name() + " in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + " after execution.", MessageType.Information);
 		
 		// ----------------------------------------------------------
 		// --- Validate the configured EOM models -------------------
 		// ----------------------------------------------------------
 		this.checkNetworkComponents(validationList);
+		if (debugCheckDetailSteps) this.addMessage("Check done for " + SingleConfigurationEntity.EomModels.name() + " in " + this.getDurationDescription(System.currentTimeMillis() - checkTimeStart) + " after execution.", MessageType.Information);
 		
+		
+		// ----------------------------------------------------------		
+		// --- Create an execution report ---------------------------
+		// ----------------------------------------------------------
+		//if (checkDetailSteps) this.createExecutionReport(validationList, null);
+		if (debugCheckDetailSteps) this.createExecutionReport(validationList, SingleConfigurationEntity.EomModels.name());
 		
 		// --- Set the finalized message ----------------------------
 		long durationMS = System.currentTimeMillis() - checkTimeStart;
-		double durationS = (double)durationMS / 1000.0;
-		double durationMin = (double)durationS / 60.0;
-		
-		String durationText = null;
-		if (durationMS<=1000) {
-			durationText = durationMS + " ms";
-		} else {
-			if (durationS<=300) {
-				durationText = NumberHelper.round(durationS, 2) + " s";
-			} else {
-				durationText = NumberHelper.round(durationMin , 2) + " min";
-			}
-		}
-		this.addMessage("Done! - Finalized in " + durationText + ".", MessageType.Information);
+		this.addMessage("Done! - Finalized in " + this.getDurationDescription(durationMS) + ".", MessageType.Information);
 
 		// --- Inform listener about the finalization ---------------
 		this.informHyGridValidationProcessListener(ListenerInformation.Finalized, null);
@@ -200,8 +209,9 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 */
 	private void checkNetworkComponents(List<HyGridValidationAdapter> validationList) {
 		
-		NetworkModel networkModel = this.getGraphController().getNetworkModel();
+		SingleConfigurationEntity configEntityToCheck = SingleConfigurationEntity.EomModels;
 		
+		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Vector<NetworkComponent> netCompList = networkModel.getNetworkComponentVectorSorted();
 		for (int i = 0; i < netCompList.size(); i++) {
 			// --- Check each NetworkComponent ----------------------
@@ -215,6 +225,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				
 				HyGridValidationAdapter validator = validationList.get(v);
 				String validatorClassName = validator.getClass().getName();
+				long execStart = System.nanoTime();
+
 				try {
 					// --- Call the validation methods --------------
 					HyGridValidationMessage message = validator.validateNetworkComponent(netComp);
@@ -251,6 +263,13 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					this.addMessage(errMessage);
 					ex.printStackTrace();				
 				}
+				
+				// --- Remind process duration --------------------------
+				long execDuration = System.nanoTime() - execStart;
+				Long oldDuration = validator.getExecutionDurationMap().get(configEntityToCheck.name());
+				long newDuration = oldDuration==null ? execDuration : oldDuration + execDuration;  
+				validator.setExecutionDuration(configEntityToCheck.name(), newDuration);
+
 			} // end inner for
 		} // end outer for
 	}
@@ -259,22 +278,22 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	 * Check single configuration entity.
 	 *
 	 * @param validationList the validation list
-	 * @param configEntity the actual single configuration entity
+	 * @param configEntityToCheck the actual single configuration entity
 	 * @param instanceToCheck the instance to check
 	 */
-	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity) {
-		this.checkSingleConfigurationEntity(validationList, configEntity, null);
+	private void checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntityToCheck) {
+		this.checkSingleConfigurationEntity(validationList, configEntityToCheck, null);
 	}
 	
 	/**
 	 * Check single configuration entity.
 	 *
 	 * @param validationList the validation list
-	 * @param configEntity the actual single configuration entity
+	 * @param configEntityToCheck the actual single configuration entity
 	 * @param instanceToCheck the instance to check (e.g. a Project or a SimulationSetup - depends on the 'configEntity')
 	 * @return true, if the check created a HyGridValidationMessage
 	 */
-	private boolean checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntity, Object instanceToCheck) {
+	private boolean checkSingleConfigurationEntity(List<HyGridValidationAdapter> validationList, SingleConfigurationEntity configEntityToCheck, Object instanceToCheck) {
 		
 		boolean checkCreatedMessage = false;
 		
@@ -282,11 +301,12 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 			
 			HyGridValidationAdapter validator = validationList.get(i);
 			String validatorClassName = validator.getClass().getName();
+			long execStart = System.nanoTime();
 			try {
 				// --- Call the validation method -------------------
 				Project project = null;
 				HyGridValidationMessage message = null;
-				switch (configEntity) {
+				switch (configEntityToCheck) {
 				case AfterFileLoadProject:
 					message = validator.validateProjectAfterFileLoad((Project)instanceToCheck);
 					break;
@@ -320,6 +340,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					message = validator.validateHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());
 					break;
 					
+				default:
+					break;
 				}
 
 				// --- Configure return value of this method --------
@@ -330,14 +352,104 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 				
 			} catch (Exception ex) {
 				// --- Create a message for the exception -----------
-				HyGridValidationMessage errMessage = new HyGridValidationMessage("Exception in validation class '" + validatorClassName + "' while checking the " + configEntity.name() + ".", MessageType.Error);
+				HyGridValidationMessage errMessage = new HyGridValidationMessage("Exception in validation class '" + validatorClassName + "' while checking the " + configEntityToCheck.name() + ".", MessageType.Error);
 				errMessage.setDescription(ex.getMessage());
 				this.addMessage(errMessage);
 				ex.printStackTrace();				
 			}
+			
+			// --- Remind process duration --------------------------
+			long execDuration = System.nanoTime() - execStart; 
+			validator.setExecutionDuration(configEntityToCheck.name(), execDuration);
+			
 		}
 		return checkCreatedMessage;
 	}
+	
+	/**
+	 * Creates an execution report for all specified validation adapter.
+	 *
+	 * @param validationList the validation list
+	 * @param filterForConfigEntityToCheck the filter for config entity to check
+	 */
+	private void createExecutionReport(List<HyGridValidationAdapter> validationList, String filterForConfigEntityToCheck) {
+		
+		// --- Conclude everything in one map ------------- 
+		HashMap<String, Long> concludingHashMap = new HashMap<>(); 
+		for (HyGridValidationAdapter validator : validationList) {
+
+			String validatorClassName = validator.getClass().getName();
+			
+			List<String> validatorKeys = new ArrayList<>(validator.getExecutionDurationMap().keySet());
+			for (String configEntityToCheck : validatorKeys) {
+				// --- Prepare concluding key -------------
+				Long duration = validator.getExecutionDurationMap().get(configEntityToCheck);
+				String concludingKey = validatorClassName + "-" + configEntityToCheck;
+				
+				if (filterForConfigEntityToCheck!=null && configEntityToCheck.equals(filterForConfigEntityToCheck)==false) continue;
+				
+				concludingHashMap.put(concludingKey, duration);
+			}
+		}
+		
+		// --- Get the report from the new hashMap --------
+		int counter = 0;
+		long sumUp = 0;
+		Map<String, Long> reportMap = concludingHashMap.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		for (String concludingKey : reportMap.keySet()) {
+			
+			String[] keyArray = concludingKey.split("-");
+			String validationClassName = keyArray[0];
+			String configEntityToCheck = keyArray[1];
+			
+			long duration = reportMap.get(concludingKey);
+			counter++;
+			sumUp += duration;
+			System.out.println(counter + ":\t" + configEntityToCheck + "\t " + this.getDurationDescription(duration, true) + " \t " + validationClassName);
+		}
+		System.out.println("Overall Time = " + sumUp + " ns => " + this.getDurationDescription(sumUp, true) + "");
+	}
+	
+	
+	
+	/**
+	 * Returns a textual description for a duration in ms.
+	 * @param durationMS the duration in milliseconds
+	 * @return the duration description
+	 */
+	private String getDurationDescription(long durationMS) {
+		return this.getDurationDescription(durationMS, false);
+	}
+	/**
+	 * Returns a textual description for a duration in ms or nanoseconds.
+	 * @param durationMS the duration in milliseconds
+	 * @return the duration description
+	 */
+	private String getDurationDescription(long duration, boolean isNano) {
+		
+		double durationMS = duration; 
+		if (isNano==true) {
+			if (duration<=1000) return duration + " ns";
+			durationMS = duration * Math.pow(10, -6);
+		}
+		
+		double durationS = (double)durationMS / 1000.0;
+		double durationMin = (double)durationS / 60.0;
+		
+		String durationText = null;
+		if (durationMS<=1000) {
+			durationText = NumberHelper.round(durationMS, 2) + " ms";
+		} else {
+			if (durationS<=300) {
+				durationText = NumberHelper.round(durationS, 2) + " s";
+			} else {
+				durationText = NumberHelper.round(durationMin , 2) + " min";
+			}
+		}
+		return durationText;
+	}
+	
+	
 	
 	/**
 	 * Returns the list of validation checks that were provided by the services.

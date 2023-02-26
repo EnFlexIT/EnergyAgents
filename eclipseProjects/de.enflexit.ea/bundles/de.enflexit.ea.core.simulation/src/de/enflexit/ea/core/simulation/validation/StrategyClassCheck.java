@@ -4,19 +4,17 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import agentgui.simulationService.time.TimeModelContinuous;
 import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
 import de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionProcess;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
-import energy.OptionModelController;
-import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.AbstractSnapshotStrategy;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
-import energygroup.GroupController;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
 import energygroup.evaluation.AbstractGroupSnapshotStrategy;
 
@@ -29,9 +27,6 @@ import energygroup.evaluation.AbstractGroupSnapshotStrategy;
  */
 public class StrategyClassCheck extends HyGridValidationAdapter {
 
-	private OptionModelController omc;
-	private GroupController gc;
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateHyGridAbstractEnvironmentModel(de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel)
 	 */
@@ -81,7 +76,6 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystem(NetworkComponent netComp, TechnicalSystem ts) {
 		String evalStrategyClass = ts.getEvaluationSettings().getEvaluationClass();
-		this.getOptionModelController().setTechnicalSystem(ts);
 		return this.getValidationMessage(netComp, evalStrategyClass, false);
 	}
 	
@@ -91,30 +85,28 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystemGroup(NetworkComponent netComp, TechnicalSystemGroup tsg) {
 		String evalStrategyClass = tsg.getTechnicalSystem().getEvaluationSettings().getEvaluationClass();
-		this.getGroupController().setTechnicalSystemGroup(tsg);
 		return this.getValidationMessage(netComp, evalStrategyClass, true);
 	}
-
+	
 	/**
-	 * Returns the private OptionModelController that provides common help functions.
-	 * @return the option model controller
+	 * Returns the class for the specified class name.
+	 * 
+	 * @param className the class name
+	 * @return the strategy class
 	 */
-	private OptionModelController getOptionModelController() {
-		if (omc==null) {
-			omc = new OptionModelController();
+	private Class<?> getClass(String className) {
+		
+		if (className==null || className.isBlank()==true) return null;
+		
+		Class<?> clazz = null;
+		try {
+			clazz = BaseClassLoadServiceUtility.forName(className);
+		} catch (ClassNotFoundException | NoClassDefFoundError ex) {
+			ex.printStackTrace();
 		}
-		return omc;
+		return clazz;
 	}
-	/**
-	 * Returns the private GroupController.
-	 * @return the group controller
-	 */
-	private GroupController getGroupController() {
-		if (gc==null) {
-			gc = new GroupController();
-		}
-		return gc;
-	}
+	
 	
 	/**
 	 * Gets the validation message for the specified evaluation class.
@@ -137,18 +129,11 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 			msgDescription = "No default evaluation strategy could be found for the EOM model of " + netCompDescription + ".";
 			
 		} else {
-			// --- Get instance of strategy ---------------------------------------------
-			AbstractEvaluationStrategy strategy = null;
-			if (isAggregation==false) {
-				strategy = this.getOptionModelController().createEvaluationStrategy(evalStrategyClassName);
-			} else {
-				strategy = this.getGroupController().getGroupOptionModelController().createEvaluationStrategy(evalStrategyClassName);
-			}
+			// --- Get class of the strategy --------------------------------------------
+			Class<?> strategyClass = this.getClass(evalStrategyClassName);
+			if (strategyClass==null) {
+				msgDescription = "Could not find strategy class '" + evalStrategyClassName + "' for " + netCompDescription + ". See console for further information.";
 			
-			if (strategy==null) {
-				// --- Error while initiating strategy class ----------------------------
-				msgDescription = "Error while initiating strategy class '" + evalStrategyClassName + "' for " + netCompDescription + ". See console for further information.";
-				
 			} else {
 				// ----------------------------------------------------------------------
 				// --- Check with respect to the current simulation type ----------------
@@ -158,19 +143,19 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				// --- => Continuous Simulations <= --- 
 				boolean isContinuousSimulation = (this.getProject().getTimeModelController().getTimeModel() instanceof TimeModelContinuous);
 				if (isContinuousSimulation==true) {
-					return this.getValidationMessageForContinuousSimulation(netCompDescription, msg, strategy, isAggregation);
+					return this.getValidationMessageForContinuousSimulation(netCompDescription, msg, strategyClass, isAggregation);
 				}
 				
 				// ------------------------------------
 				// --- => Discrete Simulations <= -----
 				boolean isSnapShotSimulation = this.getHyGridAbstractEnvironmentModel().isDiscreteSnapshotSimulation();
 				if (isSnapShotSimulation==false) {
-					return this.getValidationMessageForDiscreteSimulation(netCompDescription, msg, strategy, isAggregation);
+					return this.getValidationMessageForDiscreteSimulation(netCompDescription, msg, strategyClass, isAggregation);
 				}
 				
 				// ------------------------------------
 				// --- => Snapshot Simulations <= -----
-				return this.getValidationMessageForSnapshotSimulation(netCompDescription, msgDescription, strategy, isAggregation);
+				return this.getValidationMessageForSnapshotSimulation(netCompDescription, msgDescription, strategyClass, isAggregation);
 				
 			}
 		}
@@ -182,11 +167,11 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	 *
 	 * @param netCompDescription the network component description
 	 * @param msg the short message
-	 * @param strategy the strategy
+	 * @param strategyClass the strategy class
 	 * @param isAggregation the is aggregation
 	 * @return the validation message for continuous simulation
 	 */
-	private HyGridValidationMessage getValidationMessageForContinuousSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
+	private HyGridValidationMessage getValidationMessageForContinuousSimulation(String netCompDescription, String msg, Class<?> strategyClass, boolean isAggregation) {
 		
 		String msgDescription = null;
 		MessageType msgType = MessageType.Error;
@@ -195,10 +180,10 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 			// ------------------------------------------------------------------
 			// --- Check for TechnicalSystem instances --------------------------
 			// ------------------------------------------------------------------
-			if (strategy instanceof AbstractSnapshotStrategy) {
+			if (AbstractSnapshotStrategy.class.isAssignableFrom(strategyClass)==true) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for real time purposes!";
 			} else {
-				if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
+				if (AbstractEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false) {
 					msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 					msgType = MessageType.Information;
 				}
@@ -208,10 +193,10 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 			// ------------------------------------------------------------------
 			// --- Check for TechnicalSystemGroup instances ---------------------
 			// ------------------------------------------------------------------
-			if (strategy instanceof AbstractGroupSnapshotStrategy) {
+			if (AbstractGroupSnapshotStrategy.class.isAssignableFrom(strategyClass)==true) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for real time purposes!";
 			} else {
-				if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
+				if (AbstractGroupEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false) {
 					msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 					msgType = MessageType.Information;
 				}
@@ -225,11 +210,11 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	 *
 	 * @param netCompDescription the the network component description
 	 * @param msg the short message
-	 * @param strategy the strategy
+	 * @param strategyClass the strategy
 	 * @param isAggregation the is aggregation
 	 * @return the validation message for discrete simulation
 	 */
-	private HyGridValidationMessage getValidationMessageForDiscreteSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
+	private HyGridValidationMessage getValidationMessageForDiscreteSimulation(String netCompDescription, String msg, Class<?> strategyClass, boolean isAggregation) {
 		
 		String msgDescription = null;
 		MessageType msgType = MessageType.Error;
@@ -238,35 +223,34 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 			// ------------------------------------------------------------------
 			// --- Check for TechnicalSystem instances --------------------------
 			// ------------------------------------------------------------------
-			if (strategy instanceof AbstractSnapshotStrategy) {
+			if (AbstractSnapshotStrategy.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
-			} else if (strategy instanceof AbstractEvaluationStrategyRT) {
+			} else if (AbstractEvaluationStrategyRT.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
 			}
 		} else {
 			// ------------------------------------------------------------------
 			// --- Check for TechnicalSystemGroup instances ---------------------
 			// ------------------------------------------------------------------
-			if (strategy instanceof AbstractGroupSnapshotStrategy) {
+			if (AbstractGroupSnapshotStrategy.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
-			} else  if (strategy instanceof AbstractGroupEvaluationStrategyRT) {
+			} else  if (AbstractGroupEvaluationStrategyRT.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
 			}
 		}
 		return this.getHyGridValidationMessage(msg, msgDescription, msgType);
 	}
-
 	
 	/**
 	 * Gets the validation message for discrete simulation.
 	 *
 	 * @param netCompDescription the the network component description
 	 * @param msg the short message
-	 * @param strategy the strategy
+	 * @param strategyClass the strategy
 	 * @param isAggregation the is aggregation
 	 * @return the validation message for discrete simulation
 	 */
-	private HyGridValidationMessage getValidationMessageForSnapshotSimulation(String netCompDescription, String msg, AbstractEvaluationStrategy strategy, boolean isAggregation) {
+	private HyGridValidationMessage getValidationMessageForSnapshotSimulation(String netCompDescription, String msg, Class<?> strategyClass, boolean isAggregation) {
 		
 		String msgDescription = null;
 		MessageType msgType = MessageType.Error;
@@ -282,11 +266,11 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				case Decentral:
 					// --- Check for the right strategy type ------------------------
 					if (isSnapShotSimulation==true) {
-						if (!(strategy instanceof AbstractSnapshotStrategy)) {
+						if (AbstractSnapshotStrategy.class.isAssignableFrom(strategyClass)==false) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
 						}
 					} else {
-						if (!(strategy instanceof AbstractEvaluationStrategyRT) || strategy instanceof AbstractSnapshotStrategy) {
+						if (AbstractEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false || AbstractSnapshotStrategy.class.isAssignableFrom(strategyClass)==true) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 						}
 					}
@@ -294,7 +278,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 					
 				case Central:
 					// --- Ensure that the class is of type RT strategy -------------
-					if (!(strategy instanceof AbstractEvaluationStrategyRT)) {
+					if (AbstractEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false) {
 						msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 					}
 					break;
@@ -311,11 +295,11 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 				case Decentral:
 					// --- Check for the right strategy type ------------------------
 					if (isSnapShotSimulation==true) {
-						if (!(strategy instanceof AbstractGroupSnapshotStrategy)) {
+						if (AbstractGroupSnapshotStrategy.class.isAssignableFrom(strategyClass)==false) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a snapshot strategy!";
 						}
 					} else {
-						if (!(strategy instanceof AbstractGroupEvaluationStrategyRT) || strategy instanceof AbstractGroupSnapshotStrategy) {
+						if (AbstractGroupEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false || AbstractGroupSnapshotStrategy.class.isAssignableFrom(strategyClass)) {
 							msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 						}
 					}		
@@ -323,7 +307,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 					
 				case Central:
 					// --- Ensure that the class is of type RT strategy -------------
-					if (!(strategy instanceof AbstractGroupEvaluationStrategyRT)) {
+					if (AbstractGroupEvaluationStrategyRT.class.isAssignableFrom(strategyClass)==false) {
 						msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is not a real time strategy!";
 					}
 					break;

@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.validation;
 
+import java.util.TreeMap;
+
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
@@ -29,7 +31,7 @@ public class HyGridValidationAdapter {
 	private NetworkModel networkModel;
 	private HyGridAbstractEnvironmentModel hyGridAbsEnvModel;
 	
-
+	private TreeMap<String, Long> executionDurationMap;
 	
 	/**
 	 * Validate the project after the project files were loaded.
@@ -257,5 +259,28 @@ public class HyGridValidationAdapter {
 			}
 		}
 	}
+
+
+	
+	/**
+	 * Returns the execution duration map.
+	 * @return the execution duration map
+	 */
+	public TreeMap<String, Long> getExecutionDurationMap() {
+		if (executionDurationMap==null) {
+			executionDurationMap = new TreeMap<>();
+		}
+		return executionDurationMap;
+	}
+	/**
+	 * Sets the execution duration.
+	 *
+	 * @param task the task description
+	 * @param execDuration the exec duration
+	 */
+	public void setExecutionDuration(String task, long execDuration) {
+		this.getExecutionDurationMap().put(task, execDuration);
+	}
+	
 	
 }
