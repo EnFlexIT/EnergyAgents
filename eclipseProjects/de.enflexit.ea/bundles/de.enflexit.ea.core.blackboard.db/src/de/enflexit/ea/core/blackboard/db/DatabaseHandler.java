@@ -237,6 +237,8 @@ public class DatabaseHandler {
 	public void saveNetworkState(NetworkState networkState) {
 		
 		Session sessionToUse = this.getSession();
+		if (sessionToUse==null) return;
+		
 		Transaction transaction = null;
 		try {
 
