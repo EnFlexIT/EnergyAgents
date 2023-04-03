@@ -5,5 +5,5 @@
 // Generiert: 2018.03.14 um 12:34:23 PM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.dawis.wiwi.uni-due.de/HyGridAgentConfiguration", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.dawis.wiwi.uni-due.de/HyGridAgentConfiguration", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package de.enflexit.ea.core.dataModel.deployment;

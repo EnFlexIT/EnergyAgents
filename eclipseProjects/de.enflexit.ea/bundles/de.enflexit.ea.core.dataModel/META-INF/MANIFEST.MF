@@ -34,5 +34,5 @@ Require-Bundle: de.enflexit.common,
  org.eclipse.osgi
 Import-Package: edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.util,
- javax.xml.bind,
- javax.xml.bind.annotation
+ jakarta.xml.bind,
+ jakarta.xml.bind.annotation
