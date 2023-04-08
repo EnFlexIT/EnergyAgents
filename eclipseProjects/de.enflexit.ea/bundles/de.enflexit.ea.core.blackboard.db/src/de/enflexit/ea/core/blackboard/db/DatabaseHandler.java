@@ -227,7 +227,7 @@ public class DatabaseHandler {
 				
 				Application.setStatusBarMessageReady();
 			}
-		}, "NetworkState-SaveThread").start();
+		}, "NetworkState-SaveThread of " + Thread.currentThread().getName()).start();
 	}
 	
 	/**
