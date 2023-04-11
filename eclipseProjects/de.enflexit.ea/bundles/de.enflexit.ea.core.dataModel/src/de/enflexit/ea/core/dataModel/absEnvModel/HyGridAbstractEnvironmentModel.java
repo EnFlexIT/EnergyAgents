@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -55,6 +57,9 @@ import energy.schedule.ScheduleTransformerKeyValueConfiguration;
     "stateTransmission",
     "executionDataBase",
     "saveRuntimeInformationToDatabase",
+	"saveRuntimeInformationToDedicatedDatabase",
+	"dedicatedDatabasePrefix",
+	"factoryIDList",
     "energyTransmissionConfiguration",
     "displayUpdateConfiguration",
     "graphElementLayoutSettingsPersisted",
@@ -105,7 +110,13 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	private String snapshotCentralDecisionClass;
 	
 	private ExecutionDataBase executionDataBase;
+	
 	private boolean saveRuntimeInformationToDatabase;
+	private boolean saveRuntimeInformationToDedicatedDatabase;
+	private String dedicatedDatabasePrefix;
+	@XmlElementWrapper(name = "factoryIDList")
+	@XmlElement(name = "factoryID")
+	private List<String> factoryIDList;
 	
 	private ScheduleTransformerKeyValueConfiguration energyTransmissionConfiguration;
 	private DisplayUpdateConfiguration displayUpdateConfiguration;
@@ -340,6 +351,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		this.executionDataBase = executionDataBase;
 	}
 		
+	
 	/**
 	 * Checks if runtime information are to be save to database.
 	 * @return true, if is save runtime information to database
@@ -354,6 +366,55 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	public void setSaveRuntimeInformationToDatabase(boolean saveRuntimeInformationToDatabase) {
 		this.saveRuntimeInformationToDatabase = saveRuntimeInformationToDatabase;
 	}
+	
+	/**
+	 * Checks if is save runtime information to a dedicated database.
+	 * @return true, if is save runtime information to dedicated database
+	 */
+	public boolean isSaveRuntimeInformationToDedicatedDatabase() {
+		return saveRuntimeInformationToDedicatedDatabase;
+	}
+	/**
+	 * Sets to save runtime information to a dedicated database.
+	 * @param saveRuntimeInformationToDedicatedDatabase the new save runtime information to dedicated database
+	 */
+	public void setSaveRuntimeInformationToDedicatedDatabase(boolean saveRuntimeInformationToDedicatedDatabase) {
+		this.saveRuntimeInformationToDedicatedDatabase = saveRuntimeInformationToDedicatedDatabase;
+	}
+
+	/**
+	 * Returns the name prefix for a dedicated database.
+	 * @return the dedicated database prefix
+	 */
+	public String getDedicatedDatabasePrefix() {
+		return dedicatedDatabasePrefix;
+	}
+	/**
+	 * Sets the name prefix for dedicated database.
+	 * @param dedicatedDatabasePrefix the new dedicated database prefix
+	 */
+	public void setDedicatedDatabasePrefix(String dedicatedDatabasePrefix) {
+		this.dedicatedDatabasePrefix = dedicatedDatabasePrefix;
+	}
+
+	/**
+	 * Returns the list of factory ID's to be switched to a dedicated database.
+	 * @return the list of factory-ID's to be considered for a dedicated database 
+	 */
+	public List<String> getFactoryIDList() {
+		if (factoryIDList==null) {
+			factoryIDList = new ArrayList<>();
+		}
+		return factoryIDList;
+	}
+	/**
+	 * Sets the factory ID list.
+	 * @param factoryIDList the new factory ID list
+	 */
+	public void setFactoryIDList(List<String> factoryIDList) {
+		this.factoryIDList = factoryIDList;
+	}
+
 	
 	/**
 	 * Sets the energy transmission configuration.
@@ -547,7 +608,12 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		// --- Data handling ------------------------------
 		copy.setExecutionDataBase(this.getExecutionDataBase());
 		copy.setScheduleLengthRestriction(SerialClone.clone(this.getScheduleLengthRestriction()));
+		
+		// --- Database settings --------------------------
 		copy.setSaveRuntimeInformationToDatabase(this.isSaveRuntimeInformationToDatabase());
+		copy.setSaveRuntimeInformationToDedicatedDatabase(this.isSaveRuntimeInformationToDedicatedDatabase());
+		copy.setDedicatedDatabasePrefix(this.getDedicatedDatabasePrefix());
+		copy.setFactoryIDList(new ArrayList<>(this.getFactoryIDList()));
 		
 		// --- Visualization settings ---------------------
 		copy.setDisplayUpdateConfiguration(this.getDisplayUpdateConfiguration().getCopy());
@@ -630,7 +696,12 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		if (slrDurationComp!=slrDurationThis) return false;
 		if (slrComp.getMaxNumberOfSystemStates()!=slrThis.getMaxNumberOfSystemStates()) return false;
 		
+		// ------------------------------------------------
+		// --- Database settings --------------------------
 		if (hyGridComp.isSaveRuntimeInformationToDatabase()!=this.isSaveRuntimeInformationToDatabase()) return false;
+		if (hyGridComp.isSaveRuntimeInformationToDedicatedDatabase()!=this.isSaveRuntimeInformationToDedicatedDatabase()) return false;
+		if (hyGridComp.getDedicatedDatabasePrefix().equals(this.getDedicatedDatabasePrefix())==false) return false;
+		if (hyGridComp.getFactoryIDList().equals(this.getFactoryIDList())==false) return false;
 		
 		// ------------------------------------------------
 		// --- Visualization settings ---------------------

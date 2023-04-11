@@ -1,5 +1,10 @@
 package de.enflexit.ea.core.awbIntegration.plugin;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import org.agentgui.gui.swing.project.ProjectWindowTab;
@@ -7,6 +12,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
+import org.hibernate.cfg.Configuration;
 
 import agentgui.core.application.Application;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
@@ -16,6 +22,11 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.db.hibernate.HibernateDatabaseService;
+import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
+import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
+import de.enflexit.db.hibernate.relocation.DatabaseRelocator;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.HyGridSettingsTab;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
@@ -41,6 +52,8 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private SetupExtension setupExtension;
 
 	private ScheduleTimeRangeListener scheduleTimeRangeListener;
+
+	private DatabaseRelocator databaseRelocator;
 	
 	/**
 	 * Instantiates a new Agent.HyGrid plugin .
@@ -269,7 +282,9 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		
 		// --- ScheduleTimeRange: reloaded current data ? -----------
 		this.getScheduleTimeRangeListener().checkTimeRangeSettingsAccordingToTimeModelBeforeJadeStart();
-		
+	
+		// --- Adjust database settings? ----------------------------
+		this.onMasWillBeExecutedDB();
 	}
 
 	/*
@@ -278,10 +293,188 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	 */
 	@Override
 	public void onMasWasTerminated() {
-		HyGridAbstractEnvironmentModel haemGraphCo = (HyGridAbstractEnvironmentModel) this.getGraphController().getEnvironmentModel().getAbstractEnvironment();
-		if (haemGraphCo != null) {
-			haemGraphCo.setSetupExtension(null);
+		// --- Reset SetupExtension ---------------------------------
+		HyGridAbstractEnvironmentModel hyGridDM = this.getHyGridAbstractEnvironmentModel();
+		if (hyGridDM != null) {
+			hyGridDM.setSetupExtension(null);
 		}
+		// --- Restore database settings ----------------------------
+		this.onMasWasTerminatedDB();
+	}
+	
+	// --------------------------------------------------------------
+	// --- From here, DB handling for the execution -----------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the current HyGridAbstractEnvironmentModel to be used.
+	 * @return the hy grid abstract environment model
+	 */
+	private HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
+		return (HyGridAbstractEnvironmentModel) this.getGraphController().getAbstractEnvironmentModel();
+	}
+	
+	/**
+	 * Checks if is configured database switch.
+	 * @return true, if is configured database switch
+	 */
+	private boolean isConfiguredForDedicatedDatabase() {
+		
+		HyGridAbstractEnvironmentModel hyGridDM = this.getHyGridAbstractEnvironmentModel();
+		
+		if (hyGridDM.isSaveRuntimeInformationToDatabase()==false) return false;
+		if (hyGridDM.isSaveRuntimeInformationToDedicatedDatabase()==false) return false;
+		if (hyGridDM.getFactoryIDList().size()==0) return false;
+		return true;
+	}
+	
+	/**
+	 * Returns the PEAK database re-locator.
+	 * @return the database re-locator
+	 */
+	private DatabaseRelocator getDatabaseRelocator() {
+		if (databaseRelocator==null) {
+			databaseRelocator = new DatabaseRelocator();
+		}
+		return databaseRelocator;
+	}
+	/**
+	 * Sets the database re-locator.
+	 * @param databaseRelocator the new database re-locator
+	 */
+	private void setDatabaseRelocator(DatabaseRelocator databaseRelocator) {
+		this.databaseRelocator = databaseRelocator;
+	}
+	/**
+	 * Will adjust the destination database for the MAS execution .
+	 */
+	private void onMasWillBeExecutedDB() {
+		
+		boolean verbose = true;
+		
+		if (this.isConfiguredForDedicatedDatabase()==false) return;
+		
+		HyGridAbstractEnvironmentModel hyGridDM = this.getHyGridAbstractEnvironmentModel();
+
+		String dbPrefix = hyGridDM.getDedicatedDatabasePrefix();
+		if (dbPrefix==null || dbPrefix.isBlank()==true) {
+			dbPrefix = Application.getProjectFocused().getProjectName();
+		}
+		String simSetup = this.getShortText(Application.getProjectFocused().getSimulationSetupCurrent());
+		String dateString = new SimpleDateFormat("dd-MM-yy_HH-mm").format(new Date(System.currentTimeMillis()));
+		String newDatabase = dbPrefix + "_" + simSetup + "_" + dateString;
+		newDatabase = newDatabase.replace(".", "");
+		newDatabase = newDatabase.replace(" ", "");
+		
+		// --- Get DatabaseConnectionManager ----------------------------------
+		DatabaseConnectionManager dbConnManager = DatabaseConnectionManager.getInstance();
+		
+		// --- Define the temporary properties to apply -----------------------
+		HashMap<String, java.util.Properties> tmpPropertiesHashMap = new HashMap<>();
+		List<String> factoryIDListToConsider = hyGridDM.getFactoryIDList();
+		List<String> factoryIDList = HibernateUtilities.getSessionFactoryIDList();
+		for (String factoryID : factoryIDList) {
+			// --- Check if to consider for the DB switch ---------------------
+			if (factoryIDListToConsider.contains(factoryID)==false) continue;
+			
+			// --- Get current configuration and settings ---------------------
+			HibernateDatabaseConnectionService hdbcs = dbConnManager.getHibernateDatabaseConnectionService(factoryID);
+			Configuration configuration = hdbcs.getConfiguration();
+			dbConnManager.loadDatabaseConfigurationProperties(factoryID, configuration);
+			String oldDatabase = (String) configuration.getProperties().get(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
+			String oldURL      = (String) configuration.getProperties().get(HibernateDatabaseService.HIBERNATE_PROPERTY_URL);
+			String newURL      = oldURL.replace(oldDatabase, newDatabase);
+			
+			// --- Simply change the Catalog / DB-name for saving data --------
+			java.util.Properties tmpProps = new java.util.Properties();
+			tmpProps.setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, newDatabase);
+			tmpProps.setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, newURL);
+			tmpPropertiesHashMap.put(factoryID, tmpProps);
+		}
+		this.getDatabaseRelocator().setVerbose(verbose);
+		this.getDatabaseRelocator().applyTemporaryHibernateProperties(tmpPropertiesHashMap, true, true);
+		
+	}
+	/**
+	 * Return a short text for the specified text.
+	 *
+	 * @param longText the long text
+	 * @return the short text
+	 */
+	private String getShortText(String longText) {
+		
+		boolean isDebug = false;
+		int maxLowerCaseCharacters = 3;
+		
+		String shortText = "";
+		try {
+			
+			for (int i = 0; i < longText.length(); i++) {
+				
+				char ch = longText.charAt(i);
+				boolean addCharacter = false;
+				
+				if (ch=='-' || ch=='_') {
+					addCharacter = true;
+				} else if (Character.isDigit(ch)==true) {
+					addCharacter = true;
+				} else if (Character.isUpperCase(ch)==true) {
+					addCharacter = true;
+				} else if (Character.isLowerCase(ch)==true) {
+					// --- Check if the last three characters are lower case ---
+					addCharacter = true;
+					int lowerCaseCounter = 1;
+					for (int j = shortText.length()-1; j>=0; j--) {
+						char chCheck = shortText.charAt(j);
+						if (Character.isLowerCase(chCheck)==true) {
+							lowerCaseCounter++;
+						} else {
+							break;
+						}
+						if (lowerCaseCounter >= maxLowerCaseCharacters) {
+							addCharacter=false;
+							break;
+						}
+					}
+				} 
+				
+				if (addCharacter==true) {
+					shortText+=ch;
+				}
+			} 
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			shortText = longText;
+		}
+		
+		if (isDebug==true) {
+			System.out.println(longText + " \t=> \t" + shortText);
+		}
+		return shortText;
+	}
+	
+	/**
+	 * Checks for valid precondition for the MAS execution with respect to the database.
+	 * @return true, if successful
+	 */
+	private boolean hasValidPreconditionForMasExecutionDB() {
+		
+		if (this.isConfiguredForDedicatedDatabase()==false) return true;
+		
+		boolean isApplied = this.getDatabaseRelocator().isAppliedTemporaryHibernateProperties(2000);
+		if (isApplied==false) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] => COULD NOT APPLY TEMPORARY DATABASE CONFIGURATION FOR THE MAS EXECUTION - OBJECTION AGAINST JADE START !!! <="); 
+		}
+		return isApplied;
+	}
+	
+	/**
+	 * Will restore the database settings after the MAS execution .
+	 */
+	private void onMasWasTerminatedDB() {
+		if (this.isConfiguredForDedicatedDatabase()==false) return;
+		this.getDatabaseRelocator().restoreTemporaryHibernateProperties();
+		this.setDatabaseRelocator(null);
 	}
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------
@@ -362,8 +555,8 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	public boolean hasValidPreconditionForMasExecution() {
 		
 		boolean validPreconditions;
-		if (this.checkForTestBedRealAgents() == false) {
-			// --- No preconditions in this case --------------
+		if (this.checkForTestBedRealAgents()==false) {
+			// --- No preconditions in this case ----------
 			validPreconditions = true;
 		} else {
 			// --- If the current setup contains TestBedReal agents, check if the selected time model is compatible --------
@@ -371,10 +564,16 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		}
 
 		if (validPreconditions == false) {
-			System.err.println(this.getName() + ": Incompatible time model - when using the operating mode TestBedReal, please choose a continuous and non-accelerated time model");
-			if (Application.isOperatingHeadless() == false) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), "Incompatible time model!\nWhen using the operating mode TestBedReal, please choose a continuous and non-accelerated time model.", "Incompatible Time Model!", JOptionPane.WARNING_MESSAGE);
+			String message = "Incompatible time model: When using the operating mode TestBedReal, please choose a continuous and non-accelerated time model.";
+			System.err.println("[" + this.getClass().getSimpleName() + "]" + message);
+			if (Application.isOperatingHeadless()==false) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), message, "Incompatible Time Model!", JOptionPane.WARNING_MESSAGE);
 			}
+		}
+		
+		// --- Check database settings --------------------
+		if (validPreconditions==true) {
+			validPreconditions = this.hasValidPreconditionForMasExecutionDB();
 		}
 		return validPreconditions;
 	}
@@ -384,11 +583,10 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	 * @return true if at least one agent is in TestBedReal mode
 	 */
 	private boolean checkForTestBedRealAgents() {
+
 		if (this.setupExtension.getDeploymentGroupsHelper().getAllDeployedAgents().size() > 0) {
 			for (String testbedAgentID : this.setupExtension.getDeploymentGroupsHelper().getDeployedAgentIDs()) {
-				
 				AgentDeploymentInformation agentInfo = this.getSetupExtension().getDeploymentGroupsHelper().getAgentDeploymentInformation(testbedAgentID);
-				
 				if (agentInfo.getAgentOperatingMode()==AgentOperatingMode.TestBedReal) {
 					// --- An agent in testbed real mode has been found -------
 					return true;
