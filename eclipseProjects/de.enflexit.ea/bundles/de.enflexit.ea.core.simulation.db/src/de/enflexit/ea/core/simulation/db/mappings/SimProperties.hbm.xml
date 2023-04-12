@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+    <class name="de.enflexit.ea.core.simulation.db.dataModel.SimulationProperties" table="sim_properties">
+        
+        <id name="idProperty" type="int">
+            <column name="idProperty" />
+            <generator class="increment" />
+        </id>
+
+		<!-- <many-to-one foreign-key="fk_idSimulation" name="idSimulation" class="de.enflexit.ea.core.simulation.db.dataModel.SimulationOverview" column="idSimulation" cascade="all"/> -->
+		
+		<property name="idSimulation" type="int" not-null="true">
+            <column name="idSimulation"/>
+        </property>
+		
+        
+		<property name="identifier" type="java.lang.String" not-null="true">
+            <column name="identifier" length="255"/>
+        </property>
+        
+        <property name="stringValue" type="java.lang.String">
+            <column name="stringValue" length="255"/>
+        </property>
+        
+        <property name="booleanValue" type="java.lang.Boolean">
+            <column name="booleanValue"/>
+        </property>
+        
+        <property name="integerValue" type="java.lang.Integer">
+            <column name="integerValue"/>
+        </property>
+		<property name="longValue" type="java.lang.Long">
+            <column name="longValue"/>
+        </property>
+
+		<property name="floatValue" type="java.lang.Float">
+            <column name="floatValue"/>
+        </property>
+        <property name="doubleValue" type="java.lang.Double">
+            <column name="doubleValue"/>
+        </property>
+
+    </class>
+    
+    
+</hibernate-mapping>

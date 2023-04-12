@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private ScheduleTimeRangeListener scheduleTimeRangeListener;
 
 	private DatabaseRelocator databaseRelocator;
+	private SimulationOverviewCollector simulationOverviewCollector;
 	
 	/**
 	 * Instantiates a new Agent.HyGrid plugin .
@@ -344,12 +346,28 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private void setDatabaseRelocator(DatabaseRelocator databaseRelocator) {
 		this.databaseRelocator = databaseRelocator;
 	}
+	
+	/**
+	 * Returns the simulation overview collector.
+	 * @return the simulation overview collector
+	 */
+	private SimulationOverviewCollector getSimulationOverviewCollector() {
+		return simulationOverviewCollector;
+	}
+	/**
+	 * Sets the simulation overview collector.
+	 * @param simulationOverviewCollector the new simulation overview collector
+	 */
+	public void setSimulationOverviewCollector(SimulationOverviewCollector simulationOverviewCollector) {
+		this.simulationOverviewCollector = simulationOverviewCollector;
+	}
+	
 	/**
 	 * Will adjust the destination database for the MAS execution .
 	 */
 	private void onMasWillBeExecutedDB() {
 		
-		boolean verbose = true;
+		boolean verbose = false;
 		
 		if (this.isConfiguredForDedicatedDatabase()==false) return;
 		
@@ -364,6 +382,9 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		String newDatabase = dbPrefix + "_" + simSetup + "_" + dateString;
 		newDatabase = newDatabase.replace(".", "");
 		newDatabase = newDatabase.replace(" ", "");
+		
+		// --- Save information to table ea_simulation_overview ---------------
+		this.setSimulationOverviewCollector(new SimulationOverviewCollector(this.project, newDatabase));
 		
 		// --- Get DatabaseConnectionManager ----------------------------------
 		DatabaseConnectionManager dbConnManager = DatabaseConnectionManager.getInstance();
@@ -392,7 +413,6 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		}
 		this.getDatabaseRelocator().setVerbose(verbose);
 		this.getDatabaseRelocator().applyTemporaryHibernateProperties(tmpPropertiesHashMap, true, true);
-		
 	}
 	/**
 	 * Return a short text for the specified text.
@@ -464,6 +484,11 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		boolean isApplied = this.getDatabaseRelocator().isAppliedTemporaryHibernateProperties(2000);
 		if (isApplied==false) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] => COULD NOT APPLY TEMPORARY DATABASE CONFIGURATION FOR THE MAS EXECUTION - OBJECTION AGAINST JADE START !!! <="); 
+		} else {
+			SimulationOverviewCollector soc = this.getSimulationOverviewCollector();
+			if (soc!=null) {
+				soc.saveToDatabase();
+			}
 		}
 		return isApplied;
 	}
@@ -472,9 +497,21 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	 * Will restore the database settings after the MAS execution .
 	 */
 	private void onMasWasTerminatedDB() {
+		
 		if (this.isConfiguredForDedicatedDatabase()==false) return;
+
+		// --- Restore database settings ---------------------------- 
 		this.getDatabaseRelocator().restoreTemporaryHibernateProperties();
 		this.setDatabaseRelocator(null);
+		
+		// --- Save finalization time -------------------------------
+		SimulationOverviewCollector soc = this.getSimulationOverviewCollector();
+		if (soc!=null) {
+			soc.getSimulationOverview().setTimeOfFinalization(Calendar.getInstance());
+			soc.saveToDatabase();
+			this.setSimulationOverviewCollector(null);
+		}
+		
 	}
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------

@@ -22,6 +22,7 @@
 		<module>de.enflexit.ea.core.dashboard</module>
 		<module>de.enflexit.ea.core.dataModel</module>
 		<module>de.enflexit.ea.core.simulation</module>
+		<module>de.enflexit.ea.core.simulation.db</module>
 		<module>de.enflexit.ea.core.validation</module>
 		<module>de.enflexit.ea.deployment</module>
 		<module>de.enflexit.ea.electricity</module>

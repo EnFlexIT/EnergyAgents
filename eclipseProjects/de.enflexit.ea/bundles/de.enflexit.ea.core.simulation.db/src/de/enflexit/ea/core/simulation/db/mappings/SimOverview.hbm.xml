@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+
+    <class name="de.enflexit.ea.core.simulation.db.dataModel.SimulationOverview" table="sim_overview">
+        
+        <id name="idSimulation" type="int">
+            <column name="idSimulation" />
+            <generator class="increment" />
+        </id>
+        
+		<property name="awbProject" type="java.lang.String" not-null="true">
+            <column name="awbProject" length="100"/>
+        </property>
+		<property name="awbSetup" type="java.lang.String" not-null="true">
+            <column name="awbSetup" length="100"/>
+        </property>
+        <property name="databaseName" type="java.lang.String" not-null="true">
+            <column name="databaseName" length="100"/>
+        </property>
+        
+		
+	 	<property name="setupTimeFrom" type="java.util.Calendar">
+	    	<column name="setupTimeFrom" />
+		</property>
+		<property name="setupTimeTo" type="java.util.Calendar">
+	    	<column name="setupTimeTo" />
+		</property>
+
+		<property name="timeOfExecution" type="java.util.Calendar">
+	    	<column name="timeOfExecution" />
+		</property>
+		<property name="timeOfFinalization" type="java.util.Calendar">
+	    	<column name="timeOfFinalization" />
+		</property>
+		
+		<bag name="simulationProperties" cascade="all" inverse="true">
+			<key column="idSimulation" on-delete="cascade" foreign-key="fk_idSimulation"/>
+			<one-to-many class="de.enflexit.ea.core.simulation.db.dataModel.SimulationProperties" />
+		</bag>
+		
+    </class>
+    
+</hibernate-mapping>
