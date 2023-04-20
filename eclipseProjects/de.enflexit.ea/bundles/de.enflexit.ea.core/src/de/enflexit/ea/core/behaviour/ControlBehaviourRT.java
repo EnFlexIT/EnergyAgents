@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.behaviour;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -8,6 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.ea.core.AbstractEnergyAgent;
@@ -83,7 +85,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private long currentTime;
 	private boolean receivedNewMeasurements;
 	
-	
+	private boolean isDebug = false;
+	private String debugAgent = "n0";
 	
 	/**
 	 * Instantiates a new control behaviour that is used during real time.
@@ -536,6 +539,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			try {
 				// --- Case separation for single or multiple systems ---------
 				if (this.typeOfControlledSystem!=null) {
+					this.debugPrint("executing real time strategy ...", false);
 					switch (this.typeOfControlledSystem) {
 					case TechnicalSystem:
 						this.actionForTechnicalSystem();
@@ -881,13 +885,31 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 */
 	public boolean setDecisionSwitchPriority(int newPriority) {
 		
-		AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> ds =this.getDecisionSwitch();
+		AbstractDecisionSwitch<? extends AbstractEvaluationStrategy> ds = this.getDecisionSwitch();
 		if (ds!=null) {
 			ds.setCurrentPriorityLevel(newPriority);
 			return true;
 		}
 		return false;
 	}
+
 	
+	/**
+	 * Debug print.
+	 * @param message the message
+	 * @param isError the is error
+	 */
+	private void debugPrint(String message, boolean isError) {
+		
+		if (this.isDebug==false) return;
+		if (this.debugAgent!=null && this.debugAgent.isBlank()==false && this.debugAgent.equals(this.energyAgent.getLocalName())==false) return;
+		
+		String prefix = "[" + this.energyAgent.getLocalName() + "|" + this.getClass().getSimpleName() +  "] => " + DateTimeHelper.getDateAsString(new Date(this.currentTime), "dd.MM.yy HH:mm:ss,SSS") + " ";
+		if (isError==true) {
+			System.err.println(prefix + message);
+		} else {
+			System.out.println(prefix + message);
+		}
+	}
 	
 }
