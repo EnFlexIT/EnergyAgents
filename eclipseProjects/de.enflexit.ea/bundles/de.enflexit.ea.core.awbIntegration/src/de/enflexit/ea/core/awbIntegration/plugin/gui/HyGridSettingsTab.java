@@ -7,10 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -19,7 +15,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,12 +24,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -53,11 +45,7 @@ import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import de.enflexit.db.hibernate.HibernateUtilities;
-import de.enflexit.db.hibernate.SessionFactoryMonitor;
-import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
-import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
-import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
+import de.enflexit.db.hibernate.gui.DatabaseSelectionPanel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.DisplayUpdateConfiguration.UpdateMechanism;
@@ -79,12 +67,10 @@ import energy.schedule.gui.ScheduleLengthRestrictionPanel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class HyGridSettingsTab extends JScrollPane implements Observer, ActionListener, DocumentListener, HibernateStateVisualizationService {
+public class HyGridSettingsTab extends JScrollPane implements Observer, ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = -1983567619404123877L;
 
-	private final String DB_SESSION_FACTORY_ID = "de.enflexit.ea.core.blackboard.db";
-	
 	private Project currProject;
 	private boolean isPauseObserver;
 	
@@ -144,9 +130,13 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JRadioButton jRadioButtonPowerTransmissionAsDefined;
 	private JLabel jLabelHeaderRuntimeDataSettings;
 	private JSeparator jSeparatorAfterRuntimeDataHandling;
+
 	private JPanel jPanelRuntimeDataSettings;
 	private JCheckBox jCheckboxStoreToDatabase;
-	private JLabel jLabelHibernateState;
+	private JCheckBox jCheckboxStoreToDedicatedDatabase;
+	private DatabaseSelectionPanel databaseSelectionPanel;
+	private JLabel jLabelDatabasePrefix;
+	private JTextField jTextFieldDatabasePrefix;
 
 	
 	/**
@@ -240,6 +230,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		// --- Database settings ----------------
 		this.getJCheckboxStoreToDatabase().setSelected(hyGridDM.isSaveRuntimeInformationToDatabase());
+		this.getJCheckboxStoreToDedicatedDatabase().setSelected(hyGridDM.isSaveRuntimeInformationToDedicatedDatabase());
+		this.getJTextFieldDatabasePrefix().setText(hyGridDM.getDedicatedDatabasePrefix());
+		this.getDatabaseSelectionPanel().setFactoryIDsSelected(hyGridDM.getFactoryIDList());
 		
 		// --- Set energy transmission ----------
 		ScheduleTransformerKeyValueConfiguration etc = hyGridDM.getEnergyTransmissionConfiguration();
@@ -320,6 +313,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		
 		// --- Database settings --------------------------
 		hyGridDM.setSaveRuntimeInformationToDatabase(this.getJCheckboxStoreToDatabase().isSelected());
+		hyGridDM.setSaveRuntimeInformationToDedicatedDatabase(this.getJCheckboxStoreToDedicatedDatabase().isSelected());
+		hyGridDM.setDedicatedDatabasePrefix(this.getJTextFieldDatabasePrefix().getText());
+		hyGridDM.setFactoryIDList(this.getDatabaseSelectionPanel().getFactoryIDsSelected());
 		
 		// --- Save energy transmission -------------------
 		ScheduleTransformerKeyValueConfiguration etc = hyGridDM.getEnergyTransmissionConfiguration();
@@ -437,31 +433,6 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		this.setSize(1050, 750);
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.setViewportView(this.getJPanelMain());
-		
-		// --- Register state visualization for the DB connection ------------- 
-		this.registerHibernateStateVisualizationService();
-		// --- Prepare to unregister state visualization ---------------------- 
-		this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// --- Try to get the ProjectWindow's JInternalFrame ----------
-				JInternalFrame intFrame = Application.getGlobalInfo().getOwnerJInternalFrameForComponent(HyGridSettingsTab.this);
-				if (intFrame!=null) {
-					intFrame.addInternalFrameListener(new InternalFrameAdapter() {
-						@Override
-						public void internalFrameClosed(InternalFrameEvent ife) {
-							HyGridSettingsTab.this.unregisterHibernateStateVisualizationService();
-						}
-					});
-				}
-			}
-		});
-		// --- Show current hibernate SessionFactory state --------------------
-		SessionFactoryMonitor monitor = HibernateUtilities.getSessionFactoryMonitor(DB_SESSION_FACTORY_ID);
-		if (monitor!=null) {
-			this.setSessionFactoryState(monitor.getFactoryID(), monitor.getSessionFactoryState());
-		}
-		
 	}
 
 	/**
@@ -498,9 +469,9 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			
 			
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{133, 20, 0, 0};
+			gridBagLayout.columnWidths = new int[]{133, 0, 0};
 			gridBagLayout.rowHeights = new int[]{16, 25, 0, 0, 26, 26, 0, 0, 0, 0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 			gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelMain.setLayout(gridBagLayout);
 			jPanelMain.setSize(550, 893);
@@ -521,12 +492,12 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			GridBagConstraints gbc_jPanelDiscreteSettings = new GridBagConstraints();
 			gbc_jPanelDiscreteSettings.insets = new Insets(5, 10, 0, 10);
 			gbc_jPanelDiscreteSettings.fill = GridBagConstraints.BOTH;
-			gbc_jPanelDiscreteSettings.gridx = 2;
+			gbc_jPanelDiscreteSettings.gridx = 1;
 			gbc_jPanelDiscreteSettings.gridy = 1;
 			jPanelMain.add(getJPanelDiscreteSettings(), gbc_jPanelDiscreteSettings);
 			GridBagConstraints gbc_jSeparatorAfterTimeModelSelection = new GridBagConstraints();
 			gbc_jSeparatorAfterTimeModelSelection.insets = new Insets(15, 10, 10, 10);
-			gbc_jSeparatorAfterTimeModelSelection.gridwidth = 3;
+			gbc_jSeparatorAfterTimeModelSelection.gridwidth = 2;
 			gbc_jSeparatorAfterTimeModelSelection.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparatorAfterTimeModelSelection.gridx = 0;
 			gbc_jSeparatorAfterTimeModelSelection.gridy = 2;
@@ -546,11 +517,11 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			GridBagConstraints gbc_jPanelScheduleLengthRestriction = new GridBagConstraints();
 			gbc_jPanelScheduleLengthRestriction.insets = new Insets(0, 10, 0, 10);
 			gbc_jPanelScheduleLengthRestriction.anchor = GridBagConstraints.NORTHWEST;
-			gbc_jPanelScheduleLengthRestriction.gridx = 2;
+			gbc_jPanelScheduleLengthRestriction.gridx = 1;
 			gbc_jPanelScheduleLengthRestriction.gridy = 4;
 			jPanelMain.add(getJPanelScheduleLengthRestriction(), gbc_jPanelScheduleLengthRestriction);
 			GridBagConstraints gbc_jSeparatorAfterDataHandling = new GridBagConstraints();
-			gbc_jSeparatorAfterDataHandling.gridwidth = 3;
+			gbc_jSeparatorAfterDataHandling.gridwidth = 2;
 			gbc_jSeparatorAfterDataHandling.insets = new Insets(15, 10, 10, 10);
 			gbc_jSeparatorAfterDataHandling.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSeparatorAfterDataHandling.gridx = 0;
@@ -563,16 +534,21 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jLabelHeaderRuntimeDataSettings.gridy = 6;
 			jPanelMain.add(getJLabelHeaderRuntimeDataSettings(), gbc_jLabelHeaderRuntimeDataSettings);
 			GridBagConstraints gbc_jPanelRuntimeDataSettings = new GridBagConstraints();
-			gbc_jPanelRuntimeDataSettings.gridwidth = 3;
 			gbc_jPanelRuntimeDataSettings.insets = new Insets(5, 10, 0, 10);
 			gbc_jPanelRuntimeDataSettings.fill = GridBagConstraints.BOTH;
 			gbc_jPanelRuntimeDataSettings.gridx = 0;
 			gbc_jPanelRuntimeDataSettings.gridy = 7;
 			jPanelMain.add(getJPanelRuntimeDataSettings(), gbc_jPanelRuntimeDataSettings);
+			GridBagConstraints gbc_databaseSelectionPanel = new GridBagConstraints();
+			gbc_databaseSelectionPanel.insets = new Insets(0, 10, 0, 10);
+			gbc_databaseSelectionPanel.fill = GridBagConstraints.BOTH;
+			gbc_databaseSelectionPanel.gridx = 1;
+			gbc_databaseSelectionPanel.gridy = 7;
+			jPanelMain.add(getDatabaseSelectionPanel(), gbc_databaseSelectionPanel);
 			GridBagConstraints gbc_jSeparatorAfterRuntimeDataHandling = new GridBagConstraints();
 			gbc_jSeparatorAfterRuntimeDataHandling.insets = new Insets(15, 10, 10, 10);
 			gbc_jSeparatorAfterRuntimeDataHandling.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jSeparatorAfterRuntimeDataHandling.gridwidth = 3;
+			gbc_jSeparatorAfterRuntimeDataHandling.gridwidth = 2;
 			gbc_jSeparatorAfterRuntimeDataHandling.gridx = 0;
 			gbc_jSeparatorAfterRuntimeDataHandling.gridy = 8;
 			jPanelMain.add(getJSeparatorAfterRuntimeDataHandling(), gbc_jSeparatorAfterRuntimeDataHandling);
@@ -583,7 +559,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			gbc_jLabelHeaderVisualizationSettings.gridy = 9;
 			jPanelMain.add(getJLabelHeaderVisualizationSettings(), gbc_jLabelHeaderVisualizationSettings);
 			GridBagConstraints gbc_jPanelVisualizationSettings = new GridBagConstraints();
-			gbc_jPanelVisualizationSettings.gridwidth = 3;
+			gbc_jPanelVisualizationSettings.gridwidth = 2;
 			gbc_jPanelVisualizationSettings.insets = new Insets(5, 10, 0, 10);
 			gbc_jPanelVisualizationSettings.fill = GridBagConstraints.BOTH;
 			gbc_jPanelVisualizationSettings.gridx = 0;
@@ -1133,69 +1109,98 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		if (jPanelRuntimeDataSettings == null) {
 			jPanelRuntimeDataSettings = new JPanel();
 			GridBagLayout gbl_jPanelRuntimeDataSettings = new GridBagLayout();
-			gbl_jPanelRuntimeDataSettings.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelRuntimeDataSettings.rowHeights = new int[]{0, 0};
-			gbl_jPanelRuntimeDataSettings.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelRuntimeDataSettings.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_jPanelRuntimeDataSettings.columnWidths = new int[]{0, 0};
+			gbl_jPanelRuntimeDataSettings.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gbl_jPanelRuntimeDataSettings.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_jPanelRuntimeDataSettings.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			jPanelRuntimeDataSettings.setLayout(gbl_jPanelRuntimeDataSettings);
 			GridBagConstraints gbc_jCheckboxStoreToDatabase = new GridBagConstraints();
+			gbc_jCheckboxStoreToDatabase.anchor = GridBagConstraints.WEST;
 			gbc_jCheckboxStoreToDatabase.gridx = 0;
 			gbc_jCheckboxStoreToDatabase.gridy = 0;
 			jPanelRuntimeDataSettings.add(getJCheckboxStoreToDatabase(), gbc_jCheckboxStoreToDatabase);
-			GridBagConstraints gbc_jLabelHibernateState = new GridBagConstraints();
-			gbc_jLabelHibernateState.gridx = 1;
-			gbc_jLabelHibernateState.gridy = 0;
-			jPanelRuntimeDataSettings.add(getJLabelHibernateState(), gbc_jLabelHibernateState);
+			GridBagConstraints gbc_jCheckboxtoreToRelocatedDatabase = new GridBagConstraints();
+			gbc_jCheckboxtoreToRelocatedDatabase.insets = new Insets(10, 0, 0, 0);
+			gbc_jCheckboxtoreToRelocatedDatabase.anchor = GridBagConstraints.WEST;
+			gbc_jCheckboxtoreToRelocatedDatabase.gridx = 0;
+			gbc_jCheckboxtoreToRelocatedDatabase.gridy = 1;
+			jPanelRuntimeDataSettings.add(getJCheckboxStoreToDedicatedDatabase(), gbc_jCheckboxtoreToRelocatedDatabase);
+			GridBagConstraints gbc_jLabelDatabasePrefix = new GridBagConstraints();
+			gbc_jLabelDatabasePrefix.anchor = GridBagConstraints.WEST;
+			gbc_jLabelDatabasePrefix.insets = new Insets(5, 22, 0, 0);
+			gbc_jLabelDatabasePrefix.gridx = 0;
+			gbc_jLabelDatabasePrefix.gridy = 2;
+			jPanelRuntimeDataSettings.add(getJLabelDatabasePrefix(), gbc_jLabelDatabasePrefix);
+			GridBagConstraints gbc_jTextFieldDatabasePrefix = new GridBagConstraints();
+			gbc_jTextFieldDatabasePrefix.anchor = GridBagConstraints.WEST;
+			gbc_jTextFieldDatabasePrefix.insets = new Insets(0, 20, 0, 0);
+			gbc_jTextFieldDatabasePrefix.gridx = 0;
+			gbc_jTextFieldDatabasePrefix.gridy = 3;
+			jPanelRuntimeDataSettings.add(getJTextFieldDatabasePrefix(), gbc_jTextFieldDatabasePrefix);
+
 		}
 		return jPanelRuntimeDataSettings;
 	}
 	private JCheckBox getJCheckboxStoreToDatabase() {
 		if (jCheckboxStoreToDatabase == null) {
-			jCheckboxStoreToDatabase = new JCheckBox("Store Runtime Data to Database ( ");
+			jCheckboxStoreToDatabase = new JCheckBox("Store runtime data to database");
 			jCheckboxStoreToDatabase.setFont(new Font("Dialog", Font.BOLD, 12));
 			jCheckboxStoreToDatabase.addActionListener(this);
 		}
 		return jCheckboxStoreToDatabase;
 	}
-	private JLabel getJLabelHibernateState() {
-		if (jLabelHibernateState == null) {
-			jLabelHibernateState = new JLabel("State)");
-			jLabelHibernateState.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelHibernateState.addMouseListener(new MouseAdapter() {
+	private JCheckBox getJCheckboxStoreToDedicatedDatabase() {
+		if (jCheckboxStoreToDedicatedDatabase == null) {
+			jCheckboxStoreToDedicatedDatabase = new JCheckBox("Store runtime data of selected database connections to a dedicated database");
+			jCheckboxStoreToDedicatedDatabase.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckboxStoreToDedicatedDatabase.setVerticalAlignment(SwingConstants.TOP);
+			jCheckboxStoreToDedicatedDatabase.addActionListener(this);
+		}
+		return jCheckboxStoreToDedicatedDatabase;
+	}
+	private JLabel getJLabelDatabasePrefix() {
+		if (jLabelDatabasePrefix == null) {
+			jLabelDatabasePrefix = new JLabel("Prefix for the dedicated database (will automatically be extended)");
+			jLabelDatabasePrefix.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelDatabasePrefix;
+	}
+	private JTextField getJTextFieldDatabasePrefix() {
+		if (jTextFieldDatabasePrefix == null) {
+			jTextFieldDatabasePrefix = new JTextField();
+			jTextFieldDatabasePrefix.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldDatabasePrefix.setPreferredSize(new Dimension(400, 26));
+			jTextFieldDatabasePrefix.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
-				public void mouseClicked(MouseEvent me) {
-					if (SwingUtilities.isLeftMouseButton(me) && me.getClickCount()==2) {
-						Application.showDatabaseDialog(DB_SESSION_FACTORY_ID);
-					} 
+				public void removeUpdate(DocumentEvent de) {
+					this.updateHyGridDataModel();
+				}
+				@Override
+				public void insertUpdate(DocumentEvent de) {
+					this.updateHyGridDataModel();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent de) {
+					this.updateHyGridDataModel();
+				}
+				private void updateHyGridDataModel() {
+					if (HyGridSettingsTab.this.actOnActionsOrDocumentChanges==true) {
+						HyGridSettingsTab.this.loadFormToDataModel();	
+					}
 				}
 			});
 		}
-		return jLabelHibernateState;
+		return jTextFieldDatabasePrefix;
 	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.gui.HibernateStateVisualizationService#setSessionFactoryState(java.lang.String, de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState)
-	 */
-	@Override
-	public void setSessionFactoryState(String factoryID, SessionFactoryState sessionFactoryState) {
-		if (factoryID.equals(DB_SESSION_FACTORY_ID)==true) {
-			this.getJLabelHibernateState().setIcon(sessionFactoryState.getIconImage());
-			this.getJLabelHibernateState().setText("SessionFactory '" + factoryID + "': " + sessionFactoryState.getDescription() + ")");
+	
+	private DatabaseSelectionPanel getDatabaseSelectionPanel() {
+		if (databaseSelectionPanel == null) {
+			databaseSelectionPanel = new DatabaseSelectionPanel();
+			databaseSelectionPanel.setPreferredSize(new Dimension(350, 150));
+			databaseSelectionPanel.addActionListener(this);
 		}
+		return databaseSelectionPanel;
 	}
-	/**
-	 * Registers hibernate state visualization service.
-	 */
-	private void registerHibernateStateVisualizationService() {
-		HibernateStateVisualizer.registerStateVisualizationService(this);
-	}
-	/**
-	 * Unregister hibernate state visualization service.
-	 */
-	private void unregisterHibernateStateVisualizationService() {
-		HibernateStateVisualizer.unregisterStateVisualizationService(this);
-	}
-	
-	
 	
 	private JSeparator getJSeparatorAfterRuntimeDataHandling() {
 		if (jSeparatorAfterRuntimeDataHandling == null) {
@@ -1537,7 +1542,25 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		this.getJLabelTransHeaderLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 		this.getJTextFieldTransLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
 		this.getJLabelTransLiveBit().setEnabled(! isTimeModelDiscrete & isStateTransmissionReduced);
+		
+		this.enableDatabaseControls();
 	}
+	
+	/**
+	 * Enable / disables the database setting controls.
+	 */
+	private void enableDatabaseControls() {
+		
+		boolean saveToDatabase = this.getJCheckboxStoreToDatabase().isSelected();
+		boolean saveToDedicatedDatabase = this.getJCheckboxStoreToDedicatedDatabase().isSelected();
+		
+		this.getJCheckboxStoreToDedicatedDatabase().setEnabled(saveToDatabase);
+
+		this.getJLabelDatabasePrefix().setEnabled(saveToDatabase & saveToDedicatedDatabase);
+		this.getJTextFieldDatabasePrefix().setEnabled(saveToDatabase & saveToDedicatedDatabase);
+		this.getDatabaseSelectionPanel().setEnabled(saveToDatabase & saveToDedicatedDatabase);
+	}
+	
 	
 	/**
 	 * Sets the central decision class for snapshot simulations.
@@ -1633,6 +1656,12 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 				this.loadFormToDataModel();
 				
 			} else if (ae.getSource()==this.getJCheckboxStoreToDatabase()) {
+				this.enableDatabaseControls();
+				this.loadFormToDataModel();
+			} else if (ae.getSource()==this.getJCheckboxStoreToDedicatedDatabase()) {
+				this.enableDatabaseControls();
+				this.loadFormToDataModel();
+			} else if (ae.getSource()==this.getDatabaseSelectionPanel()) {
 				this.loadFormToDataModel();
 				
 			} else if (ae.getSource()==this.getJComboBoxIntervalWidthUnit()) {

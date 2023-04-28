@@ -2,7 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - AWB-Integration
 Bundle-SymbolicName: de.enflexit.ea.core.awbIntegration;singleton:=true
-Bundle-Version: 1.0.2.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.core.awbIntegration.adapter,
@@ -18,7 +19,8 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
  de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
- de.enflexit.ea.core.dataModel
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.ea.core.simulation.db
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml

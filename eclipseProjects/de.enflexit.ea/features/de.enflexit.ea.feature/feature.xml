@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.ea.feature"
       label="Energy Agent - Life Cycle Feature"
-      version="1.5.1.qualifier"
+      version="1.5.2.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.ea.core"
       os="linux,macosx,win32"
@@ -159,6 +159,13 @@
 
    <plugin
          id="de.enflexit.ea.core.blackboard.db"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.ea.core.simulation.db"
          download-size="0"
          install-size="0"
          version="0.0.0"

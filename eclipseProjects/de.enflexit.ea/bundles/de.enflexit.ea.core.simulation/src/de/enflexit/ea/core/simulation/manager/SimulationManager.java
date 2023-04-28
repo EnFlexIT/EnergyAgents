@@ -169,37 +169,16 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see jade.core.Agent#doDelete()
-	 */
-	@Override
-	public void doDelete() {
-		// ------------------------------------------------
-		// --- Will be called before #takeDown() ----------
-		// ------------------------------------------------
-		this.getAggregationHandler().terminate();
-		this.stopNetworkCalculationExecuter();
-		this.getBlackboard().stopBlackboardListenerServiceThread();
-		this.removeSimulationBehaviour();
-		super.doDelete();
-	}
+	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#takeDown()
 	 */
 	@Override
 	protected void takeDown() {
-		// ------------------------------------------------
-		// --- Original code moved to #doDelete() ---------
-		// ------------------------------------------------
-		super.takeDown();
-	}
-	
-	/* (non-Javadoc)
-	 * @see jade.core.Agent#join()
-	 */
-	@Override
-	public boolean join() {
-		return super.join();
+		this.stopNetworkCalculationExecuter();
+		this.getAggregationHandler().terminate();
+		this.getBlackboard().stopBlackboardListenerServiceThread();
+		this.removeSimulationBehaviour();
 	}
 	
 	

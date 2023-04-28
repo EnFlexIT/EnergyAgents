@@ -4,9 +4,9 @@
 <hibernate-mapping>
     <class name="de.enflexit.ea.core.blackboard.db.dataModel.DataOverview" table="ea_data_overview">
         
-         <id name="idExecution" type="int">
+        <id name="idExecution" type="int">
             <column name="idExecution" />
-            <generator class="native" />
+            <generator class="increment" />
         </id>
         
 		<property name="executer" type="java.lang.String" not-null="true">
@@ -31,4 +31,6 @@
 		</property>
 
     </class>
+    
+    
 </hibernate-mapping>

@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Energy Agent Simulation-DB
+Bundle-SymbolicName: de.enflexit.ea.core.simulation.db
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: de.enflexit.ea.core.simulation.db
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Require-Bundle: de.enflexit.common,
+ de.enflexit.db.hibernate,
+ org.agentgui.core,
+ org.eclipse.osgi
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: EnFlex.IT
+Export-Package: de.enflexit.ea.core.simulation.db,
+ de.enflexit.ea.core.simulation.db.cfg,
+ de.enflexit.ea.core.simulation.db.dataModel,
+ de.enflexit.ea.core.simulation.db.mappings
+Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
