@@ -120,6 +120,42 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	
 	
 	/**
+	 * Truncates all {@link EomPlannerResult}s to the specified start time and thus should save memory.
+	 * @param startTime the time at which the EomPlannnerResult should begin after calling this method
+	 */
+	public void applyScheduleLengthRestriction(long startTime) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime);
+		}
+	}
+	/**
+	 * Truncates the {@link EomPlannerResult} of the specified planner to the specified start time and thus should save memory.
+	 * @param startTime Time the time at which the EomPlannnerResult should begin after calling this method
+	 * @param plannerName the planner name
+	 */
+	public void applyScheduleLengthRestriction(long startTime, String plannerName) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime, plannerName);
+		}
+	}
+	/**
+	 * Truncates the sub result (see networkID) of the {@link EomPlannerResult} of the specified planner to the specified start time and thus should save memory.
+	 *
+	 * @param startTime the time at which the EomPlannnerResult should begin after calling this method
+	 * @param plannerName the planner name
+	 * @param networkID the network ID of a sub result (or sub ScheduleList)
+	 */
+	public void applyScheduleLengthRestriction(long startTime, String plannerName, String networkID) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime, plannerName, networkID);
+		}
+	}
+	
+	
+	/**
 	 * Starts the default planning, which means all strategies configured as planning strategies will be executed.
 	 * @param planFrom the time to plan from
 	 * @param planTo the time to plan to
