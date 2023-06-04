@@ -39,7 +39,6 @@ import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.core.planning.PlanningDispatcher;
-import de.enflexit.ea.core.runtimeAnalysis.EnergyAgentMemorySizeMonitoringBehaviour;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
@@ -89,8 +88,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	private LiveMonitoringSubscriptionResponder liveMonitoringSubscriptionResponder;
 	
 	private PlatformUpdateBehaviour updateBehaviour;
-	
-	private EnergyAgentMemorySizeMonitoringBehaviour memorySizeMonitoringBehaviour;
 	
 	/**
 	 * Returns the internal data model of this agent.
@@ -932,23 +929,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		return this.liveMonitoringSubscriptionResponder;
 	}
 
-	/**
-	 * Start memory size monitoring behaviour.
-	 * @param intervalMillis the monitoring interval in milliseconds.
-	 */
-	protected void startMemorySizeMonitoringBehaviour(long intervalMillis) {
-		this.memorySizeMonitoringBehaviour = new EnergyAgentMemorySizeMonitoringBehaviour(this, intervalMillis);
-		this.addBehaviour(memorySizeMonitoringBehaviour);
-	}
-	
-	/**
-	 * Stop memory size monitoring behaviour.
-	 */
-	protected void stopMemorySizeMonitoringBehaviour() {
-		if (this.memorySizeMonitoringBehaviour!=null) {
-			this.removeBehaviour(this.memorySizeMonitoringBehaviour);
-		}
-	}
 	
 	/**
 	 * Prints the specified message as error or info to the console.
@@ -969,7 +949,5 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			System.out.println(msgFinal);
 		}
 	}
-	
-	
 	
 }
