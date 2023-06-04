@@ -614,6 +614,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					// --- Things to do for TechnicalSystems ------------------
 					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
 					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
+					this.rtEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
 					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				}
 					
@@ -756,6 +757,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				// --- Things to do for TechnicalSystemGroupss ----------------
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
+				this.rtGroupEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
 			} catch (Exception ex) {
