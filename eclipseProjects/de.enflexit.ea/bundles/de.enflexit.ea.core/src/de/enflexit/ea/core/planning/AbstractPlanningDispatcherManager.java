@@ -86,10 +86,10 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 				System.err.println("[" + this.getClass().getSimpleName() + "] Neither a TechnicalSystem nor a TechnicalSystemGroup is under control of the current energy agent. - Consequently, no planner result for a real-time execution is available!");
 				break;
 			case TechnicalSystem:
-				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getOptionModelController().getEomPlannerResult(0, 0, true);
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getOptionModelController().getEomPlannerResult(0, 0, false, true);
 				break;
 			case TechnicalSystemGroup:
-				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getGroupController().getEomPlannerResult(0, 0, true);
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getGroupController().getEomPlannerResult(0, 0, false, true);
 				break;
 			}
 		}
