@@ -1,9 +1,10 @@
 package de.enflexit.ea.core.blackboard.db.dataModel;
 
 import java.io.Serializable;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+
+import agentgui.core.config.GlobalInfo;
 
 /**
  * The Class AbstractStateResult serves as .
@@ -12,7 +13,6 @@ public abstract class AbstractStateResult implements Serializable {
 
 	private static final long serialVersionUID = -7983870859052646439L;
 
-	private static final String TIME_ZONE_TO_SAVE_IN = "UTC+1";
 	
 	private static DateTimeFormatter dtf;
 	
@@ -22,10 +22,14 @@ public abstract class AbstractStateResult implements Serializable {
 	public abstract String getSQLInsertValueArray();
 	
 	
+	/**
+	 * Gets the date time formatter.
+	 * @return the date time formatter
+	 */
 	public static DateTimeFormatter getDateTimeFormatter() {
 		if (dtf==null) {
 			// --- Requires the format '2020-05-19 05:17:15.982' ---- 
-			dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.of(TIME_ZONE_TO_SAVE_IN));
+			dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(GlobalInfo.getCurrentZoneId());
 		}
 		return dtf;
 	}
