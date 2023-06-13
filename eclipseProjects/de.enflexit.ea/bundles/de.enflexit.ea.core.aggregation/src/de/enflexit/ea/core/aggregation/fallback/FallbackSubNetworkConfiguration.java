@@ -56,33 +56,38 @@ public class FallbackSubNetworkConfiguration extends AbstractSubNetworkConfigura
 	@Override
 	public boolean isPartOfSubnetwork(NetworkComponent netComp) {
 		
-		if (netComp==null) {
-			return false;
-		}
+		if (netComp==null) return false;
+
+		boolean isDebug = false;
+		String msgPrefix = "[" + this.getClass().getSimpleName() + "] Check NetworkComponent '" + netComp.getId() + "' (" + netComp.getType() + ") ...\t";
 		
-		// --- First check: Is the component already part of another domain aggregation? 
+		// --- First check: Is the component already part of another domain aggregation? ----------
 		if (this.getAggregationHandler().getNetworkComponentsScheduleController().get(netComp.getId())!=null) {
+			if (isDebug) System.out.println(msgPrefix + "Part of another aggregation!");
 			return false;
 		}
 		
-		// --- Second check: Is an energy agent class defined for this component?
+		// --- Second check: Is an agent class defined for this component? ------------------------
 		String compType = netComp.getType();
 		ComponentTypeSettings cts = this.getAggregationHandler().getNetworkModel().getGeneralGraphSettings4MAS().getCurrentCTS().get(compType);
 		if (cts.getAgentClass()==null) {
-			// --- Component has no agent class -----------
+			// --- Component has no agent class ---------------------------------------------------
+			if (isDebug) System.out.println(msgPrefix + "Not an agent!");
 			return false;
 		}
 		if (cts.getDomain().contains("Coordination")) {
 			// --- Ignore components from the coordination domain
+			if (isDebug) System.out.println(msgPrefix + "Belongs to the coordination domain!");
 			return false;
 		}
 		
 		// --- Third check: Does the component contain an EOM-based data model?
 		Object netCompDM = netComp.getDataModel();
 		if (netCompDM!=null && (netCompDM instanceof TechnicalSystem || netCompDM instanceof TechnicalSystemGroup || netCompDM instanceof ScheduleList)) {
+			if (isDebug) System.out.println(msgPrefix + "Uses the EOM => Add to fallback aggregation!");
 			return true;
 		}
-		
+		if (isDebug) System.out.println(msgPrefix + "Does not use the EOM!");
 		return false;
 	}
 

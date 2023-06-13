@@ -170,7 +170,7 @@ public abstract class AbstractSubAggregationBuilder {
 		this.addSubsystemsToAggregation();
 
 		// --- Show visualization of the aggregation ? ------------------------
-		if (this.hasSubSystems()==true && this.isHeadlessOperation()==false) {
+		if (this.isHeadlessOperation()==false && this.hasSubSystems()==true) {
 			this.showVisualization();
 		}
 		

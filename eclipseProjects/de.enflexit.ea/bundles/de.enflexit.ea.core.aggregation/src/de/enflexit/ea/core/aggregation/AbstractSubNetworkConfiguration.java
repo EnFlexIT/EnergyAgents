@@ -65,6 +65,34 @@ public abstract class AbstractSubNetworkConfiguration {
 		return aggregationHandler;
 	}
 	
+	/**
+	 * Disposes all local instances. Should be called before 
+	 */
+	public void dispose() {
+		
+		this.aggregationHandler = null;
+		
+		this.id = -1;
+		this.domainCluster = null;
+		
+		if (this.subAggregationBuilder!=null) {
+			this.subAggregationBuilder.terminateEomAggregation();
+			this.subAggregationBuilder = null;
+		}
+		
+		this.netCalcPreprocessor = null; 
+		this.netCalcStrategy = null;
+		this.subBlackboardModel = null;
+
+		this.netDisplayUpdater = null;
+		
+		this.userClasses = null;
+		this.userClassInstances = null;
+		
+		this.aggregationVisualizationParentContainer = null;
+		
+	}
+	
 	
 	/**
 	 * Sets the ID of the subnetwork.
