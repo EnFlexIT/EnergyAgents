@@ -158,9 +158,6 @@ public class DefaultMessageReceiveBehaviour extends CyclicBehaviour {
 			
 			if (this.debug==true) {
 				System.out.println(myAgent.getLocalName() + ": Received message with ConversationID " + msg.getConversationId() + " and performative " + ACLMessage.getPerformative(msg.getPerformative()) + " from agent " + msg.getSender().getName());
-//				if (msg.getPerformative()==ACLMessage.FAILURE) {
-//					System.out.println(msg.getContent());
-//				}
 			}
 
 			if (msg.getConversationId()!=null) {
