@@ -454,8 +454,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeStateL1.setQ(new UnitValue(nodalPowerImag_L1.get(i).floatValue(), "var"));
 				upNodeStateL1.setVoltageReal(new UnitValue(uKReal_L1.get(i).floatValue(), "V"));
 				upNodeStateL1.setVoltageImag(new UnitValue(uKImag_L1.get(i).floatValue(), "V"));
-				upNodeStateL1.setCurrent(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L1.get(i), 2)+Math.pow(nodalPowerImag_L1.get(i), 2))/uKabs_L1.get(i)), "A"));
-				upNodeStateL1.setS(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L1.get(i), 2)+Math.pow(nodalPowerImag_L1.get(i), 2))), "VA"));
+				upNodeStateL1.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal_L1.get(i), nodalPowerImag_L1.get(i), uKabs_L1.get(i))), "A"));
+				upNodeStateL1.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal_L1.get(i), nodalPowerImag_L1.get(i))), "VA"));
 				tpNodeState.setL1(upNodeStateL1);
 			}
 			if (uKabs_L2 != null) {
@@ -466,8 +466,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeStateL2.setQ(new UnitValue(nodalPowerImag_L2.get(i).floatValue(), "var"));
 				upNodeStateL2.setVoltageReal(new UnitValue(uKReal_L2.get(i).floatValue(), "V"));
 				upNodeStateL2.setVoltageImag(new UnitValue(uKImag_L2.get(i).floatValue(), "V"));
-				upNodeStateL2.setCurrent(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L2.get(i), 2)+Math.pow(nodalPowerImag_L2.get(i), 2))/uKabs_L2.get(i)), "A"));
-				upNodeStateL2.setS(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L2.get(i), 2)+Math.pow(nodalPowerImag_L2.get(i), 2))), "VA"));
+				upNodeStateL2.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal_L2.get(i), nodalPowerImag_L2.get(i), uKabs_L2.get(i))), "A"));
+				upNodeStateL2.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal_L2.get(i), nodalPowerImag_L2.get(i))), "VA"));
 				tpNodeState.setL2(upNodeStateL2);
 			}
 			if (uKabs_L3 != null) {
@@ -478,8 +478,8 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeStateL3.setQ(new UnitValue(nodalPowerImag_L3.get(i).floatValue(), "var"));
 				upNodeStateL3.setVoltageReal(new UnitValue(uKReal_L3.get(i).floatValue(), "V"));
 				upNodeStateL3.setVoltageImag(new UnitValue(uKImag_L3.get(i).floatValue(), "V"));
-				upNodeStateL3.setCurrent(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L3.get(i), 2)+Math.pow(nodalPowerImag_L3.get(i), 2))/uKabs_L3.get(i)), "A"));
-				upNodeStateL3.setS(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal_L3.get(i), 2)+Math.pow(nodalPowerImag_L3.get(i), 2))), "VA"));
+				upNodeStateL3.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal_L3.get(i), nodalPowerImag_L3.get(i), uKabs_L3.get(i))), "A"));
+				upNodeStateL3.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal_L3.get(i), nodalPowerImag_L3.get(i))), "VA"));
 				tpNodeState.setL3(upNodeStateL3);
 			}
 

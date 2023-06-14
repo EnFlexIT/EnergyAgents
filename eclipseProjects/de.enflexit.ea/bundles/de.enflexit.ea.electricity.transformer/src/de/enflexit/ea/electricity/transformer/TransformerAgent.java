@@ -291,7 +291,7 @@ public class TransformerAgent extends AbstractEnergyAgent {
 		
 		try {
 			ACLMessage acl = new ACLMessage(ACLMessage.INFORM);
-			acl.addReceiver(this.getAID());
+			acl.addReceiver(receiver);
 			acl.setLanguage(this.getAgentCodec().getName());
 			acl.setOntology(this.getAgentOntology().getName());
 	

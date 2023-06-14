@@ -331,5 +331,30 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 		subBlackboardModel.getCableStates().putAll(this.getCableStates());
 		subBlackboardModel.getTransformerStates().putAll(this.getTransformerStates());
 	}
-	
+
+	// ------------------------------------------------------------------------
+	// --- From here some general calculation classes -------------------------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Calculates the node state current.
+	 *
+	 * @param nodalPowerReal the nodal power real
+	 * @param nodalPowerImag the nodal power imag
+	 * @param uKabs the u kabs
+	 * @return the node state current
+	 */
+	protected double getNodeStateCurrent(double nodalPowerReal, double nodalPowerImag, double uKabs) {
+		return getNodeStateS(nodalPowerReal, nodalPowerImag) / uKabs;  
+	}
+	/**
+	 * Calculates the node state apparent power.
+	 *
+	 * @param nodalPowerReal the nodal power real
+	 * @param nodalPowerImag the nodal power imag
+	 * @return the node state S
+	 */
+	protected double getNodeStateS(double nodalPowerReal, double nodalPowerImag) {
+		return Math.signum(nodalPowerReal) * (Math.sqrt(Math.pow(nodalPowerReal, 2) + Math.pow(nodalPowerImag, 2)));
+	}
+
 }
