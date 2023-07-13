@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TriPhaseSensorState
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class TriPhaseSensorState extends TriPhaseCableState{ 
 
@@ -32,17 +32,6 @@ public class TriPhaseSensorState extends TriPhaseCableState{
 	   return this.getMeasuredVoltageL3().getValue();
    }
    /**
-* Protege name: measuredVoltageL2
-   */
-   private UnitValue measuredVoltageL2;
-   public void setMeasuredVoltageL2(UnitValue value) { 
-    this.measuredVoltageL2=value;
-   }
-   public UnitValue getMeasuredVoltageL2() {
-     return this.measuredVoltageL2;
-   }
-
-   /**
 * Protege name: measuredVoltageL1
    */
    private UnitValue measuredVoltageL1;
@@ -51,6 +40,17 @@ public class TriPhaseSensorState extends TriPhaseCableState{
    }
    public UnitValue getMeasuredVoltageL1() {
      return this.measuredVoltageL1;
+   }
+
+   /**
+* Protege name: measuredVoltageL2
+   */
+   private UnitValue measuredVoltageL2;
+   public void setMeasuredVoltageL2(UnitValue value) { 
+    this.measuredVoltageL2=value;
+   }
+   public UnitValue getMeasuredVoltageL2() {
+     return this.measuredVoltageL2;
    }
 
    /**

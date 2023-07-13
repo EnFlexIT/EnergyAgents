@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: PipeState
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class PipeState extends EdgeComponentState{ 
-
-   /**
-* Protege name: temperatureIn
-   */
-   private UnitValue temperatureIn;
-   public void setTemperatureIn(UnitValue value) { 
-    this.temperatureIn=value;
-   }
-   public UnitValue getTemperatureIn() {
-     return this.temperatureIn;
-   }
 
    /**
 * Protege name: velocityOut
@@ -42,6 +31,17 @@ public class PipeState extends EdgeComponentState{
    }
    public UnitValue getPressureOut() {
      return this.pressureOut;
+   }
+
+   /**
+* Protege name: temperatureOut
+   */
+   private UnitValue temperatureOut;
+   public void setTemperatureOut(UnitValue value) { 
+    this.temperatureOut=value;
+   }
+   public UnitValue getTemperatureOut() {
+     return this.temperatureOut;
    }
 
    /**
@@ -67,6 +67,17 @@ public class PipeState extends EdgeComponentState{
    }
 
    /**
+* Protege name: temperatureIn
+   */
+   private UnitValue temperatureIn;
+   public void setTemperatureIn(UnitValue value) { 
+    this.temperatureIn=value;
+   }
+   public UnitValue getTemperatureIn() {
+     return this.temperatureIn;
+   }
+
+   /**
    * Surrounding temperature
 * Protege name: surroundingTemperature
    */
@@ -76,17 +87,6 @@ public class PipeState extends EdgeComponentState{
    }
    public UnitValue getSurroundingTemperature() {
      return this.surroundingTemperature;
-   }
-
-   /**
-* Protege name: temperatureOut
-   */
-   private UnitValue temperatureOut;
-   public void setTemperatureOut(UnitValue value) { 
-    this.temperatureOut=value;
-   }
-   public UnitValue getTemperatureOut() {
-     return this.temperatureOut;
    }
 
 }

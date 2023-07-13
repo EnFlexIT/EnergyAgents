@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseElectricalNodeState
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class UniPhaseElectricalNodeState extends ElectricalNodeState{ 
 
@@ -113,6 +113,17 @@ public double getSCalculated() {
  return this.getVoltageAbsNotNull().getValue() * this.getCurrentNotNull().getValue(); 
 }
    /**
+* Protege name: Q
+   */
+   private UnitValue q;
+   public void setQ(UnitValue value) { 
+    this.q=value;
+   }
+   public UnitValue getQ() {
+     return this.q;
+   }
+
+   /**
 * Protege name: voltageAbs
    */
    private UnitValue voltageAbs;
@@ -124,17 +135,6 @@ public double getSCalculated() {
    }
 
    /**
-* Protege name: voltageReal
-   */
-   private UnitValue voltageReal;
-   public void setVoltageReal(UnitValue value) { 
-    this.voltageReal=value;
-   }
-   public UnitValue getVoltageReal() {
-     return this.voltageReal;
-   }
-
-   /**
 * Protege name: S
    */
    private UnitValue s;
@@ -143,17 +143,6 @@ public double getSCalculated() {
    }
    public UnitValue getS() {
      return this.s;
-   }
-
-   /**
-* Protege name: Q
-   */
-   private UnitValue q;
-   public void setQ(UnitValue value) { 
-    this.q=value;
-   }
-   public UnitValue getQ() {
-     return this.q;
    }
 
    /**
@@ -179,14 +168,14 @@ public double getSCalculated() {
    }
 
    /**
-* Protege name: cosPhi
+* Protege name: voltageReal
    */
-   private float cosPhi;
-   public void setCosPhi(float value) { 
-    this.cosPhi=value;
+   private UnitValue voltageReal;
+   public void setVoltageReal(UnitValue value) { 
+    this.voltageReal=value;
    }
-   public float getCosPhi() {
-     return this.cosPhi;
+   public UnitValue getVoltageReal() {
+     return this.voltageReal;
    }
 
    /**
@@ -198,6 +187,17 @@ public double getSCalculated() {
    }
    public UnitValue getCurrent() {
      return this.current;
+   }
+
+   /**
+* Protege name: cosPhi
+   */
+   private float cosPhi;
+   public void setCosPhi(float value) { 
+    this.cosPhi=value;
+   }
+   public float getCosPhi() {
+     return this.cosPhi;
    }
 
 }

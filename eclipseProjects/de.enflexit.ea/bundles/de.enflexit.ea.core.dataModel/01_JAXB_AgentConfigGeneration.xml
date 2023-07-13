@@ -14,7 +14,7 @@
 	<target name="xjc" description="....">     
 		
 		<delete>
-			<fileset dir="${pro.dir}/src/hygrid/deployment/agentConfig/dataModel">
+			<fileset dir="${pro.dir}/src/de/enflexit/ea/core/dataModel/deployment">
 				<include name="*.java"/>
 				<exclude name=".html"/>
 				<exclude name="AgentSpecifier.java"/>
@@ -25,7 +25,7 @@
 			<arg value="-d"/>         
 			<arg value="${src.dir}"/>         
 			<arg value="-p"/>        
-			<arg value="hygrid.deployment.agentConfig.dataModel"/>         
+			<arg value="de.enflexit.ea.core.dataModel.deployment"/>         
 			<arg value="${pro.dir}/01_AgentConfig.xsd"/>
 			<arg value="-b"/>     
 			<arg value="${pro.dir}/01_JAXB_AgentConfigGeneration.xjb"/>

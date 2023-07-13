@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: UniPhaseSlackNodeState
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class UniPhaseSlackNodeState extends SlackNodeState{ 
 
@@ -35,17 +35,6 @@ public class UniPhaseSlackNodeState extends SlackNodeState{
     return true;
    }
    /**
-* Protege name: voltageReal
-   */
-   private UnitValue voltageReal;
-   public void setVoltageReal(UnitValue value) { 
-    this.voltageReal=value;
-   }
-   public UnitValue getVoltageReal() {
-     return this.voltageReal;
-   }
-
-   /**
 * Protege name: voltageImag
    */
    private UnitValue voltageImag;
@@ -54,6 +43,17 @@ public class UniPhaseSlackNodeState extends SlackNodeState{
    }
    public UnitValue getVoltageImag() {
      return this.voltageImag;
+   }
+
+   /**
+* Protege name: voltageReal
+   */
+   private UnitValue voltageReal;
+   public void setVoltageReal(UnitValue value) { 
+    this.voltageReal=value;
+   }
+   public UnitValue getVoltageReal() {
+     return this.voltageReal;
    }
 
 }

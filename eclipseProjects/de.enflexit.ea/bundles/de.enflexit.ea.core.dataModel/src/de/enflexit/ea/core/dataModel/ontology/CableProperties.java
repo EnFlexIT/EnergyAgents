@@ -7,41 +7,31 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class CableProperties extends EdgeComponentProperties{ 
 
    /**
-* Protege name: linearResistance
+   * The linear capacitance of this medium voltage cable.
+* Protege name: linearCapacitance
    */
-   private UnitValue linearResistance;
-   public void setLinearResistance(UnitValue value) { 
-    this.linearResistance=value;
+   private UnitValue linearCapacitance;
+   public void setLinearCapacitance(UnitValue value) { 
+    this.linearCapacitance=value;
    }
-   public UnitValue getLinearResistance() {
-     return this.linearResistance;
+   public UnitValue getLinearCapacitance() {
+     return this.linearCapacitance;
    }
 
    /**
-* Protege name: linearReactance
+* Protege name: din
    */
-   private UnitValue linearReactance;
-   public void setLinearReactance(UnitValue value) { 
-    this.linearReactance=value;
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
    }
-   public UnitValue getLinearReactance() {
-     return this.linearReactance;
-   }
-
-   /**
-* Protege name: length
-   */
-   private UnitValue length;
-   public void setLength(UnitValue value) { 
-    this.length=value;
-   }
-   public UnitValue getLength() {
-     return this.length;
+   public String getDin() {
+     return this.din;
    }
 
    /**
@@ -57,18 +47,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-   * The linear capacitance of this medium voltage cable.
-* Protege name: linearCapacitance
-   */
-   private UnitValue linearCapacitance;
-   public void setLinearCapacitance(UnitValue value) { 
-    this.linearCapacitance=value;
-   }
-   public UnitValue getLinearCapacitance() {
-     return this.linearCapacitance;
-   }
-
-   /**
 * Protege name: dim
    */
    private String dim;
@@ -80,14 +58,36 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: din
+* Protege name: linearReactance
    */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
+   private UnitValue linearReactance;
+   public void setLinearReactance(UnitValue value) { 
+    this.linearReactance=value;
    }
-   public String getDin() {
-     return this.din;
+   public UnitValue getLinearReactance() {
+     return this.linearReactance;
+   }
+
+   /**
+* Protege name: linearResistance
+   */
+   private UnitValue linearResistance;
+   public void setLinearResistance(UnitValue value) { 
+    this.linearResistance=value;
+   }
+   public UnitValue getLinearResistance() {
+     return this.linearResistance;
+   }
+
+   /**
+* Protege name: length
+   */
+   private UnitValue length;
+   public void setLength(UnitValue value) { 
+    this.length=value;
+   }
+   public UnitValue getLength() {
+     return this.length;
    }
 
    /**

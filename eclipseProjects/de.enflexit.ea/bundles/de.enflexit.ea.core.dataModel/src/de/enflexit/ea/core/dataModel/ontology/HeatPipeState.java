@@ -7,20 +7,9 @@ import jade.core.*;
 /**
 * Protege name: HeatPipeState
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class HeatPipeState extends PipeState{ 
-
-   /**
-* Protege name: deltaPressure
-   */
-   private UnitValue deltaPressure;
-   public void setDeltaPressure(UnitValue value) { 
-    this.deltaPressure=value;
-   }
-   public UnitValue getDeltaPressure() {
-     return this.deltaPressure;
-   }
 
    /**
 * Protege name: energyLoss
@@ -31,6 +20,17 @@ public class HeatPipeState extends PipeState{
    }
    public UnitValue getEnergyLoss() {
      return this.energyLoss;
+   }
+
+   /**
+* Protege name: deltaPressure
+   */
+   private UnitValue deltaPressure;
+   public void setDeltaPressure(UnitValue value) { 
+    this.deltaPressure=value;
+   }
+   public UnitValue getDeltaPressure() {
+     return this.deltaPressure;
    }
 
    /**

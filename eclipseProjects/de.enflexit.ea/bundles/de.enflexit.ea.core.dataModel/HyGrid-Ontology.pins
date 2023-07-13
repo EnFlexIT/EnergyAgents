@@ -1,4 +1,4 @@
-; Mon Jan 17 16:00:44 CET 2022
+; Thu Jul 13 21:16:24 CEST 2023
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -70,6 +70,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([ElectricalPower] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([EnergyAgentControl] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 
@@ -186,7 +190,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\git\\EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
+	(%3ALOCATION "D:\\20_GIT\\04_EnergyAgents\\eclipseProjects\\de.enflexit.ea\\bundles\\de.enflexit.ea.core.dataModel\\src")
 	(%3AONTOLOGYNAME "HyGrid")
 	(%3APACKAGE "de.enflexit.ea.core.dataModel.ontology")
 	(%3ASUPPORT "j2se"))
@@ -225,6 +229,10 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([SetModbusSetpoints] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ShowUiAction] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))
 

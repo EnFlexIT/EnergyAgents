@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: CircuitBreaker
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class CircuitBreaker implements Concept {
 
@@ -21,17 +21,6 @@ public class CircuitBreaker implements Concept {
    }
    public String getBreakerID() {
      return this.breakerID;
-   }
-
-   /**
-* Protege name: isClosed
-   */
-   private boolean isClosed;
-   public void setIsClosed(boolean value) { 
-    this.isClosed=value;
-   }
-   public boolean getIsClosed() {
-     return this.isClosed;
    }
 
    /**
@@ -55,6 +44,17 @@ public class CircuitBreaker implements Concept {
    }
    public boolean getIsControllable() {
      return this.isControllable;
+   }
+
+   /**
+* Protege name: isClosed
+   */
+   private boolean isClosed;
+   public void setIsClosed(boolean value) { 
+    this.isClosed=value;
+   }
+   public boolean getIsClosed() {
+     return this.isClosed;
    }
 
 }
