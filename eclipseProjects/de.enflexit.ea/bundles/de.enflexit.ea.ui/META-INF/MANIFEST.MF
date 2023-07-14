@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Energy Agent - Swing UI
+Bundle-SymbolicName: de.enflexit.ea.ui
+Bundle-Version: 0.0.1.qualifier
+Export-Package: de.enflexit.ea.ui
+Require-Bundle: de.enflexit.ea.core
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.ea.ui
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Service-Component: OSGI-INF/EnergyAgentUiSwingService.xml
