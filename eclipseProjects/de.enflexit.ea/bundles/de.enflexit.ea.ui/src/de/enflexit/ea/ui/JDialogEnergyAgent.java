@@ -29,7 +29,9 @@ public class JDialogEnergyAgent extends JDialog {
 
 	private AbstractEnergyAgent energyAgent;
 	private JTabbedPane jTabbedPane;
-	private JPanelGeneralInformation panelGeneralInformation;
+	private JPanelGeneralInformation jPanelGeneralInformation;
+	private JPanelRealTimeInformation jPanelRealTimeInformation;
+	private JPanelPlannerInformation jPanelPlannerInformation;
 	
 	/**
 	 * Instantiates a new JDialog energy agent.
@@ -102,14 +104,29 @@ public class JDialogEnergyAgent extends JDialog {
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setBorder(BorderFactory.createEmptyBorder());
-			jTabbedPane.addTab("General Information", null, getPanelGeneralInformation(), null);
+			jTabbedPane.addTab(" General Information ", null, getJPanelGeneralInformation(), null);
+			jTabbedPane.addTab(" Real-Time Information ", null, getJPanelRealTimeInformation(), null);
+			jTabbedPane.addTab(" Planner Information ", null, getJPanelPlannerInformation(), null);
 		}
 		return jTabbedPane;
 	}
-	private JPanelGeneralInformation getPanelGeneralInformation() {
-		if (panelGeneralInformation == null) {
-			panelGeneralInformation = new JPanelGeneralInformation((JDialogEnergyAgent) null);
+	private JPanelGeneralInformation getJPanelGeneralInformation() {
+		if (jPanelGeneralInformation == null) {
+			jPanelGeneralInformation = new JPanelGeneralInformation(this);
 		}
-		return panelGeneralInformation;
+		return jPanelGeneralInformation;
 	}
+	private JPanelRealTimeInformation getJPanelRealTimeInformation() {
+		if (jPanelRealTimeInformation == null) {
+			jPanelRealTimeInformation = new JPanelRealTimeInformation(this);
+		}
+		return jPanelRealTimeInformation;
+	}
+	private JPanelPlannerInformation getJPanelPlannerInformation() {
+		if (jPanelPlannerInformation == null) {
+			jPanelPlannerInformation = new JPanelPlannerInformation(this);
+		}
+		return jPanelPlannerInformation;
+	}
+	
 }

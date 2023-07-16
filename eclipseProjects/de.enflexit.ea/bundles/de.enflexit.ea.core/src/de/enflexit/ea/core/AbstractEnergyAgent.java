@@ -457,6 +457,18 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			this.monitoringBehaviourRT=null;
 		}
 	}
+	/**
+	 * Checks if the monitoring is activated.
+	 * @return true, if is activated monitoring
+	 */
+	public boolean isActivatedMonitoring() {
+		if (this.threadedMonitoringBehaviour!=null && this.monitoringBehaviourRT!=null) {
+			if (this.threadedMonitoringBehaviour.getAgent()!=null && this.monitoringBehaviourRT.getAgent()!=null ) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	/**
@@ -494,10 +506,19 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Overwrite this method to change the destination of system state logging.
 	 * @return the logging destination
 	 */
-	protected LoggingDestination getLoggingDestination() {
+	public LoggingDestination getLoggingDestination() {
 		return LoggingDestination.EomDatabase;
 	}
-	
+	/**
+	 * Checks if the log writer is activated.
+	 * @return true, if is activated log writer
+	 */
+	public boolean isActivatedLogWriter() {
+		if (this.logWriter!=null) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 
@@ -579,6 +600,13 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		boolean isTechnicalSystem = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystem;
 		boolean isTechnicalSystemGroup = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystemGroup;
 		return isTechnicalSystem || isTechnicalSystemGroup;
+	}
+	/**
+	 * Checks if the planning is activated.
+	 * @return true, if the planning is activated
+	 */
+	public boolean isPlanningActivated() {
+		return planningDispatcher!=null;
 	}
 	
 	/**
@@ -982,5 +1010,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			System.out.println(msgFinal);
 		}
 	}
+
+
 	
 }

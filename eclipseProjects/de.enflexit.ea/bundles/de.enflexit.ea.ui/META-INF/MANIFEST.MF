@@ -7,9 +7,14 @@ Export-Package: de.enflexit.ea.ui
 Import-Package: agentgui.core.application,
  agentgui.core.config,
  agentgui.core.gui,
+ de.enflexit.common.properties,
  de.enflexit.common.swing,
+ de.enflexit.ea.core.dataModel.deployment,
  de.enflexit.ea.core.dataModel.phonebook,
  de.enflexit.jade.phonebook,
+ energy.evaluation,
+ energy.evaluation.decision,
+ energygroup.evaluation,
  jade.core,
  org.awb.env.networkModel
 Require-Bundle: de.enflexit.ea.core
