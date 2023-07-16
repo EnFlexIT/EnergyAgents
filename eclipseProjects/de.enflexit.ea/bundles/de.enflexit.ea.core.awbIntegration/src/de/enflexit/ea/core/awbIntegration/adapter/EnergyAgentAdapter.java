@@ -40,7 +40,7 @@ public class EnergyAgentAdapter extends EomAdapter {
 	 */
 	private JMenuItem getJMenuItemShowUI(){
 		if (this.menuItemShowUI == null){
-			this.menuItemShowUI = new JMenuItem("Show State Information");
+			this.menuItemShowUI = new JMenuItem("Show " + this.networkComponent.getType() + " Information");
 			this.menuItemShowUI.setIcon(ImageHelper.getImageIcon("Search.png"));
 			this.menuItemShowUI.addActionListener(new ActionListener() {
 				@Override
