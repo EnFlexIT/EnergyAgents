@@ -84,7 +84,11 @@ public class RealTimeInformation extends Properties {
 		if (isActivatedRealTimeControl==true) {
 			// --- Under real time control ----------------
 			this.eomController = this.energyAgent.getControlBehaviourRT().getEomController();
-			this.technicalSystemStateEvaluation = this.energyAgent.getControlBehaviourRT().getLastTechnicalSystemStateEvaluation();
+			this.technicalSystemStateEvaluation = this.energyAgent.getControlBehaviourRT().getTechnicalSystemGroupStateEvaluation();
+			if (this.technicalSystemStateEvaluation==null) {
+				this.technicalSystemStateEvaluation = this.energyAgent.getControlBehaviourRT().getLastTechnicalSystemStateEvaluation();
+			}
+			
 		} else {
 			// --- Not under real time control ------------
 			if (energyAgent.getEnergyAgentIO() instanceof AbstractIOSimulated) {
