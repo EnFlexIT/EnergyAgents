@@ -228,14 +228,14 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	}
 	/**
 	 * Returns all system states of an aggregation (a {@link TechnicalSystemGroup}) within one instance of the type {@link TechnicalSystemGroupStateEvaluation}.
-	 * @return the technical system group state evaluation
+	 * @return the technical system group state evaluation or <code>null</code>, e.g. if no or a single TechnicalSystem is under control of the real-time control behaviour
 	 */
 	public TechnicalSystemGroupStateEvaluation getTechnicalSystemGroupStateEvaluation() {
 		
 		if (this.typeOfControlledSystem == ControlledSystemType.TechnicalSystemGroup) {
 			TechnicalSystemStateEvaluation tsseMain = this.getRealTimeGroupEvaluationStrategy().getTechnicalSystemStateEvaluation();
 			TechnicalSystemGroupStateEvaluation tsgse = TechnicalSystemStateHelper.convertToTechnicalSystemGroupStateEvaluation(tsseMain);
-			new SubStateCollectorTreeAction(this.getRealTimeGroupEvaluationStrategy().getGroupCalculation(), tsgse);
+			new SubStateCollectorTreeAction(this.getRealTimeGroupEvaluationStrategy().getGroupCalculation(), tsgse).doGroupTreeAction();
 			return tsgse;
 		}
 		return null;

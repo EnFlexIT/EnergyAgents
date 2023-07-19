@@ -1,16 +1,23 @@
 package de.enflexit.ea.core.ui;
 
+import org.awb.env.networkModel.NetworkComponent;
+
 import de.enflexit.common.properties.Properties;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
-import de.enflexit.ea.core.eomStateStream.EomModelStateInputStream;
 import energy.EomController;
+import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.decision.AbstractDecider;
 import energy.evaluation.decision.AbstractDecisionSwitch;
+import energy.optionModel.ScheduleList;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemGroup;
 import energy.optionModel.TechnicalSystemStateEvaluation;
+import energy.schedule.ScheduleController;
+import energygroup.GroupController;
 
 /**
  * The Class RealTimeInformation.
@@ -39,15 +46,15 @@ public class RealTimeInformation extends Properties {
 		AbstractInternalDataModel<?> intDM = this.energyAgent.getInternalDataModel();
 		boolean isActivatedRealTimeControl = this.energyAgent.isExecutedControlBehaviourRT();
 		
-		// ------------------------------------------------
-		// --- Real-Time control --------------------------
-		// ------------------------------------------------
+		// ----------------------------------------------------------
+		// --- Real-Time control ------------------------------------
+		// ----------------------------------------------------------
 		String group = "Real-Time Control";
-		// --- Activated real-time control? ---------------
+		// --- Activated real-time control? -------------------------
 		this.setBooleanValue(group + ".Activated", isActivatedRealTimeControl);
 		if (isActivatedRealTimeControl==true) {
 			ControlBehaviourRT rtBehav = this.energyAgent.getControlBehaviourRT();
-			// --- Get evaluation class -------------------
+			// --- Get evaluation class -----------------------------
 			AbstractEvaluationStrategy strategy = null;
 			switch (intDM.getTypeOfControlledSystem()) {
 			case TechnicalSystem:
@@ -62,11 +69,11 @@ public class RealTimeInformation extends Properties {
 			}
 			this.setStringValue(group + ".StrategyClass", strategy==null ? "No real time strategy defined." : strategy.getClass().getName());
 			
-			// --- Found a strategy -----------------------
+			// --- Found a strategy ---------------------------------
 			if (strategy!=null) {
 				AbstractDecisionSwitch<?> dSwitch = strategy.getDecisionSwitch();
 				if (dSwitch!=null) {
-					// --- Found decision switch ----------
+					// --- Found decision switch --------------------
 					group += ".DecisionSwitch-Active";
 					int key = dSwitch.getCurrentPriorityLevel();
 					AbstractDecider<?, ?> decider = dSwitch.getCurrentDecider();
@@ -78,11 +85,11 @@ public class RealTimeInformation extends Properties {
 		}
 
 		
-		// ------------------------------------------------
-		// --- Get the current tsse -----------------------
-		// ------------------------------------------------
+		// ----------------------------------------------------------
+		// --- Get the current tsse ---------------------------------
+		// ----------------------------------------------------------
 		if (isActivatedRealTimeControl==true) {
-			// --- Under real time control ----------------
+			// --- Under real time control --------------------------
 			this.eomController = this.energyAgent.getControlBehaviourRT().getEomController();
 			this.technicalSystemStateEvaluation = this.energyAgent.getControlBehaviourRT().getTechnicalSystemGroupStateEvaluation();
 			if (this.technicalSystemStateEvaluation==null) {
@@ -90,16 +97,26 @@ public class RealTimeInformation extends Properties {
 			}
 			
 		} else {
-			// --- Not under real time control ------------
+			// --- Not under control of ControlBehaviourRT ----------
 			if (energyAgent.getEnergyAgentIO() instanceof AbstractIOSimulated) {
 				
-				AbstractIOSimulated ioSimulated = energyAgent.getIOSimulated();
-				EomModelStateInputStream eomInputStream = (EomModelStateInputStream) ioSimulated.getStateInputStream();
+				NetworkComponent netComp = energyAgent.getInternalDataModel().getNetworkComponent();
+				Object dataModel = netComp.getDataModel(); 
+				if (dataModel instanceof ScheduleList) {
+					ScheduleController sc = new ScheduleController();
+					sc.setScheduleList((ScheduleList) dataModel);
+					this.eomController = sc;
+				} else if (dataModel instanceof TechnicalSystem) {
+					OptionModelController omc = new OptionModelController();
+					omc.setTechnicalSystem((TechnicalSystem) dataModel);
+					this.eomController = omc;
+				} else if (dataModel instanceof TechnicalSystemGroup) {
+					GroupController gc = new GroupController();
+					gc.setTechnicalSystemGroup((TechnicalSystemGroup)dataModel);
+					this.eomController = gc;
+				}
 				
-				EomController eomController = eomInputStream.getRealTimeStrategyController();
-				AbstractEvaluationStrategy strategy = eomInputStream.getRealTimeStrategy();
-				// TODO
-				this.eomController = null;
+				AbstractIOSimulated ioSimulated = (AbstractIOSimulated) energyAgent.getEnergyAgentIO();
 				this.technicalSystemStateEvaluation = ioSimulated.getSimulationConnector().getLastTechnicalSystemStateEvaluationTransferred();
 			}
 		}

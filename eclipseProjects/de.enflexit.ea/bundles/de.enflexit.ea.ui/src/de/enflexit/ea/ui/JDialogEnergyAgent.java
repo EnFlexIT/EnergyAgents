@@ -64,7 +64,7 @@ public class JDialogEnergyAgent extends JDialog {
 	 */
 	private void initialize() {
 		
-		this.setSize(950, 650);
+		this.setSize(1200, 700);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setTitle("State of Energy Agent '" + this.getEnergyAgent().getLocalName() + "' (" + this.getEnergyAgent().getInternalDataModel().getNetworkComponent().getType() + ")");
 		this.registerEscapeKeyStroke();
