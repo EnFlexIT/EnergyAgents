@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.planning;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -29,6 +30,16 @@ public class PlanningDispatcherConfiguration {
 		return plannerInformationTreeMap;
 	}
 
+	/**
+	 * Returns the planner name list in the order of the planner hierarchy.
+	 * @return the planner name list
+	 */
+	public List<String> getPlannerNameList() {
+		ArrayList<String> plannerNameList = new ArrayList<>(this.getPlannerInformationTreeMap().keySet());
+		Collections.sort(plannerNameList);
+		return plannerNameList;
+	}
+	
 	/**
 	 * Returns the planner information for the specified planner.
 	 *

@@ -9,15 +9,12 @@ Import-Package: agentgui.core.application,
  agentgui.core.gui,
  de.enflexit.common.properties,
  de.enflexit.common.swing,
- de.enflexit.ea.core.dataModel.deployment,
  de.enflexit.ea.core.dataModel.phonebook,
  de.enflexit.jade.phonebook,
- energy.evaluation,
- energy.evaluation.decision,
- energygroup.evaluation,
  jade.core,
  org.awb.env.networkModel
-Require-Bundle: de.enflexit.ea.core
+Require-Bundle: de.enflexit.ea.core,
+ de.enflexit.eom.core
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ea.ui
 Bundle-ActivationPolicy: lazy

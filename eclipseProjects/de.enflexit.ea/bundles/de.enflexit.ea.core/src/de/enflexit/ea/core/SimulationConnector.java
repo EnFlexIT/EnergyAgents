@@ -2,6 +2,7 @@ package de.enflexit.ea.core;
 
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
+import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.AID;
 
 /**
@@ -38,6 +39,12 @@ public interface SimulationConnector {
 	 * @param aSynchron the a synchron
 	 */
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron);
+	
+	/**
+	 * Has to return the last TechnicalSystemStateEvaluation that was transferred to the simulation manager.
+	 * @return the last technical system state evaluation transferred
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluationTransferred();
 	
 	/**
 	 * This method can be used to transfer any kind of information to the Manager of the current environment model.

@@ -41,6 +41,8 @@ import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestin
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.core.planning.PlanningDispatcher;
 import de.enflexit.ea.core.ui.EnergyAgentUiConnector;
+import de.enflexit.ea.core.ui.GeneralInformation;
+import de.enflexit.ea.core.ui.RealTimeInformation;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
@@ -980,18 +982,6 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 
 	
 	/**
-	 * Returns the UI connector for this energy agent.
-	 * @return the UI connector
-	 */
-	public EnergyAgentUiConnector getUIConnector() {
-		if (uiConnector==null) {
-			uiConnector = new EnergyAgentUiConnector(this);
-		}
-		return uiConnector;
-	}
-	
-	
-	/**
 	 * Prints the specified message as error or info to the console.
 	 *
 	 * @param message the message
@@ -1011,6 +1001,33 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		}
 	}
 
-
+	// ----------------------------------------------------
+	// --- From here, UI access methods -------------------
+	// ----------------------------------------------------	
+	/**
+	 * Returns the UI connector for this energy agent.
+	 * @return the UI connector
+	 */
+	public EnergyAgentUiConnector getUIConnector() {
+		if (uiConnector==null) {
+			uiConnector = new EnergyAgentUiConnector(this);
+		}
+		return uiConnector;
+	}
+	/**
+	 * Return a snapshot of the general runtime information of the agent .
+	 * @return the general information
+	 */
+	public GeneralInformation getGeneralInformation() {
+		return new GeneralInformation(this);
+	}
+	/**
+	 * Returns a snapshot of the real time information.
+	 * @return the real time information
+	 */
+	public RealTimeInformation getRealTimeInformation() {
+		return new RealTimeInformation(this);
+	}
+	
 	
 }

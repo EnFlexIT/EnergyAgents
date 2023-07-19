@@ -186,6 +186,26 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	public AbstractGroupEvaluationStrategyRT getRealTimeGroupEvaluationStrategy() {
 		return rtGroupEvaluationStrategy;
 	}
+	/**
+	 * Returns the last TechnicalSystemStateEvaluation that was used to control the current system(s).
+	 * @return the last technical system state evaluation
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluation() {
+		
+		TechnicalSystemStateEvaluation tsseLast = null;
+		switch (this.typeOfControlledSystem) {
+		case TechnicalSystem:
+			tsseLast = this.getRealTimeEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			break;
+		case TechnicalSystemGroup:
+			tsseLast = this.getRealTimeGroupEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			break;
+		case None:
+			break;
+		}
+		return tsseLast;
+	}
+	
 	
 	/**
 	 * Removes the current behaviour from the agent.
@@ -373,7 +393,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		if (ioSimulated!=null) {
 			ioSimulated.sendManagerNotification(this.getDiscreteSimulationStep());
 		}
-		
 	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 

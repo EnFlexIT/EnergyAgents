@@ -11,9 +11,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
-
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import javax.swing.JTabbedPane;
 import java.awt.GridBagConstraints;
@@ -63,7 +64,7 @@ public class JDialogEnergyAgent extends JDialog {
 	 */
 	private void initialize() {
 		
-		this.setSize(700, 450);
+		this.setSize(950, 650);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setTitle("State of Energy Agent '" + this.getEnergyAgent().getLocalName() + "' (" + this.getEnergyAgent().getInternalDataModel().getNetworkComponent().getType() + ")");
 		this.registerEscapeKeyStroke();
@@ -81,7 +82,9 @@ public class JDialogEnergyAgent extends JDialog {
 		gbc_jTabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_jTabbedPane.gridx = 0;
 		gbc_jTabbedPane.gridy = 0;
-		getContentPane().add(getJTabbedPane(), gbc_jTabbedPane);
+		this.getContentPane().add(this.getJTabbedPane(), gbc_jTabbedPane);
+	
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 		
 	}
 	
