@@ -42,6 +42,7 @@ import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.core.planning.PlanningDispatcher;
 import de.enflexit.ea.core.ui.EnergyAgentUiConnector;
 import de.enflexit.ea.core.ui.GeneralInformation;
+import de.enflexit.ea.core.ui.PlanningInformation;
 import de.enflexit.ea.core.ui.RealTimeInformation;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
@@ -1028,6 +1029,12 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	public RealTimeInformation getRealTimeInformation() {
 		return new RealTimeInformation(this);
 	}
-	
+	/**
+	 * Returns the planning information.
+	 * @return the planning information
+	 */
+	public PlanningInformation getPlanningInformation() {
+		return new PlanningInformation(this);
+	}
 	
 }

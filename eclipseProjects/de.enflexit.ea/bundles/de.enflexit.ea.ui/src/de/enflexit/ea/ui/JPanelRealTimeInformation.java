@@ -25,8 +25,6 @@ public class JPanelRealTimeInformation extends JSplitPane {
 
 	private static final long serialVersionUID = 7714692252010988662L;
 	
-	private JDialogEnergyAgent jDialogEnergyAgent;
-	
 	private PropertiesPanel jPanelRealTimeProperties;
 	private JTabbedPane jTabbedPane;
 	private TechnicalSystemStatePanel technicalSystemStatePanel;
@@ -36,7 +34,6 @@ public class JPanelRealTimeInformation extends JSplitPane {
 	 * @param jDialogEnergyAgent the j dialog energy agent
 	 */
 	public JPanelRealTimeInformation(JDialogEnergyAgent jDialogEnergyAgent) {
-		this.jDialogEnergyAgent = jDialogEnergyAgent;
 		this.initialize();
 		this.setDisplayInformation(jDialogEnergyAgent);
 	}
