@@ -11,6 +11,7 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseSensorAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseSensorAdapter;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
@@ -466,7 +467,7 @@ public abstract class AbstractSlackNodeHandler {
 				String netCompType = netCompCheck.getType();
 				ComponentTypeSettings cts = networkModel.getGeneralGraphSettings4MAS().getCurrentCTS().get(netCompType);
 				// --- Check if transformer, agent and based on a EOM model ---
-				if (netCompType.toLowerCase().contains("transformer")==true && cts.getAgentClass()!=null && cts.getAdapterClass().equals(EomAdapter.class.getName())==true) {
+				if (netCompType.toLowerCase().contains("transformer")==true && cts.getAgentClass()!=null && cts.getAdapterClass().equals(EomAdapter.class.getName())==true || cts.getAdapterClass().equals(EnergyAgentAdapter.class.getName())==true) {
 					// --- Found a transformer with agent and EOM model -------
 					if (netCompCheck.getId().equals(snDesc.getNetworkComponentID())==true) {
 						networkComponentTransformer = netCompCheck;
