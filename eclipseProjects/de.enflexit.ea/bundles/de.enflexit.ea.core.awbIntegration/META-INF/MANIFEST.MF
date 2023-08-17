@@ -6,9 +6,11 @@ Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Export-Package: de.enflexit.ea.core.awbIntegration.adapter,
+Export-Package: de.enflexit.ea.core.awbIntegration,
+ de.enflexit.ea.core.awbIntegration.adapter,
  de.enflexit.ea.core.awbIntegration.adapter.triPhase,
  de.enflexit.ea.core.awbIntegration.adapter.uniPhase,
+ de.enflexit.ea.core.awbIntegration.classLoadService,
  de.enflexit.ea.core.awbIntegration.plugin,
  de.enflexit.ea.core.awbIntegration.plugin.gui
 Require-Bundle: de.enflexit.common,

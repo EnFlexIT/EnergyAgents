@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: GridStateAssessmentInformation
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class GridStateAssessmentInformation extends NetworkStateInformation{ 
 
@@ -17,17 +17,6 @@ public GridStateAssessment getGridStateAssessmentNotNull() {
 	return this.gridStateAssessment;
 }
    /**
-* Protege name: voltageRange
-   */
-   private VoltageBand voltageRange;
-   public void setVoltageRange(VoltageBand value) { 
-    this.voltageRange=value;
-   }
-   public VoltageBand getVoltageRange() {
-     return this.voltageRange;
-   }
-
-   /**
 * Protege name: gridStateAssessment
    */
    private GridStateAssessment gridStateAssessment;
@@ -36,6 +25,17 @@ public GridStateAssessment getGridStateAssessmentNotNull() {
    }
    public GridStateAssessment getGridStateAssessment() {
      return this.gridStateAssessment;
+   }
+
+   /**
+* Protege name: voltageRange
+   */
+   private VoltageBand voltageRange;
+   public void setVoltageRange(VoltageBand value) { 
+    this.voltageRange=value;
+   }
+   public VoltageBand getVoltageRange() {
+     return this.voltageRange;
    }
 
 }

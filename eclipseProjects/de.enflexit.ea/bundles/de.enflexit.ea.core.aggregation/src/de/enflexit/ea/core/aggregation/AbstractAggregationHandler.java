@@ -282,7 +282,7 @@ public abstract class AbstractAggregationHandler {
 	 */
 	private void initialize() {
 		
-		// --- Fallback
+		// --- Variable for a FallbackSubNetworkConfiguration -------
 		FallbackSubNetworkConfiguration fbNetConfig = null;
 		
 		// --- Create an aggregation for each configuration ---------
@@ -306,9 +306,14 @@ public abstract class AbstractAggregationHandler {
 			}
 		}
 		
-		// ---Finally create Fallback Aggregation ? -----------------
+		// --- Finally create Fallback Aggregation ? ----------------
 		if (fbNetConfig!=null) {
 			fbNetConfig.getSubAggregationBuilder().createEomAggregation();
+			// --- Destroy fallback part ? ----------------------
+			if (fbNetConfig.getSubAggregationBuilder().hasSubSystems()==false) {
+				this.getSubNetworkConfigurations().remove(fbNetConfig);
+				fbNetConfig.dispose();
+			}
 		}
 		
 		// --- Reset executed builds Vector -------------------------

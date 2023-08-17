@@ -86,10 +86,10 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 				System.err.println("[" + this.getClass().getSimpleName() + "] Neither a TechnicalSystem nor a TechnicalSystemGroup is under control of the current energy agent. - Consequently, no planner result for a real-time execution is available!");
 				break;
 			case TechnicalSystem:
-				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getOptionModelController().getEomPlannerResult(0, 0, true);
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getOptionModelController().getEomPlannerResult(0, 0, false, true);
 				break;
 			case TechnicalSystemGroup:
-				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getGroupController().getEomPlannerResult(0, 0, true);
+				plannerResultForRT = this.getEnergyAgent().getInternalDataModel().getGroupController().getEomPlannerResult(0, 0, false, true);
 				break;
 			}
 		}
@@ -116,6 +116,42 @@ public abstract class AbstractPlanningDispatcherManager<Agent extends AbstractEn
 	 */
 	private boolean isInvalidPlanningDispatcherState() {
 		return this.getEnergyAgent().isPlanningDispatcherTerminated()==true || this.getPlanningDispatcher()==null;
+	}
+	
+	
+	/**
+	 * Truncates all {@link EomPlannerResult}s to the specified start time and thus should save memory.
+	 * @param startTime the time at which the EomPlannnerResult should begin after calling this method
+	 */
+	public void applyScheduleLengthRestriction(long startTime) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime);
+		}
+	}
+	/**
+	 * Truncates the {@link EomPlannerResult} of the specified planner to the specified start time and thus should save memory.
+	 * @param startTime Time the time at which the EomPlannnerResult should begin after calling this method
+	 * @param plannerName the planner name
+	 */
+	public void applyScheduleLengthRestriction(long startTime, String plannerName) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime, plannerName);
+		}
+	}
+	/**
+	 * Truncates the sub result (see networkID) of the {@link EomPlannerResult} of the specified planner to the specified start time and thus should save memory.
+	 *
+	 * @param startTime the time at which the EomPlannnerResult should begin after calling this method
+	 * @param plannerName the planner name
+	 * @param networkID the network ID of a sub result (or sub ScheduleList)
+	 */
+	public void applyScheduleLengthRestriction(long startTime, String plannerName, String networkID) {
+		PlanningDispatcher pd = this.getPlanningDispatcher();
+		if (pd!=null) {
+			pd.applyScheduleLengthRestriction(startTime, plannerName, networkID);
+		}
 	}
 	
 	

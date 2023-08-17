@@ -469,6 +469,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			if (uKabs != null) {
 				nodalPowerReal.set(i, nodalPowerReal.get(i) * 3); //Adjustment due to uni-phase powerflow calculation
 				nodalPowerImag.set(i, nodalPowerImag.get(i) * 3); //Adjustment due to uni-phase powerflow calculation
+				
 				upNodeState = new UniPhaseElectricalNodeState();
 				upNodeState.setVoltageAbs(new UnitValue(uKabs.get(i).floatValue(), "V"));
 				upNodeState.setCosPhi(cosPhi.get(i).floatValue());
@@ -476,8 +477,8 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeState.setQ(new UnitValue(nodalPowerImag.get(i).floatValue(), "var"));
 				upNodeState.setVoltageReal(new UnitValue(uKReal.get(i).floatValue(), "V"));
 				upNodeState.setVoltageImag(new UnitValue(uKImag.get(i).floatValue(), "V"));
-				upNodeState.setCurrent(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal.get(i), 2)+Math.pow(nodalPowerImag.get(i), 2))/uKabs.get(i)) / 3, "A")); //Adjusted to show only the current of a single phase.
-				upNodeState.setS(new UnitValue((float)(Math.sqrt(Math.pow(nodalPowerReal.get(i), 2)+Math.pow(nodalPowerImag.get(i), 2))), "VA"));
+				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i)) / 3.0), "A")); //Adjusted to show only the current of a single phase.
+				upNodeState.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal.get(i), nodalPowerImag.get(i))), "VA"));
 
 			}
 

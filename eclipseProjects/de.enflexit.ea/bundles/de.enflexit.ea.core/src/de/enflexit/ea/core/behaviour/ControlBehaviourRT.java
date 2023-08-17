@@ -33,6 +33,7 @@ import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.decision.AbstractDecisionSwitch;
 import energy.helper.DisplayHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.FixedBoolean;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.FixedInteger;
@@ -43,6 +44,7 @@ import energy.optionModel.SystemVariableDefinitionDouble;
 import energy.optionModel.SystemVariableDefinitionInteger;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
+import energy.optionModel.TechnicalSystemGroupStateEvaluation;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.planning.EomPlannerResult;
 import energygroup.GroupController;
@@ -51,6 +53,7 @@ import energygroup.evaluation.AbstractGroupEvaluationStrategy;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
 import energygroup.evaluation.AbstractGroupTreeAction;
 import energygroup.evaluation.MemberEvaluationStrategy;
+import energygroup.evaluation.SubStateCollectorTreeAction;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**
@@ -185,6 +188,57 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	 */
 	public AbstractGroupEvaluationStrategyRT getRealTimeGroupEvaluationStrategy() {
 		return rtGroupEvaluationStrategy;
+	}
+	
+	/**
+	 * Returns the last TechnicalSystemStateEvaluation that was used to control the current system(s).
+	 * @return the last technical system state evaluation
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluation() {
+		return this.getLastTechnicalSystemStateEvaluation(null);
+	}
+	/**
+	 * Returns the last TechnicalSystemStateEvaluation that was used to control the current system(s).
+	 *
+	 * @param networkID the network ID of a sub system within an aggregation. If <code>null</code>, the main system TSSE will be returned
+	 * @return the last technical system state evaluation
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluation(String networkID) {
+		
+		TechnicalSystemStateEvaluation tsseLast = null;
+		switch (this.typeOfControlledSystem) {
+		case TechnicalSystem:
+			tsseLast = this.getRealTimeEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			if (networkID!=null) {
+				System.out.println("[" + this.getClass().getSimpleName() + "|Last system state] The system under control is a TechnicalSystem, Thus, no networkID can be considered.");
+			}
+			break;
+			
+		case TechnicalSystemGroup:
+			if (networkID==null) {
+				tsseLast = this.getRealTimeGroupEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			} else {
+				tsseLast = this.getRealTimeGroupEvaluationStrategy().getLatestSubSystemTSSE(networkID);
+			}
+			break;
+		case None:
+			break;
+		}
+		return tsseLast;
+	}
+	/**
+	 * Returns all system states of an aggregation (a {@link TechnicalSystemGroup}) within one instance of the type {@link TechnicalSystemGroupStateEvaluation}.
+	 * @return the technical system group state evaluation or <code>null</code>, e.g. if no or a single TechnicalSystem is under control of the real-time control behaviour
+	 */
+	public TechnicalSystemGroupStateEvaluation getTechnicalSystemGroupStateEvaluation() {
+		
+		if (this.typeOfControlledSystem == ControlledSystemType.TechnicalSystemGroup) {
+			TechnicalSystemStateEvaluation tsseMain = this.getRealTimeGroupEvaluationStrategy().getTechnicalSystemStateEvaluation();
+			TechnicalSystemGroupStateEvaluation tsgse = TechnicalSystemStateHelper.convertToTechnicalSystemGroupStateEvaluation(tsseMain);
+			new SubStateCollectorTreeAction(this.getRealTimeGroupEvaluationStrategy().getGroupCalculation(), tsgse).doGroupTreeAction();
+			return tsgse;
+		}
+		return null;
 	}
 	
 	/**
@@ -373,7 +427,6 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		if (ioSimulated!=null) {
 			ioSimulated.sendManagerNotification(this.getDiscreteSimulationStep());
 		}
-		
 	}
 	/**
 	 * Returns the current {@link DiscreteSimulationStep} with the system state and the 
@@ -614,6 +667,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					// --- Things to do for TechnicalSystems ------------------
 					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
 					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
+					this.rtEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
 					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				}
 					
@@ -756,6 +810,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				// --- Things to do for TechnicalSystemGroupss ----------------
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
+				this.rtGroupEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
 			} catch (Exception ex) {

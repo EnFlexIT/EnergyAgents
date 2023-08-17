@@ -13,6 +13,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;
+import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.AID;
 import jade.core.Location;
 import jade.core.ServiceException;
@@ -31,6 +32,7 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 
 	private AbstractEnergyAgent myAgent;
 	private AbstractIOSimulated ioSimulated;
+	private TechnicalSystemStateEvaluation tsseLastTransferred;
 	
 	private ServiceSensor mySensor;
 	
@@ -149,10 +151,21 @@ public class SimulationConnectorLocal implements SimulationConnector, ServiceSen
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.SimulationConnector#getLastTechnicalSystemStateEvaluationTransferred()
+	 */
+	@Override
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluationTransferred() {
+		return this.tsseLastTransferred;
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.energyAgent.core.SimulationConnectorInterface#sendManagerNotification(java.lang.Object)
 	 */
 	@Override
 	public boolean sendManagerNotification(Object notification) {
+		
+		if (notification instanceof TechnicalSystemStateEvaluation) this.tsseLastTransferred = (TechnicalSystemStateEvaluation) notification;
+		
 		boolean send = false;
 		EnvironmentNotification myNotification = new EnvironmentNotification(this.myAgent.getAID(), false, notification);
 		try {

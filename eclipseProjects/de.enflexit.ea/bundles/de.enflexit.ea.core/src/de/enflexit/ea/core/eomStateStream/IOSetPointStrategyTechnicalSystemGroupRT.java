@@ -96,7 +96,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 		
 		String systemDescription = this.networkComponentID + " - '" + this.optionModelController.getTechnicalSystem().getSystemID() + "'";
 		
-		// --- Initialise search --------------------------------------------------------
+		// --- Initialize search --------------------------------------------------------
 		TechnicalSystemStateEvaluation tsse = this.getTechnicalSystemStateEvaluation();
 		// --- Search by walking through time -------------------------------------------
 		while (tsse.getGlobalTime() < this.evaluationEndTime ) {

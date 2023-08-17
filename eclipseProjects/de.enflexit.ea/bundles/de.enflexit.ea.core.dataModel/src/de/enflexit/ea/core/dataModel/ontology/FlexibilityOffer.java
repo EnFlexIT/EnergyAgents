@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class FlexibilityOffer extends GridStateControl{ 
 
@@ -23,17 +23,6 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: actuatorName
-   */
-   private String actuatorName;
-   public void setActuatorName(String value) { 
-    this.actuatorName=value;
-   }
-   public String getActuatorName() {
-     return this.actuatorName;
-   }
-
-   /**
 * Protege name: possibleCurrentAdjustment
    */
    private float possibleCurrentAdjustment;
@@ -42,6 +31,17 @@ public class FlexibilityOffer extends GridStateControl{
    }
    public float getPossibleCurrentAdjustment() {
      return this.possibleCurrentAdjustment;
+   }
+
+   /**
+* Protege name: actuatorName
+   */
+   private String actuatorName;
+   public void setActuatorName(String value) { 
+    this.actuatorName=value;
+   }
+   public String getActuatorName() {
+     return this.actuatorName;
    }
 
    /**
@@ -56,17 +56,6 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: priority
-   */
-   private int priority;
-   public void setPriority(int value) { 
-    this.priority=value;
-   }
-   public int getPriority() {
-     return this.priority;
-   }
-
-   /**
 * Protege name: possiblePowerImag
    */
    private float possiblePowerImag;
@@ -75,6 +64,17 @@ public class FlexibilityOffer extends GridStateControl{
    }
    public float getPossiblePowerImag() {
      return this.possiblePowerImag;
+   }
+
+   /**
+* Protege name: priority
+   */
+   private int priority;
+   public void setPriority(int value) { 
+    this.priority=value;
+   }
+   public int getPriority() {
+     return this.priority;
    }
 
 }

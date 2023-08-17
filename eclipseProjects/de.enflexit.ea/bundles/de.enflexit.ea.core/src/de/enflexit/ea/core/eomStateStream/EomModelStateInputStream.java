@@ -45,7 +45,7 @@ import energygroup.evaluation.IOSelectTreeAction;
 public class EomModelStateInputStream extends AbstractStateInputStream {
 
 	protected boolean debug = false;
-	protected String debugNetworkComponentID = "n10";
+	protected String debugNetworkComponentID = "n4";
 	
 	private SystemStateDispatcherAgentConnector dispatchConnector;
 	private AbstractStateQueueKeeper stateQueueKeeper;
@@ -448,7 +448,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * Returns the current real time strategy, if any.
 	 * @return the real time strategy
 	 */
-	protected AbstractEvaluationStrategy getRealTimeStrategy() {
+	public AbstractEvaluationStrategy getRealTimeStrategy() {
 		return realTimeStrategy;
 	}
 	/**
@@ -463,7 +463,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * Returns the real time strategy controller that is either an {@link OptionModelController} or a {@link GroupController}.
 	 * @return the real time strategy controller
 	 */
-	protected EomController getRealTimeStrategyController() {
+	public EomController getRealTimeStrategyController() {
 		return realTimeStrategyController;
 	}
 	/**

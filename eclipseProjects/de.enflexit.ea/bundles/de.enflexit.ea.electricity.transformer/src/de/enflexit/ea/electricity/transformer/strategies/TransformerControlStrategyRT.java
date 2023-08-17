@@ -95,7 +95,7 @@ public class TransformerControlStrategyRT extends AbstractEvaluationStrategyRT {
 
 		double slackVoltage = this.nominalSlackVoltage;
 		
-		// ---Check if CNP for transformer step is ready
+		// --- Check if CNP for transformer step is ready
 		if (this.getInternalDataModel()!=null && this.getInternalDataModel().isNewSetPointFromCNP()==true) {
 			this.getInternalDataModel().setNewSetPointFromCNP(false);
 			

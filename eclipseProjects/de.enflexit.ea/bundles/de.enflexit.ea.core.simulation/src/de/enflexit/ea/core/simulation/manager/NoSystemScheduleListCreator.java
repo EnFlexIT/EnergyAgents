@@ -45,15 +45,9 @@ import energy.optionModel.GoodFlow;
  */
 public class NoSystemScheduleListCreator {
 
-	/** The network model. */
 	private NetworkModel networkModel;
-	
-	/** The time model date based. */
 	private TimeModelDateBased timeModelDateBased;
-	
-	/** The network elements without eom model. */
 	private List<DataModelNetworkElement> networkElementsWithoutEomModel;
-	
 	
 	/**
 	 * Instantiates a new 'no-system' => ScheduleList-Creator.
@@ -445,7 +439,7 @@ public class NoSystemScheduleListCreator {
 	
 	
 	// ----------------------------------------------------------------------------------
-	// --- From here factory methods to create ScheduleList parts can be found ---------- 
+	// --- From here, production methods to create ScheduleList parts can be found ------ 
 	// ----------------------------------------------------------------------------------	
 	/**
 	 * Creates the ScheduleList.

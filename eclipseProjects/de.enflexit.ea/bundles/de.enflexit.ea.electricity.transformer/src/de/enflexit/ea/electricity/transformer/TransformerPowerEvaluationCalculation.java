@@ -61,6 +61,13 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		}
 		return eaConnector;
 	}
+	/**
+	 * Returns the transformer agents internal data model.
+	 * @return the internal data model
+	 */
+	private InternalDataModel getInternalDataModel() {
+		return this.getEnergyAgentConnector().getInternalDataModel();
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- Get the current transformer data model -----------------------------
@@ -71,10 +78,16 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	 */
 	private TransformerDataModel getTransformerDataModel() {
 		if (this.transformerDataModel == null) {
-			OptionModelController omc = this.getOptionModelController();
-			if(omc != null) {
-				SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) this.getOptionModelController().getSystemVariableDefinition(this.getOptionModelController().getTechnicalSystem().getSystemVariables(), "StaticParameters");
-				this.transformerDataModel = (TransformerDataModel) this.getOptionModelController().getStaticModelInstance(sysVarDefStaticModel);
+			// --- Get the agents TransformerDataModel ------------------------
+			TransformerDataModel tdm = this.getInternalDataModel().getTransformerDataModel();
+			if (tdm!=null) {
+				this.transformerDataModel = tdm;
+			} else {
+				OptionModelController omc = this.getOptionModelController();
+				if(omc != null) {
+					SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) this.getOptionModelController().getSystemVariableDefinition(this.getOptionModelController().getTechnicalSystem().getSystemVariables(), "StaticParameters");
+					this.transformerDataModel = (TransformerDataModel) this.getOptionModelController().getStaticModelInstance(sysVarDefStaticModel);
+				}
 			}
 		}
 		return this.transformerDataModel;
@@ -91,7 +104,7 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		
 		double checkCurrent = 0.0;
 		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==false) {
-			// --- Uni-phase power flow ----------------------------- 
+			// --- Uni-phase power flow -----------------------------
 			FixedDouble fdLvTotaCurrentRealAllPhases = (FixedDouble) this.getOptionModelController().getVariableState(tss.getIOlist(), TransformerSystemVariable.lvTotaCurrentRealAllPhases.name());
 			checkCurrent = fdLvTotaCurrentRealAllPhases==null ? 0.0 : fdLvTotaCurrentRealAllPhases.getValue();
 			
@@ -128,7 +141,8 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 
 		TapSide slackNodeSide = this.getTransformerDataModel().getSlackNodeSide();
 		double configuredVoltagelevel = this.getTransformerDataModel().getSlackNodeVoltageLevel();
-
+		double transLVRealAllPhases = configuredVoltagelevel;		// --- Just as a default value ---
+		
 		// --- Calculate based on slack node side -----------------------------
 		switch (slackNodeSide) {
 		case LowVoltageSide:
@@ -136,7 +150,7 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			if (configuredVoltagelevel==0.0) {
 				configuredVoltagelevel = U_rTUS;
 			}
-			this.transformerLowVoltageLevelReal = configuredVoltagelevel;
+			transLVRealAllPhases = configuredVoltagelevel;
 			break;
 
 		case HighVoltageSide:
@@ -172,16 +186,16 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			// --- Calculate slack voltage ------------------------------------
 			switch (tapSide) {
 			case LowVoltageSide:
-				this.transformerLowVoltageLevelReal = configuredVoltagelevel / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				transLVRealAllPhases = configuredVoltagelevel / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 
 			case HighVoltageSide:
-				this.transformerLowVoltageLevelReal = configuredVoltagelevel / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				transLVRealAllPhases = configuredVoltagelevel / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 			}
 			break;
 		}
-		this.transformerLowVoltageLevelReal = this.transformerLowVoltageLevelReal / Math.sqrt(3);
+		this.setTransformerLowVoltageLevelReal(transLVRealAllPhases / Math.sqrt(3));
 	}
 	/**
 	 * Calculate transformer impedance.
@@ -251,18 +265,18 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			
 			
 			// --- Specify for Slack Voltage----------------------------------- 
-			double voltageRealAllPhases = this.transformerLowVoltageLevelReal - dURealAllPhases;
+			double voltageRealAllPhases = this.getTransformerLowVoltageLevelReal() - dURealAllPhases;
 			double voltageImagAllPhases = -dUImagAllPhases;
 			switch (this.getTransformerDataModel().getSlackNodeSide()) {
 			case LowVoltageSide:
 				// --- Calculate Voltage for Slack node on LV site ------------
-				voltageRealAllPhases = this.transformerLowVoltageLevelReal;
+				voltageRealAllPhases = this.getTransformerLowVoltageLevelReal();
 				voltageImagAllPhases = 0;
 				break;
 				
 			case HighVoltageSide:
 				// --- Calculate Voltage for Slack node on HV site ------------
-				voltageRealAllPhases = this.transformerLowVoltageLevelReal - dURealAllPhases;
+				voltageRealAllPhases = this.getTransformerLowVoltageLevelReal() - dURealAllPhases;
 				voltageImagAllPhases = - dUImagAllPhases;
 				break;
 			}
@@ -270,16 +284,16 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			// Calculate voltage violations
 			double voltageBand = 0.1;
 			double voltageAbsAllPhases = Math.sqrt(voltageRealAllPhases * voltageRealAllPhases + voltageImagAllPhases * voltageImagAllPhases);
-			if (voltageAbsAllPhases <= (1-voltageBand)*this.transformerLowVoltageLevelReal || voltageAbsAllPhases >= (1+voltageBand)*this.transformerLowVoltageLevelReal) {
+			if (voltageAbsAllPhases <= (1-voltageBand)*this.getTransformerLowVoltageLevelReal() || voltageAbsAllPhases >= (1+voltageBand)*this.getTransformerLowVoltageLevelReal()) {
 				voltageViolations = true;
 			}
 			
 			// Calculate residual load
-			residualLoadPAllPhases = this.transformerLowVoltageLevelReal * lvTotaCurrentRealAllPhases;
-			residualLoadQAllPhases = -this.transformerLowVoltageLevelReal * lvTotaCurrentImagAllPhases;
+			residualLoadPAllPhases = this.getTransformerLowVoltageLevelReal() * lvTotaCurrentRealAllPhases;
+			residualLoadQAllPhases = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagAllPhases;
 			
 			// Calculate transformator utilization
-			double residualLoadAbs = this.transformerLowVoltageLevelReal * Math.sqrt(Math.pow(lvTotaCurrentRealAllPhases,2) + Math.pow(lvTotaCurrentImagAllPhases, 2));
+			double residualLoadAbs = this.getTransformerLowVoltageLevelReal() * Math.sqrt(Math.pow(lvTotaCurrentRealAllPhases,2) + Math.pow(lvTotaCurrentImagAllPhases, 2));
 			trafoUtilization = residualLoadAbs / this.transformerDataModel.getRatedPower_sR();
 			
 			// Calculate transformator losses
@@ -312,13 +326,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 				return;
 			}
 			
-			if (lvTotaCurrentRealL1.getValue()<0||lvTotaCurrentRealL2.getValue()<0||lvTotaCurrentRealL3.getValue()<0) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Error: Received negative current values, can't handle that yet!");
-				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL1: " + lvTotaCurrentRealL1.getValue());
-				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL2: " + lvTotaCurrentRealL2.getValue());
-				System.out.println("[" + this.getClass().getSimpleName() + "] lvTotaCurrentRealL3: " + lvTotaCurrentRealL3.getValue());
-			}
-			
 			// Calculate voltage drop on transformer
 			double dURealL1 = this.resistance_R * lvTotaCurrentRealL1.getValue() - this.reactance_X * lvTotaCurrentImagL1.getValue();
 			double dUImagL1 = this.reactance_X * lvTotaCurrentRealL1.getValue() + this.resistance_R * lvTotaCurrentImagL1.getValue();
@@ -337,21 +344,21 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			switch (this.getTransformerDataModel().getSlackNodeSide()) {
 			case LowVoltageSide:
 				// --- Calculate Voltage for Slack node on LV site ------------
-				voltageRealL1 = this.transformerLowVoltageLevelReal;
+				voltageRealL1 = this.getTransformerLowVoltageLevelReal();
 				voltageImagL1 = 0;
-				voltageRealL2 = this.transformerLowVoltageLevelReal;
+				voltageRealL2 = this.getTransformerLowVoltageLevelReal();
 				voltageImagL2 = 0;
-				voltageRealL3 = this.transformerLowVoltageLevelReal;
+				voltageRealL3 = this.getTransformerLowVoltageLevelReal();
 				voltageImagL3 = 0;
 				break;
 				
 			case HighVoltageSide:
 				// --- Calculate Voltage for Slack node on HV site ------------
-				voltageRealL1 = this.transformerLowVoltageLevelReal - dURealL1;
+				voltageRealL1 = this.getTransformerLowVoltageLevelReal() - dURealL1;
 				voltageImagL1 = - dUImagL1;
-				voltageRealL2 = this.transformerLowVoltageLevelReal - dURealL2;
+				voltageRealL2 = this.getTransformerLowVoltageLevelReal() - dURealL2;
 				voltageImagL2 = - dUImagL2;
-				voltageRealL3 = this.transformerLowVoltageLevelReal - dURealL3;
+				voltageRealL3 = this.getTransformerLowVoltageLevelReal() - dURealL3;
 				voltageImagL3 = - dUImagL3;
 				break;
 			}
@@ -361,22 +368,22 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			double voltageAbsL1 = Math.sqrt(voltageRealL1 * voltageRealL1 + voltageImagL1 * voltageImagL1);
 			double voltageAbsL2 = Math.sqrt(voltageRealL2 * voltageRealL2 + voltageImagL2 * voltageImagL2);
 			double voltageAbsL3 = Math.sqrt(voltageRealL3 * voltageRealL3 + voltageImagL3 * voltageImagL3);
-			if (voltageAbsL1 <= (1-voltageBand)*this.transformerLowVoltageLevelReal || voltageAbsL1 >= (1+voltageBand)*this.transformerLowVoltageLevelReal) {
+			if (voltageAbsL1 <= (1-voltageBand)*this.getTransformerLowVoltageLevelReal() || voltageAbsL1 >= (1+voltageBand)*this.getTransformerLowVoltageLevelReal()) {
 				voltageViolations = true;
-			} else if (voltageAbsL2 <= (1-voltageBand)*this.transformerLowVoltageLevelReal || voltageAbsL2 >= (1+voltageBand)*this.transformerLowVoltageLevelReal) {
+			} else if (voltageAbsL2 <= (1-voltageBand)*this.getTransformerLowVoltageLevelReal() || voltageAbsL2 >= (1+voltageBand)*this.getTransformerLowVoltageLevelReal()) {
 				voltageViolations = true;
-			} else if (voltageAbsL3 <= (1-voltageBand)*this.transformerLowVoltageLevelReal || voltageAbsL3 >= (1+voltageBand)*this.transformerLowVoltageLevelReal) {
+			} else if (voltageAbsL3 <= (1-voltageBand)*this.getTransformerLowVoltageLevelReal() || voltageAbsL3 >= (1+voltageBand)*this.getTransformerLowVoltageLevelReal()) {
 				voltageViolations = true;
 			}
 			
 			// Calculate residual load
-			double residualLoadPL1 = this.transformerLowVoltageLevelReal * lvTotaCurrentRealL1.getValue();
-			double residualLoadPL2 = this.transformerLowVoltageLevelReal * lvTotaCurrentRealL2.getValue();
-			double residualLoadPL3 = this.transformerLowVoltageLevelReal * lvTotaCurrentRealL3.getValue();
+			double residualLoadPL1 = this.getTransformerLowVoltageLevelReal() * lvTotaCurrentRealL1.getValue();
+			double residualLoadPL2 = this.getTransformerLowVoltageLevelReal() * lvTotaCurrentRealL2.getValue();
+			double residualLoadPL3 = this.getTransformerLowVoltageLevelReal() * lvTotaCurrentRealL3.getValue();
 			residualLoadPAllPhases = residualLoadPL1 + residualLoadPL2 + residualLoadPL3;
-			double residualLoadQL1 = -this.transformerLowVoltageLevelReal * lvTotaCurrentImagL1.getValue();
-			double residualLoadQL2 = -this.transformerLowVoltageLevelReal * lvTotaCurrentImagL2.getValue();
-			double residualLoadQL3 = -this.transformerLowVoltageLevelReal * lvTotaCurrentImagL3.getValue();
+			double residualLoadQL1 = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagL1.getValue();
+			double residualLoadQL2 = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagL2.getValue();
+			double residualLoadQL3 = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagL3.getValue();
 			residualLoadQAllPhases = residualLoadQL1 + residualLoadQL2 + residualLoadQL3;
 			
 			// Calculate transformator utilization
@@ -579,6 +586,25 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		return 0;
 	}
 
+	
+	// ------------------------------------------------------------------------
+	// --- Access method for the low voltage level of the transformer ---------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Returns the low voltage level real for the transformer.
+	 * @return the transformer low voltage level real
+	 */
+	public double getTransformerLowVoltageLevelReal() {
+		return transformerLowVoltageLevelReal;
+	}
+	/**
+	 * Sets the low voltage level real for the transformer.
+	 * @param transformerLowVoltageLevelReal the new transformer low voltage level real
+	 */
+	public void setTransformerLowVoltageLevelReal(double transformerLowVoltageLevelReal) {
+		this.transformerLowVoltageLevelReal = transformerLowVoltageLevelReal;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here, methods to access power values --------------------------

@@ -38,6 +38,8 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 	
 	protected AbstractEnergyAgent myAgent;
 	private AbstractIOSimulated ioSimulated;
+	private TechnicalSystemStateEvaluation tsseLastTransferred;
+	
 	private DeployedAgentMessageReceiveBehaviour msgReceiveBehaviour;
 
 	protected AID proxyAgentAID;
@@ -167,6 +169,14 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.SimulationConnector#getLastTechnicalSystemStateEvaluationTransferred()
+	 */
+	@Override
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateEvaluationTransferred() {
+		return this.tsseLastTransferred;
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.energyAgent.core.SimulationConnector#sendManagerNotification(java.lang.Object)
 	 */
 	@Override
@@ -178,6 +188,7 @@ public class SimulationConnectorRemote implements SimulationConnector, ServiceSe
 			if (notification instanceof TechnicalSystemStateEvaluation) {
 				TechnicalSystemStateEvaluation tsse = (TechnicalSystemStateEvaluation) notification;
 				TechnicalSystemStateEvaluation tsseClone = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsse);
+				this.tsseLastTransferred = tsseClone;
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, tsseClone);
 			} else {
 				notificationMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_MANAGER_NOTIFICATION, notification);

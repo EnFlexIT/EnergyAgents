@@ -7,74 +7,9 @@ import jade.core.*;
 /**
 * Protege name: GridStateViolation
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class GridStateViolation extends GridStateControl{ 
-
-   /**
-* Protege name: actuatorName
-   */
-   private String actuatorName;
-   public void setActuatorName(String value) { 
-    this.actuatorName=value;
-   }
-   public String getActuatorName() {
-     return this.actuatorName;
-   }
-
-   /**
-* Protege name: nPhaseOfViolation
-   */
-   private int nPhaseOfViolation;
-   public void setNPhaseOfViolation(int value) { 
-    this.nPhaseOfViolation=value;
-   }
-   public int getNPhaseOfViolation() {
-     return this.nPhaseOfViolation;
-   }
-
-   /**
-* Protege name: possibleFlexibilityOffers
-   */
-   private List possibleFlexibilityOffers = new ArrayList();
-   public void addPossibleFlexibilityOffers(FlexibilityOffer elem) { 
-     List oldList = this.possibleFlexibilityOffers;
-     possibleFlexibilityOffers.add(elem);
-   }
-   public boolean removePossibleFlexibilityOffers(FlexibilityOffer elem) {
-     List oldList = this.possibleFlexibilityOffers;
-     boolean result = possibleFlexibilityOffers.remove(elem);
-     return result;
-   }
-   public void clearAllPossibleFlexibilityOffers() {
-     List oldList = this.possibleFlexibilityOffers;
-     possibleFlexibilityOffers.clear();
-   }
-   public Iterator getAllPossibleFlexibilityOffers() {return possibleFlexibilityOffers.iterator(); }
-   public List getPossibleFlexibilityOffers() {return possibleFlexibilityOffers; }
-   public void setPossibleFlexibilityOffers(List l) {possibleFlexibilityOffers = l; }
-
-   /**
-* Protege name: requiredPowerImag
-   */
-   private float requiredPowerImag;
-   public void setRequiredPowerImag(float value) { 
-    this.requiredPowerImag=value;
-   }
-   public float getRequiredPowerImag() {
-     return this.requiredPowerImag;
-   }
-
-   /**
-* Protege name: requiredCurrentAdjustment
-   */
-   private float requiredCurrentAdjustment;
-   public void setRequiredCurrentAdjustment(float value) { 
-    this.requiredCurrentAdjustment=value;
-   }
-   public float getRequiredCurrentAdjustment() {
-     return this.requiredCurrentAdjustment;
-   }
 
    /**
 * Protege name: componentOfViolation
@@ -85,6 +20,17 @@ public class GridStateViolation extends GridStateControl{
    }
    public String getComponentOfViolation() {
      return this.componentOfViolation;
+   }
+
+   /**
+* Protege name: requiredPowerImag
+   */
+   private float requiredPowerImag;
+   public void setRequiredPowerImag(float value) { 
+    this.requiredPowerImag=value;
+   }
+   public float getRequiredPowerImag() {
+     return this.requiredPowerImag;
    }
 
    /**
@@ -99,6 +45,17 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
+* Protege name: chosenFlexibilityReal
+   */
+   private float chosenFlexibilityReal;
+   public void setChosenFlexibilityReal(float value) { 
+    this.chosenFlexibilityReal=value;
+   }
+   public float getChosenFlexibilityReal() {
+     return this.chosenFlexibilityReal;
+   }
+
+   /**
 * Protege name: kindOfViolation
    */
    private String kindOfViolation;
@@ -107,39 +64,6 @@ public class GridStateViolation extends GridStateControl{
    }
    public String getKindOfViolation() {
      return this.kindOfViolation;
-   }
-
-   /**
-* Protege name: cable
-   */
-   private String cable;
-   public void setCable(String value) { 
-    this.cable=value;
-   }
-   public String getCable() {
-     return this.cable;
-   }
-
-   /**
-* Protege name: chosenFlexibilityImag
-   */
-   private float chosenFlexibilityImag;
-   public void setChosenFlexibilityImag(float value) { 
-    this.chosenFlexibilityImag=value;
-   }
-   public float getChosenFlexibilityImag() {
-     return this.chosenFlexibilityImag;
-   }
-
-   /**
-* Protege name: requiredVoltageAdjustment
-   */
-   private float requiredVoltageAdjustment;
-   public void setRequiredVoltageAdjustment(float value) { 
-    this.requiredVoltageAdjustment=value;
-   }
-   public float getRequiredVoltageAdjustment() {
-     return this.requiredVoltageAdjustment;
    }
 
    /**
@@ -165,6 +89,17 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
+* Protege name: nPhaseOfViolation
+   */
+   private int nPhaseOfViolation;
+   public void setNPhaseOfViolation(int value) { 
+    this.nPhaseOfViolation=value;
+   }
+   public int getNPhaseOfViolation() {
+     return this.nPhaseOfViolation;
+   }
+
+   /**
 * Protege name: cableOverloadInPercent
    */
    private float cableOverloadInPercent;
@@ -176,14 +111,79 @@ public class GridStateViolation extends GridStateControl{
    }
 
    /**
-* Protege name: chosenFlexibilityReal
+* Protege name: requiredCurrentAdjustment
    */
-   private float chosenFlexibilityReal;
-   public void setChosenFlexibilityReal(float value) { 
-    this.chosenFlexibilityReal=value;
+   private float requiredCurrentAdjustment;
+   public void setRequiredCurrentAdjustment(float value) { 
+    this.requiredCurrentAdjustment=value;
    }
-   public float getChosenFlexibilityReal() {
-     return this.chosenFlexibilityReal;
+   public float getRequiredCurrentAdjustment() {
+     return this.requiredCurrentAdjustment;
+   }
+
+   /**
+* Protege name: cable
+   */
+   private String cable;
+   public void setCable(String value) { 
+    this.cable=value;
+   }
+   public String getCable() {
+     return this.cable;
+   }
+
+   /**
+* Protege name: requiredVoltageAdjustment
+   */
+   private float requiredVoltageAdjustment;
+   public void setRequiredVoltageAdjustment(float value) { 
+    this.requiredVoltageAdjustment=value;
+   }
+   public float getRequiredVoltageAdjustment() {
+     return this.requiredVoltageAdjustment;
+   }
+
+   /**
+* Protege name: actuatorName
+   */
+   private String actuatorName;
+   public void setActuatorName(String value) { 
+    this.actuatorName=value;
+   }
+   public String getActuatorName() {
+     return this.actuatorName;
+   }
+
+   /**
+* Protege name: possibleFlexibilityOffers
+   */
+   private List possibleFlexibilityOffers = new ArrayList();
+   public void addPossibleFlexibilityOffers(FlexibilityOffer elem) { 
+     List oldList = this.possibleFlexibilityOffers;
+     possibleFlexibilityOffers.add(elem);
+   }
+   public boolean removePossibleFlexibilityOffers(FlexibilityOffer elem) {
+     List oldList = this.possibleFlexibilityOffers;
+     boolean result = possibleFlexibilityOffers.remove(elem);
+     return result;
+   }
+   public void clearAllPossibleFlexibilityOffers() {
+     List oldList = this.possibleFlexibilityOffers;
+     possibleFlexibilityOffers.clear();
+   }
+   public Iterator getAllPossibleFlexibilityOffers() {return possibleFlexibilityOffers.iterator(); }
+   public List getPossibleFlexibilityOffers() {return possibleFlexibilityOffers; }
+   public void setPossibleFlexibilityOffers(List l) {possibleFlexibilityOffers = l; }
+
+   /**
+* Protege name: chosenFlexibilityImag
+   */
+   private float chosenFlexibilityImag;
+   public void setChosenFlexibilityImag(float value) { 
+    this.chosenFlexibilityImag=value;
+   }
+   public float getChosenFlexibilityImag() {
+     return this.chosenFlexibilityImag;
    }
 
 }

@@ -24,6 +24,7 @@ import de.enflexit.ea.core.behaviour.DefaultMessageReceiveBehaviour;
 import de.enflexit.ea.core.behaviour.LiveMonitoringSubscriptionResponder;
 import de.enflexit.ea.core.behaviour.O2ABehaviour;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
+import de.enflexit.ea.core.behaviour.TestTickerBehaviour;
 import de.enflexit.ea.core.dataModel.PlatformUpdater;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
@@ -39,6 +40,10 @@ import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.core.planning.PlanningDispatcher;
+import de.enflexit.ea.core.ui.EnergyAgentUiConnector;
+import de.enflexit.ea.core.ui.GeneralInformation;
+import de.enflexit.ea.core.ui.PlanningInformation;
+import de.enflexit.ea.core.ui.RealTimeInformation;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
@@ -69,6 +74,11 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 
 	private static final long serialVersionUID = -6729957368366493537L;
 	
+	private boolean isStartTestTickerBehaviour = false;
+	private String testTickerLocalName = "n0";
+	private TestTickerBehaviour testTickerBehaviour;
+	
+	
 	private AgentOperatingMode operatingMode;
 	
 	private EnergyAgentIO agentIOBehaviour;
@@ -88,6 +98,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	private LiveMonitoringSubscriptionResponder liveMonitoringSubscriptionResponder;
 	
 	private PlatformUpdateBehaviour updateBehaviour;
+	
+	private EnergyAgentUiConnector uiConnector;
+	
 	
 	/**
 	 * Returns the internal data model of this agent.
@@ -161,6 +174,11 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			this.onEnvironmentModelSet();
 		}
 		
+		// --- Start test ticker behaviour? -------------------------
+		if (this.isStartTestTickerBehaviour==true && (this.testTickerLocalName==null || this.testTickerLocalName.isBlank()==true || this.getLocalName().equals(this.testTickerLocalName) )) {
+			this.testTickerBehaviour = new TestTickerBehaviour(this, 10 * 1000);
+			this.addBehaviour(this.testTickerBehaviour);
+		}
 	}
 	
 	/**
@@ -213,6 +231,12 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	@Override
 	protected final void takeDown() {
 		
+		// --- Stop test ticker behaviour? --------------------------
+		if (this.testTickerBehaviour!=null) {
+			this.removeBehaviour(this.testTickerBehaviour);
+			this.testTickerBehaviour = null;
+		}
+		
 		// --- Stop the log writer --------------------------------------------
 		this.stopSystemStateLogWriter();
 		this.stopMonitoringBehaviourRT();
@@ -251,14 +275,14 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Gets the codec for this agent. Override to specify your own codec.
 	 * @return the agent codec
 	 */
-	protected Codec getAgentCodec() {
+	public Codec getAgentCodec() {
 		return new SLCodec();
 	}
 	/**
 	 * Gets the ontology for this agent. Override to specify your own ontology.
 	 * @return the agent ontology
 	 */
-	protected Ontology getAgentOntology() {
+	public Ontology getAgentOntology() {
 		return HyGridOntology.getInstance();
 	}
 	
@@ -266,7 +290,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Gets the ontology for OPS interactions. Override to specify your own ontology.
 	 * @return the ops ontology
 	 */
-	protected Ontology getOpsOntology() {
+	public Ontology getOpsOntology() {
 		return OpsOntology.getInstance();
 	}
 	
@@ -436,6 +460,18 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			this.monitoringBehaviourRT=null;
 		}
 	}
+	/**
+	 * Checks if the monitoring is activated.
+	 * @return true, if is activated monitoring
+	 */
+	public boolean isActivatedMonitoring() {
+		if (this.threadedMonitoringBehaviour!=null && this.monitoringBehaviourRT!=null) {
+			if (this.threadedMonitoringBehaviour.getAgent()!=null && this.monitoringBehaviourRT.getAgent()!=null ) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	/**
@@ -473,10 +509,19 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 * Overwrite this method to change the destination of system state logging.
 	 * @return the logging destination
 	 */
-	protected LoggingDestination getLoggingDestination() {
+	public LoggingDestination getLoggingDestination() {
 		return LoggingDestination.EomDatabase;
 	}
-	
+	/**
+	 * Checks if the log writer is activated.
+	 * @return true, if is activated log writer
+	 */
+	public boolean isActivatedLogWriter() {
+		if (this.logWriter!=null) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 
@@ -558,6 +603,13 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 		boolean isTechnicalSystem = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystem;
 		boolean isTechnicalSystemGroup = this.getInternalDataModel().getTypeOfControlledSystem()==ControlledSystemType.TechnicalSystemGroup;
 		return isTechnicalSystem || isTechnicalSystemGroup;
+	}
+	/**
+	 * Checks if the planning is activated.
+	 * @return true, if the planning is activated
+	 */
+	public boolean isPlanningActivated() {
+		return planningDispatcher!=null;
 	}
 	
 	/**
@@ -928,7 +980,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	protected LiveMonitoringSubscriptionResponder getLiveMonitoringSubscriptionResponder(){
 		return this.liveMonitoringSubscriptionResponder;
 	}
-	
+
 	
 	/**
 	 * Prints the specified message as error or info to the console.
@@ -949,7 +1001,40 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			System.out.println(msgFinal);
 		}
 	}
-	
-	
+
+	// ----------------------------------------------------
+	// --- From here, UI access methods -------------------
+	// ----------------------------------------------------	
+	/**
+	 * Returns the UI connector for this energy agent.
+	 * @return the UI connector
+	 */
+	public EnergyAgentUiConnector getUIConnector() {
+		if (uiConnector==null) {
+			uiConnector = new EnergyAgentUiConnector(this);
+		}
+		return uiConnector;
+	}
+	/**
+	 * Return a snapshot of the general runtime information of the agent .
+	 * @return the general information
+	 */
+	public GeneralInformation getGeneralInformation() {
+		return new GeneralInformation(this);
+	}
+	/**
+	 * Returns a snapshot of the real time information.
+	 * @return the real time information
+	 */
+	public RealTimeInformation getRealTimeInformation() {
+		return new RealTimeInformation(this);
+	}
+	/**
+	 * Returns the planning information.
+	 * @return the planning information
+	 */
+	public PlanningInformation getPlanningInformation() {
+		return new PlanningInformation(this);
+	}
 	
 }

@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
+import de.enflexit.ea.core.dataModel.visualizationMessaging.EnergyAgentVisualizationMessagging.EnergyAgentConversationID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -158,9 +159,6 @@ public class DefaultMessageReceiveBehaviour extends CyclicBehaviour {
 			
 			if (this.debug==true) {
 				System.out.println(myAgent.getLocalName() + ": Received message with ConversationID " + msg.getConversationId() + " and performative " + ACLMessage.getPerformative(msg.getPerformative()) + " from agent " + msg.getSender().getName());
-//				if (msg.getPerformative()==ACLMessage.FAILURE) {
-//					System.out.println(msg.getContent());
-//				}
 			}
 
 			if (msg.getConversationId()!=null) {
@@ -175,10 +173,16 @@ public class DefaultMessageReceiveBehaviour extends CyclicBehaviour {
 				} else if (msg.getConversationId().equals(ConversationID.OPS_FIELD_DATA_REQUEST.toString())) {
 					// --- Handle requests for field data ---------------------
 					if (msg.getPerformative()==ACLMessage.REQUEST) {
-						myAgent.addBehaviour(new HandleFieldDataRequestBehaviour(msg));
+						this.getEnergyAgent().addBehaviour(new HandleFieldDataRequestBehaviour(msg));
 					}
+					
+				} else if (msg.getConversationId().equals(EnergyAgentConversationID.ShowUI.name())) {
+					if (msg.getPerformative()==ACLMessage.REQUEST) {
+						this.getEnergyAgent().getUIConnector().openOrFocusUI();
+						invokeEnergyAgentsMessageReceiveMethod = false;
+					}
+					
 				}
-			
 			}
 			
 			// --- Invoke default receive method in the energy agent ----------

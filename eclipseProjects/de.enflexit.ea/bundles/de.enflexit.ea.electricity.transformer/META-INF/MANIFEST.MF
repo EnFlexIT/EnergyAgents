@@ -4,7 +4,7 @@ Bundle-Name: Transformer
 Bundle-ActivationPolicy: lazy
 Bundle-SymbolicName: de.enflexit.ea.electricity.transformer
 Automatic-Module-Name: de.enflexit.ea.electricity.transformer
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: HSU | BUW | SOFTEC | EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.electricity.transformer,

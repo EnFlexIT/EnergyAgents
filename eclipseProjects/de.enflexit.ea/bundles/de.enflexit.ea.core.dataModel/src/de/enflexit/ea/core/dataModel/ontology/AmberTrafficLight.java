@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: AmberTrafficLight
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class AmberTrafficLight extends TrafficLight{ 
 

@@ -9,7 +9,7 @@ import jade.core.*;
    * Stores information about a testbed agent and its proxy agent
 * Protege name: RemoteAgentInformation
 * @author ontology bean generator
-* @version 2022/01/17, 15:51:08
+* @version 2023/07/13, 21:15:48
 */
 public class RemoteAgentInformation implements Concept {
 
