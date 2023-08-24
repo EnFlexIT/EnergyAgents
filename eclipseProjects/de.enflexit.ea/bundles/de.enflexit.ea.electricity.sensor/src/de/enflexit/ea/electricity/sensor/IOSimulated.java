@@ -11,6 +11,7 @@ import org.awb.env.networkModel.NetworkModel;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
@@ -79,7 +80,7 @@ public abstract class IOSimulated extends AbstractIOSimulated {
 		Vector<NetworkComponent> neighbours = networkModel.getNeighbourNetworkComponents(netComp);
 		NetworkComponent relevantNeighbour = null;
 		for (NetworkComponent neighbourComp : neighbours) {
-			if (neighbourComp.getType().equals("Transformer")) {
+			if (TransformerHelper.isTransformer(neighbourComp)==true) {
 				relevantNeighbour = neighbourComp;
 				break;
 			} else if (neighbourComp.getType().equals("CableCabinet")) {
