@@ -6,12 +6,15 @@ import java.util.TreeMap;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 
-import de.enflexit.ea.core.awbIntegration.adapter.NetworkComponentHelper;
+import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.ElectricityNetworkType;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
+import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 import energy.optionModel.TechnicalSystem;
 
 /**
@@ -21,7 +24,6 @@ public class ValidateTransformer extends HyGridValidationAdapter {
 
 	private String netCompID;
 	private String domain;
-	
 	
 	/* (non-Javadoc)
 	 * @see net.agenthygrid.core.validation.HyGridValidationAdapter#validateNetworkComponent(org.awb.env.networkModel.NetworkComponent)
@@ -100,20 +102,37 @@ public class ValidateTransformer extends HyGridValidationAdapter {
 		
 		return this.validateSlotInDataModelArray(dmArray);
 	}
-	
 	/**
 	 * Validates the actual type in data model array.
 	 *
-	 * @param netCompID the net comp ID
 	 * @param dmArray the dm array
-	 * @param domain the domain
 	 * @return the hy grid validation message
 	 */
 	private HyGridValidationMessage validateTypeInDataModelArray(Object[] dmArray) {
-		Class<?> dmClass = NetworkComponentHelper.getGraphNodeDataModelClassForDomain(this.domain, true);
-		//TODO Add check for properties class (dmArray[0])
-		if (dmArray[1]==null || dmClass.isInstance(dmArray[1])==false) {
+
+		if (dmArray[1]==null) {
+			return new HyGridValidationMessage("The vertex properties for the Transformer '" + this.netCompID + "' are not configured!", MessageType.Error);
+		}
+		
+		// --- Get type of electrical network -----------------------
+		ElectricityNetworkType elNetType = ElectricityDomainIdentification.getElectricityNetworkType(this.domain);
+		if (elNetType==null) {
+			// --- Not configured for electrical networks ----------- 
 			return new HyGridValidationMessage("Wrong type in vertex properties for Transformer '" + this.netCompID + "'!", MessageType.Error);
+		}
+		
+		switch (elNetType) {
+		case TriPhaseNetwork:
+			if (TriPhaseElectricalNodeState.class.isInstance(dmArray[1])==false) {
+				return new HyGridValidationMessage("Wrong type in vertex properties for Transformer '" + this.netCompID + "'!", MessageType.Error);
+			}
+			break;
+
+		case UniPhaseNetwork:
+			if (UniPhaseElectricalNodeState.class.isInstance(dmArray[1])==false) {
+				return new HyGridValidationMessage("Wrong type in vertex properties for Transformer '" + this.netCompID + "'!", MessageType.Error);
+			}
+			break;
 		}
 		return null;
 	}
@@ -171,7 +190,6 @@ public class ValidateTransformer extends HyGridValidationAdapter {
 		if (ratedVoltage.getUnit()==null || ratedVoltage.getUnit().isEmpty()==true) {
 			return new HyGridValidationMessage("The rated voltage unit for '" + this.domain + "' in the vertex properties for Transformer '" + this.netCompID + "' is null!", MessageType.Error);
 		}
-		
 		return null;
 	}
 	

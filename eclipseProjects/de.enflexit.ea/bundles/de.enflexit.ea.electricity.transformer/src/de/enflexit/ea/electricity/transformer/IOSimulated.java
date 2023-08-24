@@ -207,19 +207,21 @@ public class IOSimulated extends AbstractIOSimulated {
 		
 		// ----------------------------------------------------------
 		// --- Check for neighbor components ------------------------
-		Vector<NetworkComponent> lvNeighbours = intDM.getConnectedNetworkComponentsOfElectricalDomain(InternalDataModel.DOMAIN_ELECTRICITY_400V);
+		String domain = networkModel.getDomain(intDM.getNetworkComponent());
+		Vector<NetworkComponent> lvNeighbours = intDM.getConnectedNetworkComponentsOfElectricalDomain(domain);
 		if (lvNeighbours!=null && lvNeighbours.size()>0) {
 			// --- Define allowed types of NetworkComponents -------- 
-			List<String> allowedTypes = new ArrayList<String>();
-			allowedTypes.add("Cable");
-			allowedTypes.add("Sensor");
+			List<String> allowedTypeKeyWords = new ArrayList<String>();
+			allowedTypeKeyWords.add("Cable".toLowerCase());
+			allowedTypeKeyWords.add("Sensor".toLowerCase());
 			// --- Filter for cables and sensors --------------------
-			for (int i = 0; i < lvNeighbours.size(); i++) {
-				NetworkComponent lvNetComp = lvNeighbours.get(i);
-				if (allowedTypes.contains(lvNetComp.getType())==true) {
-					// --- Prepare BlackboardRequest ----------------
-					SingleRequestSpecifier spec = new SingleRequestSpecifier(ElectricityRequestObjective.CurrentLevels, lvNetComp.getId());
-					requestSpecifierVector.add(spec);
+			for (NetworkComponent lvNetComp : lvNeighbours) {
+				for (String allowedTypeKeyWord : allowedTypeKeyWords) {
+					if (lvNetComp.getType().toLowerCase().contains(allowedTypeKeyWord)) {
+						// --- Prepare BlackboardRequest ----------------
+						requestSpecifierVector.add(new SingleRequestSpecifier(ElectricityRequestObjective.CurrentLevels, lvNetComp.getId()));
+						break;
+					}
 				}
 			}
 		}

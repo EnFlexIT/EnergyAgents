@@ -11,10 +11,10 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import de.enflexit.ea.core.AbstractInternalDataModel;
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBookEvent;
@@ -33,11 +33,7 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 
 	private static final long serialVersionUID = 3913554312467337020L;
 
-	public static String DOMAIN_ELECTRICITY_400V = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
-	public static String DOMAIN_ELECTRICITY_10KV = GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV;
-	
 	private TransformerAgent transformerAgent;
-	
 	
 	private GraphNode myGraphNode;
 	private TransformerDataModel transformerDataModel;
@@ -124,9 +120,6 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	 *
 	 * @param domain the domain specifier
 	 * @return the network components connected to the transformer in the specified domain
-	 * 
-	 * @see #DOMAIN_ELECTRICITY_400V
-	 * @see #DOMAIN_ELECTRICITY_10KV
 	 */
 	public Vector<NetworkComponent> getConnectedNetworkComponentsOfElectricalDomain(String domain) {
 	
@@ -139,7 +132,7 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 			return null;
 		}
 		// --- Unknown / illegal domain? ------------------
-		if (domain.equals(DOMAIN_ELECTRICITY_400V)==false && domain.equals(DOMAIN_ELECTRICITY_10KV)==false) {
+		if (ElectricityDomainIdentification.isElectricityDomain(domain)==false) {
 			errMsg = "Unknown or illegal domain '" + domain + "' for the request of connected electrical domain NetworkComponents!";
 			System.err.println("[" + this.energyAgent.getClass().getName() + "] " + errMsg);
 			return null;

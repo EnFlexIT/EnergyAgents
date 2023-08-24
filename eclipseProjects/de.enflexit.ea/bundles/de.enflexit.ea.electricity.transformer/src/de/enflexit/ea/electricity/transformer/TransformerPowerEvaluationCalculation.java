@@ -79,12 +79,11 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	private TransformerDataModel getTransformerDataModel() {
 		if (this.transformerDataModel == null) {
 			// --- Get the agents TransformerDataModel ------------------------
-			TransformerDataModel tdm = this.getInternalDataModel().getTransformerDataModel();
-			if (tdm!=null) {
-				this.transformerDataModel = tdm;
+			if (this.getEnergyAgentConnector().getEnergyAgent()!=null) {
+				this.transformerDataModel = this.getInternalDataModel().getTransformerDataModel();
 			} else {
 				OptionModelController omc = this.getOptionModelController();
-				if(omc != null) {
+				if (omc!=null) {
 					SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) this.getOptionModelController().getSystemVariableDefinition(this.getOptionModelController().getTechnicalSystem().getSystemVariables(), "StaticParameters");
 					this.transformerDataModel = (TransformerDataModel) this.getOptionModelController().getStaticModelInstance(sysVarDefStaticModel);
 				}
@@ -195,7 +194,13 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			}
 			break;
 		}
-		this.setTransformerLowVoltageLevelReal(transLVRealAllPhases / Math.sqrt(3));
+		
+		// --- TODO Martin: Check if this is right ----------------------------
+		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==true) {
+			this.setTransformerLowVoltageLevelReal(transLVRealAllPhases / Math.sqrt(3));
+		} else {
+			this.setTransformerLowVoltageLevelReal(transLVRealAllPhases);
+		}
 	}
 	/**
 	 * Calculate transformer impedance.
