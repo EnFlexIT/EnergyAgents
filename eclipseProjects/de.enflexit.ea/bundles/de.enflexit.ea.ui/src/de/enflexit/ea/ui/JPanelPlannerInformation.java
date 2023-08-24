@@ -42,8 +42,10 @@ public class JPanelPlannerInformation extends JTabbedPane {
 				PlanningInformation plInfo = jDialogEnergyAgent.getEnergyAgent().getPlanningInformation();
 				 JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
 				 JPanelPlannerInformation.this.addPlannerResult("Real Time Planner Result", plInfo.getRealTimePlannerResult());
-				 for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
-					 JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
+				 if (plInfo.getPlannerResultTreeMap()!=null) {
+					 for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
+						 JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
+					 }
 				 }
 			}
 		});
