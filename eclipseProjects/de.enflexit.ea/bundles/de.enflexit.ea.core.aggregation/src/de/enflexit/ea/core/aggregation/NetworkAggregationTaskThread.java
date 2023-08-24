@@ -132,7 +132,12 @@ public class NetworkAggregationTaskThread extends Thread {
 				if (netCalcStrategy!=null) {
 					String stratExMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_STRATEGY_EXECUTION + this.subNetConfig.getID();
 					this.aggregationHandler.setPerformanceMeasurementStarted(stratExMeasureID);
-					netCalcStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
+					try {
+						netCalcStrategy.runEvaluationUntil(this.evaluationStepEndTime, this.rebuildDecisionGraph);
+					} catch (Exception ex) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Error while executing network calculation strategey for '" + this.subNetConfig.getSubNetworkDescriptionID()+ "':");
+						ex.printStackTrace();
+					}
 					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
 					// --- Update the sub blackboard model ---------- 
 					netCalcStrategy.updateSubBlackboardModel();
@@ -145,7 +150,12 @@ public class NetworkAggregationTaskThread extends Thread {
 				if (displayUpdater!=null) {
 					String disUpMeasureID = AbstractAggregationHandler.AGGREGATION_MEASUREMENT_DISPLAY_UPDATE_EXECUTION + this.subNetConfig.getID();
 					this.aggregationHandler.setPerformanceMeasurementStarted(disUpMeasureID);
-					displayUpdater.updateNetworkModelDisplay(this.lastStateUpdates, this.displayTime);
+					try {
+						displayUpdater.updateNetworkModelDisplay(this.lastStateUpdates, this.displayTime);
+					} catch (Exception ex) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Error while trying to execute display update procedure for '" + this.subNetConfig.getSubNetworkDescriptionID()+ "':");
+						ex.printStackTrace();
+					}
 					this.aggregationHandler.setPerformanceMeasurementFinalized(disUpMeasureID);
 				}
 				this.currentJob = null;
