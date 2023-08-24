@@ -26,7 +26,7 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseSubNetworkConfiguration;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.HighVoltageUniPhase;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
@@ -55,6 +55,8 @@ public class BlackboardListener implements BlackboardListenerService {
 	private final double voltageBoundaryHigh = voltageBase + voltageBoundaryStep;
 	private final double voltageBoundaryLow  = voltageBase - voltageBoundaryStep;
 	
+	
+	private List<SubBlackboardModelElectricity> subBlackboardModelListElectricity;
 	
 	private Integer idExecution;
 
@@ -126,42 +128,70 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		// --- Get the sub blackboard model -------------------------
 		AbstractAggregationHandler aggregationHandler = blackboard.getAggregationHandler();
-		SubBlackboardModelElectricity subBlackboardModel = this.getSubBlackboardModelElectricity(aggregationHandler);
-		if (subBlackboardModel!=null) {
-			// --- Get a quick copy of the relevant states ----------
-			HashMap<String, ElectricalNodeState> nodeStates = new HashMap<>(subBlackboardModel.getNodeStates());
-			HashMap<String, CableState> cableStates = new HashMap<>(subBlackboardModel.getCableStates());
-			HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs = this.getLastTransformerStatesFromBlackboardAggregation(aggregationHandler);
-			
-			// --- Create lists to save to database -----------------
-			NetworkState networkState = new NetworkState();
-			networkState.setStateTime(stateTime);
-			networkState.setNodeResultList(this.getNodeResults(nodeStates, stateTime));
-			networkState.setEdgeResultList(this.getEdgeResults(cableStates, stateTime));
-			networkState.setTrafoResultList(this.getTrafoResults(nodeStates, transformerTSSEs, stateTime));
-			
-			// --- Save to database ---------------------------------
-			this.getDatabaseHandler().addNetworkStateToSave(networkState);
-			
-		} else {
-//			System.err.println("[" + this.getClass().getSimpleName() + "] No SubBlackboardModel found for " + TriPhaseSubNetworkConfiguration.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
-		}
+
+		// --- Write electricity data to DB -------------------------
+		this.writeElectricityStatesToDatabase(stateTime, aggregationHandler);
+		
+		// --- Space for further improvements ;-) -------------------
+		
 	}
 	
 	/**
-	 * Gets the sub blackboard model electricity.
+	 * Write electricity states to database.
+	 *
+	 * @param stateTime the state time
 	 * @param aggregationHandler the aggregation handler
-	 * @return the sub blackboard model electricity
 	 */
-	private SubBlackboardModelElectricity getSubBlackboardModelElectricity(AbstractAggregationHandler aggregationHandler) {
+	private void writeElectricityStatesToDatabase(Calendar stateTime, AbstractAggregationHandler aggregationHandler) {
+		
+		List<SubBlackboardModelElectricity> subBlackboardModelListElectricity = this.getSubBlackboardModelElectricity(aggregationHandler);
+		if (subBlackboardModelListElectricity.size()==0) return;
+		
+		// --- Define state HashMaps --------------------------------
+		HashMap<String, ElectricalNodeState> nodeStates = new HashMap<>();
+		HashMap<String, CableState> cableStates = new HashMap<>();
+		HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs = this.getLastTransformerStatesFromBlackboardAggregation(aggregationHandler);
 
-		// TODO what if there are several aggregations of the same kind?
-//		List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(TriPhaseSubNetworkConfiguration.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
-//		if (subNetworkConfogurations.size()>0) {
-//			return (SubBlackboardModelElectricity) subNetworkConfogurations.get(0).getSubBlackboardModel();
-//		} else {
-			return null;
-//		}
+		// --- Get a quick copy of the relevant states --------------
+		for (SubBlackboardModelElectricity subBlackboardModel : subBlackboardModelListElectricity) {
+			nodeStates.putAll(subBlackboardModel.getNodeStates());
+			cableStates.putAll(subBlackboardModel.getCableStates());
+		}
+		
+		// --- Create lists to save to database ---------------------
+		NetworkState networkState = new NetworkState();
+		networkState.setStateTime(stateTime);
+		networkState.setNodeResultList(this.getNodeResults(nodeStates, stateTime));
+		networkState.setEdgeResultList(this.getEdgeResults(cableStates, stateTime));
+		networkState.setTrafoResultList(this.getTrafoResults(nodeStates, transformerTSSEs, stateTime));
+		
+		// --- Save to database -------------------------------------
+		this.getDatabaseHandler().addNetworkStateToSave(networkState);
+		
+	}
+	
+	
+	/**
+	 * Returns all sub blackboard model for the type electricity.
+	 * @param aggregationHandler the aggregation handler
+	 * @return the list of sub blackboard model electricity
+	 */
+	private List<SubBlackboardModelElectricity> getSubBlackboardModelElectricity(AbstractAggregationHandler aggregationHandler) {
+		if (subBlackboardModelListElectricity==null) {
+			subBlackboardModelListElectricity = new ArrayList<>();
+
+			List<String> domainList = ElectricityDomainIdentification.getDomainList();
+			for (String domain : domainList) {
+				// --- Get all sub configurations that are of type electricity ----------
+				List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(domain);
+				for (AbstractSubNetworkConfiguration subNetworkConfoguration : subNetworkConfogurations) {
+					subBlackboardModelListElectricity.add((SubBlackboardModelElectricity)subNetworkConfoguration.getSubBlackboardModel());
+					subNetworkConfoguration.getSubBlackboardModel();
+				}
+			}
+		}
+		return subBlackboardModelListElectricity;
+		
 	}
 	/**
 	 * Returns the last transformer states from blackboard aggregation.
@@ -599,6 +629,20 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		if (this.nodeElementList==null || this.nodeElementList==null || this.transformerList==null) {
 		
+			// --- Define the NetworkComponets if interest here -----
+			HashMap<String, List<String>> compTypeToElementListHashMap = new HashMap<>();
+			compTypeToElementListHashMap.put("Prosumer".toLowerCase(), this.getNodeElementList());
+			compTypeToElementListHashMap.put("CableCabinet".toLowerCase(), this.getNodeElementList());
+			
+			compTypeToElementListHashMap.put("Cable".toLowerCase(), this.getEdgeElementList());
+			compTypeToElementListHashMap.put("Sensor".toLowerCase(), this.getEdgeElementList());
+			compTypeToElementListHashMap.put("Breaker".toLowerCase(), this.getEdgeElementList());
+			
+			// --- Extract a list of search Phrases -----------------
+			List<String> searchPhrases = new ArrayList<>(compTypeToElementListHashMap.keySet());
+
+			
+			// --- Check all NetworkComponets -----------------------
 			Vector<NetworkComponent> netCompVector = this.getNetworkModel().getNetworkComponentVectorSorted();
 			for (int i = 0; i < netCompVector.size(); i++) {
 
@@ -609,19 +653,14 @@ public class BlackboardListener implements BlackboardListenerService {
 					this.getNodeElementList().add(this.getGraphNodeID(netComp.getId()));
 					
 				} else {
-					// --- The remaining cases ------------
-					switch (netComp.getType()) {
-					case "Prosumer":
-					case "CableCabinet":
-						this.getNodeElementList().add(netComp.getId());
-						break;
-					case "Cable":
-					case "Sensor":
-					case "Breaker":
-						this.getEdgeElementList().add(netComp.getId());
-						break;
+					// --- Check for search phrases -------
+					String netCompType = netComp.getType().toLowerCase();
+					for (String searchPhrase : searchPhrases) {
+						if (netCompType.contains(searchPhrase)==true) {
+							compTypeToElementListHashMap.get(searchPhrase).add(netComp.getId());
+							break;
+						}
 					}
-
 				}
 			} // end for
 		}

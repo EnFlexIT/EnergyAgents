@@ -158,6 +158,32 @@ public class ElectricityDomainIdentification {
 		return getElectricityNetworkType(domain)!=null;
 	}
 	
+	/**
+	 * Returns all domains that are of type electricity.
+	 *
+	 * @param subNetConfigService the SubNetworkConfigurationService
+	 * @return the domain id list
+	 */
+	public static List<String> getDomainList() {
+
+		List<String> domainIdList = new ArrayList<>();
+		
+		// --- Get the current domain settings ------------
+		TreeMap<String, DomainSettings> dsTreeMap = getDomainSettings();
+		
+		List<String> domainList = new ArrayList<>(dsTreeMap.keySet());
+		for (String domain : domainList) {
+			DomainSettings ds = dsTreeMap.get(domain);
+			String adapterClass = ds.getAdapterClass();
+			if (adapterClass==null || adapterClass.isEmpty()==true) continue;
+			
+			if (adapterClass.equals(TriPhaseElectricalNodeAdapter.class.getName()) || adapterClass.equals(UniPhaseElectricalNodeAdapter.class.getName())) {
+				domainIdList.add(domain);
+			}
+		}
+		return domainIdList;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here some basic access functions ------------------------------
