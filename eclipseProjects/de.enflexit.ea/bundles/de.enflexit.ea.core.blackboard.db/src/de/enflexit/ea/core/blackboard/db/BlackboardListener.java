@@ -19,13 +19,14 @@ import de.enflexit.ea.core.blackboard.db.dataModel.EdgeResult;
 import de.enflexit.ea.core.blackboard.db.dataModel.NetworkState;
 import de.enflexit.ea.core.blackboard.db.dataModel.NodeResult;
 import de.enflexit.ea.core.blackboard.db.dataModel.TrafoResult;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
+import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseSubNetworkConfiguration;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.HighVoltageUniPhase;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
@@ -143,7 +144,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			this.getDatabaseHandler().addNetworkStateToSave(networkState);
 			
 		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No SubBlackboardModel found for " + SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
+//			System.err.println("[" + this.getClass().getSimpleName() + "] No SubBlackboardModel found for " + TriPhaseSubNetworkConfiguration.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
 		}
 	}
 	
@@ -155,12 +156,12 @@ public class BlackboardListener implements BlackboardListenerService {
 	private SubBlackboardModelElectricity getSubBlackboardModelElectricity(AbstractAggregationHandler aggregationHandler) {
 
 		// TODO what if there are several aggregations of the same kind?
-		List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
-		if (subNetworkConfogurations.size()>0) {
-			return (SubBlackboardModelElectricity) subNetworkConfogurations.get(0).getSubBlackboardModel();
-		} else {
+//		List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(TriPhaseSubNetworkConfiguration.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
+//		if (subNetworkConfogurations.size()>0) {
+//			return (SubBlackboardModelElectricity) subNetworkConfogurations.get(0).getSubBlackboardModel();
+//		} else {
 			return null;
-		}
+//		}
 	}
 	/**
 	 * Returns the last transformer states from blackboard aggregation.
@@ -602,20 +603,25 @@ public class BlackboardListener implements BlackboardListenerService {
 			for (int i = 0; i < netCompVector.size(); i++) {
 
 				NetworkComponent netComp = netCompVector.get(i);
-				switch (netComp.getType()) {
-				case "Prosumer":
-				case "CableCabinet":
-					this.getNodeElementList().add(netComp.getId());
-					break;
-				case "Cable":
-				case "Sensor":
-				case "Breaker":
-					this.getEdgeElementList().add(netComp.getId());
-					break;
-				case "Transformer":
+				if (TransformerHelper.isTransformer(netComp.getType())==true) {
+					// --- For Transformer ----------------
 					this.getTransformerList().add(netComp.getId());
 					this.getNodeElementList().add(this.getGraphNodeID(netComp.getId()));
-					break;
+					
+				} else {
+					// --- The remaining cases ------------
+					switch (netComp.getType()) {
+					case "Prosumer":
+					case "CableCabinet":
+						this.getNodeElementList().add(netComp.getId());
+						break;
+					case "Cable":
+					case "Sensor":
+					case "Breaker":
+						this.getEdgeElementList().add(netComp.getId());
+						break;
+					}
+
 				}
 			} // end for
 		}
