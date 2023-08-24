@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.dataModel.graphLayout;
 
+import java.util.List;
+
 import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.NetworkModel;
@@ -13,10 +15,12 @@ import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersi
 public interface GraphElementLayoutService {
 
 	/**
-	 * Returns the domain of the service (e.g. Heat, Electricity).
-	 * @return the domain
+	 * Has to return the list of domains this service is responsible for (e.g. Heat, Electricity).
+	 *
+	 * @param currProject the current project
+	 * @return the domain list
 	 */
-	public String getDomain();
+	public List<String> getDomainList(Project currProject);
 	
 	/**
 	 * Returns the graph element layout for the specified GraphElement.
@@ -37,10 +41,12 @@ public interface GraphElementLayoutService {
 	
 	/**
 	 * Converts an {@link AbstractGraphElementLayoutSettings} instance to a tree map for persistence.
+	 *
 	 * @param settings the settings
+	 * @param domain the domain
 	 * @return the tree map
 	 */
-	public GraphElementLayoutSettingsPersistenceTreeMap convertInstanceToTreeMap(AbstractGraphElementLayoutSettings settings);
+	public GraphElementLayoutSettingsPersistenceTreeMap convertInstanceToTreeMap(AbstractGraphElementLayoutSettings settings, String domain);
 	
 	
 	/**
