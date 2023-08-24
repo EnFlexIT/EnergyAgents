@@ -12,15 +12,17 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
-import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SetupType;
+import de.enflexit.ea.lib.powerFlowEstimation.Clustering;
+import de.enflexit.ea.lib.powerFlowEstimation.DistrictModel;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 
 public class GridStateEstimationInit {
-	NetworkModel networkModel = new NetworkModel();
-	NetworkModelToCsvMapper netModelToCsvMapper;
+	
+	private NetworkModel networkModel = new NetworkModel();
+	private NetworkModelToCsvMapper netModelToCsvMapper;
 	private int nNumNodes; // Number of Nodes
 	private int nNumSensors; // Number of Sensors
 	private int nNumAutarkicGrids; // Number of Autarkic Grid

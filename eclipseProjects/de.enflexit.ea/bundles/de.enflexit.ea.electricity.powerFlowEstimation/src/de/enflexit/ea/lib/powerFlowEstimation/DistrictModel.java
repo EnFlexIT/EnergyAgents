@@ -1,4 +1,4 @@
-package de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation;
+package de.enflexit.ea.lib.powerFlowEstimation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,9 +7,10 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SetupType;
 import de.enflexit.ea.lib.powerFlowCalculation.PVNodeParameters;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowParameter;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.BranchMeasurement;
@@ -17,6 +18,7 @@ import de.enflexit.ea.lib.powerFlowCalculation.parameter.BranchParams;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.Complex;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.NodeAssignment;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.NodeAssociationParams;
+import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.BuildSensitivity;
 import jampack.JampackException;
 
 public class DistrictModel {
@@ -179,7 +181,7 @@ public class DistrictModel {
 		if(this.isCentral==true) {
 			// --- Central estimation has transformer as slackNode
 			for(int i=0;i<this.getvNetworkComponents().size();i++) {
-				if(this.getvNetworkComponents().get(i).getType().equals("Transformer")) {
+				if (TransformerHelper.isTransformer(this.getvNetworkComponents().get(i))==true) {
 					nSlackNode = this.getNetworkModelToCsvMapper().getNetworkComponentIdToNodeNumber().get(this.getvNetworkComponents().get(i).getId());
 				}
 				

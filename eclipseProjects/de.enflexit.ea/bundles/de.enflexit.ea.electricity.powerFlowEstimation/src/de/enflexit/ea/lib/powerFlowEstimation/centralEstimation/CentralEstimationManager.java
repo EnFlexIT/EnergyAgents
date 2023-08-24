@@ -11,13 +11,13 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
-import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.AbstractGridStateEstimation;
-import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
+import de.enflexit.ea.lib.powerFlowEstimation.AbstractEstimation;
+import de.enflexit.ea.lib.powerFlowEstimation.DistrictModel;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
-public class CentralEstimationManager extends AbstractGridStateEstimation {
+public class CentralEstimationManager extends AbstractEstimation {
 	
 	protected final static String REFPV = "REF PV";
 	protected final static String VOLTAGE_L1 = "Voltage L1";

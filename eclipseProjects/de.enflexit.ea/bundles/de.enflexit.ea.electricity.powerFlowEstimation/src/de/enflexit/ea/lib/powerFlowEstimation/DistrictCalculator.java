@@ -1,6 +1,4 @@
-package de.enflexit.ea.lib.powerFlowEstimation.centralEstimation;
-
-import de.enflexit.ea.lib.powerFlowEstimation.decentralEstimation.DistrictModel;
+package de.enflexit.ea.lib.powerFlowEstimation;
 
 /**
  * 
