@@ -14,6 +14,7 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
+import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
@@ -256,7 +257,11 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 	 */
 	private void addGraphElementLayoutForNodes(TimeSeriesSettings tsSettings, UniPhaseElectricalNodeState triPhaseNodeState) {
 		
-		ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForNodes();
+		HyGridGraphElementLayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings==null) return;
+		if (layoutSettings.getColorSettingsForNodes()==null) return;
+		
+		ColorSettingsCollection colorSettings = layoutSettings.getColorSettingsForNodes();
 		if (colorSettings.isEnabled()==false) return;
 		if (colorSettings.getColorSettingsVector().size()==0) return;
 		if (tsSettings==null) return;
@@ -265,7 +270,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		
 		// --- Get the GraphElementLayout for this node ---------------
 		GraphNode node = tsSettings.getGraphNode(); 
-		GraphElementLayout layout = this.getLayoutService().getGraphElementLayout(node, this.getNetworkModel(), this.getLayoutSettings());
+		GraphElementLayout layout = this.getLayoutService().getGraphElementLayout(node, this.getNetworkModel(), layoutSettings);
 		
 		if (layout!=null) {
 			this.addGraphElementLayout(layout);
