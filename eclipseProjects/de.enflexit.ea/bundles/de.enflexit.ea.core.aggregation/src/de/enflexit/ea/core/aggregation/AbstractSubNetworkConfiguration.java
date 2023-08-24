@@ -9,6 +9,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
+import de.enflexit.common.classLoadService.BaseClassLoadService;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import energy.OptionModelController;
@@ -113,14 +114,30 @@ public abstract class AbstractSubNetworkConfiguration {
 	 * Has to return a description for the subnetwork that describes the here defined aggregation handling.
 	 * @return the subnetwork ID
 	 */
-	public abstract String getSubNetworkDescription();
+	public String getSubNetworkDescription() {
+		return null;
+	}
 
+	/**
+	 * Returns the sub network description internal.
+	 * @return the sub network description internal
+	 */
+	protected String getSubNetworkDescriptionInternal() {
+		
+		String description = this.getSubNetworkDescription();
+		if (description==null) {
+			description = this.getDomain();
+		}
+		return description;
+	}
+	
+	
 	/**
 	 * Returns the combination of ID and description for the current configuration.
 	 * @return the sub network description ID
 	 */
 	public String getSubNetworkDescriptionID() {
-		String description = this.getSubNetworkDescription();
+		String description = this.getSubNetworkDescriptionInternal();
 		if (description==null || description.isEmpty()) {
 			description = "Undescribed Sub-Network Description of class " + this.getClass().getSimpleName(); 
 		}
@@ -564,6 +581,23 @@ public abstract class AbstractSubNetworkConfiguration {
 		return userClassInstances;
 	}
 
+	/**
+	 * Determines a class instance from the specified name by using the {@link BaseClassLoadService}.
+	 *
+	 * @param className the class name
+	 * @return the class
+	 */
+	protected Class<?> classForName(String className) {
+		
+		Class<?> classFound = null;
+		try {
+			classFound = BaseClassLoadServiceUtility.forName(className);
+		} catch (ClassNotFoundException | NoClassDefFoundError ex) {
+			ex.printStackTrace();
+		}
+		return classFound;
+	}
+	
 	/**
 	 * Returns a new instance of the specified class.
 	 *

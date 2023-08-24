@@ -116,10 +116,12 @@ public class DefaultSubNetworkConfigurations extends ArrayList<AbstractSubNetwor
 			// --- Look for available SubNetworkConfigurations ------
 			List<SubNetworkConfigurationService> services = ServiceFinder.findServices(SubNetworkConfigurationService.class);
 			for (int i=0; i<services.size(); i++) {
-				// --- 
-				SubNetworkConfigurationService service = services.get(i);
-				domainToSubNetworkConfigurationHash.put(service.getDomainID(), service.getSubNetworkConfigurationCass().getName());
-				domainsLeft.remove(service.getDomainID());
+				// --- Get domains covered by this service ----------
+				SubNetworkConfigurationService configService = services.get(i);
+				for (String domain : configService.getDomainIdList()) {
+					domainToSubNetworkConfigurationHash.put(domain, configService.getSubNetworkConfigurationClass().getName());
+					domainsLeft.remove(domain);
+				}
 			}
 			
 			// --- Fallback case if no other aggregation applies ----

@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.aggregation;
 
+import java.util.List;
+
 /**
  * This interface defines methods for providing SubNetworkConfigurations via an OSGI service.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
@@ -7,13 +9,14 @@ package de.enflexit.ea.core.aggregation;
 public interface SubNetworkConfigurationService {
 	
 	/**
-	 * Gets ID of the domain 
+	 * Has to return the list of domains that 
 	 * @return the domain ID
 	 */
-	public String getDomainID();
+	public List<String> getDomainIdList();
+	
 	/**
 	 * The name of the class providing the 
 	 * @return
 	 */
-	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationCass();
+	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationClass();
 }

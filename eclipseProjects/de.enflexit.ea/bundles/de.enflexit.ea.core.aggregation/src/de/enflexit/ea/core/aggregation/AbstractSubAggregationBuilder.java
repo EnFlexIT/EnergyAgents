@@ -151,26 +151,41 @@ public abstract class AbstractSubAggregationBuilder {
 	 * Creates the EOM aggregation in a dedicated thread.
 	 */
 	protected void createEomAggregationInThread() {
+		this.createEomAggregationInThread(true);
+	}
+	/**
+	 * Creates the EOM aggregation in a dedicated thread.
+	 * @param showVisualization the indicator to directly show the aggregations visualization
+	 */
+	protected void createEomAggregationInThread(boolean showVisualization) {
 		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// --- Create aggregation ---------------------------
-				AbstractSubAggregationBuilder.this.createEomAggregation();
+				AbstractSubAggregationBuilder.this.createEomAggregation(showVisualization);
 			}
 		}, "EOM-Aggregation-Build_" + this.getSubAggregationConfiguration().getID()).start();
 	}
+	
 	/**
-	 * Will be invoked to create the aggregation.
+	 * Will be invoked to create the EOM - aggregation.
 	 */
 	protected void createEomAggregation() {
+		this.createEomAggregation(true);
+	}
+	/**
+	 * Will be invoked to create the EOM - aggregation.
+	 * @param showVisualization the show visualization
+	 */
+	protected void createEomAggregation(boolean showVisualization) {
 	
 		// --- Create / fill the aggregation model ----------------------------
 		this.createAggregationAsTechnicalSystemGroup();
 		this.addSubsystemsToAggregation();
 
 		// --- Show visualization of the aggregation ? ------------------------
-		if (this.isHeadlessOperation()==false && this.hasSubSystems()==true) {
+		if (showVisualization==true && this.isHeadlessOperation()==false && this.hasSubSystems()==true) {
 			this.showVisualization();
 		}
 		

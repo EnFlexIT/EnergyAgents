@@ -270,7 +270,7 @@ public abstract class AbstractAggregationHandler {
 		List<AbstractSubNetworkConfiguration> configurationsFound = new ArrayList<>();
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			AbstractSubNetworkConfiguration checkConfig = this.getSubNetworkConfigurations().get(i); 
-			if (checkConfig.getSubNetworkDescription().equals(subnetworkDescription)) {
+			if (checkConfig.getSubNetworkDescriptionInternal().equals(subnetworkDescription)) {
 				configurationsFound.add(checkConfig);
 			}
 		}
@@ -293,7 +293,7 @@ public abstract class AbstractAggregationHandler {
 				fbNetConfig = (FallbackSubNetworkConfiguration) subConfig;
 			} else {
 				this.getExecutedBuilds().add(subEomBuilder);
-				subEomBuilder.createEomAggregationInThread();
+				subEomBuilder.createEomAggregationInThread(false);
 			}
 		}
 		
@@ -306,9 +306,17 @@ public abstract class AbstractAggregationHandler {
 			}
 		}
 		
+		// --- Sequentially show the aggregations that were build ---
+		for (AbstractSubNetworkConfiguration subConfig : this.getSubNetworkConfigurations()) {
+			AbstractSubAggregationBuilder subEomBuilder = subConfig.getSubAggregationBuilder();
+			if (this.isHeadlessOperation()==false && subEomBuilder.hasSubSystems()==true) {
+				subEomBuilder.showVisualization();
+			}
+		}
+		
 		// --- Finally create Fallback Aggregation ? ----------------
 		if (fbNetConfig!=null) {
-			fbNetConfig.getSubAggregationBuilder().createEomAggregation();
+			fbNetConfig.getSubAggregationBuilder().createEomAggregation(true);
 			// --- Destroy fallback part ? ----------------------
 			if (fbNetConfig.getSubAggregationBuilder().hasSubSystems()==false) {
 				this.getSubNetworkConfigurations().remove(fbNetConfig);
