@@ -1304,9 +1304,11 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			List<GraphElementLayoutService> layoutServiceList = ServiceFinder.findServices(GraphElementLayoutService.class);
 			for (int i = 0; i < layoutServiceList.size(); i++) {
 				GraphElementLayoutService layoutService = layoutServiceList.get(i);
-				AbstractGraphElementLayoutSettingsPanel layoutSettingsPanel = layoutService.getGraphElementLayoutSettingPanel(this.currProject, layoutService.getDomain());
-				layoutSettingsPanel.setGraphElementLayoutSettingsToVisualization();
-				jTabbedPaneColorSettings.addTab(" " + layoutService.getDomain() + " ", layoutSettingsPanel);
+				for (String domain : layoutService.getDomainList(this.currProject)) {
+					AbstractGraphElementLayoutSettingsPanel layoutSettingsPanel = layoutService.getGraphElementLayoutSettingPanel(this.currProject, domain);
+					layoutSettingsPanel.setGraphElementLayoutSettingsToVisualization();
+					jTabbedPaneColorSettings.addTab(" " + domain + " ", layoutSettingsPanel);
+				}
 			}
 		}
 		return jTabbedPaneColorSettings;
