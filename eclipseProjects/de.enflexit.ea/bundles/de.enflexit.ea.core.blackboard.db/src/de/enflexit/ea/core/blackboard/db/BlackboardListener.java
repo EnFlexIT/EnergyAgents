@@ -158,6 +158,36 @@ public class BlackboardListener implements BlackboardListenerService {
 			cableStates.putAll(subBlackboardModel.getCableStates());
 		}
 		
+		// --- Prepare and put to database --------------------------
+		this.prepareAndPutElectricityStatesToDatabaseInThread(stateTime, nodeStates, cableStates, transformerTSSEs);
+	}
+	/**
+	 * Prepares and puts the specified electricity state data to the database by using a dedicated thread.
+	 *
+	 * @param stateTime the state time
+	 * @param nodeStates the node states
+	 * @param cableStates the cable states
+	 * @param transformerTSSEs the transformer TSS es
+	 */
+	private void prepareAndPutElectricityStatesToDatabaseInThread(final Calendar stateTime, final HashMap<String, ElectricalNodeState> nodeStates, final HashMap<String, CableState> cableStates, final HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs) {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				BlackboardListener.this.prepareAndPutElectricityStatesToDatabase(stateTime, nodeStates, cableStates, transformerTSSEs);
+			}
+		}, "DB-Preparation-" + stateTime.getTimeInMillis()).start();
+	}
+	/**
+	 * Prepares and puts the specified electricity state data to the database.
+	 *
+	 * @param stateTime the state time
+	 * @param nodeStates the node states
+	 * @param cableStates the cable states
+	 * @param transformerTSSEs the transformer TSS es
+	 */
+	private void prepareAndPutElectricityStatesToDatabase(Calendar stateTime, HashMap<String, ElectricalNodeState> nodeStates, HashMap<String, CableState> cableStates, HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs) {
+		
 		// --- Create lists to save to database ---------------------
 		NetworkState networkState = new NetworkState();
 		networkState.setStateTime(stateTime);
@@ -167,7 +197,6 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		// --- Save to database -------------------------------------
 		this.getDatabaseHandler().addNetworkStateToSave(networkState);
-		
 	}
 	
 	
@@ -330,7 +359,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			trafoResult.setTrafoLossesP(trafoLossesP);
 			trafoResult.setTrafoLossesQ(trafoLossesQ);
 			
-			trafoResult.setTapPos(tapPosition);
+			trafoResult.setTapPos(tapPosition==null ? -9999 : tapPosition);
 			
 			// --- Add to list ------------------------
 			trafoResultList.add(trafoResult);
