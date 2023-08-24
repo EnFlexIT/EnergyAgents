@@ -69,21 +69,20 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) requestSpecifier.getRequestObjective();
 		
 			switch (requestObjective) {
-				case PowerFlowCalculationResults:
-					answer = new PowerFlowCalculationResultAnswer(this.getNodeStates(), this.getCableStates());
-					break;
-				case TransformerPower:
-					answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
-					break;
-				case VoltageLevels:
-					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getNodeStates().get(requestSpecifier.getIdentifier()));
-					break;
-				case CurrentLevels:
-					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getCableStates().get(requestSpecifier.getIdentifier()));
-					break;
+			case PowerFlowCalculationResults:
+				answer = new PowerFlowCalculationResultAnswer(this.getNodeStates(), this.getCableStates());
+				break;
+			case TransformerPower:
+				answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
+				break;
+			case VoltageLevels:
+				answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getNodeStates().get(requestSpecifier.getIdentifier()));
+				break;
+			case CurrentLevels:
+				answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getCableStates().get(requestSpecifier.getIdentifier()));
+				break;
 			}
 		}
-		
 		return answer;
 	}
 	

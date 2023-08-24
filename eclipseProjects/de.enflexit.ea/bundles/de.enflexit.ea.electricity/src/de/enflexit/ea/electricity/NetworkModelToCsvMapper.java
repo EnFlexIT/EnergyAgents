@@ -1,6 +1,8 @@
-package de.enflexit.ea.core.dataModel.csv;
+package de.enflexit.ea.electricity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +16,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.core.dataModel.TransformerComponent;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.CableWithBreakerProperties;
 import de.enflexit.ea.core.dataModel.ontology.CircuitBreaker;
@@ -28,99 +31,85 @@ import edu.uci.ics.jung.graph.util.Pair;
  * to a CSV file corresponding structure. It can be used for the preparation of
  * the power flow calculation and for the export into CSV files.
  * 
- * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
+ * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
 public class NetworkModelToCsvMapper {
-	
-	//TODO move to the electricity bundle after solving dependency problems (PowerFlowEstimation, SimulationDataCsvExporter) 
 
 	public enum SetupType {
-		NodeSetup,
-		BranchSetup,
-		SensorSetup
+		NodeSetup, BranchSetup, SensorSetup
 	}
-	
+
 	public enum SetupColumn {
-		NodeSetup_NodeNumber,
-		NodeSetup_isLoadNode,
-		NodeSetup_NominalPower,
-		
-		BranchSetup_NodeNumberFrom,
-		BranchSetup_NodeNumberTo,
-		BranchSetup_LengthLine,
-		BranchSetup_LinearResistance,
-		BranchSetup_LinearReactance,
-		BranchSetup_LinearCapacitance,
-		BranchSetup_LinearConductance,
-		BranchSetup_MaxCurrent,
-		BranchSetup_BranchNumber,
-		
-		SensorSetup_NodeNumberFrom,
-		SensorSetup_NodeNumberTo
+		NodeSetup_NodeNumber, NodeSetup_isLoadNode, NodeSetup_NominalPower,
+
+		BranchSetup_NodeNumberFrom, BranchSetup_NodeNumberTo, BranchSetup_LengthLine, BranchSetup_LinearResistance,
+		BranchSetup_LinearReactance, BranchSetup_LinearCapacitance, BranchSetup_LinearConductance,
+		BranchSetup_MaxCurrent, BranchSetup_BranchNumber,
+
+		SensorSetup_NodeNumberFrom, SensorSetup_NodeNumberTo
 	}
-	
+
 	private boolean debugTableModels;
-	
+
 	private NetworkModel networkModel;
 	private DomainCluster domainCluster;
-	
+
 	private Vector<NetworkComponent> netCompsSorted;
-	
+
 	private Vector<Vector<Double>> nodeSetupVector;
 	private Vector<SlackNodeDescription> slackNodeVector;
-	
+
 	private HashMap<Integer, GraphNode> nodeNumberToGraphNode;
 	private HashMap<GraphNode, Integer> graphNodeToNodeNumber;
 	private HashMap<String, Integer> networkComponentIdToNodeNumber;
 	private HashMap<Integer, String> nodeNumberToNetworkComponentId;
-	
+
 	private Vector<Vector<Double>> branchSetupVector;
 	private Vector<BranchDescription> branchDescription;
 	private Vector<Vector<Double>> sensorSetupVector;
-	
+
 	private SetupTableModel tableModelNode;
 	private SetupTableModel tableModelBranch;
 	private SetupTableModel tableModelSensor;
-	
-	
+
 	/**
 	 * Instantiates a NetworkModelToCsvMapper
 	 *
-	 * @param networkModel the network model
+	 * @param networkModel  the network model
 	 * @param domainCluster the domain cluster
 	 */
 	public NetworkModelToCsvMapper(NetworkModel networkModel, DomainCluster domainCluster) {
 		this.networkModel = networkModel;
 		this.domainCluster = domainCluster;
 		this.createCsvStructure();
-		
-		if (this.debugTableModels==true) {
+
+		if (this.debugTableModels == true) {
 			// --- Simply print the SetupTableModel -----------------
 			this.getTableModelNodes().printModel();
 			this.getTableModelBranches().printModel();
 			this.getTableModelSensors().printModel();
 
-			// --- Get a data row as a row HashMap ------------------ 
+			// --- Get a data row as a row HashMap ------------------
 			int rowIndex = 0;
 			HashMap<SetupColumn, Double> rowHash = this.getTableModelBranches().getTableModelRowAsHashMap(rowIndex);
 			System.out.println("Values are from row no. " + (rowIndex + 1));
-			
+
 			// --- Access and print a single value ------------------
 			System.out.println("Single value for maximum current: " + rowHash.get(SetupColumn.BranchSetup_MaxCurrent));
 			System.out.println();
-			
+
 			// --- Print all values of the row ----------------------
 			System.out.println("Print all values of row no. " + (rowIndex + 1));
-			List<SetupColumn> headerList = new ArrayList<>(rowHash.keySet()); 
+			List<SetupColumn> headerList = new ArrayList<>(rowHash.keySet());
 			for (int i = 0; i < headerList.size(); i++) {
 				SetupColumn sCol = headerList.get(i);
 				Double sColValue = rowHash.get(sCol);
-				System.out.println( "Column '" + sCol.toString() + "' \t" + sColValue );
+				System.out.println("Column '" + sCol.toString() + "' \t" + sColValue);
 			}
 			System.out.println();
 		}
 	}
-	
+
 	/**
 	 * Creates the csv structure.
 	 */
@@ -132,18 +121,19 @@ public class NetworkModelToCsvMapper {
 			this.createBranchSetup();
 			// --- Check SlackNode definition -------------
 			this.checkSlackNodeDefinition();
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Returns the specified setup as an array.
+	 * 
 	 * @return the setup as array
 	 */
 	public double[][] getSetupAsArray(SetupType setupType) {
-		
+
 		// --- Select the specified setup vector --------------------
 		Vector<Vector<Double>> setupVector = null;
 		switch (setupType) {
@@ -157,33 +147,35 @@ public class NetworkModelToCsvMapper {
 			setupVector = this.getSensorSetupVector();
 			break;
 		}
-		if (setupVector==null || setupVector.size()==0) return null;
-		
+		if (setupVector == null || setupVector.size() == 0)
+			return null;
+
 		// --- Create the double array of the setup -----------------
 		int nRows = setupVector.size();
 		int nColumns = setupVector.get(0).size();
-		
+
 		double[][] nodeSetup = null;
-		if (nRows>0 && nColumns>0) {
-			// --- Create the array with the correct size ----------- 
-			nodeSetup = new double [nRows][nColumns];
+		if (nRows > 0 && nColumns > 0) {
+			// --- Create the array with the correct size -----------
+			nodeSetup = new double[nRows][nColumns];
 			// --- Transfer from Vector to array --------------------
-			for (int row=0; row<nRows; row++) {
+			for (int row = 0; row < nRows; row++) {
 				Vector<Double> rowVector = setupVector.get(row);
-				for (int column=0; column<nColumns; column++) {
-					nodeSetup[row][column] = rowVector.get(column); 
+				for (int column = 0; column < nColumns; column++) {
+					nodeSetup[row][column] = rowVector.get(column);
 				}
 			}
 		}
 		return nodeSetup;
 	}
-	
+
 	/**
 	 * Returns the table model for the nodes of the electrical grid.
+	 * 
 	 * @return the table model node
 	 */
 	public SetupTableModel getTableModelNodes() {
-		if (tableModelNode==null) {
+		if (tableModelNode == null) {
 			Vector<SetupColumn> columns = new Vector<>();
 			columns.add(SetupColumn.NodeSetup_NodeNumber);
 			columns.add(SetupColumn.NodeSetup_isLoadNode);
@@ -192,12 +184,14 @@ public class NetworkModelToCsvMapper {
 		}
 		return tableModelNode;
 	}
+
 	/**
 	 * Return the table model for the branches of the electrical grid.
+	 * 
 	 * @return the table model branch
 	 */
 	public SetupTableModel getTableModelBranches() {
-		if (tableModelBranch==null) {
+		if (tableModelBranch == null) {
 			Vector<SetupColumn> columns = new Vector<>();
 			columns.add(SetupColumn.BranchSetup_NodeNumberFrom);
 			columns.add(SetupColumn.BranchSetup_NodeNumberTo);
@@ -212,12 +206,14 @@ public class NetworkModelToCsvMapper {
 		}
 		return tableModelBranch;
 	}
+
 	/**
 	 * Returns the table model for sensors.
+	 * 
 	 * @return the table model sensors
 	 */
 	public SetupTableModel getTableModelSensors() {
-		if (tableModelSensor==null) {
+		if (tableModelSensor == null) {
 			Vector<SetupColumn> columns = new Vector<>();
 			columns.add(SetupColumn.SensorSetup_NodeNumberFrom);
 			columns.add(SetupColumn.SensorSetup_NodeNumberTo);
@@ -225,6 +221,7 @@ public class NetworkModelToCsvMapper {
 		}
 		return tableModelSensor;
 	}
+
 	/**
 	 * Creates a default table model row, where all values will be 0.
 	 *
@@ -232,83 +229,94 @@ public class NetworkModelToCsvMapper {
 	 * @return the vector
 	 */
 	private Vector<Double> createDefaultTableModelRow(int size) {
-		
+
 		Vector<Double> defaultRow = new Vector<>();
 		for (int i = 0; i < size; i++) {
 			defaultRow.add(0.0);
 		}
 		return defaultRow;
 	}
-	
+
 	/**
 	 * Gets the node setup vector.
+	 * 
 	 * @return the node setup vector
 	 */
 	public Vector<Vector<Double>> getNodeSetupVector() {
-		if (nodeSetupVector==null) {
+		if (nodeSetupVector == null) {
 			nodeSetupVector = new Vector<Vector<Double>>();
 		}
 		return nodeSetupVector;
 	}
+
 	/**
 	 * Gets the slack node vector.
+	 * 
 	 * @return the slack node vector
 	 */
 	public Vector<SlackNodeDescription> getSlackNodeVector() {
-		if (slackNodeVector==null) {
+		if (slackNodeVector == null) {
 			slackNodeVector = new Vector<SlackNodeDescription>();
 		}
 		return slackNodeVector;
 	}
+
 	/**
 	 * Gets the node index to GraphNode.
+	 * 
 	 * @return the node index to GraphNode
 	 */
 	public HashMap<Integer, GraphNode> getNodeNumberToGraphNode() {
-		if (nodeNumberToGraphNode==null) {
+		if (nodeNumberToGraphNode == null) {
 			nodeNumberToGraphNode = new HashMap<Integer, GraphNode>();
 		}
 		return nodeNumberToGraphNode;
 	}
+
 	/**
 	 * Gets the graph node to node number.
+	 * 
 	 * @return the graph node to node number
 	 */
 	public HashMap<GraphNode, Integer> getGraphNodeToNodeNumber() {
-		if (graphNodeToNodeNumber==null) {
-			graphNodeToNodeNumber = new HashMap<>(); 
+		if (graphNodeToNodeNumber == null) {
+			graphNodeToNodeNumber = new HashMap<>();
 		}
 		return graphNodeToNodeNumber;
 	}
+
 	/**
 	 * Gets the network component id to node number.
+	 * 
 	 * @return the network component id to node number
 	 */
 	public HashMap<String, Integer> getNetworkComponentIdToNodeNumber() {
-		if (networkComponentIdToNodeNumber==null) {
+		if (networkComponentIdToNodeNumber == null) {
 			networkComponentIdToNodeNumber = new HashMap<>();
 		}
 		return networkComponentIdToNodeNumber;
 	}
+
 	/**
 	 * Gets the node number to network component id.
+	 * 
 	 * @return the node number to network component id
 	 */
 	public HashMap<Integer, String> getNodeNumberToNetworkComponentId() {
-		if (nodeNumberToNetworkComponentId==null) {
+		if (nodeNumberToNetworkComponentId == null) {
 			nodeNumberToNetworkComponentId = new HashMap<>();
 		}
 		return nodeNumberToNetworkComponentId;
 	}
-	
-	
+
 	/**
 	 * Returns the sorted Vector of {@link NetworkComponent}s.
+	 * 
 	 * @return the network component vector sorted
 	 */
 	private Vector<NetworkComponent> getNetworkComponentVectorSorted() {
-		if (netCompsSorted==null) {
-			if (domainCluster==null) {
+		if (netCompsSorted == null) {
+			if (domainCluster == null) {
 				netCompsSorted = this.networkModel.getNetworkComponentVectorSorted();
 			} else {
 				netCompsSorted = this.domainCluster.getNetworkComponents();
@@ -316,6 +324,7 @@ public class NetworkModelToCsvMapper {
 		}
 		return netCompsSorted;
 	}
+
 	/**
 	 * Creates the node setup table.
 	 */
@@ -328,216 +337,237 @@ public class NetworkModelToCsvMapper {
 
 			// --- Check single NetworkComponent ------------------------------
 			NetworkComponent netComp = netCompVector.get(i);
-			HashSet<GraphElement> graphNodeElements = this.networkModel.getGraphElementsOfNetworkComponent(netComp, new GraphNode());
-			if (graphNodeElements.size()==1) {
+			HashSet<GraphElement> graphNodeElements = this.networkModel.getGraphElementsOfNetworkComponent(netComp,
+					new GraphNode());
+			if (graphNodeElements.size() == 1) {
 				// --- Distribution nodes only --------------------------------
 				double dIsloadNode = 0;
-				double dDEAPwrNom  = 0;
+				double dDEAPwrNom = 0;
 				GraphNode graphNode = (GraphNode) graphNodeElements.iterator().next();
-				if (graphNode.getDataModel()!=null) {
+				if (graphNode.getDataModel() != null) {
 					// --- Get the object array of the data model -------------
 					Object dataModel = graphNode.getDataModel();
 					Object[] dataModelArray = null;
-					if (dataModel!=null && dataModel.getClass().isArray()) {
+					if (dataModel != null && dataModel.getClass().isArray()) {
 						// --- Regular NetworkComponentAdapter4DataModel ------
 						dataModelArray = (Object[]) dataModel;
-						
-					} else if (dataModel instanceof TreeMap<?,?>) {
+
+					} else if (dataModel instanceof TreeMap<?, ?>) {
 						// --- BundlingNetworkComponentAdapter4DataModel ------
 						@SuppressWarnings("unchecked")
 						TreeMap<String, Object> dmTreeMap = (TreeMap<String, Object>) dataModel;
-						if (this.getDomain()==null) {
+						if (this.getDomain() == null) {
 							// --- This is just a default fall back! ----------
-							dataModel = dmTreeMap.get(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V);
+							dataModel = dmTreeMap.get(this.networkModel.getDomain(netComp));
 						} else {
 							// --- Work on current domain ---------------------
 							dataModel = dmTreeMap.get(this.getDomain());
 						}
-						
-						if (dataModel!=null && dataModel.getClass().isArray()) {
+
+						if (dataModel != null && dataModel.getClass().isArray()) {
 							dataModelArray = (Object[]) dataModel;
 						}
-						
+
 					}
-					
+
 					// --- Define 'dDEAPwrNom' and 'dIsloadNode' --------------
-					if (dataModelArray!=null && dataModelArray.length>0) {
+					if (dataModelArray != null && dataModelArray.length > 0) {
 						// --- Get the node state -----------------------------
 						if (dataModelArray[0] instanceof ElectricalNodeProperties) {
 							ElectricalNodeProperties nodeProperties = (ElectricalNodeProperties) dataModelArray[0];
-							if (nodeProperties.getNominalPower()!=null) {
+							if (nodeProperties.getNominalPower() != null) {
 								dDEAPwrNom = nodeProperties.getNominalPower().getValue();
 							} else {
 								dDEAPwrNom = 0;
 							}
-							if (nodeProperties.getIsLoadNode()==true) {
+							if (nodeProperties.getIsLoadNode() == true) {
 								dIsloadNode = 1;
 							}
-							
-						} else if (dataModelArray[0] instanceof ElectricalNodeProperties) {
-							ElectricalNodeProperties nodeState = (ElectricalNodeProperties) dataModelArray[0];
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Define 'dDEAPwrNom' and 'dIsloadNode' for '" + nodeState.getClass().getName() + "'!?");
-							
-						} else if (dataModelArray[0]==null){
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Data model incomplete: No properties instance set for node " + graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
+						} else if (dataModelArray[0] == null) {
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
+									+ "] Data model incomplete: No properties instance set for node "
+									+ graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
 						} else {
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName() + "'!");
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
+									+ "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName()
+									+ "'!");
 						}
-						
+
 					}
 				}
-				
+
 				// --- Define single row for the node setup -------------------
 				Vector<Double> row = new Vector<Double>();
-				row.add((double)nodeNumber); 
+				row.add((double) nodeNumber);
 				row.add(dIsloadNode);
 				row.add(dDEAPwrNom);
 				this.getNodeSetupVector().add(row);
-				
+
 				// --- Define single row for the table model ------------------
-				Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount()); 
+				Vector<Double> newTableRow = this
+						.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount());
 				int colNodeNumber = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_NodeNumber.toString());
-				newTableRow.set(colNodeNumber, (double)nodeNumber);
+				newTableRow.set(colNodeNumber, (double) nodeNumber);
 				int colIsLoadNode = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_isLoadNode.toString());
 				newTableRow.set(colIsLoadNode, dIsloadNode);
-				int colNominalPower = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_NominalPower.toString());
+				int colNominalPower = this.getTableModelNodes()
+						.findColumn(SetupColumn.NodeSetup_NominalPower.toString());
 				newTableRow.set(colNominalPower, dDEAPwrNom);
 				this.getTableModelNodes().addRow(newTableRow);
-				
+
 				// --- Remind relations between no, index and GraphNode -------
 				this.getNodeNumberToGraphNode().put(nodeNumber, graphNode);
 				this.getGraphNodeToNodeNumber().put(graphNode, nodeNumber);
 				// --- Remind relation between NetworkComponent and no --------
 				this.getNetworkComponentIdToNodeNumber().put(netComp.getId(), nodeNumber);
 				this.getNodeNumberToNetworkComponentId().put(nodeNumber, netComp.getId());
-				
+
 				// --- Remind transformer / slack node ------------------------
-				if (netComp.getType().equals("Transformer") || netComp.getType().equals("TransformerControllable") || netComp.getType().equals("SlackNode")) {
+				if (TransformerHelper.isTransformer(netComp.getType())) {
 					this.getSlackNodeVector().add(new SlackNodeDescription(nodeNumber, netComp.getId()));
 				}
-				
+
 				// --- Increase rowBumber -------------------------------------
 				nodeNumber++;
 			}
-		}// end for
+		} // end for
 	}
-	
-	
+
 	/**
 	 * Gets the branch setup vector.
+	 * 
 	 * @return the branch setup vector
 	 */
 	public Vector<Vector<Double>> getBranchSetupVector() {
-		if (branchSetupVector==null) {
+		if (branchSetupVector == null) {
 			branchSetupVector = new Vector<Vector<Double>>();
 		}
 		return branchSetupVector;
 	}
+
 	/**
-	 * Gets the branch (cable, breaker or mBox) line index to network component HashMap.
+	 * Gets the branch (cable, breaker or mBox) line index to network component
+	 * HashMap.
+	 * 
 	 * @return the branch line number to network component
 	 */
 	public Vector<BranchDescription> getBranchDescription() {
-		if (branchDescription==null) {
+		if (branchDescription == null) {
 			branchDescription = new Vector<BranchDescription>();
 		}
 		return branchDescription;
 	}
+
 	/**
 	 * Gets the sensor setup vector.
+	 * 
 	 * @return the sensor setup vector
 	 */
 	public Vector<Vector<Double>> getSensorSetupVector() {
-		if (sensorSetupVector==null) {
+		if (sensorSetupVector == null) {
 			sensorSetupVector = new Vector<Vector<Double>>();
 		}
 		return sensorSetupVector;
 	}
-	
+
 	/**
 	 * Creates the branch setup table.
 	 */
 	private void createBranchSetup() {
-		
+
 		Graph<GraphNode, GraphEdge> graph = this.networkModel.getGraph();
 		int branchNumber = 1;
 		for (GraphEdge edge : graph.getEdges()) {
-			
-			// --- Check domain of the NetworkComponent ----------------------- 
+
+			// --- Check domain of the NetworkComponent -----------------------
 			NetworkComponent netComp = this.networkModel.getNetworkComponent(edge);
-			if (this.domainCluster!=null && this.domainCluster.getNetworkComponents().contains(netComp)==false) continue;
-			
+			if (this.domainCluster != null && this.domainCluster.getNetworkComponents().contains(netComp) == false)
+				continue;
+
 			// --- Check domain of the NetworkComponent -----------------------
 			String domain = this.networkModel.getDomain(netComp);
-			if (domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V)==false && domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV)==false) continue; 
-				
+			if (ElectricityDomainIdentification.isElectricityDomain(domain) == false)
+				continue;
+//			if (domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V)==false && domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV)==false) continue; 
+
 			// --- Get start and end point of the Edge ------------------------
 			Pair<GraphNode> edgeNodes = graph.getEndpoints(edge);
 			GraphNode nodeFrom = edgeNodes.getFirst();
 			int nodeNumberFrom = this.getGraphNodeToNodeNumber().get(nodeFrom);
-			
+
 			GraphNode nodeTo = edgeNodes.getSecond();
 			Integer nodeNumberTo = this.getGraphNodeToNodeNumber().get(nodeTo);
-			
+
 			// --- Get the NetworkComponent of the edge -----------------------
 			if (netComp.getDataModel() instanceof Object[]) {
-				
+
 				// --- Data model is a Object Array of an Ontology adapter ----
 				Object[] dataModelArray = (Object[]) netComp.getDataModel();
-				if (dataModelArray[0]==null) continue;
-				
+				if (dataModelArray[0] == null)
+					continue;
+
 				// --- Handle cable and sub classes ---------------------------
 				if (dataModelArray[0] instanceof CableProperties) {
-					
-					CableProperties cable 		= (CableProperties) dataModelArray[0];
-					double dLengthLine		  	= cable.getLength().getValue();
-					double dResistanceLinear_R  = cable.getLinearResistance()==null  ? 0.0 : cable.getLinearResistance().getValue();
-					double dReactanceLinear_X   = cable.getLinearReactance()==null   ? 0.0 : cable.getLinearReactance().getValue();
-					double dLinearCapacitance_C = cable.getLinearCapacitance()==null ? 0.0 : cable.getLinearCapacitance().getValue();
-					double dLinearConductance_G = cable.getLinearConductance()==null ? 0.0 : cable.getLinearConductance().getValue();
-					double nMaxCurrent		 	= cable.getMaxCurrent()==null 	  	 ? 0.0 : cable.getMaxCurrent().getValue();
-					
+
+					CableProperties cable = (CableProperties) dataModelArray[0];
+					double dLengthLine = cable.getLength().getValue();
+					double dResistanceLinear_R = cable.getLinearResistance() == null ? 0.0
+							: cable.getLinearResistance().getValue();
+					double dReactanceLinear_X = cable.getLinearReactance() == null ? 0.0
+							: cable.getLinearReactance().getValue();
+					double dLinearCapacitance_C = cable.getLinearCapacitance() == null ? 0.0
+							: cable.getLinearCapacitance().getValue();
+					double dLinearConductance_G = cable.getLinearConductance() == null ? 0.0
+							: cable.getLinearConductance().getValue();
+					double nMaxCurrent = cable.getMaxCurrent() == null ? 0.0 : cable.getMaxCurrent().getValue();
+
 					if (cable instanceof SensorProperties) {
 						// ----------------------------------------------------
 						// --- Handle Sensor information ----------------------
 						// ----------------------------------------------------
 						SensorProperties sensor = (SensorProperties) cable;
-						if (sensor.getMeasureLocation()!=null) {
+						if (sensor.getMeasureLocation() != null) {
 							// --- Check, where the measurement location is ---
-							String locationNetCompNo = sensor.getMeasureLocation(); 
+							String locationNetCompNo = sensor.getMeasureLocation();
 							NetworkComponent netCompFrom = this.networkModel.getDistributionNode(nodeFrom);
-							if (netCompFrom.getId().contains(locationNetCompNo)==false) {
+							if (netCompFrom.getId().contains(locationNetCompNo) == false) {
 								int nFromNodeNew = nodeNumberTo;
 								int nToNodeNew = nodeNumberFrom;
 								nodeNumberFrom = nFromNodeNew;
 								nodeNumberTo = nToNodeNew;
 							}
-							// --- Remind this Sensor ------------------------- 
+							// --- Remind this Sensor -------------------------
 							Vector<Double> sensorSingle = new Vector<Double>();
 							sensorSingle.add((double) nodeNumberFrom);
 							sensorSingle.add((double) nodeNumberTo);
 							this.getSensorSetupVector().addElement(sensorSingle);
-							
+
 							// --- Remind in table model too ------------------
-							Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelSensors().getColumnCount()); 
-							int colNodeNumberFrom = this.getTableModelSensors().findColumn(SetupColumn.SensorSetup_NodeNumberFrom.toString());
-							newTableRow.set(colNodeNumberFrom, (double)nodeNumberFrom);
-							int colNodeNumberTo = this.getTableModelSensors().findColumn(SetupColumn.SensorSetup_NodeNumberTo.toString());
-							newTableRow.set(colNodeNumberTo, (double)nodeNumberTo);
+							Vector<Double> newTableRow = this
+									.createDefaultTableModelRow(this.getTableModelSensors().getColumnCount());
+							int colNodeNumberFrom = this.getTableModelSensors()
+									.findColumn(SetupColumn.SensorSetup_NodeNumberFrom.toString());
+							newTableRow.set(colNodeNumberFrom, (double) nodeNumberFrom);
+							int colNodeNumberTo = this.getTableModelSensors()
+									.findColumn(SetupColumn.SensorSetup_NodeNumberTo.toString());
+							newTableRow.set(colNodeNumberTo, (double) nodeNumberTo);
 							this.getTableModelSensors().addRow(newTableRow);
 						}
-						
+
 					} else if (cable instanceof CableWithBreakerProperties) {
 						// ----------------------------------------------------
 						// --- Handle breaker configuration -------------------
 						// ----------------------------------------------------
 						CableWithBreakerProperties cwBreaker = (CableWithBreakerProperties) cable;
-						if (this.isOpenBreaker(cwBreaker.getBreakerBegin())==true) continue;
-						if (this.isOpenBreaker(cwBreaker.getBreakerEnd())==true) continue;
-						if (dLengthLine==0) dLengthLine = 0.001;
-						
+						if (this.isOpenBreaker(cwBreaker.getBreakerBegin()) == true)
+							continue;
+						if (this.isOpenBreaker(cwBreaker.getBreakerEnd()) == true)
+							continue;
+						if (dLengthLine == 0)
+							dLengthLine = 0.001;
+
 					}
-					
+
 					// --- Add row to setup vector ----------------------------
 					Vector<Double> row = new Vector<Double>();
 					row.add((double) nodeNumberFrom);
@@ -548,48 +578,57 @@ public class NetworkModelToCsvMapper {
 					row.add(dLinearConductance_G);
 					row.add(dLinearCapacitance_C);
 					row.add(nMaxCurrent);
-					row.add((double)branchNumber);
+					row.add((double) branchNumber);
 					this.getBranchSetupVector().add(row);
-					
-					
+
 					// --- Define single row for the table model --------------
-					Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelBranches().getColumnCount()); 
-					int colNodeNumberFrom = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_NodeNumberFrom.toString());
-					newTableRow.set(colNodeNumberFrom, (double)nodeNumberFrom);
-					int colNodeNumberTo = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_NodeNumberTo.toString());
-					newTableRow.set(colNodeNumberTo, (double)nodeNumberTo);
-					
-					int colLineLength = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LengthLine.toString());
+					Vector<Double> newTableRow = this
+							.createDefaultTableModelRow(this.getTableModelBranches().getColumnCount());
+					int colNodeNumberFrom = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_NodeNumberFrom.toString());
+					newTableRow.set(colNodeNumberFrom, (double) nodeNumberFrom);
+					int colNodeNumberTo = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_NodeNumberTo.toString());
+					newTableRow.set(colNodeNumberTo, (double) nodeNumberTo);
+
+					int colLineLength = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_LengthLine.toString());
 					newTableRow.set(colLineLength, dLengthLine);
-					
-					int colLinearResistance  = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearResistance.toString());
+
+					int colLinearResistance = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_LinearResistance.toString());
 					newTableRow.set(colLinearResistance, dResistanceLinear_R);
-					int colLinearReactance   = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearReactance.toString());
+					int colLinearReactance = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_LinearReactance.toString());
 					newTableRow.set(colLinearReactance, dReactanceLinear_X);
-					int colLinearCapacitance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearCapacitance.toString());
+					int colLinearCapacitance = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_LinearCapacitance.toString());
 					newTableRow.set(colLinearCapacitance, dLinearCapacitance_C);
-					int colLinearConductance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearConductance.toString());
+					int colLinearConductance = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_LinearConductance.toString());
 					newTableRow.set(colLinearConductance, dLinearConductance_G);
 
-					int colMaxCurrent = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_MaxCurrent.toString());
+					int colMaxCurrent = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_MaxCurrent.toString());
 					newTableRow.set(colMaxCurrent, nMaxCurrent);
-					
-					int colBranchNumber = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_BranchNumber.toString());
-					newTableRow.set(colBranchNumber, (double)branchNumber);
+
+					int colBranchNumber = this.getTableModelBranches()
+							.findColumn(SetupColumn.BranchSetup_BranchNumber.toString());
+					newTableRow.set(colBranchNumber, (double) branchNumber);
 
 					this.getTableModelBranches().addRow(newTableRow);
-					
-					
+
 					// --- Remind indexes for this branch (cable etc.) --------
-					this.getBranchDescription().add(new BranchDescription(nodeNumberFrom, nodeNumberTo, branchNumber, netComp));
-					
+					this.getBranchDescription()
+							.add(new BranchDescription(nodeNumberFrom, nodeNumberTo, branchNumber, netComp));
+
 					branchNumber++;
 				}
 			} // end if 'instanceof Object[]'
-			
-		} // end for 
+
+		} // end for
 	}
-	
+
 	/**
 	 * Checks if the specified CircuitBreaker is open.
 	 *
@@ -601,26 +640,76 @@ public class NetworkModelToCsvMapper {
 		if (cb.getBreakerID()==null || cb.getBreakerID().trim().isEmpty()) return false;
 		return !cb.getIsClosed();
 	}
-	
-	
+
 	/**
 	 * Checks, if a slack node definition is available.
 	 */
 	private void checkSlackNodeDefinition() {
 		
 		if (this.getSlackNodeVector().size()==0) {
-			// --- No transformer was found, take a sensor ----------
+			// ----------------------------------------------------------------
+			// --- No transformer was found, take a sensor --------------------
+			// ----------------------------------------------------------------
 			if (this.getSensorSetupVector().size()>0) {
-				// --- Get the first sensor -------------------------
+				// --- Get the first sensor -----------------------------------
 				Vector<Double> nodeFromToVector = this.getSensorSetupVector().get(0);
 				int nodeNumber = nodeFromToVector.get(0).intValue();
 				String networkComponentID = this.getNodeNumberToNetworkComponentId().get(nodeNumber);
-				// --- Add the sensor as slack node description -----
+				// --- Add the sensor as slack node description ---------------
 				SlackNodeDescription snDesc = new SlackNodeDescription(nodeNumber, networkComponentID);
 				this.getSlackNodeVector().addElement(snDesc);
 			}
+			
+		} else if (this.getSlackNodeVector().size()>1) {
+			// ----------------------------------------------------------------
+			// --- Decide which node to use -----------------------------------
+			// ----------------------------------------------------------------
+			// --- Get vector of NetworkComponents ----------------------------
+			Vector<NetworkComponent> slackNodeNetCompVector = new Vector<>();
+			this.getSlackNodeVector().forEach((SlackNodeDescription snd) -> slackNodeNetCompVector.add(this.networkModel.getNetworkComponent(snd.getNetworkComponentID())));
+			// --- Get corresponding vector of TransformerComponents ----------
+			Vector<TransformerComponent> transCompVector = TransformerHelper.getTransformerComponents(this.networkModel, this.getDomain(), slackNodeNetCompVector);
+			// --- Sort ascending by opposite rated voltage to get highest ----
+			Collections.sort(transCompVector, new Comparator<TransformerComponent>() {
+				@Override
+				public int compare(TransformerComponent tc1, TransformerComponent tc2) {
+					Float oppRatedVoltage1 = tc1.getOppositeRatedVoltage();
+					Float oppRatedVoltage2 = tc2.getOppositeRatedVoltage();
+					return oppRatedVoltage1.compareTo(oppRatedVoltage2);
+				}
+			});
+
+			// --- Remove every node, expect the last one ---------------------  
+			for (int i = 0; i < (transCompVector.size()-1); i++) {
+				TransformerComponent transCompDelete = transCompVector.get(i);
+				this.removeSlackNode(transCompDelete.getNetworkComponent().getId());
+			}
+			System.out.println("[" + this.getClass().getSimpleName() + "] Selected NetworkComponent '" + this.getSlackNodeVector().get(0).getNetworkComponentID() + "' as SlackNode" + (this.getDomain()!=null ? " for Domain '" + this.getDomain() + "'": "") + "!");
 		}
 	}
+	
+	/**
+	 * Removes the SlackNodeDescription with the specified ID of a NetworkComponent.
+	 *
+	 * @param netCompID the net comp ID
+	 * @return the slack node description that was removed
+	 */
+	private SlackNodeDescription removeSlackNode(String netCompID) {
+		
+		int deleteIndex = -1;
+		for (int i = 0; i < this.getSlackNodeVector().size(); i++) {
+			SlackNodeDescription snd = this.getSlackNodeVector().get(i);
+			if (snd.getNetworkComponentID().equals(netCompID)==true) {
+				deleteIndex =i;
+				break;
+			}
+		}
+		if (deleteIndex!=-1) {
+			return this.getSlackNodeVector().remove(deleteIndex);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Returns the domain of the current NetworkModelToCsvMapper.

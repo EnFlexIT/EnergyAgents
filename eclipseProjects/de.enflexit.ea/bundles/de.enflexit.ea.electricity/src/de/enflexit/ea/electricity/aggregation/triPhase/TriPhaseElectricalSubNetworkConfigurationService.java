@@ -1,8 +1,10 @@
 package de.enflexit.ea.electricity.aggregation.triPhase;
 
+import java.util.List;
+
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.aggregation.SubNetworkConfigurationService;
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 
 /**
  * This SubNetworkConfigurationService implementation provides a SubNetworkConfiguration for tri-phase electrical networks.
@@ -11,19 +13,19 @@ import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 public class TriPhaseElectricalSubNetworkConfigurationService implements SubNetworkConfigurationService {
 
 	/* (non-Javadoc)
-	 * @see hygrid.aggregation.subNetworkConfiguration.SubNetworkConfigurationService#getDomainID()
+	 * @see de.enflexit.ea.core.aggregation.SubNetworkConfigurationService#getDomainIdList()
 	 */
 	@Override
-	public String getDomainID() {
-		return GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
+	public List<String> getDomainIdList() {
+		return ElectricityDomainIdentification.getDomainList(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.SubNetworkConfigurationService#getSubNetworkConfigurationCass()
 	 */
 	@Override
-	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationCass() {
-		return SubNetworkConfigurationElectricalDistributionGrids.class;
+	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationClass() {
+		return TriPhaseSubNetworkConfiguration.class;
 	}
 
 }

@@ -14,9 +14,6 @@ import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotifica
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
@@ -24,6 +21,9 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.BranchDescription;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;

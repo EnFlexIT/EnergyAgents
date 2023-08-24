@@ -18,6 +18,7 @@ import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.domain.DomainSettings;
@@ -91,6 +92,9 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		// --- Get all affected elements from the changed elements: -----------------
 		HashMap<String, TechnicalSystemStateEvaluation> sysStateChanges = this.getStateUpdates();  
 	
+		// --- Get the configured rated voltage -------------------------------------
+		double confRatedVoltage = ((AbstractElectricalNetworkConfiguration)this.getSubAggregationConfiguration()).getConfiguredRatedVoltageFromNetwork();
+
 		// --------------------------------------------------------------------------
 		// --- Work on the changes of the GraphNode ---------------------------------
 		// --------------------------------------------------------------------------
@@ -155,11 +159,12 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 				Vector<Float> floatVectorEnergyFlows = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 				// --- Walk through the energy flows of the interfaces -------------- 
 				for (AbstractUsageOfInterface abstractUOI : tsse.getUsageOfInterfaces()) {
+					
 					String interfaceID = abstractUOI.getInterfaceID();
 					ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(netComp.getId());
 					InterfaceSetting intSet = ScheduleController.getInterfaceSetting(sc.getScheduleList().getInterfaceSettings(), interfaceID);
 					
-					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==230) {
+					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==confRatedVoltage) {
 						
 						UsageOfInterfaceEnergy uoi = (UsageOfInterfaceEnergy) abstractUOI;
 						EnergyCarrier ec = DomainSettings.getEnergyCarrier(intSet.getDomain());

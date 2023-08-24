@@ -9,41 +9,29 @@ import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
-import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.aggregation.triPhase.TriPhaseElectricalNetworkPreprocessor;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
-import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.EnergyCarrier;
 import jade.core.AID;
 
 /**
- * The Class SubNetworkConfigurationElectricity10kV.
+ * The Class UniPhaseSubNetworkConfiguration.
+ * 
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkConfiguration {
+public class UniPhaseSubNetworkConfiguration extends AbstractElectricalNetworkConfiguration {
 
-	public static final String SUBNET_DESCRIPTION_ELECTRICITY_10KV = "Electricity 10kV";
-	
-	/* (non-Javadoc)
-	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getSubnetworkID()
-	 */
-	@Override
-	public String getSubNetworkDescription() {
-		return SUBNET_DESCRIPTION_ELECTRICITY_10KV;
-	}
-	
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#isPartOfSubnetwork(org.awb.env.networkModel.helper.NetworkComponent)
 	 */
 	@Override
 	public boolean isPartOfSubnetwork(NetworkComponent netComp) {
-//			if (netComp.getType().equals("Sensor")) {
-//				return true;
-//			}
 		return super.isPartOfSubnetwork(netComp);
 	}
 	/* (non-Javadoc)
@@ -54,7 +42,7 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 		if (domain.equals(EnergyCarrier.ELECTRICITY.value())==true) {
 			if (domainModel instanceof DefaultDomainModelElectricity) {
 				DefaultDomainModelElectricity dmElec = (DefaultDomainModelElectricity) domainModel;
-				if (dmElec.getRatedVoltage()==10000.0) return true;
+				if (dmElec.getRatedVoltage()==this.getConfiguredRatedVoltageFromNetwork()) return true;
 			}
 		}
 		return false;
@@ -65,7 +53,7 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 	 */
 	@Override
 	public Class<? extends AbstractSubAggregationBuilder> getSubAggregationBuilderClass() {
-		return SubAggregationBuilderElectricity10kV.class;
+		return UniPhaseSubAggregationBuilder.class;
 	}
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getNetworkCalculationPreProcessorClass()
@@ -97,7 +85,7 @@ public class SubNetworkConfigurationElectricity10kV extends AbstractSubNetworkCo
 		HashMap<String, Class<?>> myUserClasses = new HashMap<>();
 		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculation.class);
 //		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculationPV.class);
-		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, CentralEstimationManager.class);
+		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, this.classForName("de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager"));
 		return myUserClasses;
 	}
 

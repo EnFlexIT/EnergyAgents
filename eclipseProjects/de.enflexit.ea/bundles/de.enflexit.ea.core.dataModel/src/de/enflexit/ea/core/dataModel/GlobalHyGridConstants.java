@@ -22,11 +22,11 @@ public final class GlobalHyGridConstants {
 	public static final String HYGRID_DOMAIN_Coordination = "Coordination";
 	
 	/** AWB domain or 'Sub Network' for electrical distribution grids */
-	public static final String HYGRID_DOMAIN_ELECTRICITY_400V = "ElectricityThriPhase";
+	public static final String DEPRECATED_DOMAIN_ELECTRICITY_400V = "ElectricityThriPhase";
 	/** AWB domain or 'Sub Network' for 10KV electricity networks */
-	public static final String HYGRID_DOMAIN_ELECTRICITY_10KV = "Electricity 10kV";
+	public static final String DEPRECATED_DOMAIN_ELECTRICITY_10KV = "Electricity 10kV";
 	
-	/** AWB domain or 'Sub Network' for natural gass networks */
+	/** AWB domain or 'Sub Network' for natural gas networks */
 	public static final String HYGRID_DOMAIN_NATURAL_GAS = "NaturalGas";
 	
 	/** AWB domain or 'Sub Network' for heat networks */
@@ -43,6 +43,12 @@ public final class GlobalHyGridConstants {
 	// ------------------------------------------
 	// --- GlobalElectricityConstants -----------
 	// ------------------------------------------
+	
+	public enum ElectricityNetworkType {
+		TriPhaseNetwork,
+		UniPhaseNetwork
+	}
+	
 	/**
 	 * The Class GlobalElectricityConstants.
 	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
@@ -80,8 +86,6 @@ public final class GlobalHyGridConstants {
 	 * Conversation ID for measurement subscriptions to SensorAgents
 	 */
 	public static final String CONVERSATION_ID_MEASUREMENT_SUBSCRIPTION = "MeasurementSubscription";
-	
-	public static final String CONVERSATION_ID_REF_PV_SUBSCRIPTION = "RefPvSubscription";
 	/**
 	 * Conversation ID for the subscription from LiveMonitoringAgents to the LiveMonitoringProxyAgent
 	 */

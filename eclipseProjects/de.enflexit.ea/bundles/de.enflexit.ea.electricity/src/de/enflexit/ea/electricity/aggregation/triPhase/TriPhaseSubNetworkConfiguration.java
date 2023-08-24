@@ -9,35 +9,23 @@ import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
 import de.enflexit.ea.core.aggregation.AbstractSubAggregationBuilder;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
-import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.PowerFlowCalculationThread;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculation;
-import de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.optionModel.AbstractDomainModel;
 import energy.optionModel.EnergyCarrier;
 import jade.core.AID;
 
 /**
- * The Class SubNetworkConfigurationElectricalDistributionGrids.
+ * The Class TriPhaseSubNetworkConfiguration.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
-public class SubNetworkConfigurationElectricalDistributionGrids extends AbstractSubNetworkConfiguration {
+public class TriPhaseSubNetworkConfiguration extends AbstractElectricalNetworkConfiguration {
 
-	public static final String SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS = "Electrical Distribution Grid - Three Phase, 230 V";
-	
-
-	/* (non-Javadoc)
-	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getSubnetworkID()
-	 */
-	@Override
-	public String getSubNetworkDescription() {
-		return SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS;
-	}
-	
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#isPartOfSubnetwork(org.awb.env.networkModel.helper.NetworkComponent)
 	 */
@@ -56,7 +44,7 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 		if (domain.equals(EnergyCarrier.ELECTRICITY.value())==true) {
 			if (domainModel instanceof DefaultDomainModelElectricity) {
 				DefaultDomainModelElectricity dmElec = (DefaultDomainModelElectricity) domainModel;
-				if (dmElec.getRatedVoltage()==230.0) return true;
+				if (dmElec.getRatedVoltage()==this.getConfiguredRatedVoltageFromNetwork()) return true;
 			}
 		}
 		return false;
@@ -67,7 +55,7 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 	 */
 	@Override
 	public Class<? extends AbstractSubAggregationBuilder> getSubAggregationBuilderClass() {
-		return SubAggregationBuilderElectricalDistributionGrid.class;
+		return TriPhaseSubAggregationBuilder.class;
 	}
 	/* (non-Javadoc)
 	 * @see hygrid.aggregation.AbstractSubNetworkConfiguration#getNetworkCalculationPreProcessorClass()
@@ -97,8 +85,7 @@ public class SubNetworkConfigurationElectricalDistributionGrids extends Abstract
 	public HashMap<String, Class<?>> getUserClasses() {
 		HashMap<String, Class<?>> myUserClasses = new HashMap<>();  
 		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculation.class);
-//		myUserClasses.put(PowerFlowCalculationThread.POWER_FLOW_CALCULATION_CLASS, PowerFlowCalculationPV.class);
-		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, CentralEstimationManager.class);
+		myUserClasses.put(TriPhaseElectricalNetworkPreprocessor.POWER_FLOW_ESTIMATION_CLASS, this.classForName("de.enflexit.ea.lib.powerFlowEstimation.centralEstimation.CentralEstimationManager"));
 		return myUserClasses;
 	}
 

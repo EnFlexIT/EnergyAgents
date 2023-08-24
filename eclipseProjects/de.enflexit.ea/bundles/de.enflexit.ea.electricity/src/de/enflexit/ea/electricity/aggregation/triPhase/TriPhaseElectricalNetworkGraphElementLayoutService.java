@@ -1,6 +1,7 @@
 package de.enflexit.ea.electricity.aggregation.triPhase;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.awb.env.networkModel.GraphEdge;
@@ -21,6 +22,7 @@ import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSetti
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 
 /**
  * {@link GraphElementLayoutService} implementation for tri-phase low voltage distribution grids.
@@ -30,11 +32,11 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 public class TriPhaseElectricalNetworkGraphElementLayoutService implements GraphElementLayoutService {
 	
 	/* (non-Javadoc)
-	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#getDomain()
+	 * @see de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService#getDomainList(agentgui.core.project.Project)
 	 */
 	@Override
-	public String getDomain() {
-		return GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V;
+	public List<String> getDomainList(Project currProject) {
+		return ElectricityDomainIdentification.getDomainList(this, currProject);
 	}
 
 	/* (non-Javadoc)
@@ -78,7 +80,14 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 				if (dataModel instanceof TreeMap<?, ?>) {
 					@SuppressWarnings("unchecked")
 					TreeMap<String, Object> dmTreeMap = (TreeMap<String, Object>) dataModel;
-					dataModelArray = (Object[]) dmTreeMap.get(this.getDomain());
+					for (String domain : this.getDomainList(null)) {
+						dataModelArray = (Object[]) dmTreeMap.get(domain);
+						if (dataModelArray!=null) break;
+					}
+					// --- Fallback / legacy trial ----------------------------
+					if (dataModelArray==null) {
+						dataModelArray = (Object[]) dmTreeMap.get(GlobalHyGridConstants.DEPRECATED_DOMAIN_ELECTRICITY_400V);
+					}
 				}
 			}
 			
@@ -142,7 +151,14 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 			if (dataModel instanceof TreeMap<?, ?>) {
 				@SuppressWarnings("unchecked")
 				TreeMap<String, Object> dmTreeMap = (TreeMap<String, Object>) dataModel;
-				dataModelArray = (Object[]) dmTreeMap.get(this.getDomain());
+				for (String domain : this.getDomainList(null)) {
+					dataModelArray = (Object[]) dmTreeMap.get(domain);
+					if (dataModelArray!=null) break;
+				}
+				// --- Fallback / legacy trial ----------------------------
+				if (dataModelArray==null) {
+					dataModelArray = (Object[]) dmTreeMap.get(GlobalHyGridConstants.DEPRECATED_DOMAIN_ELECTRICITY_400V);
+				}
 			}
 		}
 		
@@ -179,12 +195,12 @@ public class TriPhaseElectricalNetworkGraphElementLayoutService implements Graph
 	}
 
 	/* (non-Javadoc)
-	 * @see hygrid.globalDataModel.graphLayout.GraphElementLayoutService#convertInstanceToTreeMap(hygrid.globalDataModel.graphLayout.AbstractGraphElementLayoutSettings)
+	 * @see de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService#convertInstanceToTreeMap(de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettings, java.lang.String)
 	 */
 	@Override
-	public GraphElementLayoutSettingsPersistenceTreeMap convertInstanceToTreeMap(AbstractGraphElementLayoutSettings settings) {
+	public GraphElementLayoutSettingsPersistenceTreeMap convertInstanceToTreeMap(AbstractGraphElementLayoutSettings settings, String domain) {
 		GraphElementLayoutSettingsPersistenceTreeMap settingsTreeMap = new GraphElementLayoutSettingsPersistenceTreeMap();
-		settingsTreeMap.setDomain(this.getDomain());
+		settingsTreeMap.setDomain(domain);
 		settingsTreeMap.setSettingsTreeMap(settings.getSettingsAsTreeMap());
 		return settingsTreeMap;
 	}

@@ -5,11 +5,13 @@ Bundle-SymbolicName: de.enflexit.ea.electricity
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.elictricity
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Export-Package: de.enflexit.ea.electricity.aggregation,
+Export-Package: de.enflexit.ea.electricity,
+ de.enflexit.ea.electricity.aggregation,
  de.enflexit.ea.electricity.aggregation.triPhase,
  de.enflexit.ea.electricity.aggregation.uniPhase,
  de.enflexit.ea.electricity.blackboard,
  de.enflexit.ea.electricity.classLoadService,
+ de.enflexit.ea.electricity.estimation,
  de.enflexit.ea.electricity.scheduleImport,
  de.enflexit.ea.electricity.topologyImport
 Require-Bundle: de.enflexit.common,
@@ -19,9 +21,9 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.electricity.powerFlowCalculation,
- de.enflexit.ea.electricity.powerFlowEstimation,
  org.agentgui.core,
  org.agentgui.lib.jade,
+ org.agentgui.lib.jung,
  org.awb.env.networkModel,
  de.enflexit.eom.awbAdapter
 Service-Component: 

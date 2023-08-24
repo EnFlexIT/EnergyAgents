@@ -6,10 +6,10 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SetupType;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SetupType;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.lib.powerFlowCalculation.AbstractPowerFlowCalculation;
 import de.enflexit.ea.lib.powerFlowCalculation.ActiveReactivePowerPair;
 import de.enflexit.ea.lib.powerFlowCalculation.MeasuredBranchCurrent;
@@ -105,7 +105,7 @@ public class PowerFlowCalculationThread extends Thread {
 				// --- Set the transformer/slack node to the parameter ------------
 				if (slackNodeVector!=null) {
 					if (slackNodeVector.size() > 1) {
-						System.err.println("=> More than one slack node was found for the current network - just use the first node for the PowerFlowCalculation!");
+						System.err.println("[" + this.getClass().getSimpleName() + "]=> More than one slack node was found for the current network - just use the first node for the PowerFlowCalculation!");
 						powerFlowParameter.setnSlackNode(slackNodeVector.get(0).getNodeNumber());
 					}
 				}

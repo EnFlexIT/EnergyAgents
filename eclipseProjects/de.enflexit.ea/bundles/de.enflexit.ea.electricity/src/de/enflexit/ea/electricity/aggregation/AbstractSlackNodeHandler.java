@@ -15,12 +15,13 @@ import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseSensorAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseSensorAdapter;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.eom.awb.adapter.EomAdapter;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
@@ -464,10 +465,9 @@ public abstract class AbstractSlackNodeHandler {
 			for (int i = 0; i < dc.getNetworkComponents().size(); i++) {
 				
 				NetworkComponent netCompCheck = dc.getNetworkComponents().get(i);
-				String netCompType = netCompCheck.getType();
-				ComponentTypeSettings cts = networkModel.getGeneralGraphSettings4MAS().getCurrentCTS().get(netCompType);
+				ComponentTypeSettings cts = networkModel.getGeneralGraphSettings4MAS().getCurrentCTS().get(netCompCheck.getType());
 				// --- Check if transformer, agent and based on a EOM model ---
-				if (netCompType.toLowerCase().contains("transformer")==true && cts.getAgentClass()!=null && cts.getAdapterClass().equals(EomAdapter.class.getName())==true || cts.getAdapterClass().equals(EnergyAgentAdapter.class.getName())==true) {
+				if (TransformerHelper.isTransformer(netCompCheck)==true && cts.getAgentClass()!=null && cts.getAdapterClass().equals(EomAdapter.class.getName())==true || cts.getAdapterClass().equals(EnergyAgentAdapter.class.getName())==true) {
 					// --- Found a transformer with agent and EOM model -------
 					if (netCompCheck.getId().equals(snDesc.getNetworkComponentID())==true) {
 						networkComponentTransformer = netCompCheck;
