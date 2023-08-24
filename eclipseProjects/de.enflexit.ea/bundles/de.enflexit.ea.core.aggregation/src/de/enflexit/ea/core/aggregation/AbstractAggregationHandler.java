@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -79,6 +80,7 @@ public abstract class AbstractAggregationHandler {
 	private ArrayList<AbstractSubNetworkConfiguration> subNetworkConfigurations;
 	
 	private Vector<AbstractSubAggregationBuilder> executedBuilds;
+	private ConcurrentHashMap<String, Object> subSystemConstructionHashMap;
 	
 	private HashMap<String, ScheduleController> networkComponentsScheduleController;
 	private HashMap<String, TechnicalSystemStateEvaluation> lastNetworkComponentUpdates;
@@ -326,6 +328,7 @@ public abstract class AbstractAggregationHandler {
 		
 		// --- Reset executed builds Vector -------------------------
 		this.executedBuilds = null;
+		this.subSystemConstructionHashMap = null;
 	}
 	/**
 	 * Returns the list running build processes.
@@ -337,7 +340,16 @@ public abstract class AbstractAggregationHandler {
 		}
 		return executedBuilds;
 	}
-	
+	/**
+	 * Returns the sub system construction hash map.
+	 * @return the sub system construction hash map
+	 */
+	public ConcurrentHashMap<String, Object> getSubSystemConstructionHashMap() {
+		if (subSystemConstructionHashMap==null) {
+			subSystemConstructionHashMap = new ConcurrentHashMap<>();
+		}
+		return subSystemConstructionHashMap;
+	}
 	
 	/**
 	 * Terminates the current aggregation handler. 
