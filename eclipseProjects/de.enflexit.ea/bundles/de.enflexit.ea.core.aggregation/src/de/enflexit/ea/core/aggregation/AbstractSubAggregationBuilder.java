@@ -614,8 +614,10 @@ public abstract class AbstractSubAggregationBuilder {
 		// --- Try getting the synchronization object and further proceeding ------------
 		synchronized (this.getAggregationHandler().getSubSystemConstructionHashMap()) {
 			Object synchObject = this.getAggregationHandler().getSubSystemConstructionHashMap().remove(netCompID);
-			synchronized (synchObject) {
-				synchObject.notifyAll();
+			if (synchObject!=null) {
+				synchronized (synchObject) {
+					synchObject.notifyAll();
+				}
 			}
 		}
 	}
