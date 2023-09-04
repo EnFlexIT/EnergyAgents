@@ -477,7 +477,8 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeState.setQ(new UnitValue(nodalPowerImag.get(i).floatValue(), "var"));
 				upNodeState.setVoltageReal(new UnitValue(uKReal.get(i).floatValue(), "V"));
 				upNodeState.setVoltageImag(new UnitValue(uKImag.get(i).floatValue(), "V"));
-				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i)) / 3.0), "A")); //Adjusted to show only the current of a single phase.
+//				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i)) / 3.0), "A")); //Adjusted to show only the current of a single phase.
+				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i))), "A"));
 				upNodeState.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal.get(i), nodalPowerImag.get(i))), "VA"));
 
 			}
