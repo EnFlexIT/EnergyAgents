@@ -342,9 +342,12 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			p.get(nodeIndexFrom).set(nodeIndexTo, p.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
 			
-			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+//			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+//			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+//			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
+			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue() * 3, "A"));	//Show aggregated current of all phases.
+			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue() * 3, "A"));	//Show aggregated current of all phases.
+			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue() * 3, "A"));	//Show aggregated current of all phases.
 			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
 			cableState.setUtilization(utili.get(i).floatValue());
 			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
@@ -478,7 +481,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeState.setVoltageReal(new UnitValue(uKReal.get(i).floatValue(), "V"));
 				upNodeState.setVoltageImag(new UnitValue(uKImag.get(i).floatValue(), "V"));
 //				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i)) / 3.0), "A")); //Adjusted to show only the current of a single phase.
-				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i))), "A"));
+				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i))), "A")); //Show aggregated current of all phases.
 				upNodeState.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal.get(i), nodalPowerImag.get(i))), "VA"));
 
 			}

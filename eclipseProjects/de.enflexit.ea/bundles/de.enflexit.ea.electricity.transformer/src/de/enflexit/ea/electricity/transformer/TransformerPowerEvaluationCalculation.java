@@ -199,12 +199,8 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		// --- TODO Martin: Check if this is right ----------------------------
 		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==true) {
 			this.setTransformerLowVoltageLevelReal(transLVRealAllPhases / Math.sqrt(3));
-//			FixedDouble testHvVoltageLevelAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
-//			System.out.println(this.eaConnector.getEnergyAgent().getLocalName() + " U_rTUS " + U_rTUS + " V; transLVRealAllPhases " + transLVRealAllPhases + " V; MeasuredHvVoltage " + testHvVoltageLevelAllPhases.getValue());
 		} else {
 			this.setTransformerLowVoltageLevelReal(transLVRealAllPhases);
-//			FixedDouble testHvVoltageLevelAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
-//			System.out.println(this.eaConnector.getEnergyAgent().getLocalName() + " U_rTUS " + U_rTUS + " V; transLVRealAllPhases " + transLVRealAllPhases + " V; MeasuredHvVoltage " + testHvVoltageLevelAllPhases.getValue());
 		}
 	}
 	/**
@@ -328,16 +324,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 				this.getUvPowerAllPhases().setActivePower(uvLoadPAllPhases);
 				this.getUvPowerAllPhases().setReactivePower(uvLoadQAllPhases);
 			}
-			
-//			// --- Prepare console output -----------------------------------------
-//			int roundPrecision = 2;
-//			
-//			StringBuilder sb = new StringBuilder();
-//			sb.append(this.eaConnector.getEnergyAgent().getLocalName() + " lvTotaCurrentRealAllPhases: " + NumberHelper.round(lvTotaCurrentRealAllPhases, roundPrecision) + " A\t");
-//			sb.append("voltageRealAllPhases: " + NumberHelper.round(voltageRealAllPhases, roundPrecision) + " V\t");
-//			sb.append("residualLoadPAllPhases: " + NumberHelper.round(residualLoadPAllPhases, roundPrecision) + " W\t");
-//			sb.append("uvLoadPAllPhases: " + NumberHelper.round(uvLoadPAllPhases, roundPrecision) + " W\t");
-//			System.out.println(sb.toString());
 			
 		} else {
 			// --- TriPhase calculation ---------------------------------------
@@ -477,19 +463,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 				this.getUvPowerL2().setReactivePower(uvLoadQL2);
 				this.getUvPowerL3().setActivePower(uvLoadPL3);
 				this.getUvPowerL3().setReactivePower(uvLoadQL3);
-			}
-			
-			if (this.eaConnector.getEnergyAgent().getLocalName().equals("MV-Transformer-1")) {
-				// --- Prepare console output -----------------------------------------
-				int roundPrecision = 2;
-				
-				StringBuilder sb = new StringBuilder();
-				sb.append(this.eaConnector.getEnergyAgent().getLocalName() + " lvTotaCurrentRealL1: " + NumberHelper.round(lvTotaCurrentRealL1.getValue(), roundPrecision) + " A\t");
-				sb.append("lvTotaCurrentRealL2: " + NumberHelper.round(lvTotaCurrentRealL2.getValue(), roundPrecision) + " A\t");
-				sb.append("lvTotaCurrentRealL3: " + NumberHelper.round(lvTotaCurrentRealL3.getValue(), roundPrecision) + " A\t");
-				sb.append("residualLoadPAllPhases: " + NumberHelper.round(residualLoadPAllPhases, roundPrecision) + " W\t");
-				sb.append("uvLoadPAllPhases: " + NumberHelper.round(uvLoadPAllPhases, roundPrecision) + " W\t");
-				System.out.println(sb.toString());
 			}
 			
 		}

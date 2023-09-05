@@ -294,17 +294,24 @@ public class PowerFlowCalculationThread extends Thread {
 					FlowMeasuredAtInterfaceEnergy efmInterface = (FlowMeasuredAtInterfaceEnergy) afmInterface;
 					
 					DefaultDomainModelElectricity domainModel = (DefaultDomainModelElectricity) efmInterface.getDomainModel();
-					if (domainModel.getPhase()==this.phase) {
-						if (domainModel.getPowerType()==PowerType.ActivePower) {
-							activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-							if (domainModel.getPhase()==Phase.AllPhases) {
-								activePower = activePower / 3; //Adjustment due to uni-phase powerflow calculation
-							}
-							
-						} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
-							reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-							if (domainModel.getPhase()==Phase.AllPhases) {
-								reactivePower = reactivePower / 3; //Adjustment due to uni-phase powerflow calculation
+					
+					// --- Get SubNetworkConfiguration for rated voltage ------
+					AbstractElectricalNetworkConfiguration aenc = (AbstractElectricalNetworkConfiguration) this.calculationStrategy.getSubNetworkConfiguration();
+					
+					// --- Use Energy Flows from the correct domain -----------
+					if (aenc.getConfiguredRatedVoltageFromNetwork() == domainModel.getRatedVoltage()) {
+						if (domainModel.getPhase()==this.phase) {
+							if (domainModel.getPowerType()==PowerType.ActivePower) {
+								activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
+								if (domainModel.getPhase()==Phase.AllPhases) {
+									activePower = activePower / 3; //Adjustment due to uni-phase powerflow calculation
+								}
+								
+							} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
+								reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
+								if (domainModel.getPhase()==Phase.AllPhases) {
+									reactivePower = reactivePower / 3; //Adjustment due to uni-phase powerflow calculation
+								}
 							}
 						}
 					}
