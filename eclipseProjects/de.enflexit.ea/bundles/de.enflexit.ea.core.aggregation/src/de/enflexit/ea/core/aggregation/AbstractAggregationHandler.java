@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.aggregation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -21,6 +22,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
@@ -89,6 +91,8 @@ public abstract class AbstractAggregationHandler {
 	private Object networkAggregationTaskTrigger;
 	private List<NetworkAggregationTaskThread> networkAggregationTaskDoneList;
 	private Object localThreadTrigger;
+	
+	private List<AbstractTaskThreadCoordinator> taskThreadCoordinators;
 	
 	private Vector<AggregationListener> aggregationListenerListeners;
 	
@@ -278,6 +282,23 @@ public abstract class AbstractAggregationHandler {
 		}
 		return configurationsFound;
 	}
+	/**
+	 * Returns the sub network configuration for the specified subnetwork ID.
+	 *
+	 * @param id the id
+	 * @return the list of sub network configurations that were found with the description
+	 */
+	public AbstractSubNetworkConfiguration getSubNetworkConfiguration(int id) {
+		
+		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
+			AbstractSubNetworkConfiguration checkSubNetConfig = this.getSubNetworkConfigurations().get(i); 
+			if (checkSubNetConfig.getID()==id) {
+				return checkSubNetConfig;
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Initializes the aggregation handler.
@@ -329,6 +350,9 @@ public abstract class AbstractAggregationHandler {
 		// --- Reset executed builds Vector -------------------------
 		this.executedBuilds = null;
 		this.subSystemConstructionHashMap = null;
+		
+		// --- Create task thread coordinator, if any ---------------
+		this.getTaskThreadCoordinators();
 	}
 	/**
 	 * Returns the list running build processes.
@@ -1248,7 +1272,7 @@ public abstract class AbstractAggregationHandler {
 		// --- Assign actual job to task threads --------------------
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			// --- Get corresponding NetworkCalculationStrategy -----
-			AbstractSubNetworkConfiguration subNetConfig = getSubNetworkConfigurations().get(i);
+			AbstractSubNetworkConfiguration subNetConfig = this.getSubNetworkConfigurations().get(i);
 			NetworkAggregationTaskThread taskThread = this.getOrCreateNetworkAggregationTaskThread(subNetConfig); 
 			AbstractNetworkCalculationStrategy networkCalculationStrategy = subNetConfig.getNetworkCalculationStrategy();
 			if (networkCalculationStrategy!=null) {
@@ -1260,6 +1284,12 @@ public abstract class AbstractAggregationHandler {
 
 		// --- Start and wait for task threads ---------------------- 
 		this.startAndWaitForNetworkAggregationTaskThreads();
+		
+		// --- Check, if specific threads need to be restarted ------
+		if (this.isCoordinatorRequiresNetworkCalculationRestart()==true) {
+			this.runEvaluationUntil(timeUntil, rebuildDecisionGraph, isDebugPrintEvaluationEndTime);
+			return;
+		}
 		
 		// --- Notify listeners that calculation is done ------------
 		this.notifyListenerAboutNetworkCalculationDone();
@@ -1285,7 +1315,7 @@ public abstract class AbstractAggregationHandler {
 	 * @param subNetConfig the extended {@link AbstractSubNetworkConfiguration}
 	 * @return the or create network calculation thread
 	 */
-	private NetworkAggregationTaskThread getOrCreateNetworkAggregationTaskThread(AbstractSubNetworkConfiguration subNetConfig) {
+	public NetworkAggregationTaskThread getOrCreateNetworkAggregationTaskThread(AbstractSubNetworkConfiguration subNetConfig) {
 		
 		NetworkAggregationTaskThread netAggTaskThread = this.getNetworkAggregationTaskThreadHashMap().get(subNetConfig);
 		if (netAggTaskThread==null) {
@@ -1381,6 +1411,77 @@ public abstract class AbstractAggregationHandler {
 			}
 		}
 	}
+	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, handling of task thread coordinators ----------------------------------------
+	// --------------------------------------------------------------------------------------------	
+	/**
+	 * Returns the service registered task thread coordinators.
+	 * @return the task thread coordinators
+	 */
+	public List<AbstractTaskThreadCoordinator> getTaskThreadCoordinators() {
+		if (taskThreadCoordinators==null) {
+			taskThreadCoordinators = this.createTaskThreadCoordinatorList();
+			// --- Call initialize method for each coordinator ----------
+			taskThreadCoordinators.forEach(ttc -> ttc.initialize());
+		}
+		return taskThreadCoordinators;
+	}
+	/**
+	 * Based on all registered {@link SubNetworkConfigurationService}s, creates the list of unique 
+	 * task thread coordinators (here, one class will only be initiated once).
+	 * @return the list
+	 */
+	private List<AbstractTaskThreadCoordinator> createTaskThreadCoordinatorList() {
+		
+		// --- Create temporary reminder HashMap --------------------
+		HashMap<String, AbstractTaskThreadCoordinator> ttcHashMap = new HashMap<>();
+		
+		// --- Search SubNetworkConfigurationServices ---------------
+		List<SubNetworkConfigurationService> services = ServiceFinder.findServices(SubNetworkConfigurationService.class);
+		for (int i=0; i<services.size(); i++) {
+			
+			Class <? extends AbstractTaskThreadCoordinator> coordinatorClass = services.get(i).getTaskThreadCoordinator();
+			List<String> domainList = services.get(i).getDomainIdList();
+			
+			AbstractTaskThreadCoordinator ttc = ttcHashMap.get(coordinatorClass.getName());
+			if (ttc==null) {
+				// --- Create instance of task thread coordinator ---
+				try {
+					// --- Initiate and remind coordinator ----------
+					ttc = coordinatorClass.getDeclaredConstructor().newInstance();
+					ttc.setAggregationHandler(this);
+					ttcHashMap.put(coordinatorClass.getName(), ttc);
+					
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			// --- Register domains --------------------------------- 
+			if (ttc!=null) ttc.registerDomains(domainList);
+		}
+		
+		// --- Return values of HashMap -----------------------------
+		return new ArrayList<>(ttcHashMap.values());
+	}
+	
+	/**
+	 * Checks, if one of the network calculations were restarted by an of the task threads need to be restarted.
+	 */
+	private boolean isCoordinatorRequiresNetworkCalculationRestart() {
+
+		// --- Early exit? ------------------------------------------
+		if (this.getTaskThreadCoordinators().size()==0) return false;
+
+		// --- Forward check to registered coordinators -------------
+		boolean isRestartedOverAll = false;
+		for (AbstractTaskThreadCoordinator coordinator : this.getTaskThreadCoordinators()) {
+			isRestartedOverAll = isRestartedOverAll || coordinator.requiresNetworkCalculationRestart();
+		}
+		return isRestartedOverAll;
+	}
+	
 	
 	
 	/**

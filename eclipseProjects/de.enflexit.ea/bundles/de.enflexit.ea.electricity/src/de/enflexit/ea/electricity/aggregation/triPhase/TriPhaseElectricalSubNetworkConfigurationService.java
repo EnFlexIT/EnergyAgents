@@ -3,8 +3,10 @@ package de.enflexit.ea.electricity.aggregation.triPhase;
 import java.util.List;
 
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
+import de.enflexit.ea.core.aggregation.AbstractTaskThreadCoordinator;
 import de.enflexit.ea.core.aggregation.SubNetworkConfigurationService;
 import de.enflexit.ea.electricity.ElectricityDomainIdentification;
+import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricityTaskThreadCoordinator;
 
 /**
  * This SubNetworkConfigurationService implementation provides a SubNetworkConfiguration for tri-phase electrical networks.
@@ -26,6 +28,14 @@ public class TriPhaseElectricalSubNetworkConfigurationService implements SubNetw
 	@Override
 	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationClass() {
 		return TriPhaseSubNetworkConfiguration.class;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.aggregation.SubNetworkConfigurationService#getTaskThreadCoordinator()
+	 */
+	@Override
+	public Class<? extends AbstractTaskThreadCoordinator> getTaskThreadCoordinator() {
+		return ElectricityTaskThreadCoordinator.class;
 	}
 
 }

@@ -9,14 +9,24 @@ import java.util.List;
 public interface SubNetworkConfigurationService {
 	
 	/**
-	 * Has to return the list of domains that 
+	 * Has to return the list of domains that are covered by the current service.  
 	 * @return the domain ID
 	 */
 	public List<String> getDomainIdList();
 	
 	/**
-	 * The name of the class providing the 
-	 * @return
+	 * Has to return the class that provides a sub network configuration.
+	 * @return the sub network configuration class
 	 */
 	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationClass();
+	
+	/**
+	 * Has to return the task thread coordinator to be used for the current service and its domains.
+	 * => For example: a task thread coordinator will be used to check, if a network calculation needs
+	 * to be re-executed 
+	 * @return the task thread coordinator or <code>null</code> if such coordinator is not necessary
+	 */
+	public Class <? extends AbstractTaskThreadCoordinator> getTaskThreadCoordinator();
+
+			
 }

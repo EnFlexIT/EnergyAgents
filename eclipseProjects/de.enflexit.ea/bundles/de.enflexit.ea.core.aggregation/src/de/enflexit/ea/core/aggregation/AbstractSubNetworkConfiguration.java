@@ -27,7 +27,10 @@ import energygroup.calculation.GroupCalculation;
 import jade.core.AID;
 
 /**
- * The Class AggregationHandlerConfiguration.
+ * The abstract class AbstractSubNetworkConfiguration serves as a description for the {@link AbstractAggregationHandler}.
+ * It enables extended classes to provided information, which classes actually are to be used for specific use-cases.
+ * E.g., how to constitute/build an EOM-aggregation (in fact, a {@link TechnicalSystemGroup}), which network calculation 
+ * needs to be used and executed or how to translate results into visualization updates.   
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -117,12 +120,11 @@ public abstract class AbstractSubNetworkConfiguration {
 	public String getSubNetworkDescription() {
 		return null;
 	}
-
 	/**
 	 * Returns the sub network description internal.
 	 * @return the sub network description internal
 	 */
-	protected String getSubNetworkDescriptionInternal() {
+	protected final String getSubNetworkDescriptionInternal() {
 		
 		String description = this.getSubNetworkDescription();
 		if (description==null) {
@@ -360,6 +362,8 @@ public abstract class AbstractSubNetworkConfiguration {
 	public void setAggregationVisualizationParentContainer(Container aggregationVisualizationParentContainer) {
 		this.aggregationVisualizationParentContainer = aggregationVisualizationParentContainer;
 	}
+	
+	
 	// ------------------------------------------------------------------------
 	// --- Handling of the NetworkCalculationPreprocessor ---------------------
 	// ------------------------------------------------------------------------
@@ -431,7 +435,7 @@ public abstract class AbstractSubNetworkConfiguration {
 					netCalcStrategy = (AbstractNetworkCalculationStrategy) gc.getGroupOptionModelController().createEvaluationStrategy(netCalcStratClass.getName());
 					if (netCalcStrategy!=null) {
 						groupCalc.setGroupEvaluationStrategy(netCalcStrategy);
-						// --- Set further instance -------------------------------------
+						// --- Set further instances ------------------------------------
 						netCalcStrategy.setAggregationHandler(this.getAggregationHandler());
 						netCalcStrategy.setSubNetworkConfiguration(this);
 						// --- Activate the performance measurements? -------------------
