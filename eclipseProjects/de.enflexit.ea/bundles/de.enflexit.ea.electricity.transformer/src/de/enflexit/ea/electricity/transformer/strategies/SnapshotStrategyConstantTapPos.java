@@ -2,7 +2,7 @@ package de.enflexit.ea.electricity.transformer.strategies;
 
 import java.util.Vector;
 
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.OptionModelController;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.FixedInteger;

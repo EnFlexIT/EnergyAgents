@@ -3,6 +3,7 @@ package de.enflexit.ea.electricity.transformer.eomDataModel;
 import java.awt.Frame;
 import java.io.Serializable;
 
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
 import energy.OptionModelController;
 import energy.optionModel.gui.sysVariables.AbstractStaticModel;
 import energy.optionModel.gui.sysVariables.AbstractStaticModelDialog;

@@ -1,9 +1,8 @@
 package de.enflexit.ea.electricity.transformer;
 
 import de.enflexit.ea.core.EnergyAgentConnector;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TapSide;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.calculations.AbstractEvaluationCalculation;

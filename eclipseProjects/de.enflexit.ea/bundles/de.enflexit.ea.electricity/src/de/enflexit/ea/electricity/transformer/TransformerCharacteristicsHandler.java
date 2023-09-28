@@ -1,4 +1,4 @@
-package de.enflexit.ea.electricity.transformer.eomDataModel;
+package de.enflexit.ea.electricity.transformer;
 
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;

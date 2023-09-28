@@ -15,7 +15,6 @@ import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.electricity.ElectricityDomainIdentification;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBookEvent;
 import de.enflexit.jade.phonebook.PhoneBookEvent.Type;

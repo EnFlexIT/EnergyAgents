@@ -4,8 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
 import de.enflexit.ea.electricity.transformer.TransformerPowerEvaluationCalculation;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.OptionModelNotification;
 import energy.OptionModelNotification.Reason;
 import energy.domain.DefaultDomainModelElectricity;

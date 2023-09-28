@@ -20,7 +20,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.blackboard.CurrentLevelAnswer;
 import de.enflexit.ea.electricity.blackboard.ElectricityRequestObjective;
 import de.enflexit.ea.electricity.blackboard.VoltageLevelAnswer;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.FixedVariableList;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
