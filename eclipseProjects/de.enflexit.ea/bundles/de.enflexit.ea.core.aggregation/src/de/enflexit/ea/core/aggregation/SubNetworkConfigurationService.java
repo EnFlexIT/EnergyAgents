@@ -21,9 +21,10 @@ public interface SubNetworkConfigurationService {
 	public Class<? extends AbstractSubNetworkConfiguration> getSubNetworkConfigurationClass();
 	
 	/**
-	 * Has to return the task thread coordinator to be used for the current service and its domains.
-	 * => For example: a task thread coordinator will be used to check, if a network calculation needs
-	 * to be re-executed 
+	 * Has to return the task thread coordinator to be used for the current service and its domains.<br>
+	 * => For example: a task thread coordinator will be used to coordinate the network calculations within 
+	 * an electrical grid, by considering the interdependencies between low- and hibgh-voltage levels. 
+	 * 
 	 * @return the task thread coordinator or <code>null</code> if such coordinator is not necessary
 	 */
 	public Class <? extends AbstractTaskThreadCoordinator> getTaskThreadCoordinator();

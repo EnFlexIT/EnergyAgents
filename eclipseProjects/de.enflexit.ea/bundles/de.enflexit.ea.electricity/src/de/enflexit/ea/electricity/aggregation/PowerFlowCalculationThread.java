@@ -239,8 +239,8 @@ public class PowerFlowCalculationThread extends Thread {
 	}
 	
 	private HashMap<String, MeasuredBranchCurrent> integrateFromNodeToNodeInBranchCurrents(HashMap<String, MeasuredBranchCurrent> tempEstimatedBranchCurrents) {
-		ArrayList<String> keySet = new ArrayList<>(tempEstimatedBranchCurrents.keySet());
 		
+		ArrayList<String> keySet = new ArrayList<>(tempEstimatedBranchCurrents.keySet());
 		for(int i=0;i<keySet.size();i++) {
 			String cableName = keySet.get(i);
 			String nFromNodeName = tempEstimatedBranchCurrents.get(cableName).getnFromNodeComponentName();
@@ -251,8 +251,6 @@ public class PowerFlowCalculationThread extends Thread {
 			tempEstimatedBranchCurrents.get(cableName).setnFromNode(nFromNode);
 			tempEstimatedBranchCurrents.get(cableName).setnToNode(nToNode);
 		}
-			
-		
 		return tempEstimatedBranchCurrents;
 	}
 	
@@ -260,7 +258,6 @@ public class PowerFlowCalculationThread extends Thread {
 	 * Returns the current node to power pair hash map that is determined in the child's of the current parent node.
 	 *
 	 * @param currentParentNode the current parent node
-	 * @param pahse the current Phase to use
 	 * @param fmGroup the EnergyFlowsMeasuredGroup
 	 * @return the node to power hash
 	 */

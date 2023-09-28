@@ -19,6 +19,7 @@ public class NetworkAggregationTaskThread extends Thread {
 	}
 	
 	private AbstractAggregationHandler aggregationHandler;
+	private AbstractTaskThreadCoordinator taskThreadCoordinator;
 	private AbstractSubNetworkConfiguration subNetConfig;
 	
 	private NetworkAggregationTask currentJob;
@@ -31,7 +32,7 @@ public class NetworkAggregationTaskThread extends Thread {
 	private HashMap<String, TechnicalSystemStateEvaluation> lastStateUpdates;
 	private long displayTime;
 	
-	private boolean doTerminate;
+	private boolean isDoTerminate;
 	
 	
 	/**
@@ -41,8 +42,9 @@ public class NetworkAggregationTaskThread extends Thread {
 	 * @param subNetConfig the actual AbstractSubNetworkConfiguration
 	 * @param executerThreadName the executer thread name
 	 */
-	public NetworkAggregationTaskThread(AbstractAggregationHandler aggregationHandler, AbstractSubNetworkConfiguration subNetConfig, String executerThreadName) {
+	public NetworkAggregationTaskThread(AbstractAggregationHandler aggregationHandler, AbstractTaskThreadCoordinator taskThreadCoordinator, AbstractSubNetworkConfiguration subNetConfig, String executerThreadName) {
 		this.aggregationHandler = aggregationHandler;
+		this.taskThreadCoordinator = taskThreadCoordinator;
 		this.subNetConfig = subNetConfig;
 		this.setName(executerThreadName + "-SubAggregationTaskThread-" + this.subNetConfig.getID());
 		this.registerPerformanceMeasurements();
@@ -69,7 +71,7 @@ public class NetworkAggregationTaskThread extends Thread {
 	}
 	
 	/**
-	 * Sets that the thread has nothing to do after an notify arives.
+	 * Sets that the thread has nothing to do after an notify arrives.
 	 */
 	public void setDoNothing() {
 		this.currentJob = NetworkAggregationTask.DoNothing;
@@ -109,10 +111,10 @@ public class NetworkAggregationTaskThread extends Thread {
 			
 			// --- Wait for notification on the below HashMap -------
 			if (this.currentJob==null) {
-				synchronized(this.aggregationHandler.getNetworkAggregationTaskTrigger()) {
+				synchronized(this.taskThreadCoordinator.getNetworkAggregationTaskTrigger()) {
 					try {
-						this.aggregationHandler.setNetworkAggregationTaskThreadDone(this);
-						this.aggregationHandler.getNetworkAggregationTaskTrigger().wait();
+						this.taskThreadCoordinator.setNetworkAggregationTaskThreadDone(this);
+						this.taskThreadCoordinator.getNetworkAggregationTaskTrigger().wait();
 						
 					} catch (InterruptedException iEx) {
 						//iEx.printStackTrace();
@@ -121,7 +123,7 @@ public class NetworkAggregationTaskThread extends Thread {
 			}
 			
 			// --- Terminate this thread ? --------------------------
-			if (this.isDoTerminate()==true) break;
+			if (this.isDoTerminate==true) break;
 			
 			if (this.currentJob==null) continue;
 			
@@ -167,17 +169,18 @@ public class NetworkAggregationTaskThread extends Thread {
 			}
 			
 			// --- Terminate this thread ? --------------------------
-			if (this.isDoTerminate()==true) break;
+			if (this.isDoTerminate==true) break;
 			
 		}
 	}
 	
 	
-	public void setDoTerminate(boolean doTerminate) {
-		this.doTerminate = doTerminate;
+	/**
+	 * Sets to terminate this thread.
+	 */
+	public void terminate() {
+		this.isDoTerminate = true;
 	}
-	public boolean isDoTerminate() {
-		return doTerminate;
-	}
+	
 	
 }
