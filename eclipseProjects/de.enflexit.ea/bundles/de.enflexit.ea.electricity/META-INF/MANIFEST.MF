@@ -14,7 +14,8 @@ Export-Package: de.enflexit.ea.electricity,
  de.enflexit.ea.electricity.classLoadService,
  de.enflexit.ea.electricity.estimation,
  de.enflexit.ea.electricity.scheduleImport,
- de.enflexit.ea.electricity.topologyImport
+ de.enflexit.ea.electricity.topologyImport,
+ de.enflexit.ea.electricity.transformer
 Require-Bundle: de.enflexit.common,
  de.enflexit.geography,
  de.enflexit.eom.core,
@@ -26,7 +27,8 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
- de.enflexit.eom.awbAdapter
+ de.enflexit.eom.awbAdapter,
+ wrapped.org.jfree.jfreechart
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
