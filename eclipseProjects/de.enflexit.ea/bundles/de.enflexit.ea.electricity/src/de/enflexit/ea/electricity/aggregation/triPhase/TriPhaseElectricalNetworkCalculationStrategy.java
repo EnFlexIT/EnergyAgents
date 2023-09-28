@@ -42,7 +42,8 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
 /**
  * Network calculation strategy implementation for low voltage distribution grids.
  * 
- * @author mehlich
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	
@@ -197,19 +198,19 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		double transformerPowerImagL3 = 0;
 
 		if (pfcL1 != null) {
-			if(pfcL1.getPowerOfTransformer().size()>0){
+			if (pfcL1.getPowerOfTransformer().size()>0){
 				transformerPowerRealL1 = pfcL1.getPowerOfTransformer().get(0);
 				transformerPowerImagL1 = pfcL1.getPowerOfTransformer().get(1);
 			}
 		}
 		if (pfcL2 != null) {
-			if(pfcL2.getPowerOfTransformer().size()>0){
+			if (pfcL2.getPowerOfTransformer().size()>0){
 				transformerPowerRealL2 = pfcL2.getPowerOfTransformer().get(0);
 				transformerPowerImagL2 = pfcL2.getPowerOfTransformer().get(1);
 			}
 		}
 		if (pfcL3 != null) {
-			if(pfcL3.getPowerOfTransformer().size()>0){
+			if (pfcL3.getPowerOfTransformer().size()>0){
 				transformerPowerRealL3 = pfcL3.getPowerOfTransformer().get(0);
 				transformerPowerImagL3 = pfcL3.getPowerOfTransformer().get(1);
 			}
