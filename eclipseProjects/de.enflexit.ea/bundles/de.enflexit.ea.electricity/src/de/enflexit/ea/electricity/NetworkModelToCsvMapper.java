@@ -309,6 +309,61 @@ public class NetworkModelToCsvMapper {
 		return nodeNumberToNetworkComponentId;
 	}
 
+	// --------------------------------------------------------------
+	// --- Some additional help functions ---------------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the GraphNode of the specified {@link GraphNode} ID.
+	 *
+	 * @param graphNodeID the graph node ID
+	 * @return the network component ID from graph node ID
+	 */
+	public GraphNode getGraphNode(String graphNodeID) {
+		GraphElement graphElement = this.networkModel.getGraphElement(graphNodeID);
+		if (graphElement instanceof GraphNode) {
+			return (GraphNode) graphElement;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link GraphNode} from {@link NetworkComponent} ID.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return the graph node ID from network component ID
+	 */
+	public GraphNode getGraphNodeFromNetworkComponentID(String networkComponentID) {
+		
+		Integer nodeNumber = this.getNetworkComponentIdToNodeNumber().get(networkComponentID);
+		return this.getNodeNumberToGraphNode().get(nodeNumber);
+	}
+	
+	/**
+	 * Returns the {@link GraphNode}s ID for the specified {@link NetworkComponent} ID.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return the graph node ID from network component ID
+	 */
+	public String getGraphNodeIDFromNetworkComponentID(String networkComponentID) {
+		return this.getGraphNodeFromNetworkComponentID(networkComponentID).getId();
+	}
+	/**
+	 * Returns the {@link NetworkComponent} ID from the specified {@link GraphNode} ID.
+	 *
+	 * @param graphNodeID the graph node ID
+	 * @return the network component ID from graph node ID
+	 */
+	public String getNetworkComponentIDFromGraphNodeID(String graphNodeID) {
+		
+		GraphNode graphNode = this.getGraphNode(graphNodeID);
+		if (graphNode==null) return null;
+		
+		Integer nodeNumber = this.getGraphNodeToNodeNumber().get(graphNode);
+		return this.getNodeNumberToNetworkComponentId().get(nodeNumber);
+	}
+	
+	
+	
 	/**
 	 * Returns the sorted Vector of {@link NetworkComponent}s.
 	 * 
