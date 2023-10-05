@@ -61,6 +61,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	
 	private boolean isSetUpdateSystemStateFromControlBehaviourRT;
 	
+	private AbstractDiscreteSimulationEvent discreteSimulationEvent;
+	
 	
 	/**
 	 * Instantiates a new simulated IO behaviour. Assuming {@link AgentOperatingMode} simulation as default case.
@@ -442,6 +444,9 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Get time depending system state ----------------------------
 			TechnicalSystemStateEvaluation tsseAnswer = this.getStateInputStream().getSystemState(simTime);
 			FixedVariableList ioSettings = this.getStateInputStream().getIOSettings(simTime, tsseAnswer);
+
+			// --- Callback method to interfere before the new measurements are commited to the agent
+			this.getDiscreteSimulationEvent().internalBeforeMeasurementCommit();
 			
 			// --- Set IO Settings of this behaviour --------------------------
 			// --- => In discrete simulations, ControlBehaviourRT will not  
@@ -472,6 +477,9 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 						dsStep = this.getEnergyAgent().getControlBehaviourRT().getDiscreteSimulationStep();
 					}
 				}
+				
+				// --- Callback method to interfere before the new state is transmitted
+				this.getDiscreteSimulationEvent().internalBeforeSimulationStateTransmission();
 				// --- Send DiscreteSimulationStep to manager agent -----------
 				this.getSimulationConnector().setMyStimulusAnswer(dsStep);
 				break;
@@ -632,6 +640,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 * Commits the current measurements to the energy Agent.
 	 */
 	protected void commitMeasurementsToAgent() {
+		// --- Callback method to interfere before the agent makes its control decision
+		this.getDiscreteSimulationEvent().internalBeforeControlDecision();
 		this.getInternalDataModel().setMeasurementsFromSystem(this.getMeasurementsFromSystem());
 	}
 	
@@ -670,5 +680,19 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	public FixedVariableList getSetPointsToSystem() {
 		return this.setPoints;
 	}
+
+	
+	
+	/**
+	 * Gets the discrete simulation event. Override to implement an agent-specific discrete simulation event class.
+	 * @return the discrete simulation event
+	 */
+	protected AbstractDiscreteSimulationEvent getDiscreteSimulationEvent() {
+		if (discreteSimulationEvent==null) {
+			discreteSimulationEvent = new DefaultDiscreteSimulationEvent();
+		}
+		return discreteSimulationEvent;
+	}
+	
 	
 }
