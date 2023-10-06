@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.simulation.manager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import org.awb.env.networkModel.visualisation.notifications.EnvironmentModelUpda
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.ontology.Simple_Boolean;
+import agentgui.ontology.Simple_String;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
@@ -112,6 +115,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	
 	private DashboardSubscriptionResponder dashboardSubscriptionResponder;
 	
+	private List<String> additionalSimAgentClasses;
+	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#setup()
@@ -136,6 +141,17 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// --- SimpleBoolean for dashboard configuration ------------------
 			if (args.length>1 && args[1] instanceof Simple_Boolean) {
 				this.setShowDashboard(((Simple_Boolean)args[1]).getBooleanValue());
+			}
+
+			// --- Check if additional simulation agent classes have been configured
+			if (args.length>2 && args[2] instanceof Simple_String) {
+				String simAgentsArgument = ((Simple_String)args[2]).getStringValue();
+				if (simAgentsArgument!=null) {
+					String[] simAgentClassNames = simAgentsArgument.split(";");
+					if (simAgentClassNames.length>0) {
+						this.additionalSimAgentClasses = Arrays.asList(simAgentClassNames);
+					}
+				}
 			}
 		}
 		
@@ -922,7 +938,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// ----------------------------------------------------------------
 			GeneralGraphSettings4MAS ggMAS = this.getBlackboard().getNetworkModel().getGeneralGraphSettings4MAS();
 			Vector<NetworkComponent> netComps = this.getBlackboard().getNetworkModel().getNetworkComponentVectorSorted();
-			HashMap<String, Boolean> energyAgentClasses = new HashMap<String, Boolean>();
+			HashMap<String, Boolean> simulationAgentClasses = new HashMap<String, Boolean>();
 			Class<?> energyAgentClass = AbstractEnergyAgent.class;
 			for (int i = 0; i < netComps.size(); i++) {
 				
@@ -935,16 +951,23 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				if (className!=null) {
 
 					// --- Check the HashMap first ----------------------------
-					Boolean subclassOfEnergyAgent = energyAgentClasses.get(className);
-					if (subclassOfEnergyAgent==null) {
+					Boolean simulationAgentClass = simulationAgentClasses.get(className);
+					if (simulationAgentClass==null) {
 						// --- If no entry found, examine the class -----------
 						try {
 							// --- Check if class extends AbstractEnergyAgent -
 							Class<?> clazz = ClassLoadServiceUtility.forName(className);
-							subclassOfEnergyAgent = energyAgentClass.isAssignableFrom(clazz);
+							if (energyAgentClass.isAssignableFrom(clazz)) {
+								simulationAgentClass = true;
+							} else if (this.getAdditionalSimAgentClasses().contains(className)) {
+								// --- Check if the class was specified in the start arguments ----
+								simulationAgentClass = true;
+							} else {
+								simulationAgentClass = false;
+							}
+							simulationAgentClasses.put(className, simulationAgentClass);
 							
 							// --- Remember the result ------------------------
-							energyAgentClasses.put(className, subclassOfEnergyAgent);
 							
 						} catch (NoClassDefFoundError e) {
 							e.printStackTrace();
@@ -954,7 +977,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					}
 					
 					// --- Agent available? -----------------------------------
-					if (subclassOfEnergyAgent==true) {
+					if (simulationAgentClass==true) {
 						this.numberOfExecutedDeviceAgents++;
 					}
 				}
@@ -963,6 +986,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return this.numberOfExecutedDeviceAgents;
 	}
+	
 	/**
 	 * Returns the average of agent answers expected.
 	 * @return the average of agent answers expected
@@ -1439,6 +1463,19 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 			return timeToSleep;
 		}
+	}
+	
+	/**
+	 * Gets the additional simulation agent classes, i.e. classes of agents that the SimulationManager 
+	 * will expect an answer from in addition to the EnergyAgent subclasses.
+	 * @return the additional simulation agent classes
+	 */
+	private List<String> getAdditionalSimAgentClasses() {
+		if (additionalSimAgentClasses==null) {
+			// --- If not configured, provide an empty list to avoid null pointers.
+			additionalSimAgentClasses = new ArrayList<>();
+		}
+		return additionalSimAgentClasses;
 	}
 	
 }
