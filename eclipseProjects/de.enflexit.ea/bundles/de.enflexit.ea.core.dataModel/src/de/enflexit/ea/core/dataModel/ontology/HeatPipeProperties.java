@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: HeatPipeProperties
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class HeatPipeProperties extends PipeProperties{ 
 
@@ -23,17 +23,6 @@ public class HeatPipeProperties extends PipeProperties{
    }
 
    /**
-* Protege name: isolationThermalConductivity
-   */
-   private UnitValue isolationThermalConductivity;
-   public void setIsolationThermalConductivity(UnitValue value) { 
-    this.isolationThermalConductivity=value;
-   }
-   public UnitValue getIsolationThermalConductivity() {
-     return this.isolationThermalConductivity;
-   }
-
-   /**
 * Protege name: isolationThickness
    */
    private UnitValue isolationThickness;
@@ -42,6 +31,17 @@ public class HeatPipeProperties extends PipeProperties{
    }
    public UnitValue getIsolationThickness() {
      return this.isolationThickness;
+   }
+
+   /**
+* Protege name: isolationThermalConductivity
+   */
+   private UnitValue isolationThermalConductivity;
+   public void setIsolationThermalConductivity(UnitValue value) { 
+    this.isolationThermalConductivity=value;
+   }
+   public UnitValue getIsolationThermalConductivity() {
+     return this.isolationThermalConductivity;
    }
 
    /**

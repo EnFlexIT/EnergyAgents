@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: VoltageBand
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class VoltageBand implements Concept {
-
-   /**
-* Protege name: voltageAvg
-   */
-   private float voltageAvg;
-   public void setVoltageAvg(float value) { 
-    this.voltageAvg=value;
-   }
-   public float getVoltageAvg() {
-     return this.voltageAvg;
-   }
 
    /**
 * Protege name: voltageMax
@@ -43,6 +32,17 @@ public class VoltageBand implements Concept {
    }
    public float getVoltageMin() {
      return this.voltageMin;
+   }
+
+   /**
+* Protege name: voltageAvg
+   */
+   private float voltageAvg;
+   public void setVoltageAvg(float value) { 
+    this.voltageAvg=value;
+   }
+   public float getVoltageAvg() {
+     return this.voltageAvg;
    }
 
 }

@@ -9,7 +9,7 @@ import jade.core.*;
    * This class uses a String to store a double value, as double is not available in Protege 3.3.1. Converison functions from/to double are provided in the additional java code field
 * Protege name: DoubleValue
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class DoubleValue implements Concept {
 

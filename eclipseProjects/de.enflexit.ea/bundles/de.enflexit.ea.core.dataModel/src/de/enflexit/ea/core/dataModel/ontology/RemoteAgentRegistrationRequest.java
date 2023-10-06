@@ -8,7 +8,7 @@ import jade.core.*;
    * The registration request that is sent by a remote agent
 * Protege name: RemoteAgentRegistrationRequest
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class RemoteAgentRegistrationRequest extends TestbedAgentManagement{ 
 
