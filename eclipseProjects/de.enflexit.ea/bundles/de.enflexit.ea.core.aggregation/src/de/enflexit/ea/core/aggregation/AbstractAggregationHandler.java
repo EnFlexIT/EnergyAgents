@@ -806,7 +806,7 @@ public abstract class AbstractAggregationHandler {
 		boolean isDebugStateIntegration = false;
 		if (isDebugStateIntegration==true) {
 			// --- Debug the current system? ------------------------ 
-			String debugNetCompID = "MV1.101-LV1.101-Trafo 1";
+			String debugNetCompID = "MV-Transformer-1";
 			if (debugNetCompID!=null && debugNetCompID.isEmpty()==false) {
 				if (sl.getNetworkID()!=null && sl.getNetworkID().equals(debugNetCompID)==false) {
 					isDebugStateIntegration = false;
@@ -1395,6 +1395,7 @@ public abstract class AbstractAggregationHandler {
 				taskThreadCoordinators.add(ttcDefault);
 			}
 			// --- Call initialize method for each coordinator ----------------
+			taskThreadCoordinators.forEach(ttc -> ttc.getNetworkAggregationTaskTrigger());
 			taskThreadCoordinators.forEach(ttc -> ttc.initialize());
 			taskThreadCoordinators.forEach(ttc -> ttc.start());
 		}
