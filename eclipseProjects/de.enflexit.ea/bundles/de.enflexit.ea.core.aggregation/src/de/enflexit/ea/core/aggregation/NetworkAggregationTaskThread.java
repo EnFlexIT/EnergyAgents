@@ -15,6 +15,7 @@ public class NetworkAggregationTaskThread extends Thread {
 	public enum NetworkAggregationTask {
 		DoNothing,
 		ExecuteNetworkCalculation,
+		UpdateSubBlackBoardModel,
 		CreateDisplayUpdates
 	}
 	
@@ -27,6 +28,7 @@ public class NetworkAggregationTaskThread extends Thread {
 	// --- Variables for the execution of the network calculations -- 
 	private long evaluationStepEndTime;
 	private boolean rebuildDecisionGraph;
+	private boolean updateSubBlackboardModel;
 	
 	// --- Variables for the display update -------------------------
 	private HashMap<String, TechnicalSystemStateEvaluation> lastStateUpdates;
@@ -76,19 +78,24 @@ public class NetworkAggregationTaskThread extends Thread {
 	public void setDoNothing() {
 		this.currentJob = NetworkAggregationTask.DoNothing;
 	}
-
 	/**
 	 * Executes the evaluation and network calculation until the specified time.
 	 *
 	 * @param timeUntil the time to evaluate until
 	 * @param rebuildDecisionGraph the rebuild decision graph
 	 */
-	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph) {
+	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph, boolean upadateSubBlackboardModel) {
 		this.evaluationStepEndTime = timeUntil;
 		this.rebuildDecisionGraph = rebuildDecisionGraph;
+		this.updateSubBlackboardModel = upadateSubBlackboardModel;
 		this.currentJob = NetworkAggregationTask.ExecuteNetworkCalculation;
 	}
-	
+	/**
+	 * Set to call the sub blackboard model update.
+	 */
+	public void updateSubBlackboardModel() {
+		this.currentJob = NetworkAggregationTask.UpdateSubBlackBoardModel;
+	}
 	/**
 	 * Forwards the last system states updates to the display updater.
 	 *
@@ -141,12 +148,20 @@ public class NetworkAggregationTaskThread extends Thread {
 						ex.printStackTrace();
 					}
 					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
-					// --- Update the sub blackboard model ---------- 
-					netCalcStrategy.updateSubBlackboardModel();
+					// --- Update the sub blackboard model ----------
+					if (this.updateSubBlackboardModel==true) {
+						netCalcStrategy.updateSubBlackboardModel();
+					}
 				}
 				this.currentJob = null;
 				break;
 
+			case UpdateSubBlackBoardModel:
+				// --- Update the strategies SubBlackboardModel -----
+				this.subNetConfig.getNetworkCalculationStrategy().updateSubBlackboardModel();
+				this.currentJob = null;
+				break;
+				
 			case CreateDisplayUpdates:
 				AbstractNetworkModelDisplayUpdater displayUpdater = this.subNetConfig.getNetworkDisplayUpdater();
 				if (displayUpdater!=null) {

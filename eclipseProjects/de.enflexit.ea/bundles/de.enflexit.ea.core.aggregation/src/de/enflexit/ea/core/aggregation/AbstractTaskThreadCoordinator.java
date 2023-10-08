@@ -133,6 +133,11 @@ public abstract class AbstractTaskThreadCoordinator extends Thread {
 				this.currentJob = null;
 				break;
 
+			case UpdateSubBlackBoardModel:
+				this.doTaskUpdateSubBlackboardModel();
+				this.currentJob = null;
+				break;
+				
 			case CreateDisplayUpdates:
 				// --- Execute display updates ----------------------
 				this.doTaskUpdateNetworkModelDisplay(this.lastStateUpdates, this.displayTime);
@@ -270,8 +275,8 @@ public abstract class AbstractTaskThreadCoordinator extends Thread {
 		NetworkAggregationTaskThread netAggTaskThread = this.getNetworkAggregationTaskThreadHashMap().get(subNetConfig);
 		if (netAggTaskThread==null) {
 			netAggTaskThread = new NetworkAggregationTaskThread(this.getAggregationHandler(), this, subNetConfig, Thread.currentThread().getName());
-			this.getNetworkAggregationTaskThreadHashMap().put(subNetConfig, netAggTaskThread);
 			netAggTaskThread.start();
+			this.getNetworkAggregationTaskThreadHashMap().put(subNetConfig, netAggTaskThread);
 		}
 		return netAggTaskThread;
 	}
@@ -306,7 +311,41 @@ public abstract class AbstractTaskThreadCoordinator extends Thread {
 			NetworkAggregationTaskThread taskThread = this.getOrCreateNetworkAggregationTaskThread(subNetConfig); 
 			AbstractNetworkCalculationStrategy networkCalculationStrategy = subNetConfig.getNetworkCalculationStrategy();
 			if (networkCalculationStrategy!=null) {
-				taskThread.runEvaluationUntil(timeUntil, rebuildDecisionGraph);
+				taskThread.runEvaluationUntil(timeUntil, rebuildDecisionGraph, true);
+			} else {
+				taskThread.setDoNothing();
+			}
+		}
+		this.startAndWaitForNetworkAggregationTaskThreads();
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, call to update the SubBlackboardModel -------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Set the task thread to update the sub blackboard models.
+	 */
+	protected final void updateSubBlackboardModel() {
+		this.currentJob = NetworkAggregationTask.UpdateSubBlackBoardModel;
+	}
+	/**
+	 * Does the actual task to update the SubBlackboardModel. Overwrite this method to customize the calls.
+	 * The method will return when the job is done.<br>
+	 * Overwrite this method to customize the 
+	 *
+	 * @param lastStateUpdates the last state updates
+	 * @param displayTime the display time
+	 */
+	protected void doTaskUpdateSubBlackboardModel() {
+		
+		// --- Assign actual job to task threads --------------------------
+		for (AbstractSubNetworkConfiguration subNetConfig : this.getSubNetworkConfigurationsUnderControl()) {
+			// --- Get corresponding DisplayUpdater -----------------------
+			NetworkAggregationTaskThread taskThread = this.getOrCreateNetworkAggregationTaskThread(subNetConfig); 
+			AbstractNetworkCalculationStrategy networkCalculationStrategy = subNetConfig.getNetworkCalculationStrategy();
+			if (networkCalculationStrategy!=null) {
+				taskThread.updateSubBlackboardModel();
 			} else {
 				taskThread.setDoNothing();
 			}
