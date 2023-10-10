@@ -429,13 +429,9 @@ public class NetworkModelToCsvMapper {
 								dIsloadNode = 1;
 							}
 						} else if (dataModelArray[0] == null) {
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
-									+ "] Data model incomplete: No properties instance set for node "
-									+ graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Data model incomplete: No properties instance set for node " + graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
 						} else {
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
-									+ "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName()
-									+ "'!");
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName() + "'!");
 						}
 
 					}
@@ -449,8 +445,7 @@ public class NetworkModelToCsvMapper {
 				this.getNodeSetupVector().add(row);
 
 				// --- Define single row for the table model ------------------
-				Vector<Double> newTableRow = this
-						.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount());
+				Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount());
 				int colNodeNumber = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_NodeNumber.toString());
 				newTableRow.set(colNodeNumber, (double) nodeNumber);
 				int colIsLoadNode = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_isLoadNode.toString());
@@ -523,9 +518,9 @@ public class NetworkModelToCsvMapper {
 
 			// --- Check domain of the NetworkComponent -----------------------
 			NetworkComponent netComp = this.networkModel.getNetworkComponent(edge);
-			if (this.domainCluster != null && this.domainCluster.getNetworkComponents().contains(netComp) == false)
-				continue;
+			if (this.domainCluster!=null && this.domainCluster.getNetworkComponents().contains(netComp)==false) continue;
 
+			
 			// --- Check domain of the NetworkComponent -----------------------
 			String domain = this.networkModel.getDomain(netComp);
 			if (ElectricityDomainIdentification.isElectricityDomain(domain) == false) continue;
@@ -553,7 +548,7 @@ public class NetworkModelToCsvMapper {
 					double dLengthLine = cable.getLength().getValue();
 					double dResistanceLinear_R  = cable.getLinearResistance() == null  ? 0.0 : cable.getLinearResistance().getValue();
 					double dReactanceLinear_X   = cable.getLinearReactance() == null   ? 0.0 : cable.getLinearReactance().getValue();
-					double dLinearCapacitance_C = cable.getLinearCapacitance() == null ? 0.0 : cable.getLinearCapacitance().getValue();
+					double dLinearCapacitance_C = cable.getLinearCapacitance() == null ? 0.0 : cable.getLinearCapacitance().getValue() * 1E-9;
 					double dLinearConductance_G = cable.getLinearConductance() == null ? 0.0 : cable.getLinearConductance().getValue();
 					double nMaxCurrent          = cable.getMaxCurrent() == null        ? 0.0 : cable.getMaxCurrent().getValue();
 

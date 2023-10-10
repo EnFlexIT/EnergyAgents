@@ -9,10 +9,12 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.NetworkAggregationTaskThread;
+import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
+import de.enflexit.ea.electricity.transformer.TransformerCalculation;
+import energy.schedule.ScheduleController;
 
 /**
  * The Class ElectricitySubNetworkGraph.
@@ -21,7 +23,6 @@ import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfigura
  */
 public class ElectricitySubNetworkGraph {
 
-	private AbstractAggregationHandler aggregationHandler;
 	private ElectricityTaskThreadCoordinator taskThreadCoordinator;
 	
 	private TreeMap<Integer, SubNetworkGraphNode> subNetGraphNodeHash;
@@ -31,12 +32,9 @@ public class ElectricitySubNetworkGraph {
 	
 	/**
 	 * Instantiates a new electricity sub network graph.
-	 *
-	 * @param aggregationHandler the aggregation handler
 	 * @param taskThreadCoordinator the task thread coordinator
 	 */
-	public ElectricitySubNetworkGraph(AbstractAggregationHandler aggregationHandler, ElectricityTaskThreadCoordinator taskThreadCoordinator) {
-		this.aggregationHandler = aggregationHandler;
+	public ElectricitySubNetworkGraph(ElectricityTaskThreadCoordinator taskThreadCoordinator) {
 		this.taskThreadCoordinator = taskThreadCoordinator;
 		this.initialize();
 	}
@@ -45,7 +43,7 @@ public class ElectricitySubNetworkGraph {
 	 */
 	private void initialize() {
 		
-		ArrayList<AbstractElectricalNetworkConfiguration> elSubNetConfigs = this.taskThreadCoordinator.getElectricalSubNetworkConfigurations();
+		List<AbstractElectricalNetworkConfiguration> elSubNetConfigs = this.taskThreadCoordinator.getSubNetworkConfigurationsUnderControl();
 		
 		// --- Sort descending by voltage level -----------
 		Collections.sort(elSubNetConfigs, new Comparator<AbstractElectricalNetworkConfiguration>() {
@@ -70,7 +68,7 @@ public class ElectricitySubNetworkGraph {
 		// --- Create all corresponding nodes first -------
 		List<SubNetworkGraphNode> subNetworkGraphNodeList = new ArrayList<>();
 		for (AbstractElectricalNetworkConfiguration elSubNetConfig : elSubNetConfigs) {
-			NetworkAggregationTaskThread subNetTaskThread = this.aggregationHandler.getOrCreateNetworkAggregationTaskThread(elSubNetConfig);
+			NetworkAggregationTaskThread subNetTaskThread = this.taskThreadCoordinator.getOrCreateNetworkAggregationTaskThread(elSubNetConfig);
 			int graphLevel = this.getElectricalGraphLevelByVoltageLevel(elSubNetConfig.getConfiguredRatedVoltageFromNetwork());
 			subNetworkGraphNodeList.add(new SubNetworkGraphNode(elSubNetConfig, subNetTaskThread, graphLevel));
 		}
@@ -88,7 +86,7 @@ public class ElectricitySubNetworkGraph {
 	}
 	
 	/**
-	 * Returns the list of possible voltage level.
+	 * Returns the list of possible voltage level in a descending order.
 	 * @return the voltage level list
 	 */
 	public List<Double> getVoltageLevelList() {
@@ -124,6 +122,89 @@ public class ElectricitySubNetworkGraph {
 		}
 		return subNetConnectionHash;
 	}
+	
+	/**
+	 * Returns the connected sub network graph nodes as list.
+	 * @return the list of connected sub network graph nodes
+	 */
+	public List<SubNetworkGraphNode> getConnectedSubNetworkGraphNodes() {
+		
+		List<SubNetworkGraphNode> connectedNodeList = new ArrayList<>();
+		for (SubNetworkGraphNode subNetGraphNode : this.getSubNetGraphNodeHash().values()) {
+			if (subNetGraphNode.getSubNetworkConnections().size()>0) {
+				connectedNodeList.add(subNetGraphNode);
+			}
+		}
+		return connectedNodeList;
+	}
+	/**
+	 * Returns the connected sub network graph nodes as list.
+	 *
+	 * @param voltageLevel the voltage level to filter for
+	 * @return the list of connected sub network graph nodes
+	 */
+	public List<SubNetworkGraphNode> getConnectedSubNetworkGraphNodes(double voltageLevel) {
+		
+		List<SubNetworkGraphNode> connectedNodeList = new ArrayList<>();
+		for (SubNetworkGraphNode subNetGraphNode : this.getConnectedSubNetworkGraphNodes()) {
+			if (subNetGraphNode.getConfiguredRatedVoltage()==voltageLevel) {
+				connectedNodeList.add(subNetGraphNode);
+			}
+		}
+		return connectedNodeList;
+	}
+	
+	/**
+	 * Returns the isolated sub network graph nodes as list.
+	 * @return the list of isolated sub network graph nodes
+	 */
+	public List<SubNetworkGraphNode> getIsolatedSubNetworkGraphNodes() {
+		
+		List<SubNetworkGraphNode> isolatedNodeList = new ArrayList<>();
+		for (SubNetworkGraphNode subNetGraphNode : this.getSubNetGraphNodeHash().values()) {
+			if (subNetGraphNode.getSubNetworkConnections().size()==0) {
+				isolatedNodeList.add(subNetGraphNode);
+			}
+		}
+		return isolatedNodeList;
+	}
+	
+	
+	/**
+	 * Checks if the specified {@link SubNetworkGraphNode} is on the low voltage side of the specified {@link SubNetworkConnection}.
+	 *
+	 * @param subNetConn the SubNetworkConnection
+	 * @param subNetGraphNode the SubNetworkGraphNode
+	 * @return true, if is low voltage side
+	 */
+	public boolean isLowVoltageSide(SubNetworkConnection subNetConn, SubNetworkGraphNode subNetGraphNode) {
+		
+		List<SubNetworkGraphNode> subNetworkGraphNodeList = new ArrayList<>();
+		subNetworkGraphNodeList.add(this.getSubNetGraphNodeHash().get(subNetConn.getSubNetworkID_1()));
+		subNetworkGraphNodeList.add(this.getSubNetGraphNodeHash().get(subNetConn.getSubNetworkID_2()));
+
+		Collections.sort(subNetworkGraphNodeList, new Comparator<SubNetworkGraphNode>() {
+			@Override
+			public int compare(SubNetworkGraphNode subNetGraphNode1, SubNetworkGraphNode subNetGraphNode2) {
+				Double ratedVoltage1 = subNetGraphNode1.getConfiguredRatedVoltage();
+				Double ratedVoltage2 = subNetGraphNode2.getConfiguredRatedVoltage();
+				return ratedVoltage1.compareTo(ratedVoltage2);
+			}
+		});
+		
+		return (subNetworkGraphNodeList.get(0)==subNetGraphNode); 
+	}
+	/**
+	 * Checks if the specified {@link SubNetworkGraphNode} is on the high voltage side of the specified {@link SubNetworkConnection}.
+	 *
+	 * @param subNetConn the SubNetworkConnection
+	 * @param subNetGraphNode the SubNetworkGraphNode
+	 * @return true, if is low voltage side
+	 */
+	public boolean isHighVoltageSide(SubNetworkConnection subNetConn, SubNetworkGraphNode subNetGraphNode) {
+		return ! this.isLowVoltageSide(subNetConn, subNetGraphNode);
+	}
+	
 	
 	
 	// ------------------------------------------------------------------------
@@ -169,7 +250,7 @@ public class ElectricitySubNetworkGraph {
 		 * Returns the sun network task thread.
 		 * @return the sun network task thread
 		 */
-		public NetworkAggregationTaskThread getSunNetworkTaskThread() {
+		public NetworkAggregationTaskThread getSubNetworkTaskThread() {
 			return this.subNetTaksThread;
 		}
 		/**
@@ -238,11 +319,18 @@ public class ElectricitySubNetworkGraph {
 
 		/**
 		 * Return all sub network connections to the current {@link SubNetworkGraphNode}.
+		 * @return the sub network connections
+		 */
+		public List<SubNetworkConnection> getSubNetworkConnections() {
+			return this.subNetworkConnectionList;
+		}
+		/**
+		 * Return all sub network connections to the current {@link SubNetworkGraphNode}.
 		 *
 		 * @param subNetworkGraphNodeList the sub network tree node list to check and compare the current node with (can be <code>null</code> later on)
 		 * @return the sub network connections
 		 */
-		public List<SubNetworkConnection> getSubNetworkConnections(List<SubNetworkGraphNode> subNetworkGraphNodeList) {
+		protected List<SubNetworkConnection> getSubNetworkConnections(List<SubNetworkGraphNode> subNetworkGraphNodeList) {
 			if (subNetworkConnectionList==null && subNetworkGraphNodeList!=null) {
 				subNetworkConnectionList = new ArrayList<>();
 				for (SubNetworkGraphNode treeNode : subNetworkGraphNodeList) {
@@ -262,7 +350,7 @@ public class ElectricitySubNetworkGraph {
 		 * @param subNetworkGraphNode the sub network graph node
 		 * @return the sub network connections
 		 */
-		public List<SubNetworkConnection> getSubNetworkConnections(SubNetworkGraphNode subNetworkGraphNode) {
+		private List<SubNetworkConnection> getSubNetworkConnections(SubNetworkGraphNode subNetworkGraphNode) {
 			
 			List<SubNetworkConnection> subNetworkConnectionList = new ArrayList<>();
 			if (subNetworkGraphNode!=null && subNetworkGraphNode!=this) {
@@ -296,6 +384,13 @@ public class ElectricitySubNetworkGraph {
 		private int subNetworkID_2;
 		private String connectingNetworkComponentID;
 		
+		private ElectricalNodeState lvElNodeState;
+		private ElectricalNodeState hvElNodeState;
+		
+		private ScheduleController scheduleController;
+		private TransformerCalculation transformerCalculation;
+		
+		
 		/**
 		 * Instantiates a new sub network connection.
 		 *
@@ -312,6 +407,8 @@ public class ElectricitySubNetworkGraph {
 				this.subNetworkID_2 = subNetworkID_1;
 			}
 			this.connectingNetworkComponentID = connectingNetworkComponentID;
+			this.getResultScheduleController();
+			this.getTransformerCalculation();
 		}
 		
 		/**
@@ -336,12 +433,65 @@ public class ElectricitySubNetworkGraph {
 			return connectingNetworkComponentID;
 		}
 
+		/**
+		 * Sets the low voltage electrical node state.
+		 * @param elNodeState the new low voltage electrical node state
+		 */
+		public void setLowVoltageElectricalNodeState(ElectricalNodeState elNodeState) {
+			this.lvElNodeState = elNodeState;
+		}
+		/**
+		 * Returns the low voltage electrical node state.
+		 * @return the low voltage electrical node state
+		 */
+		public ElectricalNodeState getLowVoltageElectricalNodeState() {
+			return this.lvElNodeState;
+		}
+		
+		/**
+		 * Sets the high voltage electrical node state.
+		 * @param elNodeState the new high voltage electrical node state
+		 */
+		public void setHighVoltageElectricalNodeState(ElectricalNodeState elNodeState) {
+			this.hvElNodeState = elNodeState;
+		}
+		/**
+		 * Returns the high voltage electrical node state.
+		 * @return the high voltage electrical node state
+		 */
+		public ElectricalNodeState getHighVoltageElectricalNodeState() {
+			return this.hvElNodeState;
+		}
+		
+		/**
+		 * Returns the transformers result ScheduleController of the aggregation handler.
+		 * @return the result schedule controller
+		 */
+		public ScheduleController getResultScheduleController() {
+			if (scheduleController==null) {
+				scheduleController = ElectricitySubNetworkGraph.this.taskThreadCoordinator.getAggregationHandler().getNetworkComponentsScheduleController().get(this.getConnectingNetworkComponentID());
+			}
+			return scheduleController;
+		}
+		
+		/**
+		 * Returns the transformer calculation for the execution of transformer calculations.
+		 * @return the transformer calculation
+		 */
+		public TransformerCalculation getTransformerCalculation() {
+			if (transformerCalculation==null) {
+				transformerCalculation = new TransformerCalculation(ElectricitySubNetworkGraph.this.taskThreadCoordinator, this);
+			}
+			return transformerCalculation;
+		}
+		
+		
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
 		public String toString() {
-			return "SubNet No. " + this.getSubNetworkID_1() + " to SubNet No. " + this.getSubNetworkID_2() + " by " + this.getConnectingNetworkComponentID();
+			return "SubNet " + this.getSubNetworkID_1() + " <=> SubNet " + this.getSubNetworkID_2() + " by " + this.getConnectingNetworkComponentID();
 		}
 		
 		/* (non-Javadoc)
@@ -361,7 +511,7 @@ public class ElectricitySubNetworkGraph {
 			if (this.getSubNetworkID_2() != compConnection.getSubNetworkID_2()) return false;
 			return true;
 		}
-		
+
 	}
 	
 }

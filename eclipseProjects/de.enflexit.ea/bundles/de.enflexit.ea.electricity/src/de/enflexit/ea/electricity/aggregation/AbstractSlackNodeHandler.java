@@ -256,7 +256,8 @@ public abstract class AbstractSlackNodeHandler {
 			if (tnp!=null && tnp.getRatedVoltage()!=null && tnp.getRatedVoltage().getValue()>0) {
 				// --- Nominate to single phase voltage level -------
 				initialSlackNodeVoltage = (float) (tnp.getRatedVoltage().getValue() / Math.sqrt(3));
-			}	
+			}
+			System.out.println("[" + this.getClass().getSimpleName() + "] Initial slack node voltage level: " + initialSlackNodeVoltage + " for " + this.getSubNetworkConfiguration().getSubNetworkDescriptionID());
 		}
 		return initialSlackNodeVoltage;
 	}
@@ -409,14 +410,14 @@ public abstract class AbstractSlackNodeHandler {
 			if (debug==true) {
 				if (newSlackNodeState instanceof TriPhaseSlackNodeState) {
 					TriPhaseSlackNodeState tpsns = (TriPhaseSlackNodeState) newSlackNodeState;
-					System.out.println("[" + this.getClass().getSimpleName() + "] L1 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL1().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL1().getVoltageImag().getValue() + "");
-					System.out.println("[" + this.getClass().getSimpleName() + "] L2 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL2().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL2().getVoltageImag().getValue() + "");
-					System.out.println("[" + this.getClass().getSimpleName() + "] L3 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL3().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL3().getVoltageImag().getValue() + "");
-					System.out.println();
+					System.err.println("[" + this.getClass().getSimpleName() + "] L1 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL1().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL1().getVoltageImag().getValue() + "");
+					System.err.println("[" + this.getClass().getSimpleName() + "] L2 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL2().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL2().getVoltageImag().getValue() + "");
+					System.err.println("[" + this.getClass().getSimpleName() + "] L3 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL3().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL3().getVoltageImag().getValue() + "");
+					System.err.println();
 				} else if (newSlackNodeState instanceof UniPhaseSlackNodeState) {
 					UniPhaseSlackNodeState upsns = (UniPhaseSlackNodeState) newSlackNodeState;
-					System.out.println("[" + this.getClass().getSimpleName() + "] TSSE slack node voltage real: " + upsns.getVoltageReal().getValue() + ", imaginary: " + upsns.getVoltageImag().getValue() + "");
-					System.out.println();
+					System.err.println("[" + this.getClass().getSimpleName() + "] TSSE slack node voltage real: " + upsns.getVoltageReal().getValue() + ", imaginary: " + upsns.getVoltageImag().getValue() + "");
+					System.err.println();
 				}
 			}
 			
