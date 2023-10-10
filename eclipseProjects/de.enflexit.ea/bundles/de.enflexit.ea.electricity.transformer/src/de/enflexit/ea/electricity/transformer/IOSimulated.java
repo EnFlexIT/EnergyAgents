@@ -46,7 +46,6 @@ public class IOSimulated extends AbstractIOSimulated {
 		this.setTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel(false);
 	}
 	
-	
 	/**
 	 * Processes single blackboard answers.
 	 * @param aBlackAnswer the blackboard answer
@@ -72,8 +71,8 @@ public class IOSimulated extends AbstractIOSimulated {
 				// --- Three phase flow ---------------------------------------
 				TriPhaseElectricalNodeState tpNodeState = (TriPhaseElectricalNodeState) vla.getElectricalNodeState(); 
 				if (tpNodeState.getL1()!=null) {
-					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);;
-					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);;
+					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);
+					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);
 				}
 				
 			} else if (vla.getElectricalNodeState() instanceof UniPhaseElectricalNodeState) {

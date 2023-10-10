@@ -34,7 +34,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.enflexit.ea.electricity.transformer.TransformerDataModelct="de.enflexit.ea.electricity" 
+  <class id="4" language="java" name="de.enflexit.ea.electricity.transformer.TransformerDataModel" 
+    project="de.enflexit.ea.electricity" 
     file="/de.enflexit.ea.electricity/src/de/enflexit/ea/electricity/transformer/TransformerDataModel.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="638" y="397"/>    
