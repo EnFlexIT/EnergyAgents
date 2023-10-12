@@ -57,7 +57,19 @@ public abstract class AbstractStateInputStream {
 	 * @param globalTime the global time
 	 * @return the system state
 	 */
-	public abstract TechnicalSystemStateEvaluation getSystemState(long globalTime);
+	public abstract TechnicalSystemStateEvaluation getSystemStateForTimeModelContinuous(long globalTime);
+	
+	/**
+	 * Has to return the system state (a {@link TechnicalSystemStateEvaluation}) for the specified time.
+	 * Thus, this method represents the main job to be done from a data input stream. It may handle 
+	 * the data to be loaded to the memory as flexible and slim as possible. E.g. to reduce memory 
+	 * footprint for long time simulations.     
+	 *
+	 * @param globalTime the global time
+	 * @param timeStep the time step
+	 * @return the system state
+	 */
+	public abstract TechnicalSystemStateEvaluation getSystemStatesForTimeModelDiscrete(long globalTime, long timeStep);
 	
 	/**
 	 * Has to return the IO settings for the specified system state.

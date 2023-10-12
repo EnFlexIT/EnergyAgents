@@ -429,20 +429,24 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			// --- Start / continue simulation --------------------------------
 			// ----------------------------------------------------------------
 			long simTime = 0;
+			
+			TechnicalSystemStateEvaluation tsseAnswer = null;
+			
 			switch (this.getTimeModelType()) {
 			case TimeModelDiscrete:
 				// -- Get current time ----------------------------------------
 				simTime = this.getTime();
+				tsseAnswer = this.getStateInputStream().getSystemStatesForTimeModelDiscrete(simTime, this.getTimeModelDiscrete().getStep());
 				break;
 				
 			case TimeModelContinuous:
 				// --- Only used at the start of the simulation ---------------
 				simTime = this.getTimeModelContinuous().getTimeStart();
+				tsseAnswer = this.getStateInputStream().getSystemStateForTimeModelContinuous(simTime);
 				break;
 			}
 			
 			// --- Get time depending system state ----------------------------
-			TechnicalSystemStateEvaluation tsseAnswer = this.getStateInputStream().getSystemState(simTime);
 			FixedVariableList ioSettings = this.getStateInputStream().getIOSettings(simTime, tsseAnswer);
 
 			// --- Callback method to interfere before the new measurements are commited to the agent

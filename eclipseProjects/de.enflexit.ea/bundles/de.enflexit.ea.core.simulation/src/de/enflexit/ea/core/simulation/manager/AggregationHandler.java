@@ -14,6 +14,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStepCentralDecision;
 import de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionProcess;
+import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.AID;
 
 /**
@@ -98,11 +99,19 @@ public class AggregationHandler extends AbstractAggregationHandler {
 			}
 			
 			// --- Got a new system state from a part of the network ------------------------------
-			this.appendToNetworkComponentsScheduleController(networkComponentID, dsStep.getSystemState());
+			this.appendSeriesOfStates(networkComponentID, dsStep.getSystemState());
 
 		} else {
 			super.appendToNetworkComponentsScheduleController(networkComponentID, updateObject);
 		}
+	}
+	
+	private void appendSeriesOfStates(String networkID, TechnicalSystemStateEvaluation lastState) {
+		if (lastState==null) return;
+		if (lastState.getParent()!=null) {
+			this.appendSeriesOfStates(networkID, lastState.getParent());
+		}
+		this.appendToNetworkComponentsScheduleController(networkID, lastState);
 	}
 	
 	
