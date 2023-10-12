@@ -1,6 +1,5 @@
 package de.enflexit.ea.electricity.aggregation.uniPhase;
 
-import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
@@ -32,9 +31,9 @@ public class UniPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	 */
 	@Override
 	public float getDefaultVoltageLevel() {
-		AbstractSubNetworkConfiguration subNetConfig = this.getSubNetworkConfiguration();
-		if (subNetConfig!=null && subNetConfig instanceof AbstractElectricalNetworkConfiguration) {
-			double ratedVoltageLevel = ((AbstractElectricalNetworkConfiguration)subNetConfig).getConfiguredRatedVoltageFromNetwork();
+		AbstractElectricalNetworkConfiguration subNetConfig = this.getElectricalNetworkConfiguration();
+		if (subNetConfig!=null) {
+			double ratedVoltageLevel = subNetConfig.getConfiguredRatedVoltageFromNetwork();
 			return  (float) (ratedVoltageLevel / Math.sqrt(3));
 		}
 		// --- Just as a (hopefully not necessary) backup -----------
@@ -84,7 +83,7 @@ public class UniPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	 */
 	@Override
 	public SlackNodeState getSlackNodeStateFromLastTransformerState(TechnicalSystemStateEvaluation tsseLast) {
-		return getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(tsseLast);
+		return getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(tsseLast, (double)this.getDefaultVoltageLevel() * Math.sqrt(3));
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.electricity.aggregation.AbstractSlackNodeHandler#getSlackNodeStateFromLastSensorState(energy.optionModel.TechnicalSystemStateEvaluation)

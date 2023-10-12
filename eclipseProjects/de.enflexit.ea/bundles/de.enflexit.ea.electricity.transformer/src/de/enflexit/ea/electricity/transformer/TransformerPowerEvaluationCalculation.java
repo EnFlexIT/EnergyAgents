@@ -180,15 +180,12 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			}
 			
 			// --- Calculate high voltage level -------------------------------
-			// --- TODO: Check if this formula change is correct!
 			switch (tapSide) {
 			case LowVoltageSide:
-				//transLVRealAllPhases = transHVRealAllPhases / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				transHVRealAllPhases = transLVRealAllPhases / U_rTUS * U_rTOS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 
 			case HighVoltageSide:
-				//transLVRealAllPhases = transHVRealAllPhases / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				transHVRealAllPhases = transLVRealAllPhases / U_rTUS * U_rTOS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 			}
@@ -291,8 +288,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		// --- TODO: Es fehlen noch die Leerlauf-Verluste! ------
 		// --- Magnetisierungsstrom iMagO
 		
-		// --- TODO: Es fehlt noch die Ausgabe der HighVoltage --------
-		
 		// --- Case separation for number of phases ---------------------------
 		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==false) {
 			// --- UniPhase calculation ---------------------------------------
@@ -313,7 +308,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			// Calculate voltage drop on transformer
 			double dURealAllPhases = this.resistance_R * lvTotaCurrentRealAllPhases - this.reactance_X * lvTotaCurrentImagAllPhases;
 			double dUImagAllPhases = this.reactance_X * lvTotaCurrentRealAllPhases + this.resistance_R * lvTotaCurrentImagAllPhases;
-			
 			
 			// --- Specify for Slack Voltage----------------------------------- 
 			double voltageRealAllPhases = this.getTransformerLowVoltageLevelReal() - dURealAllPhases;
@@ -520,6 +514,9 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		this.setIoListDoubleValue(tss, TransformerSystemVariable.tLossesPAllPhases, trafoLossesPAllPhases);
 		this.setIoListDoubleValue(tss, TransformerSystemVariable.tLossesQAllPhases, trafoLossesQAllPhases);
 
+		this.setIoListDoubleValue(tss, TransformerSystemVariable.hvVoltageRealAllPhases, this.getTransformerHighVoltageLevelReal());
+		this.setIoListDoubleValue(tss, TransformerSystemVariable.hvVoltageImagAllPhases, 0); // TODO ???
+		
 		// --- Active and reactive power (Transformer is slack, power not important for slack) ----
 		this.getLvPowerAllPhases().setActivePower(residualLoadPAllPhases);
 		this.getLvPowerAllPhases().setReactivePower(residualLoadQAllPhases);

@@ -2,6 +2,7 @@ package de.enflexit.ea.electricity.aggregation.taskThreading;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.awb.env.networkModel.GraphNode;
@@ -15,6 +16,7 @@ import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetworkGraph.SubNetworkConnection;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetworkGraph.SubNetworkGraphNode;
+import energy.helper.NumberHelper;
 
 /**
  * The Class ElectricityTaskThreadCoordinator organizes the electrical network calculations.
@@ -23,13 +25,16 @@ import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetwor
  */
 public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordinator {
 
+	public static final int ROUND_PRECISION = 5;
+	
 	private boolean isDebug = false;
 	
 	private double deltaVoltageRelAvgMax = 0.01; // --- 1% ---
-	private int loopCounterMax = 1;
+	private int loopCounterMax = 3;
 	
 	private ArrayList<AbstractElectricalNetworkConfiguration> elSubNetConfigList;
 	private ElectricitySubNetworkGraph subNetworksGraph;
+
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.aggregation.AbstractTaskThreadCoordinator#initialize()
@@ -82,17 +87,9 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 		// --- Loop -----------------------------------------------------------
 		while (deltaVoltageRelAvg>=this.deltaVoltageRelAvgMax && loopCounter<this.loopCounterMax) {
 
-			// --- Calculate network upwards or downwards ---------------------
-			boolean isUpwardsCalculation = (loopCounter % 2 == 0);
-			
-			this.debugPrint("Loop round no. " + (loopCounter + 1) + " (" + (isUpwardsCalculation==true ? "Upwards".toUpperCase() : "Downwards".toUpperCase())+ " calcultaion) - relative delta voltage AVG: " + deltaVoltageRelAvg, false, loopCounter==0);
-			
+			this.debugPrint("Loop round no. " + (loopCounter + 1) + ": Relative delta voltage AVG: " + deltaVoltageRelAvg, false, loopCounter==0);
 			// --- Execute network calculations -------------------------------
-			this.calculateConnectedNetworks(timeUntil, rebuildDecisionGraph, isUpwardsCalculation);
-			
-			
-			
-			deltaVoltageRelAvg = 1.0; // TODO
+			deltaVoltageRelAvg = this.calculateConnectedNetworks(timeUntil, rebuildDecisionGraph);
 			loopCounter++;
 		}
 		
@@ -101,7 +98,6 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 		
 		// --- Finally call to update the SubBlackboardModels -----------------
 		this.doTaskUpdateSubBlackboardModel();
-		
 	}
 	
 	/**
@@ -109,15 +105,12 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 	 *
 	 * @param timeUntil the time until
 	 * @param rebuildDecisionGraph the rebuild decision graph
-	 * @param isUpwardsCalculation the is upwards calculation
+	 * @return the average of all relative delta voltage (delta / rated voltage)  
 	 */
-	private void calculateConnectedNetworks(long timeUntil, boolean rebuildDecisionGraph, boolean isUpwardsCalculation) {
+	private double calculateConnectedNetworks(long timeUntil, boolean rebuildDecisionGraph) {
 
 		// --- Get the voltage level to consider ------------------------------
 		List<Double> voltageLevelList = new ArrayList<>(this.getSubNetworkGraph().getVoltageLevelList());
-		if (isUpwardsCalculation==true) {
-			Collections.sort(voltageLevelList);
-		}
 		
 		// --- Iterate over the voltage level ---------------------------------
 		for (Double voltageLevel : voltageLevelList) {
@@ -147,9 +140,8 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 						} else {
 							subNetConn.setHighVoltageElectricalNodeState(elNodeState);
 						}
-					
-						// --- Transfer information to opposite network -----------
-						subNetConn.getTransformerCalculation().updateTransformerState(isLowVoltageSide, isUpwardsCalculation);
+						// --- Calculate the transformer state ----------------
+						subNetConn.getTransformerCalculation().updateTransformerState(isLowVoltageSide);
 						
 					} catch (Exception ex) {
 						this.debugPrint("Error updating transformer state for voltage level '" + voltageLevel + " V', " + subNetGraphNode + ", " + subNetConn, true, false);
@@ -160,6 +152,47 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 			} // end for list of SubNetworkGraphNode
 		} // end for list of voltageLevel
 		
+		// --- Calculate average relative voltage delta -----------------------
+		double avgRelVoltageDelta = this.getDeltaVoltageRelativeAverage();
+		this.debugPrint("=> Average, relative voltage delta: " + NumberHelper.round((avgRelVoltageDelta * 100.0), ROUND_PRECISION) + " %" , false);
+		return avgRelVoltageDelta;
+	}
+	
+	/**
+	 * Returns the delta voltage relative average.
+	 * @return the delta voltage relative average
+	 */
+	private double getDeltaVoltageRelativeAverage() {
+
+		// --- Sort by sub network --------------
+		ArrayList<SubNetworkConnection> subNetConList = new ArrayList<>(this.getSubNetworkGraph().getSubNetConnectionHash().values());
+		Collections.sort(subNetConList, new Comparator<SubNetworkConnection>() {
+			@Override
+			public int compare(SubNetworkConnection snCon1, SubNetworkConnection snCon2) {
+				Integer netID11 = snCon1.getSubNetworkID_1();
+				Integer netID21 = snCon2.getSubNetworkID_1();
+				if (netID11.equals(netID21)==false) {
+					Integer netID12 = snCon1.getSubNetworkID_2();
+					Integer netID22 = snCon2.getSubNetworkID_2();
+					return netID12.compareTo(netID22);
+				}
+				return netID11.compareTo(netID21);
+			}
+		});
+		
+		double deltaSum = 0.0; 
+		int step = 0;
+		for (SubNetworkConnection subNetConn : subNetConList) {
+			// --- Some debug output ------------ 
+			this.debugPrint(subNetConn .toString() + ": High Voltage Delta: " + subNetConn.getHighVoltageDeltaPercent() + "%, Low Voltage Delta: " + subNetConn.getLowVoltageDeltaPercent() + "%" );
+			deltaSum += subNetConn.getLowVoltageDeltaRelative();
+			step++;
+		}
+		
+		if (step==0) {
+			return 0;
+		}
+		return NumberHelper.round((deltaSum / step), ROUND_PRECISION);
 	}
 	
 	
@@ -181,7 +214,6 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 		}
 		return subNetGraphNode.getNetworkCalculationStrategy().getNodeStates().get(nmGraphNode.getId());
 	}
-	
 	
 	/**
 	 * Does the network calculation for isolated electrical networks.

@@ -176,7 +176,7 @@ public class TransformerPowerCalculation extends AbstractOptionModelCalculation 
 	public AbstractInterfaceFlow getEnergyOrGoodFlow(TechnicalSystemStateEvaluation tsse, TechnicalInterface ti, boolean isManualConfiguration) {
 		
 		// --- Execute the calculation ----------------------------------------
-		if (tsse!=this.currentTsse) {
+		if (tsse!=this.currentTsse || isManualConfiguration==true) {
 			this.getEvaluationCalculation().calculate(tsse);
 			this.currentTsse = tsse;
 		}

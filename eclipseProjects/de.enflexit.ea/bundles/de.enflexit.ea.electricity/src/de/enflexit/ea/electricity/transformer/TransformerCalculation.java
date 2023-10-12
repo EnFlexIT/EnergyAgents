@@ -12,14 +12,18 @@ import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.electricity.ElectricalNodeStateConverter;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetworkGraph.SubNetworkConnection;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricityTaskThreadCoordinator;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.OptionModelController;
+import energy.helper.FixedVariableHelper;
 import energy.helper.NumberHelper;
 import energy.helper.ScheduleListHelper;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.FixedDouble;
+import energy.optionModel.FixedInteger;
 import energy.optionModel.Schedule;
 import energy.optionModel.SystemVariableDefinition;
 import energy.optionModel.SystemVariableDefinitionStaticModel;
@@ -91,7 +95,7 @@ public class TransformerCalculation {
 	 * 
 	 * @return the transformer data model
 	 */
-	private TransformerDataModel getTransformerDataModel() {
+	public TransformerDataModel getTransformerDataModel() {
 		if (transformerDataModel==null && this.getOptionModelController()!=null) {
 			// --- Get all static models --------------------------------
 			List<SystemVariableDefinitionStaticModel> sysVarDefStaticModelList = new ArrayList<>();
@@ -113,42 +117,27 @@ public class TransformerCalculation {
 		return transformerDataModel;
 	}
 	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, transformer updates after network calculation -------------------------------
+	// --------------------------------------------------------------------------------------------
 	/**
 	 * Updates the transformer state according to the calculation direction of the network calculation.
-	 *
 	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
-	 * @param isUpwardsCalculation true, if the network calculation is executed from lower to higher voltage level
 	 */
-	public void updateTransformerState(boolean isLowVoltageSide, boolean isUpwardsCalculation) {
-
-		// ------------------------------------------------------------------------------------------------------------
-		// --- Current Situation: Network Calculation for an Electrical Graph Level / Voltage Level is done !! -------- 
-		// ------------------------------------------------------------------------------------------------------------
-		if (isUpwardsCalculation==true) {
-			if (isLowVoltageSide==true) {
-				this.updateLowVoltageSideTransformerStateForUpwardsCalculation();
-			} else {
-				this.updateHighVoltageSideTransformerStateForUpwardsCalculation();
-			}
+	public void updateTransformerState(boolean isLowVoltageSide) {
+		if (isLowVoltageSide==true) {
+			this.updateLowVoltageSideTransformerStateForUpwardsCalculation();
 		} else {
-			if (isLowVoltageSide==true) {
-				this.updateLowVoltageTransformerStateForDownwardsCalculation();
-			} else {
-				this.updateHighVoltageTransformerStateForDownwardsCalculation();
-			}
+			this.updateHighVoltageSideTransformerStateForUpwardsCalculation();
 		}
 	}
-	
-	// --------------------------------------------------------------------------------------------
-	// --- From here, transformer updates for UPWARDS network calculation -------------------------
-	// --------------------------------------------------------------------------------------------
 	/**
 	 * Updates the transformer state according to the calculation direction of the network calculation.
 	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
 	 */
 	private void updateLowVoltageSideTransformerStateForUpwardsCalculation() {
 	
-		boolean debugThisMethod = true;
+		boolean debugThisMethod = false;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
 		
 		// ----------------------------------------------------------------------------------------
@@ -230,92 +219,100 @@ public class TransformerCalculation {
 	 */
 	private void updateHighVoltageSideTransformerStateForUpwardsCalculation() {
 		
-		boolean debugThisMethod = true;
+		boolean debugThisMethod = false;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
 		
 		// ----------------------------------------------------------------------------------------
 		// --- What's ToDo here? ------------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 		// --- HIGH Voltage Side & UPWARDS calculation:
-		// --- => Network Calculation provides Upper Voltage level for underlying network 
-		// --- +  
+		// --- => Network Calculation provides Upper Voltage level for the transformer
+		// --- + Get the target upper voltage level for the transformer 
 		// --- + 
 		// --- +  
-		// --- + Update SlackNode voltage level for underlying network calculation 
+		// --- + Update SlackNode voltage level for lower voltage network calculation 
 		// ----------------------------------------------------------------------------------------
 		
+		// --- Get transformer state ----------------------
 		TechnicalSystemStateEvaluation tsseWork = this.getTechnicalSystemStateEvaluation();
+		double targetUpperVoltageLevel = 0.0;
 		
 		ElectricalNodeState elNodeState = this.subNetworkConnection.getHighVoltageElectricalNodeState();
+		boolean isTriPhase = this.getTransformerDataModel().isUpperVoltage_ThriPhase();
+		if (isTriPhase==true) {
+			// --- Three Phases -------------
+			UniPhaseElectricalNodeState upElNodeState = ElectricalNodeStateConverter.convertToUniPhaseElectricalNodeState(elNodeState);
+			targetUpperVoltageLevel = upElNodeState.getVoltageReal().getValue();
+			
+		} else {
+			// --- Single Phase -------------
+			UniPhaseElectricalNodeState upElNodeState = (UniPhaseElectricalNodeState) elNodeState;
+			targetUpperVoltageLevel = upElNodeState.getVoltageReal().getValue();
+			this.updateIOListValue(tsseWork, TransformerSystemVariable.hvVoltageRealAllPhases.name(), targetUpperVoltageLevel);
+		}
+		
+		
 		if (debugThisMethod==true) this.debugPrint("Flows BEFORE transformer calculation: " + TechnicalSystemStateHelper.toStringEnergyAndGoodFlows(tsseWork, 4, false, ", "));
-		
-		boolean isTriPhase = this.getTransformerDataModel().isLowerVoltage_ThriPhase();
-		if (isTriPhase==true) {
+
+		// --- Consider the transformers slack node side --
+		TapSide slacknodeSide = this.getTransformerDataModel().getSlackNodeSide();
+		if (slacknodeSide==TapSide.HighVoltageSide) {
+			// --------------------------------------------
+			// --- Slack node on high voltage side --------
+			// --------------------------------------------
+			this.getOptionModelController().updateTechnicalSystemStateEnergyFlows(tsseWork, 0, true);
 			
 		} else {
+			// --------------------------------------------
+			// --- Slack node on low voltage side ---------
+			// --------------------------------------------
 			
+			// --- Find the right low voltage level to match the target upper voltage level ---- 
+			FixedInteger fiTapPos = (FixedInteger) TechnicalSystemStateHelper.getFixedVariable(tsseWork.getIOlist(), TransformerSystemVariable.tapPos.name());
+			
+			double targetLowVoltageLevel = this.getLowVoltageLevelFromHighVoltageLevel(fiTapPos.getValue(), targetUpperVoltageLevel);
+			this.updateIOListValue(tsseWork, TransformerSystemVariable.lvVoltageRealAllPhases.name(), targetLowVoltageLevel);
+			this.getOptionModelController().updateTechnicalSystemStateEnergyFlows(tsseWork, 0, true);
 		}
-		
+		if (debugThisMethod==true) this.debugPrint("Flows AFTER transformer calculation:  " + TechnicalSystemStateHelper.toStringEnergyAndGoodFlows(tsseWork, 4, false, ", "));
 	}
 	
+	/**
+	 * Based on the upper voltage level and the {@link TransformerDataModel}, returns the the low voltage level.
+	 *
+	 * @param tapPos the current transformers tap position
+	 * @param upperVoltageLevel the target upper voltage level
+	 * @return the estimated low voltage level
+	 */
+	private double getLowVoltageLevelFromHighVoltageLevel(int tapPos, double upperVoltageLevel) {
+		
+		double U_rTUS = this.getTransformerDataModel().getLowerVoltage_vmLV() * 1000;
+		double U_rTOS = this.getTransformerDataModel().getUpperVoltage_vmHV() * 1000;
+		double transLVRealAllPhases = U_rTUS;
+		
+		double tapNeutral = this.getTransformerDataModel().getTapNeutral();
+		double voltageDeltaPerTap = this.getTransformerDataModel().getVoltageDeltaPerTap_dVm();
+		
+		switch (this.getTransformerDataModel().getTapSide()) {
+		case LowVoltageSide:
+			transLVRealAllPhases = upperVoltageLevel / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos - tapNeutral)/100);
+			break;
+
+		case HighVoltageSide:
+			transLVRealAllPhases = upperVoltageLevel / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos - tapNeutral)/100);
+			break;
+		}
+		return transLVRealAllPhases;
+	}
 	
 	// --------------------------------------------------------------------------------------------
-	// --- From here, transformer updates for DOWNWARDS network calculation -----------------------
+	// --- From here, some TSSE transformer help functions ----------------------------------------
 	// --------------------------------------------------------------------------------------------
-	/**
-	 * Updates the transformer state according to the calculation direction of the network calculation.
-	 */
-	private void updateLowVoltageTransformerStateForDownwardsCalculation() {
-		
-		boolean debugThisMethod = true;
-		
-		// ----------------------------------------------------------------------------------------
-		// --- What's ToDo here? ------------------------------------------------------------------
-		
-		// ----------------------------------------------------------------------------------------
-		
-		TechnicalSystemStateEvaluation tsseWork = this.getTechnicalSystemStateEvaluation();
-		
-		ElectricalNodeState elNodeState = this.subNetworkConnection.getLowVoltageElectricalNodeState();
-		boolean isTriPhase = this.getTransformerDataModel().isLowerVoltage_ThriPhase();
-		if (isTriPhase==true) {
-			
-		} else {
-			
-		}
-	
-		
-	}
-	/**
-	 * Updates the transformer state according to the calculation direction of the network calculation.
-	 */
-	private void updateHighVoltageTransformerStateForDownwardsCalculation() {
-		
-		boolean debugThisMethod = true;
-		
-		// ----------------------------------------------------------------------------------------
-		// --- What's ToDo here? ------------------------------------------------------------------
-		
-		// ----------------------------------------------------------------------------------------
-		
-		TechnicalSystemStateEvaluation tsseWork = this.getTechnicalSystemStateEvaluation();
-		
-		ElectricalNodeState elNodeState = this.subNetworkConnection.getHighVoltageElectricalNodeState();
-		boolean isTriPhase = this.getTransformerDataModel().isLowerVoltage_ThriPhase();
-		if (isTriPhase==true) {
-			
-		} else {
-			
-		}
-		
-	}
-	
-	
 	/**
 	 * Returns the latest {@link TechnicalSystemStateEvaluation} from the aggregation handler.
 	 * @return the technical system state evaluation
 	 */
-	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation() {
+	public TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation() {
 		if (tsseCurrent==null) {
 			tsseCurrent = this.taskThreadCoordinator.getAggregationHandler().getLastTechnicalSystemStateFromScheduleController(this.subNetworkConnection.getConnectingNetworkComponentID(), false);
 			tsseCurrentOriginal = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluation(tsseCurrent, false);
@@ -391,6 +388,10 @@ public class TransformerCalculation {
 	 */
 	private double updateIOListValue(TechnicalSystemStateEvaluation tsse, String ioVarName, double newValue) {
 		FixedDouble fdValue = ((FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tsse.getIOlist(), ioVarName));
+		if (fdValue==null) {
+			tsse.getIOlist().add(FixedVariableHelper.createFixedDouble(ioVarName, newValue));
+			return 0.0;
+		}
 		double oldValue = fdValue.getValue();
 		fdValue.setValue(newValue);
 		return oldValue;
@@ -420,7 +421,6 @@ public class TransformerCalculation {
 			return upElNodeState.getCurrent().getValue() * (upElNodeState.getQCalculated() / upElNodeState.getSCalculated());
 		}
 		return 0.0;
-		
 	}
 	
 	

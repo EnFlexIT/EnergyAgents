@@ -10,11 +10,9 @@ import org.awb.env.networkModel.helper.DomainCluster;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
-import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseSensorAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseSensorAdapter;
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.GlobalElectricityConstants.GlobalTransformerMeasurements;
 import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
@@ -22,6 +20,7 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
 import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import de.enflexit.eom.awb.adapter.EomAdapter;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
@@ -72,19 +71,20 @@ public abstract class AbstractSlackNodeHandler {
 	 * Returns the current sub network configuration.
 	 * @return the sub network configuration
 	 */
-	public AbstractSubNetworkConfiguration getSubNetworkConfiguration() {
+	public AbstractElectricalNetworkConfiguration getElectricalNetworkConfiguration() {
 		if (this.electricalNetworkCalculationStrategy!=null) {
-			return this.electricalNetworkCalculationStrategy.getSubNetworkConfiguration();
+			return (AbstractElectricalNetworkConfiguration) this.electricalNetworkCalculationStrategy.getSubNetworkConfiguration();
 		}
 		return null;
 	}
+	
 	/**
 	 * Return the current DomainCluster.
 	 * @return the domain cluster
 	 */
 	public DomainCluster getDomainCluster() {
-		if (this.getSubNetworkConfiguration()!=null) {
-			return this.getSubNetworkConfiguration().getDomainCluster();
+		if (this.getElectricalNetworkConfiguration()!=null) {
+			return this.getElectricalNetworkConfiguration().getDomainCluster();
 		}
 		return null;
 	}
@@ -130,6 +130,7 @@ public abstract class AbstractSlackNodeHandler {
 		if (snsToCheck==null || snsToCheck.getVoltageReal()==null) return true;
 		return snsToCheck.getVoltageReal().getValue()==errorIndicatingRealStartValue;
 	}
+
 	/**
 	 * Return a UniPhaseSlackNodeState from the specified TechnicalSystemStateEvaluation.
 	 *
@@ -137,26 +138,63 @@ public abstract class AbstractSlackNodeHandler {
 	 * @return the UniPhaseSlackNodeState from technical system state evaluation
 	 */
 	public static UniPhaseSlackNodeState getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(TechnicalSystemStateEvaluation tsse) {
+		return getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(tsse, null);
+	}
+	
+	/**
+	 * Return a UniPhaseSlackNodeState from the specified TechnicalSystemStateEvaluation.
+	 *
+	 * @param tsse the TechnicalSystemStateEvaluation
+	 * @param targetVoltageLevelReal the target voltage level real
+	 * @return the UniPhaseSlackNodeState from technical system state evaluation
+	 */
+	public static UniPhaseSlackNodeState getUniPhaseSlackNodeStateFromTechnicalSystemStateEvaluation(TechnicalSystemStateEvaluation tsse, Double targetVoltageLevelReal) {
 		
-		float errorIndicatingValue = 0;
-		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
+		float lvVoltageRealAllPhases = 0.0f;
+		float lvVoltageImaglAllPhases = 0.0f;
 		
+		float hvVoltageRealAllPhases = 0.0f;
+		float hvVoltageImaglAllPhases = 0.0f;
+		
+		// --- Collect low and high voltage levels from current state --------- 
 		for (int i = 0; i < tsse.getIOlist().size(); i++) {
-			// --- Check IO-value ----------------------------------- 
+			// --- Check IO-value ---------------------------------------------
 			FixedVariable fv = tsse.getIOlist().get(i);
 			if (fv instanceof FixedDouble) {
-				// --- Get the float value --------------------------
+				// --- Get the float value ------------------------------------
 				float value = (float) ((FixedDouble) fv).getValue();
-				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealAllPhases.name())) {
-					upSns.getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagAllPhases.name())) {
-					upSns.getVoltageImag().setValue(value);
+				if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageRealAllPhases.name())) {
+					lvVoltageRealAllPhases = value;
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageImagAllPhases.name())) {
+					lvVoltageImaglAllPhases = value;
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.hvVoltageRealAllPhases.name())) {
+					hvVoltageRealAllPhases = value;
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.hvVoltageImagAllPhases.name())) {
+					hvVoltageImaglAllPhases = value;
 				}
 			}
 		}
+
+		// --- Low or high voltage level? -------------------------------------
+		float voltageRealAllPhases = lvVoltageRealAllPhases;	// -- Default - 
+		float voltageImagAllPhases = lvVoltageImaglAllPhases;	// -- Default -
+		if (targetVoltageLevelReal!=null) {
+			// --- Determine if low or the high voltage needs to be used ------
+			double lvRealTargetDiff = Math.abs((lvVoltageRealAllPhases - targetVoltageLevelReal) / targetVoltageLevelReal);
+			double hvRealTargetDiff = Math.abs((hvVoltageRealAllPhases - targetVoltageLevelReal) / targetVoltageLevelReal);
+			if (hvRealTargetDiff < lvRealTargetDiff) {
+				voltageRealAllPhases = hvVoltageRealAllPhases;	// -- Default - 
+				voltageImagAllPhases = hvVoltageImaglAllPhases;
+			}
+		}
 		
-		// --- Check for invalid slack node state -------------------
-		if (isErrorInUniPhaseSlackNodeState(upSns, errorIndicatingValue)) {
+		// --- Check for invalid slack node state -----------------------------
+		float errorIndicatingValue = 0;
+		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
+		upSns.getVoltageReal().setValue((float) (voltageRealAllPhases / Math.sqrt(3)));
+		upSns.getVoltageImag().setValue((float) (voltageImagAllPhases / Math.sqrt(3)));
+		
+		if (isErrorInUniPhaseSlackNodeState(upSns, errorIndicatingValue)==true) {
 			upSns = null;
 		}
 		return upSns;
@@ -216,19 +254,19 @@ public abstract class AbstractSlackNodeHandler {
 				// --- Get the float value --------------------------
 				float value = (float) ((FixedDouble) fv).getValue();
 
-				if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL1.name())) {
+				if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageRealL1.name())) {
 					tpSns.getSlackNodeStateL1().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL1.name())) {
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageImagL1.name())) {
 					tpSns.getSlackNodeStateL1().getVoltageImag().setValue(value);
 
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL2.name())) {
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageRealL2.name())) {
 					tpSns.getSlackNodeStateL2().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL2.name())) {
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageImagL2.name())) {
 					tpSns.getSlackNodeStateL2().getVoltageImag().setValue(value);
 
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageRealL3.name())) {
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageRealL3.name())) {
 					tpSns.getSlackNodeStateL3().getVoltageReal().setValue(value);
-				} else if (fv.getVariableID().equals(GlobalTransformerMeasurements.lvVoltageImagL3.name())) {
+				} else if (fv.getVariableID().equals(TransformerSystemVariable.lvVoltageImagL3.name())) {
 					tpSns.getSlackNodeStateL3().getVoltageImag().setValue(value);
 				}
 			}
@@ -257,7 +295,7 @@ public abstract class AbstractSlackNodeHandler {
 				// --- Nominate to single phase voltage level -------
 				initialSlackNodeVoltage = (float) (tnp.getRatedVoltage().getValue() / Math.sqrt(3));
 			}
-			System.out.println("[" + this.getClass().getSimpleName() + "] Initial slack node voltage level: " + initialSlackNodeVoltage + " for " + this.getSubNetworkConfiguration().getSubNetworkDescriptionID());
+			System.out.println("[" + this.getClass().getSimpleName() + "] Initial slack node voltage level: " + initialSlackNodeVoltage + " for " + this.getElectricalNetworkConfiguration().getSubNetworkDescriptionID());
 		}
 		return initialSlackNodeVoltage;
 	}
@@ -405,31 +443,56 @@ public abstract class AbstractSlackNodeHandler {
 		
 		// --- Is this a new slack node state ---------------------------------
 		if (newSlackNodeState!=null) {
-			// --- For debugging, set true ------------------------------------
-			boolean debug = false;
-			if (debug==true) {
-				if (newSlackNodeState instanceof TriPhaseSlackNodeState) {
-					TriPhaseSlackNodeState tpsns = (TriPhaseSlackNodeState) newSlackNodeState;
-					System.err.println("[" + this.getClass().getSimpleName() + "] L1 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL1().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL1().getVoltageImag().getValue() + "");
-					System.err.println("[" + this.getClass().getSimpleName() + "] L2 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL2().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL2().getVoltageImag().getValue() + "");
-					System.err.println("[" + this.getClass().getSimpleName() + "] L3 TSSE slack node voltage real: " + tpsns.getSlackNodeStateL3().getVoltageReal().getValue() + ", imaginary: " + tpsns.getSlackNodeStateL3().getVoltageImag().getValue() + "");
-					System.err.println();
-				} else if (newSlackNodeState instanceof UniPhaseSlackNodeState) {
-					UniPhaseSlackNodeState upsns = (UniPhaseSlackNodeState) newSlackNodeState;
-					System.err.println("[" + this.getClass().getSimpleName() + "] TSSE slack node voltage real: " + upsns.getVoltageReal().getValue() + ", imaginary: " + upsns.getVoltageImag().getValue() + "");
-					System.err.println();
+			// --- Compare with old state -------------------------------------
+			SlackNodeState oldSlackNodeState = this.getSlackNodeState();
+			
+			boolean isSetNewSlackNodeState = false;
+			// --- Check for different class type -----------------------------
+			boolean isDifferentClass = oldSlackNodeState.getClass()!=newSlackNodeState.getClass();
+			isSetNewSlackNodeState = isSetNewSlackNodeState || isDifferentClass;
+			
+			// --- Check for a different value --------------------------------
+			if (isSetNewSlackNodeState==false) {
+				if (oldSlackNodeState instanceof UniPhaseSlackNodeState) {
+					// --- UniPhaseSlackNodeState -----------------------------
+					UniPhaseSlackNodeState snStateNew = (UniPhaseSlackNodeState) newSlackNodeState;
+					UniPhaseSlackNodeState snStateOld = (UniPhaseSlackNodeState) oldSlackNodeState;
+					isSetNewSlackNodeState = this.isEqualUniPhaseSlackNodeState(snStateNew, snStateOld)==false;
+					
+				} else if (oldSlackNodeState instanceof TriPhaseSlackNodeState) {
+					// --- TriPhaseSlackNodeState -----------------------------
+					TriPhaseSlackNodeState snStateNew = (TriPhaseSlackNodeState) newSlackNodeState;
+					TriPhaseSlackNodeState snStateOld = (TriPhaseSlackNodeState) oldSlackNodeState;
+					
+					isSetNewSlackNodeState = this.isEqualUniPhaseSlackNodeState(snStateNew.getSlackNodeStateL1(), snStateOld.getSlackNodeStateL1())==false;
+					isSetNewSlackNodeState = isSetNewSlackNodeState || this.isEqualUniPhaseSlackNodeState(snStateNew.getSlackNodeStateL2(), snStateOld.getSlackNodeStateL2())==false;
+					isSetNewSlackNodeState = isSetNewSlackNodeState || this.isEqualUniPhaseSlackNodeState(snStateNew.getSlackNodeStateL3(), snStateOld.getSlackNodeStateL3())==false;
 				}
 			}
 			
-			// --- Compare with old state -------------------------------------
-			SlackNodeState oldSlackNodeState = this.getSlackNodeState();
-			if (newSlackNodeState.equals(oldSlackNodeState)==false) {
+			if (isSetNewSlackNodeState==true) {
 				this.setSlackNodeState(newSlackNodeState);
 				this.setChangedSlackNodeState(true);
 			}
 		}
 	}
-
+	/**
+	 * Checks if both parameter are equal {@link UniPhaseSlackNodeState}s.
+	 *
+	 * @param snState1 the sn state 1
+	 * @param snState2 the sn state 2
+	 * @return true, if is equal uni phase slack node state
+	 */
+	private boolean isEqualUniPhaseSlackNodeState(UniPhaseSlackNodeState snState1, UniPhaseSlackNodeState snState2) {
+		
+		if (snState1==snState2) {
+			return true;
+		} else if (snState1==null && snState2!=null || snState1!=null && snState2==null) {
+			return false;
+		}
+		return snState1.getVoltageReal()==snState2.getVoltageReal() && snState1.getVoltageImag()==snState2.getVoltageImag();
+	}
+	
 	/**
 	 * Has to update the current slack node state from the last transformer system state.
 	 *
@@ -478,7 +541,7 @@ public abstract class AbstractSlackNodeHandler {
 			}
 			
 			if (networkComponentTransformer==null) {
-				String domainDescription = this.getSubNetworkConfiguration().getDomain() + " (ID = " + this.getSubNetworkConfiguration().getID() + ")";
+				String domainDescription = this.getElectricalNetworkConfiguration().getDomain() + " (ID = " + this.getElectricalNetworkConfiguration().getID() + ")";
 				System.out.println("[" + this.getClass().getSimpleName() + "] No active transformer could be found in the current sub network model of domain '" + domainDescription + "'!");
 				System.out.println("[" + this.getClass().getSimpleName() + "] => A constant slack node voltage of " + this.getInitialVoltageLevel() + " V will be used for the power flow calculation.");
 			}
@@ -515,7 +578,7 @@ public abstract class AbstractSlackNodeHandler {
 				}
 			}
 			if (networkComponentSlackNodeSensor==null) {
-				String domainDescription = this.getSubNetworkConfiguration().getDomain() + " (ID = " + this.getSubNetworkConfiguration().getID() + ")";
+				String domainDescription = this.getElectricalNetworkConfiguration().getDomain() + " (ID = " + this.getElectricalNetworkConfiguration().getID() + ")";
 				System.out.println("[" + this.getClass().getSimpleName() + "] Could not find any active slack node sensor for slack node '" + snDesc.getNetworkComponentID() + "' in the sub network model of domain '" + domainDescription + "'!");
 				System.out.println("[" + this.getClass().getSimpleName() + "] => A constant slack node voltage of " + this.getInitialVoltageLevel() + " V will be used for the power flow calculation.");
 			}

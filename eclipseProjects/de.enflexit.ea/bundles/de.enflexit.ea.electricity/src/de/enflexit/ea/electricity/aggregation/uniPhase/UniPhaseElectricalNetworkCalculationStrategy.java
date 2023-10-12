@@ -83,7 +83,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		if (isSkipNetworkCalculation==false) {
 		
 			// --- Update slack node voltage level for sensor data based calculations ---
-			//this.getSlackNodeHandler().updateSlackNodeState();
+			this.getSlackNodeHandler().updateSlackNodeState();
 			
 			// --------------------------------------------------------------------------
 			// --- (Re) execute the phase dependent electrical network calculation ------

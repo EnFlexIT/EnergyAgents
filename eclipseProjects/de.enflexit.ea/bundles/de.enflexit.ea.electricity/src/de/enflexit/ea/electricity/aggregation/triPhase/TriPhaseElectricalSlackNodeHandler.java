@@ -1,6 +1,5 @@
 package de.enflexit.ea.electricity.aggregation.triPhase;
 
-import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
@@ -33,9 +32,9 @@ public class TriPhaseElectricalSlackNodeHandler extends AbstractSlackNodeHandler
 	 */
 	@Override
 	public float getDefaultVoltageLevel() {
-		AbstractSubNetworkConfiguration subNetConfig = this.getSubNetworkConfiguration();
-		if (subNetConfig!=null && subNetConfig instanceof AbstractElectricalNetworkConfiguration) {
-			double ratedVoltageLevel = ((AbstractElectricalNetworkConfiguration)subNetConfig).getConfiguredRatedVoltageFromNetwork();
+		AbstractElectricalNetworkConfiguration subNetConfig = this.getElectricalNetworkConfiguration();
+		if (subNetConfig!=null) {
+			double ratedVoltageLevel = subNetConfig.getConfiguredRatedVoltageFromNetwork();
 			return (float) (ratedVoltageLevel / Math.sqrt(3));
 		}
 		// --- Just as a (hopefully not necessary) backup -----------
