@@ -107,7 +107,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 	 */
 	private void initialize() {
 		
-		this.setTitle("Energy Agent / HyGrid - Setup Validator");
+		this.setTitle("Energy Agent - Setup Validator");
 		
 		this.loadAndApplyDialogSizeAndPosition();
 		this.registerEscapeKeyStroke();
@@ -122,7 +122,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 		
 		GridBagConstraints gbc_lblErrors = new GridBagConstraints();
 		gbc_lblErrors.anchor = GridBagConstraints.WEST;
-		gbc_lblErrors.insets = new Insets(10, 10, 0, 10);
+		gbc_lblErrors.insets = new Insets(10, 12, 0, 10);
 		gbc_lblErrors.gridx = 0;
 		gbc_lblErrors.gridy = 0;
 		getContentPane().add(getJLabelErrors(), gbc_lblErrors);
@@ -137,7 +137,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 		GridBagConstraints gbc_scrollPaneList = new GridBagConstraints();
 		gbc_scrollPaneList.gridwidth = 2;
 		gbc_scrollPaneList.fill = GridBagConstraints.BOTH;
-		gbc_scrollPaneList.insets = new Insets(5, 8, 15, 8);
+		gbc_scrollPaneList.insets = new Insets(5, 10, 15, 10);
 		gbc_scrollPaneList.gridx = 0;
 		gbc_scrollPaneList.gridy = 1;
 		getContentPane().add(this.getJSplitPaneHyGridMessages(), gbc_scrollPaneList);
@@ -247,7 +247,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
     
 	private JLabel getJLabelErrors() {
 		if (jLabelErrors == null) {
-			jLabelErrors = new JLabel("Found in the current setup:");
+			jLabelErrors = new JLabel("Validation results from the current setup:");
 			jLabelErrors.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelErrors;
@@ -362,6 +362,8 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextAreaDescription.setEditable(false);
+			jTextAreaDescription.setLineWrap(true);
+			jTextAreaDescription.setWrapStyleWord(true);
 		}
 		return jTextAreaDescription;
 	}

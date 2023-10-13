@@ -445,7 +445,7 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			TechnicalSystemStateEvaluation tsseAnswer = this.getStateInputStream().getSystemState(simTime);
 			FixedVariableList ioSettings = this.getStateInputStream().getIOSettings(simTime, tsseAnswer);
 
-			// --- Callback method to interfere before the new measurements are commited to the agent
+			// --- Callback method to interfere before the new measurements are committed to the agent
 			this.getDiscreteSimulationEvent().internalBeforeMeasurementCommit();
 			
 			// --- Set IO Settings of this behaviour --------------------------
