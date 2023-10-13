@@ -6,6 +6,8 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.awb.env.networkModel.NetworkComponent;
+
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
 import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
 import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SetupType;
@@ -46,7 +48,8 @@ public class PowerFlowCalculationThread extends Thread {
 	private OptionModelController optionModelController;
 	private AbstractElectricalNetworkCalculationStrategy calculationStrategy; 
 	
-	private HashMap<Integer, ActiveReactivePowerPair> powerPairHash;
+	private HashMap<Integer, ActiveReactivePowerPair> powerPairHashMap;
+	private String transformerNetworkComponentID;
 	
 	private PowerFlowParameter powerFlowParameter;
 	private AbstractPowerFlowCalculation powerFlowCalculation;
@@ -198,7 +201,7 @@ public class PowerFlowCalculationThread extends Thread {
 							this.getPowerFlowParameter().setvPVNodes(this.pvNodes);
 						}
 						
-						if(this.estimatedBranchCurrents!=null) {
+						if (this.estimatedBranchCurrents!=null) {
 							HashMap<String, MeasuredBranchCurrent> temp = this.integrateFromNodeToNodeInBranchCurrents(this.estimatedBranchCurrents);
 							this.setEstimatedBranchCurrents(temp);
 							this.getPowerFlowParameter().setEstimatedBranchCurrents(temp);
@@ -239,8 +242,8 @@ public class PowerFlowCalculationThread extends Thread {
 	}
 	
 	private HashMap<String, MeasuredBranchCurrent> integrateFromNodeToNodeInBranchCurrents(HashMap<String, MeasuredBranchCurrent> tempEstimatedBranchCurrents) {
-		ArrayList<String> keySet = new ArrayList<>(tempEstimatedBranchCurrents.keySet());
 		
+		ArrayList<String> keySet = new ArrayList<>(tempEstimatedBranchCurrents.keySet());
 		for(int i=0;i<keySet.size();i++) {
 			String cableName = keySet.get(i);
 			String nFromNodeName = tempEstimatedBranchCurrents.get(cableName).getnFromNodeComponentName();
@@ -251,8 +254,6 @@ public class PowerFlowCalculationThread extends Thread {
 			tempEstimatedBranchCurrents.get(cableName).setnFromNode(nFromNode);
 			tempEstimatedBranchCurrents.get(cableName).setnToNode(nToNode);
 		}
-			
-		
 		return tempEstimatedBranchCurrents;
 	}
 	
@@ -260,15 +261,17 @@ public class PowerFlowCalculationThread extends Thread {
 	 * Returns the current node to power pair hash map that is determined in the child's of the current parent node.
 	 *
 	 * @param currentParentNode the current parent node
-	 * @param pahse the current Phase to use
 	 * @param fmGroup the EnergyFlowsMeasuredGroup
 	 * @return the node to power hash
 	 */
 	private HashMap<Integer, ActiveReactivePowerPair> getPowerPairsForPhase(DefaultMutableTreeNode currentParentNode, FlowsMeasuredGroup fmGroup) {
 		
-		if (powerPairHash==null) {
-			powerPairHash = new HashMap<Integer, ActiveReactivePowerPair>();	
+		if (powerPairHashMap==null) {
+			powerPairHashMap = new HashMap<Integer, ActiveReactivePowerPair>();	
 		}
+		
+		// --- Reminder for the transformer power -----------------------------
+		ActiveReactivePowerPair transformerPowerPair = null;
 		
 		int numberOfChildren = currentParentNode.getChildCount();
 		for (int i=0; i<numberOfChildren; i++) {
@@ -279,7 +282,9 @@ public class PowerFlowCalculationThread extends Thread {
 			Integer nodeNumber = this.getNetworkModelToCsvMapper().getNetworkComponentIdToNodeNumber().get(networkID);
 			if (nodeNumber==null) continue;
 			
-			double activePower= 0;
+			boolean isTransfomer = this.isTransformer(networkID);
+			
+			double activePower   = 0;
 			double reactivePower = 0;
 			
 			FlowsMeasuredGroupMember efmGrouMember = fmGroup.getFlowsMeasuredGroupMember(treeNode);
@@ -292,7 +297,6 @@ public class PowerFlowCalculationThread extends Thread {
 				for (AbstractFlowMeasuredAtInterface afmInterface : afmArray) {
 					
 					FlowMeasuredAtInterfaceEnergy efmInterface = (FlowMeasuredAtInterfaceEnergy) afmInterface;
-					
 					DefaultDomainModelElectricity domainModel = (DefaultDomainModelElectricity) efmInterface.getDomainModel();
 					
 					// --- Get SubNetworkConfiguration for rated voltage ------
@@ -304,13 +308,13 @@ public class PowerFlowCalculationThread extends Thread {
 							if (domainModel.getPowerType()==PowerType.ActivePower) {
 								activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
 								if (domainModel.getPhase()==Phase.AllPhases) {
-									activePower = activePower / 3; //Adjustment due to uni-phase powerflow calculation
+									activePower = activePower / 3; // --- Adjustment due to uni-phase power flow calculation
 								}
 								
 							} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
 								reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
 								if (domainModel.getPhase()==Phase.AllPhases) {
-									reactivePower = reactivePower / 3; //Adjustment due to uni-phase powerflow calculation
+									reactivePower = reactivePower / 3; // --- Adjustment due to uni-phase power flow calculation
 								}
 							}
 						}
@@ -319,13 +323,67 @@ public class PowerFlowCalculationThread extends Thread {
 				
 			}
 			// --- Add to node power Hash -------------------------------------
-			powerPairHash.put(nodeNumber, new ActiveReactivePowerPair(activePower, reactivePower));
+			ActiveReactivePowerPair nodePowerPair = new ActiveReactivePowerPair(activePower, reactivePower);
+			if (isTransfomer==true) {
+				// --- Remind for the subsequent sum-up ----------------------- 
+				transformerPowerPair = nodePowerPair;
+			}
+			powerPairHashMap.put(nodeNumber, nodePowerPair);
 		}
-		return powerPairHash;
+		
+		// --- Update the transformer power pair ------------------------------
+		this.updateTransformerPowerPair(powerPairHashMap, transformerPowerPair);
+		
+		return powerPairHashMap;
 	}
 	
 	/**
-	 * Gets the average energy flow in watt as a double value.
+	 * Updates the transformer power pair by sum-up all other power pairs.
+	 *
+	 * @param powerPairHashMap the power pair hash map
+	 * @param transformerPowerPair the transformer power pair
+	 */
+	private void updateTransformerPowerPair(HashMap<Integer, ActiveReactivePowerPair> powerPairHashMap, ActiveReactivePowerPair transformerPowerPair) {
+		
+		if (transformerPowerPair==null) return;
+		if (powerPairHashMap==null || powerPairHashMap.size()==0) return;
+		
+		double activePower   = 0.0;
+		double reactivePower = 0.0;
+
+		for (ActiveReactivePowerPair nodePowerPair : powerPairHashMap.values()) {
+			// --- Skip the transformer -----------------------------
+			if (nodePowerPair==transformerPowerPair) continue;
+			activePower   += nodePowerPair.getActivePowerInWatt();
+			reactivePower += nodePowerPair.getReactivePowerInWatt(); 
+		}
+		
+		// --- Set the recalculated values to the power pair --------
+		transformerPowerPair.setActivePowerInWatt(activePower);
+		transformerPowerPair.setReactivePowerInWatt(reactivePower);
+	}
+	
+	/**
+	 * Checks if the specified ID of a {@link NetworkComponent} belongs to the networks transformer.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return true, if is transformer
+	 */
+	private boolean isTransformer(String networkComponentID) {
+		if (networkComponentID==null) return false;
+		if (transformerNetworkComponentID==null) {
+			// --- Fast exit ? --------------------------------
+			if (this.getNetworkModelToCsvMapper().getSlackNodeVector().size()==0) return false;
+			// --- Check the SlackNodeDescription -------------
+			SlackNodeDescription snDesc = this.getNetworkModelToCsvMapper().getSlackNodeVector().get(0);
+			if (snDesc==null || snDesc.getNetworkComponentID()==null) return false;
+			transformerNetworkComponentID = snDesc.getNetworkComponentID();
+		}
+		return networkComponentID.equals(transformerNetworkComponentID); 
+	}
+	
+	/**
+	 * Returns the average energy flow in watt as a double value.
 	 *
 	 * @param measuredEnergyFlow the measured energy flow
 	 * @return the average energy flow in watt
@@ -335,10 +393,17 @@ public class PowerFlowCalculationThread extends Thread {
 		return UnitConverter.convertEnergyFlowToWatt(efiw);
 	}
 
+	/**
+	 * Returns the estimated branch currents.
+	 * @return the estimated branch currents
+	 */
 	public HashMap<String, MeasuredBranchCurrent> getEstimatedBranchCurrents() {
 		return estimatedBranchCurrents;
 	}
-
+	/**
+	 * Sets the estimated branch currents.
+	 * @param estimatedBranchCurrents the estimated branch currents
+	 */
 	public void setEstimatedBranchCurrents(HashMap<String, MeasuredBranchCurrent> estimatedBranchCurrents) {
 		this.estimatedBranchCurrents = estimatedBranchCurrents;
 	}

@@ -1,9 +1,8 @@
 package de.enflexit.ea.electricity.transformer;
 
 import de.enflexit.ea.core.EnergyAgentConnector;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TapSide;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.FixedVariableList;
 import energy.OptionModelController;
 import energy.calculations.AbstractEvaluationCalculation;
@@ -34,6 +33,7 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	private TransformerDataModel transformerDataModel;
 	
 	private double transformerLowVoltageLevelReal;
+	private double transformerHighVoltageLevelReal;
 	private double resistance_R;
 	private double reactance_X;
 
@@ -135,68 +135,108 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	 */
 	private void calculateSlackVoltage(TechnicalSystemState tss) {
 		
+		// --- Get voltage relevant information -------------------------------
 		double U_rTUS = this.getTransformerDataModel().getLowerVoltage_vmLV() * 1000;
 		double U_rTOS = this.getTransformerDataModel().getUpperVoltage_vmHV() * 1000;
 
 		TapSide slackNodeSide = this.getTransformerDataModel().getSlackNodeSide();
-		double configuredVoltagelevel = this.getTransformerDataModel().getSlackNodeVoltageLevel();
-		double transLVRealAllPhases = configuredVoltagelevel;		// --- Just as a default value ---
+		double confSlackNodeVoltagelevel = this.getTransformerDataModel().getSlackNodeVoltageLevel();
+		double transLVRealAllPhases = U_rTUS;	// --- As a default value ---
+		double transHVRealAllPhases = U_rTOS; 	// --- As a default value ---
+		
+		// --- Get Tap information --------------------------------------------
+		TapSide tapSide = this.getTransformerDataModel().getTapSide();
+		double tapNeutral = this.getTransformerDataModel().getTapNeutral();
+		double voltageDeltaPerTap = this.getTransformerDataModel().getVoltageDeltaPerTap_dVm();
+		FixedInteger tapPos = (FixedInteger) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.tapPos.name());
+		
 		
 		// --- Calculate based on slack node side -----------------------------
 		switch (slackNodeSide) {
 		case LowVoltageSide:
 			// --- Correct configured slack node voltage ----------------------
-			if (configuredVoltagelevel==0.0) {
-				configuredVoltagelevel = U_rTUS;
-			}
-			transLVRealAllPhases = configuredVoltagelevel;
-			break;
-
-		case HighVoltageSide:
-			// --- Correct configured slack node voltage ----------------------
-			if (configuredVoltagelevel==0.0) {
-				configuredVoltagelevel = U_rTOS;
-			}
+			if (confSlackNodeVoltagelevel!=0.0) transLVRealAllPhases = confSlackNodeVoltagelevel;
 			
-			// --- Check for measurement of HV voltage level ------------------
-			FixedDouble hvVoltageLevelAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
-			if (hvVoltageLevelAllPhases!=null) {
-				double hvMeasurementVoltageReal = hvVoltageLevelAllPhases.getValue();
-				if (hvMeasurementVoltageReal==0) {
+			// --- Check for measurement of LV voltage level all Phases -------
+			FixedDouble fdmTransLVRealAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.lvVoltageRealAllPhases.name());
+			if (fdmTransLVRealAllPhases!=null) {
+				double mLVRealAllPhases = fdmTransLVRealAllPhases.getValue();
+				if (mLVRealAllPhases==0) {
 					// --- Check if the transformer is used -------------------
 					if (this.isTransformerUsed(tss)==true) {
 						// --- Use the above voltage level as fallback --------
 						// --- => Nothing to do here --------------------------
 					} else {
 						// --- Really 0.0: use this measurement ---------------
-						configuredVoltagelevel = hvVoltageLevelAllPhases.getValue();						
+						transLVRealAllPhases = mLVRealAllPhases;						
 					}
 				} else {
-					configuredVoltagelevel = hvVoltageLevelAllPhases.getValue();
+					transLVRealAllPhases = mLVRealAllPhases;
+				}
+				// --- Correct IO-List value? ---------------------------------
+				if (mLVRealAllPhases!=transLVRealAllPhases) {
+					fdmTransLVRealAllPhases.setValue(transLVRealAllPhases);
 				}
 			}
 			
-			// --- Get Tap information ----------------------------------------
-			TapSide tapSide = this.getTransformerDataModel().getTapSide();
-			double tapNeutral = this.getTransformerDataModel().getTapNeutral();
-			double voltageDeltaPerTap = this.getTransformerDataModel().getVoltageDeltaPerTap_dVm();
-			FixedInteger tapPos = (FixedInteger) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.tapPos.name());
-
-			// --- Calculate slack voltage ------------------------------------
+			// --- Calculate high voltage level -------------------------------
 			switch (tapSide) {
 			case LowVoltageSide:
-				transLVRealAllPhases = configuredVoltagelevel / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				transHVRealAllPhases = transLVRealAllPhases / U_rTUS * U_rTOS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 
 			case HighVoltageSide:
-				transLVRealAllPhases = configuredVoltagelevel / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				transHVRealAllPhases = transLVRealAllPhases / U_rTUS * U_rTOS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				break;
+			}
+			break;
+
+		case HighVoltageSide:
+			// --- Correct by configured slack node voltage -------------------
+			if (confSlackNodeVoltagelevel!=0.0) transHVRealAllPhases = confSlackNodeVoltagelevel;
+			
+			// --- Check for measurement of HV voltage level ------------------
+			FixedDouble fdmTransHVRealAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
+			if (fdmTransHVRealAllPhases!=null) {
+				double mHVRealAllPhases = fdmTransHVRealAllPhases.getValue();
+				if (mHVRealAllPhases==0) {
+					// --- Check if the transformer is used -------------------
+					if (this.isTransformerUsed(tss)==true) {
+						// --- Use the above voltage level as fallback --------
+						// --- => Nothing to do here --------------------------
+					} else {
+						// --- Really 0.0: use this measurement ---------------
+						transHVRealAllPhases = mHVRealAllPhases;						
+					}
+				} else {
+					transHVRealAllPhases = mHVRealAllPhases;
+				}
+				// --- Correct IO-List value? ---------------------------------
+				if (mHVRealAllPhases!=transHVRealAllPhases) {
+					fdmTransHVRealAllPhases.setValue(transHVRealAllPhases);
+				}
+			}
+			
+			// --- Calculate low voltage level --------------------------------
+			switch (tapSide) {
+			case LowVoltageSide:
+				transLVRealAllPhases = transHVRealAllPhases / U_rTOS * U_rTUS * (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
+				break;
+
+			case HighVoltageSide:
+				transLVRealAllPhases = transHVRealAllPhases / U_rTOS * U_rTUS / (1 + voltageDeltaPerTap * (tapPos.getValue() - tapNeutral)/100);
 				break;
 			}
 			break;
 		}
 		
+		// --- TODO Martin: Check if the below is right (Math.sqrt(3 & high voltage level ----------------------------
+		if (this.getTransformerDataModel().isUpperVoltage_ThriPhase()==true) {
+			this.setTransformerHighVoltageLevelReal(transHVRealAllPhases / Math.sqrt(3));
+		} else {
+			this.setTransformerHighVoltageLevelReal(transHVRealAllPhases);
+		}
 		
-		// --- TODO Martin: Check if this is right ----------------------------
 		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==true) {
 			this.setTransformerLowVoltageLevelReal(transLVRealAllPhases / Math.sqrt(3));
 		} else {
@@ -209,19 +249,19 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	 */
 	private void calculateTransformerImpedance(TechnicalSystemState tss) {
 		
-		//Get Values from DataModel
+		// --- Get Values from DataModel ------------------
 		double U_rTUS = this.getTransformerDataModel().getLowerVoltage_vmLV();
 		double u_kr = this.getTransformerDataModel().getShortCircuitImpedance_vmImp();
 		double S_rT = this.getTransformerDataModel().getRatedPower_sR();
 		double P_krT = this.getTransformerDataModel().getCopperLosses_pCu();
 		
-		//Calculation
+		// --- Do calculation -----------------------------
 		double u_Rr = P_krT / (S_rT*1000) * 100;
 		double Z_1TUS = u_kr / 100 * U_rTUS*U_rTUS / S_rT;
 		double R_1TUS = u_Rr / 100 * U_rTUS*U_rTUS / S_rT;
 		double X_1TUS = Math.sqrt(Z_1TUS*Z_1TUS - R_1TUS*R_1TUS);
 		
-		//Save calculated data
+		//--- Locally remind calculated data --------------
 		this.resistance_R = R_1TUS;
 		this.reactance_X = X_1TUS;
 	}
@@ -269,7 +309,6 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			double dURealAllPhases = this.resistance_R * lvTotaCurrentRealAllPhases - this.reactance_X * lvTotaCurrentImagAllPhases;
 			double dUImagAllPhases = this.reactance_X * lvTotaCurrentRealAllPhases + this.resistance_R * lvTotaCurrentImagAllPhases;
 			
-			
 			// --- Specify for Slack Voltage----------------------------------- 
 			double voltageRealAllPhases = this.getTransformerLowVoltageLevelReal() - dURealAllPhases;
 			double voltageImagAllPhases = -dUImagAllPhases;
@@ -298,11 +337,11 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			residualLoadPAllPhases = this.getTransformerLowVoltageLevelReal() * lvTotaCurrentRealAllPhases;
 			residualLoadQAllPhases = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagAllPhases;
 			
-			// Calculate transformator utilization
+			// Calculate transformer utilization
 			double residualLoadAbs = this.getTransformerLowVoltageLevelReal() * Math.sqrt(Math.pow(lvTotaCurrentRealAllPhases,2) + Math.pow(lvTotaCurrentImagAllPhases, 2));
-			trafoUtilization = residualLoadAbs / this.transformerDataModel.getRatedPower_sR();
+			trafoUtilization = residualLoadAbs / this.getTransformerDataModel().getRatedPower_sR();
 			
-			// Calculate transformator losses
+			// Calculate transformer losses
 			double ironLosses = this.getTransformerDataModel().getIronLosses_pFe() * 1000.0;
 			trafoLossesPAllPhases = ironLosses + (dURealAllPhases * lvTotaCurrentRealAllPhases + dUImagAllPhases * lvTotaCurrentImagAllPhases);
 			trafoLossesQAllPhases = -dURealAllPhases * lvTotaCurrentImagAllPhases + dUImagAllPhases * lvTotaCurrentRealAllPhases;
@@ -402,11 +441,11 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			double residualLoadQL3 = -this.getTransformerLowVoltageLevelReal() * lvTotaCurrentImagL3.getValue();
 			residualLoadQAllPhases = residualLoadQL1 + residualLoadQL2 + residualLoadQL3;
 			
-			// Calculate transformator utilization
+			// Calculate transformer utilization
 			double residualLoadAbs = Math.sqrt(Math.pow(residualLoadPAllPhases, 2) + Math.pow(residualLoadQAllPhases, 2));
-			trafoUtilization = residualLoadAbs / this.transformerDataModel.getRatedPower_sR() / 1000000 * 100;
+			trafoUtilization = residualLoadAbs / this.getTransformerDataModel().getRatedPower_sR() / 1000000 * 100;
 			
-			// Calculate transformator losses
+			// Calculate transformer losses
 			double ironLossesSinglePhase = this.getTransformerDataModel().getIronLosses_pFe() * 1000.0 / 3.0;
 			double trafoLossesPL1 = ironLossesSinglePhase + (dURealL1 * lvTotaCurrentRealL1.getValue() + dUImagL1 * lvTotaCurrentImagL1.getValue());
 			double trafoLossesPL2 = ironLossesSinglePhase + (dURealL2 * lvTotaCurrentRealL2.getValue() + dUImagL2 * lvTotaCurrentImagL2.getValue());
@@ -475,6 +514,9 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 		this.setIoListDoubleValue(tss, TransformerSystemVariable.tLossesPAllPhases, trafoLossesPAllPhases);
 		this.setIoListDoubleValue(tss, TransformerSystemVariable.tLossesQAllPhases, trafoLossesQAllPhases);
 
+		this.setIoListDoubleValue(tss, TransformerSystemVariable.hvVoltageRealAllPhases, this.getTransformerHighVoltageLevelReal());
+		this.setIoListDoubleValue(tss, TransformerSystemVariable.hvVoltageImagAllPhases, 0); // TODO ???
+		
 		// --- Active and reactive power (Transformer is slack, power not important for slack) ----
 		this.getLvPowerAllPhases().setActivePower(residualLoadPAllPhases);
 		this.getLvPowerAllPhases().setReactivePower(residualLoadQAllPhases);
@@ -620,6 +662,24 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 	 */
 	public void setTransformerLowVoltageLevelReal(double transformerLowVoltageLevelReal) {
 		this.transformerLowVoltageLevelReal = transformerLowVoltageLevelReal;
+	}
+	
+	// ------------------------------------------------------------------------
+	// --- Access method for the high voltage level of the transformer --------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Returns the high voltage level real for the transformer.
+	 * @return the transformer high voltage level real
+	 */
+	public double getTransformerHighVoltageLevelReal() {
+		return transformerHighVoltageLevelReal;
+	}
+	/**
+	 * Sets the high voltage level real for the transformer.
+	 * @param transformerHighVoltageLevelReal the new transformer high voltage level real
+	 */
+	public void setTransformerHighVoltageLevelReal(double transformerHighVoltageLevelReal) {
+		this.transformerHighVoltageLevelReal = transformerHighVoltageLevelReal;
 	}
 	
 	

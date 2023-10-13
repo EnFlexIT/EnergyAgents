@@ -15,10 +15,12 @@ public class NetworkAggregationTaskThread extends Thread {
 	public enum NetworkAggregationTask {
 		DoNothing,
 		ExecuteNetworkCalculation,
+		UpdateSubBlackBoardModel,
 		CreateDisplayUpdates
 	}
 	
 	private AbstractAggregationHandler aggregationHandler;
+	private AbstractTaskThreadCoordinator taskThreadCoordinator;
 	private AbstractSubNetworkConfiguration subNetConfig;
 	
 	private NetworkAggregationTask currentJob;
@@ -26,12 +28,13 @@ public class NetworkAggregationTaskThread extends Thread {
 	// --- Variables for the execution of the network calculations -- 
 	private long evaluationStepEndTime;
 	private boolean rebuildDecisionGraph;
+	private boolean updateSubBlackboardModel;
 	
 	// --- Variables for the display update -------------------------
 	private HashMap<String, TechnicalSystemStateEvaluation> lastStateUpdates;
 	private long displayTime;
 	
-	private boolean doTerminate;
+	private boolean isDoTerminate;
 	
 	
 	/**
@@ -41,8 +44,9 @@ public class NetworkAggregationTaskThread extends Thread {
 	 * @param subNetConfig the actual AbstractSubNetworkConfiguration
 	 * @param executerThreadName the executer thread name
 	 */
-	public NetworkAggregationTaskThread(AbstractAggregationHandler aggregationHandler, AbstractSubNetworkConfiguration subNetConfig, String executerThreadName) {
+	public NetworkAggregationTaskThread(AbstractAggregationHandler aggregationHandler, AbstractTaskThreadCoordinator taskThreadCoordinator, AbstractSubNetworkConfiguration subNetConfig, String executerThreadName) {
 		this.aggregationHandler = aggregationHandler;
+		this.taskThreadCoordinator = taskThreadCoordinator;
 		this.subNetConfig = subNetConfig;
 		this.setName(executerThreadName + "-SubAggregationTaskThread-" + this.subNetConfig.getID());
 		this.registerPerformanceMeasurements();
@@ -69,24 +73,29 @@ public class NetworkAggregationTaskThread extends Thread {
 	}
 	
 	/**
-	 * Sets that the thread has nothing to do after an notify arives.
+	 * Sets that the thread has nothing to do after an notify arrives.
 	 */
 	public void setDoNothing() {
 		this.currentJob = NetworkAggregationTask.DoNothing;
 	}
-
 	/**
 	 * Executes the evaluation and network calculation until the specified time.
 	 *
 	 * @param timeUntil the time to evaluate until
 	 * @param rebuildDecisionGraph the rebuild decision graph
 	 */
-	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph) {
+	public void runEvaluationUntil(long timeUntil, boolean rebuildDecisionGraph, boolean upadateSubBlackboardModel) {
 		this.evaluationStepEndTime = timeUntil;
 		this.rebuildDecisionGraph = rebuildDecisionGraph;
+		this.updateSubBlackboardModel = upadateSubBlackboardModel;
 		this.currentJob = NetworkAggregationTask.ExecuteNetworkCalculation;
 	}
-	
+	/**
+	 * Set to call the sub blackboard model update.
+	 */
+	public void updateSubBlackboardModel() {
+		this.currentJob = NetworkAggregationTask.UpdateSubBlackBoardModel;
+	}
 	/**
 	 * Forwards the last system states updates to the display updater.
 	 *
@@ -109,10 +118,10 @@ public class NetworkAggregationTaskThread extends Thread {
 			
 			// --- Wait for notification on the below HashMap -------
 			if (this.currentJob==null) {
-				synchronized(this.aggregationHandler.getNetworkAggregationTaskTrigger()) {
+				synchronized(this.taskThreadCoordinator.getNetworkAggregationTaskTrigger()) {
 					try {
-						this.aggregationHandler.setNetworkAggregationTaskThreadDone(this);
-						this.aggregationHandler.getNetworkAggregationTaskTrigger().wait();
+						this.taskThreadCoordinator.setNetworkAggregationTaskThreadDone(this);
+						this.taskThreadCoordinator.getNetworkAggregationTaskTrigger().wait();
 						
 					} catch (InterruptedException iEx) {
 						//iEx.printStackTrace();
@@ -121,7 +130,7 @@ public class NetworkAggregationTaskThread extends Thread {
 			}
 			
 			// --- Terminate this thread ? --------------------------
-			if (this.isDoTerminate()==true) break;
+			if (this.isDoTerminate==true) break;
 			
 			if (this.currentJob==null) continue;
 			
@@ -139,12 +148,20 @@ public class NetworkAggregationTaskThread extends Thread {
 						ex.printStackTrace();
 					}
 					this.aggregationHandler.setPerformanceMeasurementFinalized(stratExMeasureID);
-					// --- Update the sub blackboard model ---------- 
-					netCalcStrategy.updateSubBlackboardModel();
+					// --- Update the sub blackboard model ----------
+					if (this.updateSubBlackboardModel==true) {
+						netCalcStrategy.updateSubBlackboardModel();
+					}
 				}
 				this.currentJob = null;
 				break;
 
+			case UpdateSubBlackBoardModel:
+				// --- Update the strategies SubBlackboardModel -----
+				this.subNetConfig.getNetworkCalculationStrategy().updateSubBlackboardModel();
+				this.currentJob = null;
+				break;
+				
 			case CreateDisplayUpdates:
 				AbstractNetworkModelDisplayUpdater displayUpdater = this.subNetConfig.getNetworkDisplayUpdater();
 				if (displayUpdater!=null) {
@@ -167,17 +184,18 @@ public class NetworkAggregationTaskThread extends Thread {
 			}
 			
 			// --- Terminate this thread ? --------------------------
-			if (this.isDoTerminate()==true) break;
+			if (this.isDoTerminate==true) break;
 			
 		}
 	}
 	
 	
-	public void setDoTerminate(boolean doTerminate) {
-		this.doTerminate = doTerminate;
+	/**
+	 * Sets to terminate this thread.
+	 */
+	public void terminate() {
+		this.isDoTerminate = true;
 	}
-	public boolean isDoTerminate() {
-		return doTerminate;
-	}
+	
 	
 }

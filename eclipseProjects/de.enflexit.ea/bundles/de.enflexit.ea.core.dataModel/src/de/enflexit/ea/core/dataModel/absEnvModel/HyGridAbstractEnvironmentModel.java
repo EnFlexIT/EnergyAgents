@@ -125,7 +125,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	
 	@XmlTransient
 	private TreeMap<String, AbstractGraphElementLayoutSettings> graphElementLayoutSettings;
-	
 	private ArrayList<GraphElementLayoutSettingsPersistenceTreeMap> graphElementLayoutSettingsPersisted;
 	
 	private ScheduleLengthRestriction scheduleLengthRestriction;
@@ -479,7 +478,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	public TreeMap<String, AbstractGraphElementLayoutSettings> getGraphElementLayoutSettings() {
 		if (graphElementLayoutSettings==null) {
 			graphElementLayoutSettings = new TreeMap<>();
-			
 			List<GraphElementLayoutService> layoutServices = ServiceFinder.findServices(GraphElementLayoutService.class);
 			for (int i = 0; i < layoutServices.size(); i++) {
 				GraphElementLayoutService layoutService = layoutServices.get(i);
@@ -488,7 +486,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 					if (settingsTreeMap!=null) {
 						AbstractGraphElementLayoutSettings layoutSettings = layoutService.convertTreeMapToInstance(settingsTreeMap);
 						if (layoutSettings!=null) {
-							this.getGraphElementLayoutSettings().put(domain, layoutSettings);
+							graphElementLayoutSettings.put(domain, layoutSettings);
 						}
 					}
 				}
@@ -636,8 +634,13 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		
 		// --- Visualization settings ---------------------
 		copy.setDisplayUpdateConfiguration(this.getDisplayUpdateConfiguration().getCopy());
-		copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
 		copy.setGraphElementLayoutSettingsPersisted((ArrayList<GraphElementLayoutSettingsPersistenceTreeMap>) this.getGraphElementLayoutSettingsPersisted().clone());
+		// ------------------------------------------------
+		// ------------------------------------------------
+		// ==> Most probably not required, since the getter produces everything 
+		//copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
+		// ------------------------------------------------
+		// ------------------------------------------------
 		
 		// --- Deployment settings ------------------------
 		copy.setDeploymentSettings(this.getDeploymentSettings().getCopy());

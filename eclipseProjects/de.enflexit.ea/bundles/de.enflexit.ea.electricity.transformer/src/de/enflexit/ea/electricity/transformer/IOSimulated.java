@@ -20,7 +20,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.blackboard.CurrentLevelAnswer;
 import de.enflexit.ea.electricity.blackboard.ElectricityRequestObjective;
 import de.enflexit.ea.electricity.blackboard.VoltageLevelAnswer;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.FixedVariableList;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
@@ -45,7 +45,6 @@ public class IOSimulated extends AbstractIOSimulated {
 		super(agent);
 		this.setTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel(false);
 	}
-	
 	
 	/**
 	 * Processes single blackboard answers.
@@ -72,8 +71,8 @@ public class IOSimulated extends AbstractIOSimulated {
 				// --- Three phase flow ---------------------------------------
 				TriPhaseElectricalNodeState tpNodeState = (TriPhaseElectricalNodeState) vla.getElectricalNodeState(); 
 				if (tpNodeState.getL1()!=null) {
-					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);;
-					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);;
+					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);
+					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);
 				}
 				
 			} else if (vla.getElectricalNodeState() instanceof UniPhaseElectricalNodeState) {

@@ -72,6 +72,7 @@ public class NetworkModelToCsvMapper {
 	private SetupTableModel tableModelBranch;
 	private SetupTableModel tableModelSensor;
 
+	
 	/**
 	 * Instantiates a NetworkModelToCsvMapper
 	 *
@@ -238,8 +239,7 @@ public class NetworkModelToCsvMapper {
 	}
 
 	/**
-	 * Gets the node setup vector.
-	 * 
+	 * Returns the node setup vector.
 	 * @return the node setup vector
 	 */
 	public Vector<Vector<Double>> getNodeSetupVector() {
@@ -248,10 +248,8 @@ public class NetworkModelToCsvMapper {
 		}
 		return nodeSetupVector;
 	}
-
 	/**
-	 * Gets the slack node vector.
-	 * 
+	 * Returns the slack node vector.
 	 * @return the slack node vector
 	 */
 	public Vector<SlackNodeDescription> getSlackNodeVector() {
@@ -260,10 +258,8 @@ public class NetworkModelToCsvMapper {
 		}
 		return slackNodeVector;
 	}
-
 	/**
-	 * Gets the node index to GraphNode.
-	 * 
+	 * Returns the node index to GraphNode.
 	 * @return the node index to GraphNode
 	 */
 	public HashMap<Integer, GraphNode> getNodeNumberToGraphNode() {
@@ -272,10 +268,8 @@ public class NetworkModelToCsvMapper {
 		}
 		return nodeNumberToGraphNode;
 	}
-
 	/**
-	 * Gets the graph node to node number.
-	 * 
+	 * Returns the graph node to node number.
 	 * @return the graph node to node number
 	 */
 	public HashMap<GraphNode, Integer> getGraphNodeToNodeNumber() {
@@ -284,10 +278,8 @@ public class NetworkModelToCsvMapper {
 		}
 		return graphNodeToNodeNumber;
 	}
-
 	/**
-	 * Gets the network component id to node number.
-	 * 
+	 * Returns the network component id to node number.
 	 * @return the network component id to node number
 	 */
 	public HashMap<String, Integer> getNetworkComponentIdToNodeNumber() {
@@ -309,6 +301,60 @@ public class NetworkModelToCsvMapper {
 		return nodeNumberToNetworkComponentId;
 	}
 
+	// --------------------------------------------------------------
+	// --- Some additional help functions ---------------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the GraphNode of the specified {@link GraphNode} ID.
+	 *
+	 * @param graphNodeID the graph node ID
+	 * @return the network component ID from graph node ID
+	 */
+	public GraphNode getGraphNode(String graphNodeID) {
+		GraphElement graphElement = this.networkModel.getGraphElement(graphNodeID);
+		if (graphElement instanceof GraphNode) {
+			return (GraphNode) graphElement;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link GraphNode} from {@link NetworkComponent} ID.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return the graph node ID from network component ID
+	 */
+	public GraphNode getGraphNodeFromNetworkComponentID(String networkComponentID) {
+		Integer nodeNumber = this.getNetworkComponentIdToNodeNumber().get(networkComponentID);
+		return this.getNodeNumberToGraphNode().get(nodeNumber);
+	}
+	
+	/**
+	 * Returns the {@link GraphNode}s ID for the specified {@link NetworkComponent} ID.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return the graph node ID from network component ID
+	 */
+	public String getGraphNodeIDFromNetworkComponentID(String networkComponentID) {
+		return this.getGraphNodeFromNetworkComponentID(networkComponentID).getId();
+	}
+	/**
+	 * Returns the {@link NetworkComponent} ID from the specified {@link GraphNode} ID.
+	 *
+	 * @param graphNodeID the graph node ID
+	 * @return the network component ID from graph node ID
+	 */
+	public String getNetworkComponentIDFromGraphNodeID(String graphNodeID) {
+		
+		GraphNode graphNode = this.getGraphNode(graphNodeID);
+		if (graphNode==null) return null;
+		
+		Integer nodeNumber = this.getGraphNodeToNodeNumber().get(graphNode);
+		return this.getNodeNumberToNetworkComponentId().get(nodeNumber);
+	}
+	
+	
+	
 	/**
 	 * Returns the sorted Vector of {@link NetworkComponent}s.
 	 * 
@@ -337,8 +383,7 @@ public class NetworkModelToCsvMapper {
 
 			// --- Check single NetworkComponent ------------------------------
 			NetworkComponent netComp = netCompVector.get(i);
-			HashSet<GraphElement> graphNodeElements = this.networkModel.getGraphElementsOfNetworkComponent(netComp,
-					new GraphNode());
+			HashSet<GraphElement> graphNodeElements = this.networkModel.getGraphElementsOfNetworkComponent(netComp, new GraphNode());
 			if (graphNodeElements.size() == 1) {
 				// --- Distribution nodes only --------------------------------
 				double dIsloadNode = 0;
@@ -384,13 +429,9 @@ public class NetworkModelToCsvMapper {
 								dIsloadNode = 1;
 							}
 						} else if (dataModelArray[0] == null) {
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
-									+ "] Data model incomplete: No properties instance set for node "
-									+ graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Data model incomplete: No properties instance set for node " + graphNode.getId() + ", " + netComp.getType() + " " + netComp.getId());
 						} else {
-							System.err.println("==> ToDo: [" + this.getClass().getSimpleName()
-									+ "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName()
-									+ "'!");
+							System.err.println("==> ToDo: [" + this.getClass().getSimpleName() + "] Found unknow GraphNode data type '" + dataModelArray[0].getClass().getName() + "'!");
 						}
 
 					}
@@ -404,14 +445,12 @@ public class NetworkModelToCsvMapper {
 				this.getNodeSetupVector().add(row);
 
 				// --- Define single row for the table model ------------------
-				Vector<Double> newTableRow = this
-						.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount());
+				Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelNodes().getColumnCount());
 				int colNodeNumber = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_NodeNumber.toString());
 				newTableRow.set(colNodeNumber, (double) nodeNumber);
 				int colIsLoadNode = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_isLoadNode.toString());
 				newTableRow.set(colIsLoadNode, dIsloadNode);
-				int colNominalPower = this.getTableModelNodes()
-						.findColumn(SetupColumn.NodeSetup_NominalPower.toString());
+				int colNominalPower = this.getTableModelNodes().findColumn(SetupColumn.NodeSetup_NominalPower.toString());
 				newTableRow.set(colNominalPower, dDEAPwrNom);
 				this.getTableModelNodes().addRow(newTableRow);
 
@@ -444,7 +483,6 @@ public class NetworkModelToCsvMapper {
 		}
 		return branchSetupVector;
 	}
-
 	/**
 	 * Gets the branch (cable, breaker or mBox) line index to network component
 	 * HashMap.
@@ -457,7 +495,6 @@ public class NetworkModelToCsvMapper {
 		}
 		return branchDescription;
 	}
-
 	/**
 	 * Gets the sensor setup vector.
 	 * 
@@ -481,14 +518,12 @@ public class NetworkModelToCsvMapper {
 
 			// --- Check domain of the NetworkComponent -----------------------
 			NetworkComponent netComp = this.networkModel.getNetworkComponent(edge);
-			if (this.domainCluster != null && this.domainCluster.getNetworkComponents().contains(netComp) == false)
-				continue;
+			if (this.domainCluster!=null && this.domainCluster.getNetworkComponents().contains(netComp)==false) continue;
 
+			
 			// --- Check domain of the NetworkComponent -----------------------
 			String domain = this.networkModel.getDomain(netComp);
-			if (ElectricityDomainIdentification.isElectricityDomain(domain) == false)
-				continue;
-//			if (domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V)==false && domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV)==false) continue; 
+			if (ElectricityDomainIdentification.isElectricityDomain(domain) == false) continue;
 
 			// --- Get start and end point of the Edge ------------------------
 			Pair<GraphNode> edgeNodes = graph.getEndpoints(edge);
@@ -511,15 +546,11 @@ public class NetworkModelToCsvMapper {
 
 					CableProperties cable = (CableProperties) dataModelArray[0];
 					double dLengthLine = cable.getLength().getValue();
-					double dResistanceLinear_R = cable.getLinearResistance() == null ? 0.0
-							: cable.getLinearResistance().getValue();
-					double dReactanceLinear_X = cable.getLinearReactance() == null ? 0.0
-							: cable.getLinearReactance().getValue();
-					double dLinearCapacitance_C = cable.getLinearCapacitance() == null ? 0.0
-							: cable.getLinearCapacitance().getValue();
-					double dLinearConductance_G = cable.getLinearConductance() == null ? 0.0
-							: cable.getLinearConductance().getValue();
-					double nMaxCurrent = cable.getMaxCurrent() == null ? 0.0 : cable.getMaxCurrent().getValue();
+					double dResistanceLinear_R  = cable.getLinearResistance() == null  ? 0.0 : cable.getLinearResistance().getValue();
+					double dReactanceLinear_X   = cable.getLinearReactance() == null   ? 0.0 : cable.getLinearReactance().getValue();
+					double dLinearCapacitance_C = cable.getLinearCapacitance() == null ? 0.0 : cable.getLinearCapacitance().getValue() * 1E-9;
+					double dLinearConductance_G = cable.getLinearConductance() == null ? 0.0 : cable.getLinearConductance().getValue();
+					double nMaxCurrent          = cable.getMaxCurrent() == null        ? 0.0 : cable.getMaxCurrent().getValue();
 
 					if (cable instanceof SensorProperties) {
 						// ----------------------------------------------------
@@ -543,13 +574,10 @@ public class NetworkModelToCsvMapper {
 							this.getSensorSetupVector().addElement(sensorSingle);
 
 							// --- Remind in table model too ------------------
-							Vector<Double> newTableRow = this
-									.createDefaultTableModelRow(this.getTableModelSensors().getColumnCount());
-							int colNodeNumberFrom = this.getTableModelSensors()
-									.findColumn(SetupColumn.SensorSetup_NodeNumberFrom.toString());
+							Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelSensors().getColumnCount());
+							int colNodeNumberFrom = this.getTableModelSensors().findColumn(SetupColumn.SensorSetup_NodeNumberFrom.toString());
 							newTableRow.set(colNodeNumberFrom, (double) nodeNumberFrom);
-							int colNodeNumberTo = this.getTableModelSensors()
-									.findColumn(SetupColumn.SensorSetup_NodeNumberTo.toString());
+							int colNodeNumberTo = this.getTableModelSensors().findColumn(SetupColumn.SensorSetup_NodeNumberTo.toString());
 							newTableRow.set(colNodeNumberTo, (double) nodeNumberTo);
 							this.getTableModelSensors().addRow(newTableRow);
 						}
@@ -582,46 +610,30 @@ public class NetworkModelToCsvMapper {
 					this.getBranchSetupVector().add(row);
 
 					// --- Define single row for the table model --------------
-					Vector<Double> newTableRow = this
-							.createDefaultTableModelRow(this.getTableModelBranches().getColumnCount());
-					int colNodeNumberFrom = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_NodeNumberFrom.toString());
+					Vector<Double> newTableRow = this.createDefaultTableModelRow(this.getTableModelBranches().getColumnCount());
+					int colNodeNumberFrom = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_NodeNumberFrom.toString());
 					newTableRow.set(colNodeNumberFrom, (double) nodeNumberFrom);
-					int colNodeNumberTo = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_NodeNumberTo.toString());
+					int colNodeNumberTo = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_NodeNumberTo.toString());
 					newTableRow.set(colNodeNumberTo, (double) nodeNumberTo);
-
-					int colLineLength = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_LengthLine.toString());
+					int colLineLength = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LengthLine.toString());
 					newTableRow.set(colLineLength, dLengthLine);
-
-					int colLinearResistance = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_LinearResistance.toString());
+					int colLinearResistance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearResistance.toString());
 					newTableRow.set(colLinearResistance, dResistanceLinear_R);
-					int colLinearReactance = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_LinearReactance.toString());
+					int colLinearReactance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearReactance.toString());
 					newTableRow.set(colLinearReactance, dReactanceLinear_X);
-					int colLinearCapacitance = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_LinearCapacitance.toString());
+					int colLinearCapacitance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearCapacitance.toString());
 					newTableRow.set(colLinearCapacitance, dLinearCapacitance_C);
-					int colLinearConductance = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_LinearConductance.toString());
+					int colLinearConductance = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_LinearConductance.toString());
 					newTableRow.set(colLinearConductance, dLinearConductance_G);
-
-					int colMaxCurrent = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_MaxCurrent.toString());
+					int colMaxCurrent = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_MaxCurrent.toString());
 					newTableRow.set(colMaxCurrent, nMaxCurrent);
-
-					int colBranchNumber = this.getTableModelBranches()
-							.findColumn(SetupColumn.BranchSetup_BranchNumber.toString());
+					int colBranchNumber = this.getTableModelBranches().findColumn(SetupColumn.BranchSetup_BranchNumber.toString());
 					newTableRow.set(colBranchNumber, (double) branchNumber);
 
 					this.getTableModelBranches().addRow(newTableRow);
 
 					// --- Remind indexes for this branch (cable etc.) --------
-					this.getBranchDescription()
-							.add(new BranchDescription(nodeNumberFrom, nodeNumberTo, branchNumber, netComp));
-
+					this.getBranchDescription().add(new BranchDescription(nodeNumberFrom, nodeNumberTo, branchNumber, netComp));
 					branchNumber++;
 				}
 			} // end if 'instanceof Object[]'

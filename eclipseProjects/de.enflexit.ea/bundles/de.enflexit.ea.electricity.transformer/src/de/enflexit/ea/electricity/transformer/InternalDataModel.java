@@ -15,7 +15,6 @@ import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalMeasurement;
 import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookEntry;
 import de.enflexit.ea.electricity.ElectricityDomainIdentification;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel;
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBookEvent;
 import de.enflexit.jade.phonebook.PhoneBookEvent.Type;
@@ -46,16 +45,6 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 	private ElectricalMeasurement sensorMeasurement;
 
 	private FixedVariableList setpointsToSystem;
-	
-	private double requestedVoltageAdjustment = 0;
-	private int nDistrictAgentsForCNP;
-	
-	private int acceptedVoltageAdjustment = 0;
-	
-	private int transformerStep = 0;
-	private double possibleVoltageAdjustment = 0;
-	
-	private boolean newSetPointFromCNP = false;
 	
 	
 	/**
@@ -260,53 +249,6 @@ public class InternalDataModel extends AbstractInternalDataModel<EnergyAgentPhon
 		this.setpointsToSystem = setpointsToSystem;
 	}
 
-
-	public double getRequestedVoltageAdjustment() {
-		return requestedVoltageAdjustment;
-	}
-	public void setRequestedVoltageAdjustment(double requestedVoltageAdjustment) {
-		this.requestedVoltageAdjustment = requestedVoltageAdjustment;
-	}
-
-	
-	public int getnDistrictAgentsForCNP() {
-		return nDistrictAgentsForCNP;
-	}
-	public void setnDistrictAgentsForCNP(int nDistrictAgentsForCNP) {
-		this.nDistrictAgentsForCNP = nDistrictAgentsForCNP;
-	}
-
-	
-	public int getAcceptedVoltageAdjustment() {
-		return acceptedVoltageAdjustment;
-	}
-	public void setAcceptedVoltageAdjustment(int acceptedVoltageAdjustment) {
-		this.acceptedVoltageAdjustment = acceptedVoltageAdjustment;
-	}
-
-
-	public int getTransformerStep() {
-		return transformerStep;
-	}
-	public void setTransformerStep(int transformerStep) {
-		this.transformerStep = transformerStep;
-	}
-
-
-	public double getPossibleVoltageAdjustment() {
-		return possibleVoltageAdjustment;
-	}
-	public void setPossibleVoltageAdjustment(double possibleVoltageAdjustment) {
-		this.possibleVoltageAdjustment = possibleVoltageAdjustment;
-	}
-
-
-	public boolean isNewSetPointFromCNP() {
-		return newSetPointFromCNP;
-	}
-	public void setNewSetPointFromCNP(boolean newSetPointFromCNP) {
-		this.newSetPointFromCNP = newSetPointFromCNP;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.AbstractInternalDataModel#getPhoneBookEntryClass()

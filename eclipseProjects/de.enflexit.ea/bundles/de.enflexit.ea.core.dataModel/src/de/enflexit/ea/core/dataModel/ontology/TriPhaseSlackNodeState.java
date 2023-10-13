@@ -7,7 +7,7 @@ import jade.core.*;
 /**
 * Protege name: TriPhaseSlackNodeState
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class TriPhaseSlackNodeState extends SlackNodeState{ 
 
@@ -36,17 +36,6 @@ public class TriPhaseSlackNodeState extends SlackNodeState{
     return true;
    }
    /**
-* Protege name: slackNodeStateL1
-   */
-   private UniPhaseSlackNodeState slackNodeStateL1;
-   public void setSlackNodeStateL1(UniPhaseSlackNodeState value) { 
-    this.slackNodeStateL1=value;
-   }
-   public UniPhaseSlackNodeState getSlackNodeStateL1() {
-     return this.slackNodeStateL1;
-   }
-
-   /**
 * Protege name: slackNodeStateL2
    */
    private UniPhaseSlackNodeState slackNodeStateL2;
@@ -66,6 +55,17 @@ public class TriPhaseSlackNodeState extends SlackNodeState{
    }
    public UniPhaseSlackNodeState getSlackNodeStateL3() {
      return this.slackNodeStateL3;
+   }
+
+   /**
+* Protege name: slackNodeStateL1
+   */
+   private UniPhaseSlackNodeState slackNodeStateL1;
+   public void setSlackNodeStateL1(UniPhaseSlackNodeState value) { 
+    this.slackNodeStateL1=value;
+   }
+   public UniPhaseSlackNodeState getSlackNodeStateL1() {
+     return this.slackNodeStateL1;
    }
 
 }

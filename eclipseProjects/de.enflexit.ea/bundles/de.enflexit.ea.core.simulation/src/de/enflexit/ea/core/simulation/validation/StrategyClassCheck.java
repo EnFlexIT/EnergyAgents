@@ -220,22 +220,24 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 		MessageType msgType = MessageType.Error;
 		
 		if (isAggregation==false) {
-			// ------------------------------------------------------------------
-			// --- Check for TechnicalSystem instances --------------------------
-			// ------------------------------------------------------------------
+			// ----------------------------------------------------------------
+			// --- Check for TechnicalSystem instances ------------------------
+			// ----------------------------------------------------------------
 			if (AbstractSnapshotStrategy.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
 			} else if (AbstractEvaluationStrategyRT.class.isAssignableFrom(strategyClass)) {
-				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
+				// --- Obviously, this is no error. Therefore ... -------------
+				//msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
 			}
 		} else {
-			// ------------------------------------------------------------------
-			// --- Check for TechnicalSystemGroup instances ---------------------
-			// ------------------------------------------------------------------
+			// ----------------------------------------------------------------
+			// --- Check for TechnicalSystemGroup instances -------------------
+			// ----------------------------------------------------------------
 			if (AbstractGroupSnapshotStrategy.class.isAssignableFrom(strategyClass)) {
 				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a snapshot strategy and can not be used for discrete simulations!";
 			} else  if (AbstractGroupEvaluationStrategyRT.class.isAssignableFrom(strategyClass)) {
-				msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
+				// --- Obviously, this is no error. Therefore ... -------------
+				//msgDescription = "The evaluation strategy for the EOM model of " + netCompDescription + " is a real time strategy and can not be used for discrete simulations!";
 			}
 		}
 		return this.getHyGridValidationMessage(msg, msgDescription, msgType);

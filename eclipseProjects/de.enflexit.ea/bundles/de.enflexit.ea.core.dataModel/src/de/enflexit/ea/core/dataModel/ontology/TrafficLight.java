@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: TrafficLight
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class TrafficLight implements Concept {
 

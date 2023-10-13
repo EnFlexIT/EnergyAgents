@@ -30,7 +30,8 @@ import agentgui.core.application.Application;
 import de.enflexit.common.csv.CsvDataController;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.electricity.transformer.TransformerBundleHelper;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TapSide;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
 
 /**
  * The Class TransformerStaticModelSettings.
