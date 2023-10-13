@@ -233,7 +233,6 @@ public class ElectricityDomainIdentification {
 	 */
 	private static Project getProject() {
 		if (currProject!=null) return currProject;
-		
 		return Application.getProjectFocused();
 	}
 

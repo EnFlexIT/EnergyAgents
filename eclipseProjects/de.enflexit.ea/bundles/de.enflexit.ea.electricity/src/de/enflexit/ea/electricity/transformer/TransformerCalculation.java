@@ -97,22 +97,7 @@ public class TransformerCalculation {
 	 */
 	public TransformerDataModel getTransformerDataModel() {
 		if (transformerDataModel==null && this.getOptionModelController()!=null) {
-			// --- Get all static models --------------------------------
-			List<SystemVariableDefinitionStaticModel> sysVarDefStaticModelList = new ArrayList<>();
-			List<SystemVariableDefinition> sysVarDefList = this.getOptionModelController().getTechnicalSystem().getSystemVariables();
-			for (SystemVariableDefinition sysVarDef : sysVarDefList) {
-				if (sysVarDef instanceof SystemVariableDefinitionStaticModel) {
-					sysVarDefStaticModelList.add((SystemVariableDefinitionStaticModel) sysVarDef);
-				}
-			}
-			// --- Check each static model for a transformer model ------
-			for (SystemVariableDefinitionStaticModel sysVarDefStaticModel : sysVarDefStaticModelList) {
-				Serializable model = this.getOptionModelController().getStaticModelInstance(sysVarDefStaticModel);
-				if (model instanceof TransformerDataModel) {
-					transformerDataModel = (TransformerDataModel) model;
-					break;
-				}
-			}
+			transformerDataModel = TransformerCalculation.getTransformerDataModelFromOptionModelController(this.getOptionModelController());
 		}
 		return transformerDataModel;
 	}
@@ -421,6 +406,49 @@ public class TransformerCalculation {
 			return upElNodeState.getCurrent().getValue() * (upElNodeState.getQCalculated() / upElNodeState.getSCalculated());
 		}
 		return 0.0;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, some static help methods --------------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the transformer data model from the specified {@link TechnicalSystem}.
+	 *
+	 * @param technicalSystem the technical system
+	 * @return the transformer data model from option model controller
+	 */
+	public static TransformerDataModel getTransformerDataModelFromTechnicalSystem(TechnicalSystem technicalSystem) {
+		if (technicalSystem==null) return null;
+		OptionModelController omc = new OptionModelController();
+		omc.setTechnicalSystem(technicalSystem);
+		return getTransformerDataModelFromOptionModelController(omc);
+	}
+	/**
+	 * Returns the transformer data model from the specified option model controller.
+	 *
+	 * @param omc the OptionModelController to use
+	 * @return the transformer data model from option model controller
+	 */
+	public static TransformerDataModel getTransformerDataModelFromOptionModelController(OptionModelController omc) {
+		
+		if (omc==null) return null;
+		
+		List<SystemVariableDefinitionStaticModel> sysVarDefStaticModelList = new ArrayList<>();
+		List<SystemVariableDefinition> sysVarDefList = omc.getTechnicalSystem().getSystemVariables();
+		for (SystemVariableDefinition sysVarDef : sysVarDefList) {
+			if (sysVarDef instanceof SystemVariableDefinitionStaticModel) {
+				sysVarDefStaticModelList.add((SystemVariableDefinitionStaticModel) sysVarDef);
+			}
+		}
+		// --- Check each static model for a transformer model ------
+		for (SystemVariableDefinitionStaticModel sysVarDefStaticModel : sysVarDefStaticModelList) {
+			Serializable model = omc.getStaticModelInstance(sysVarDefStaticModel);
+			if (model instanceof TransformerDataModel) {
+				return (TransformerDataModel) model;
+			}
+		}
+		return null;
 	}
 	
 	
