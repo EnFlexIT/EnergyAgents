@@ -309,6 +309,8 @@ public class TransformerCalculation {
 	 */
 	public void moveCalculatedTransformerStatesToSecondSchedule() {
 		
+		if (true) return;
+		
 		TechnicalSystemStateEvaluation tsseWorkedAt = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluation(this.tsseCurrent);
 		TechnicalSystemStateEvaluation tsseOriginal = this.tsseCurrentOriginal;
 		// --- Reset local reminder variables -------------

@@ -106,12 +106,18 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		}
 	}
 	
-	private void appendSeriesOfStates(String networkID, TechnicalSystemStateEvaluation lastState) {
+	/**
+	 * Appends a series of states to the schedule controller.
+	 * @param networkComponentID the network component ID
+	 * @param lastState the last state
+	 */
+	private void appendSeriesOfStates(String networkComponentID, TechnicalSystemStateEvaluation lastState) {
 		if (lastState==null) return;
 		if (lastState.getParent()!=null) {
-			this.appendSeriesOfStates(networkID, lastState.getParent());
+			this.appendSeriesOfStates(networkComponentID, lastState.getParent());
 		}
-		this.appendToNetworkComponentsScheduleController(networkID, lastState);
+		lastState.setParent(null);
+		this.appendToNetworkComponentsScheduleController(networkComponentID, lastState);
 	}
 	
 	
