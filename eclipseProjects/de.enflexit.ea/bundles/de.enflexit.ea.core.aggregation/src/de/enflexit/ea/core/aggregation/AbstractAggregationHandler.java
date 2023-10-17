@@ -915,34 +915,34 @@ public abstract class AbstractAggregationHandler {
 	 * @return the last technical system state from schedule controller
 	 */
 	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID) {
-		return this.getLastTechnicalSystemStateFromScheduleController(netCompID, true);
+		return this.getLastTechnicalSystemStateFromScheduleController(netCompID, 0, true);
 	}
 	/**
 	 * Returns the last {@link TechnicalSystemStateEvaluation} from the specified NetworkComponent's ScheduleController
 	 * (defined by it's network component ID).
 	 *
 	 * @param netCompID the ID of the NetworkComponent
+	 * @param scheduleIndex the index of the Schedule to use
 	 * @param isGetCopy the indicator to get a copy of the last system state or not
 	 * @return the last technical system state from schedule controller
 	 */
-	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID, boolean isGetCopy) {
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID, int scheduleIndex, boolean isGetCopy) {
 
-		TechnicalSystemStateEvaluation tsse = null;
 		ScheduleController sc = this.getNetworkComponentsScheduleController().get(netCompID);
-		if (sc!=null && sc.getScheduleList().getSchedules().size()>0) {
-			Schedule schedule = sc.getScheduleList().getSchedules().get(0);
+		if (sc!=null && sc.getScheduleList().getSchedules().size()>=(scheduleIndex+1)) {
+			Schedule schedule = sc.getScheduleList().getSchedules().get(scheduleIndex);
 			if (schedule!=null) {
 				TechnicalSystemStateEvaluation tsseSchedule = schedule.getTechnicalSystemStateEvaluation();
 				if (tsseSchedule!=null) {
 					if (isGetCopy==true) {
-						tsse = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsseSchedule);
+						return TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsseSchedule);
 					} else {
-						tsse = tsseSchedule;
+						return tsseSchedule;
 					}
 				}
 			}
 		}
-		return tsse;
+		return null;
 	}
 	
 	/**

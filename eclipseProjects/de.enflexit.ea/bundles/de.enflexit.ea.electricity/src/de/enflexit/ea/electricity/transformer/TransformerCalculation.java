@@ -8,7 +8,10 @@ import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.NetworkComponent;
 
+import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
+import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
@@ -46,7 +49,6 @@ public class TransformerCalculation {
 	private TransformerDataModel transformerDataModel;
 	
 	private TechnicalSystemStateEvaluation tsseCurrent;
-	private TechnicalSystemStateEvaluation tsseCurrentOriginal;
 	
 	/**
 	 * Instantiates a new transformer integration.
@@ -111,16 +113,16 @@ public class TransformerCalculation {
 	 */
 	public void updateTransformerState(boolean isLowVoltageSide) {
 		if (isLowVoltageSide==true) {
-			this.updateLowVoltageSideTransformerStateForUpwardsCalculation();
+			this.updateLowVoltageSideTransformerState();
 		} else {
-			this.updateHighVoltageSideTransformerStateForUpwardsCalculation();
+			this.updateHighVoltageSideTransformerState();
 		}
 	}
 	/**
 	 * Updates the transformer state according to the calculation direction of the network calculation.
 	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
 	 */
-	private void updateLowVoltageSideTransformerStateForUpwardsCalculation() {
+	private void updateLowVoltageSideTransformerState() {
 	
 		boolean debugThisMethod = false;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
@@ -202,7 +204,7 @@ public class TransformerCalculation {
 	 * Updates the transformer state according to the calculation direction of the network calculation.
 	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
 	 */
-	private void updateHighVoltageSideTransformerStateForUpwardsCalculation() {
+	private void updateHighVoltageSideTransformerState() {
 		
 		boolean debugThisMethod = false;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
@@ -294,36 +296,49 @@ public class TransformerCalculation {
 	// --- From here, some TSSE transformer help functions ----------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
-	 * Returns the latest {@link TechnicalSystemStateEvaluation} from the aggregation handler.
+	 * Returns a working copy of the latest {@link TechnicalSystemStateEvaluation} from the aggregation handler.
 	 * @return the technical system state evaluation
 	 */
 	public TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation() {
 		if (tsseCurrent==null) {
-			tsseCurrent = this.taskThreadCoordinator.getAggregationHandler().getLastTechnicalSystemStateFromScheduleController(this.subNetworkConnection.getConnectingNetworkComponentID(), false);
-			tsseCurrentOriginal = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluation(tsseCurrent, false);
+			// --- Get a copy of the latest TSSE ------------------------------
+			AbstractAggregationHandler aggregationHandler = this.taskThreadCoordinator.getAggregationHandler();
+			TechnicalSystemStateEvaluation tsseLatest = aggregationHandler.getLastTechnicalSystemStateFromScheduleController(this.subNetworkConnection.getConnectingNetworkComponentID(), 0, true);
+			
+			// --- Check time model type --------------------------------------
+			TimeModelType timeModelType = aggregationHandler.getHyGridAbstractEnvironmentModel().getTimeModelType();
+			if (timeModelType==TimeModelType.TimeModelDiscrete) {
+				// --- Consider the discrete step length ----------------------
+				TimeModelDiscrete tmCont = (TimeModelDiscrete) aggregationHandler.getTimeModel();
+				tsseLatest.setStateTime(tmCont.getStep());
+			}
+			
+			// --- Set this copy as current instance --------------------------
+			tsseCurrent = tsseLatest;
+
+			// --- Add to Schedule for network calculation --------------------
+			Schedule secTransSchedule = this.getTransformerScheduleOfNetworkCalculation();
+			
+			// --- Check for the parent -----------------------
+			TechnicalSystemStateEvaluation tsseParent = secTransSchedule.getTechnicalSystemStateEvaluation(); 
+			if (tsseParent!=null) {
+				this.tsseCurrent.setParent(tsseParent);
+			}
+			secTransSchedule.setTechnicalSystemStateEvaluation(this.tsseCurrent);
+			
 		}
 		return tsseCurrent;
 	}
+	
 	/**
-	 * Moves the last calculated transformer states to the second transformer Schedule and restores the state before the network calculations.
+	 * Returns the schedule that is created during the network calculation.
+	 * @return the transformer schedule of network calculation
 	 */
-	public void moveCalculatedTransformerStatesToSecondSchedule() {
+	private Schedule getTransformerScheduleOfNetworkCalculation() {
 		
-		if (true) return;
-		
-		TechnicalSystemStateEvaluation tsseWorkedAt = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluation(this.tsseCurrent);
-		TechnicalSystemStateEvaluation tsseOriginal = this.tsseCurrentOriginal;
-		// --- Reset local reminder variables -------------
-		this.tsseCurrent = null;
-		this.tsseCurrentOriginal = null;
-
-		
+		// --- Get the second Schedule --------------------
 		String strategyClassName = this.taskThreadCoordinator.getClass().getName();
 		final ScheduleController sc = this.subNetworkConnection.getResultScheduleController();
-		
-		// ------------------------------------------------
-		// --- Update the second transformer schedule -----
-		// ------------------------------------------------
 		Schedule secTransSchedule = ScheduleListHelper.getScheduleByStrategyClass(sc.getScheduleList(), strategyClassName);
 		if (secTransSchedule==null) {
 			// --- Create that Schedule -------------------
@@ -334,35 +349,24 @@ public class TransformerCalculation {
 			secTransSchedule.setPriority(0);
 			sc.getScheduleList().getSchedules().add(secTransSchedule);
 		}
-		// --- Check for the parent -----------------------
-		TechnicalSystemStateEvaluation tsseParent = secTransSchedule.getTechnicalSystemStateEvaluation(); 
-		if (tsseParent!=null) {
-			tsseWorkedAt.setParent(tsseParent);
-		}
-		// --- Set state to schedule ----------------------
-		secTransSchedule.setTechnicalSystemStateEvaluation(tsseWorkedAt);
+		return secTransSchedule;
+	}
+	
+	/**
+	 * Moves the last calculated transformer states to the second transformer Schedule and restores the state before the network calculations.
+	 */
+	public void finalizeTransformerCalculation() {
+
+		this.tsseCurrent = null;
 		
-		// ------------------------------------------------
-		// --- Restore first transformer schedule ---------
-		// ------------------------------------------------
-		Schedule firstTransSchedule = sc.getScheduleList().getSchedules().get(0);
-		if (tsseOriginal!=null) {
-			if (secTransSchedule.getTechnicalSystemStateEvaluation()!=null &&  secTransSchedule.getTechnicalSystemStateEvaluation().getParent()!=null) {
-				tsseOriginal.setParent(secTransSchedule.getTechnicalSystemStateEvaluation().getParent());
-			}
-			firstTransSchedule.setTechnicalSystemStateEvaluation(tsseOriginal);
-		}
-		
- 		// ------------------------------------------------
 		// --- Update Aggregations UI ---------------------
-		// ------------------------------------------------
+		final ScheduleController sc = this.subNetworkConnection.getResultScheduleController();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				sc.setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleListLoaded, null)); 
 			}
 		});
-		
 	}
 	
 	/**

@@ -415,14 +415,21 @@ public abstract class AbstractSlackNodeHandler {
 	public final void updateSlackNodeState() {
 
 		SlackNodeState newSlackNodeState = null;
-		// --- Get the slack node state dependent on ExecutionDataBase --------
+		// --- Get the slack node state dependent on ExecutionDataBase ----------------------------
 		switch (this.getAggregationHandler().getExecutionDataBase()) {
 		case NodePowerFlows:
 			NetworkComponent transformerNC = this.getNetworkComponentTransformer();
 			if (transformerNC!=null) {
-				TechnicalSystemStateEvaluation tsseLast = this.getAggregationHandler().getLastTechnicalSystemStateFromScheduleController(transformerNC.getId());
+				// --- Try getting the state from the network calculation Schedule (index=1) ------
+				TechnicalSystemStateEvaluation tsseLast = this.getAggregationHandler().getLastTechnicalSystemStateFromScheduleController(transformerNC.getId(), 1, true);
 				if (tsseLast!=null) {
 					newSlackNodeState = this.getSlackNodeStateFromLastTransformerState(tsseLast);
+				} else {
+					// --- Backup take from index==0 ---------------------------------------------
+					tsseLast = this.getAggregationHandler().getLastTechnicalSystemStateFromScheduleController(transformerNC.getId(), 0, true); 
+					if (tsseLast!=null) {
+						newSlackNodeState = this.getSlackNodeStateFromLastTransformerState(tsseLast);
+					}
 				}
 			}
 			break;

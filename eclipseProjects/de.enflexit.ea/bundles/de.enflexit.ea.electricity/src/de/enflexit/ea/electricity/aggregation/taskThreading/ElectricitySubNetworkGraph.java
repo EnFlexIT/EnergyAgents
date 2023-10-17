@@ -516,7 +516,7 @@ public class ElectricitySubNetworkGraph {
 
 			TechnicalSystemStateEvaluation tsseTransformer = this.getTransformerCalculation().getTechnicalSystemStateEvaluation();
 			FixedDouble fdHighVoltageRealTransformer  = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tsseTransformer.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
-			double highVoltageRealTransformer = fdHighVoltageRealTransformer.getValue(); 
+			double highVoltageRealTransformer = fdHighVoltageRealTransformer.getValue();
 			
 			return NumberHelper.round(highVoltageRealNode - highVoltageRealTransformer, ElectricityTaskThreadCoordinator.ROUND_PRECISION);
 		}

@@ -94,7 +94,7 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 		}
 		
 		// --- Move so far calculated Transformer TSSE to second schedule -----
-		this.moveCalculatedTransformerStatesToSecondSchedule(); 
+		this.finalizeTransformerCalculation(); 
 		
 		// --- Finally call to update the SubBlackboardModels -----------------
 		this.doTaskUpdateSubBlackboardModel();
@@ -252,10 +252,10 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 	}
 	
 	/**
-	 * Move calculated transformer states to second Transformer schedule.
+	 * Will be invoked to finalize the transformer calculations.
 	 */
-	private void moveCalculatedTransformerStatesToSecondSchedule() {
-		this.getSubNetworkGraph().getSubNetConnectionHash().values().forEach(subNetConn -> subNetConn.getTransformerCalculation().moveCalculatedTransformerStatesToSecondSchedule());
+	private void finalizeTransformerCalculation() {
+		this.getSubNetworkGraph().getSubNetConnectionHash().values().forEach(subNetConn -> subNetConn.getTransformerCalculation().finalizeTransformerCalculation());
 	}
 	
 	

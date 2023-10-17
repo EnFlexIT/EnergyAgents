@@ -478,11 +478,15 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// ------------------------------------------------------
 			// --- Decentral decision process -----------------------
 			// ------------------------------------------------------
-			// --- Use an individual discrete system state type? --------
+			// --- Use an individual discrete system state type? ----
 			DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
 			if (dsTypeIndividual==null) {
 				dsTypeIndividual = DiscreteSystemStateType.Final;
 			}
+			// --- Reduce to states that belongs to time step -------
+			long simStepBegin = this.getTimeModelDiscrete().getTime() - this.getTimeModelDiscrete().getStep();
+			tsse = TechnicalSystemStateHelper.copyTechnicalSystemstateEvaluationWithLimitedParents(tsse, simStepBegin);
+			// --- Prepare return value -----------------------------
 			dsStep = new DiscreteSimulationStep(tsse, dsTypeIndividual);
 		}
 		return dsStep;
