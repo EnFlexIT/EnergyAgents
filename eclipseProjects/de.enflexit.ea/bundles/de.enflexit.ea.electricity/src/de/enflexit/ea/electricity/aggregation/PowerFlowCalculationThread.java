@@ -2,6 +2,7 @@ package de.enflexit.ea.electricity.aggregation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -26,7 +27,6 @@ import energy.helper.UnitConverter;
 import energy.optionModel.EnergyCarrier;
 import energy.optionModel.EnergyFlowInWatt;
 import energy.optionModel.EnergyFlowMeasured;
-import energygroup.GroupTreeNodeObject;
 import energygroup.calculation.AbstractFlowMeasuredAtInterface;
 import energygroup.calculation.FlowMeasuredAtInterfaceEnergy;
 import energygroup.calculation.FlowsMeasuredGroup;
@@ -270,62 +270,67 @@ public class PowerFlowCalculationThread extends Thread {
 			powerPairHashMap = new HashMap<Integer, ActiveReactivePowerPair>();	
 		}
 		
-		// --- Reminder for the transformer power -----------------------------
+		// --- Reminder for the transformer power -------------------------------------------------
 		ActiveReactivePowerPair transformerPowerPair = null;
-		
-		int numberOfChildren = currentParentNode.getChildCount();
-		for (int i=0; i<numberOfChildren; i++) {
-			// --- Get the tree nodes network ID ------------------------------
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) currentParentNode.getChildAt(i);
-			GroupTreeNodeObject gtno = (GroupTreeNodeObject) treeNode.getUserObject();
-			String networkID = gtno.getGroupMember().getNetworkID();
-			Integer nodeNumber = this.getNetworkModelToCsvMapper().getNetworkComponentIdToNodeNumber().get(networkID);
-			if (nodeNumber==null) continue;
+
+		// --- Iterate over all known nodes that require information ------------------------------
+		HashMap<Integer, String> nodeNumberToNetCompIdHashMap = this.getNetworkModelToCsvMapper().getNodeNumberToNetworkComponentId();
+		List<Integer> nodeNumberList = new ArrayList<>(nodeNumberToNetCompIdHashMap.keySet());
+		for (Integer nodeNumber : nodeNumberList) {
 			
+			// --- Get required information for the further proceeding ----------------------------
+			String networkID = nodeNumberToNetCompIdHashMap.get(nodeNumber);
 			boolean isTransfomer = this.isTransformer(networkID);
-			
+
 			double activePower   = 0;
 			double reactivePower = 0;
 			
-			FlowsMeasuredGroupMember efmGrouMember = fmGroup.getFlowsMeasuredGroupMember(treeNode);
-			if (efmGrouMember!=null) {
-				// ------------------------------------------------------------
-				// --- Found measurements for node ----------------------------
-				// --- Cumulate the Energy Flow in Watt -----------------------
-				// ------------------------------------------------------------				
-				ArrayList<AbstractFlowMeasuredAtInterface> afmArray = efmGrouMember.getFlowMeasuredAtInterfaceByDomain(EnergyCarrier.ELECTRICITY.value());
-				for (AbstractFlowMeasuredAtInterface afmInterface : afmArray) {
-					
-					FlowMeasuredAtInterfaceEnergy efmInterface = (FlowMeasuredAtInterfaceEnergy) afmInterface;
-					DefaultDomainModelElectricity domainModel = (DefaultDomainModelElectricity) efmInterface.getDomainModel();
-					
-					// --- Get SubNetworkConfiguration for rated voltage ------
-					AbstractElectricalNetworkConfiguration aenc = (AbstractElectricalNetworkConfiguration) this.calculationStrategy.getSubNetworkConfiguration();
-					
-					// --- Use Energy Flows from the correct domain -----------
-					if (aenc.getConfiguredRatedVoltageFromNetwork() == domainModel.getRatedVoltage()) {
-						if (domainModel.getPhase()==this.phase) {
-							if (domainModel.getPowerType()==PowerType.ActivePower) {
-								activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-								if (domainModel.getPhase()==Phase.AllPhases) {
-									activePower = activePower / 3; // --- Adjustment due to uni-phase power flow calculation
-								}
-								
-							} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
-								reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-								if (domainModel.getPhase()==Phase.AllPhases) {
-									reactivePower = reactivePower / 3; // --- Adjustment due to uni-phase power flow calculation
+			// --- Try to get the node of the tree to find the energy flow ------------------------
+			DefaultMutableTreeNode treeNode = this.calculationStrategy.getGroupController().getGroupTreeModel().getGroupTreeNodeByNetworkID(networkID);
+			if (treeNode!=null) {
+				
+				FlowsMeasuredGroupMember efmGrouMember = fmGroup.getFlowsMeasuredGroupMember(treeNode);
+				if (efmGrouMember!=null) {
+					// ----------------------------------------------------------------------------
+					// --- Found measurements for node --------------------------------------------
+					// --- Cumulate the Energy Flow in Watt ---------------------------------------
+					// ----------------------------------------------------------------------------
+					ArrayList<AbstractFlowMeasuredAtInterface> afmArray = efmGrouMember.getFlowMeasuredAtInterfaceByDomain(EnergyCarrier.ELECTRICITY.value());
+					for (AbstractFlowMeasuredAtInterface afmInterface : afmArray) {
+						
+						FlowMeasuredAtInterfaceEnergy efmInterface = (FlowMeasuredAtInterfaceEnergy) afmInterface;
+						DefaultDomainModelElectricity domainModel = (DefaultDomainModelElectricity) efmInterface.getDomainModel();
+						
+						// --- Get SubNetworkConfiguration for rated voltage ----------------------
+						AbstractElectricalNetworkConfiguration aenc = (AbstractElectricalNetworkConfiguration) this.calculationStrategy.getSubNetworkConfiguration();
+						
+						// --- Use Energy Flows from the correct domain ---------------------------
+						if (aenc.getConfiguredRatedVoltageFromNetwork() == domainModel.getRatedVoltage()) {
+							if (domainModel.getPhase()==this.phase) {
+								if (domainModel.getPowerType()==PowerType.ActivePower) {
+									activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
+									if (domainModel.getPhase()==Phase.AllPhases) {
+										// --- Adjustment due to uni-phase power flow calculation -
+										activePower = activePower / 3; 
+									}
+									
+								} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
+									reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
+									if (domainModel.getPhase()==Phase.AllPhases) {
+										// --- Adjustment due to uni-phase power flow calculation -
+										reactivePower = reactivePower / 3; 
+									}
 								}
 							}
 						}
 					}
 				}
-				
 			}
-			// --- Add to node power Hash -------------------------------------
+			
+			// --- Add to node power Hash ---------------------------------------------------------
 			ActiveReactivePowerPair nodePowerPair = new ActiveReactivePowerPair(activePower, reactivePower);
 			if (isTransfomer==true) {
-				// --- Remind for the subsequent sum-up ----------------------- 
+				// --- Remind for the subsequent sum-up ------------------------------------------- 
 				transformerPowerPair = nodePowerPair;
 			}
 			powerPairHashMap.put(nodeNumber, nodePowerPair);
