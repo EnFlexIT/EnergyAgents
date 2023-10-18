@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.configuration;
 
+import java.util.List;
+
 /**
  * The Interface SetupConfigurationService.
  *
@@ -7,5 +9,10 @@ package de.enflexit.ea.core.configuration;
  */
 public interface SetupConfigurationService {
 
+	/**
+	 * Has to return the configuration attribute list.
+	 * @return the configuration attribute list
+	 */
+	public List<SetupConfigurationAttribute<?>> getConfigurationAttributeList();
 	
 }
