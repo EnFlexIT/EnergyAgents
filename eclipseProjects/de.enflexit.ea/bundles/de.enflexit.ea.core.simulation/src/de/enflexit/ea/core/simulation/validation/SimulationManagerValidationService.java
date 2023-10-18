@@ -20,6 +20,7 @@ public class SimulationManagerValidationService implements HyGridValidationServi
 		validationChecks.add(new SiMaClassNameChecks());
 		validationChecks.add(new SiMaNotFoundCheck());
 		validationChecks.add(new StrategyClassCheck());
+		validationChecks.add(new AgentStartArgumentsCheck());
 		return validationChecks;
 	}
 
