@@ -62,6 +62,7 @@ public class PowerFlowCalculationThread extends Thread {
 	private Vector<PVNodeParameters> pvNodes; 
 	private HashMap<String, MeasuredBranchCurrent> estimatedBranchCurrents;
 	
+	private HashMap<String, DefaultMutableTreeNode> treeNodeHashMap;
 	
 	/**
 	 * Instantiates a new power flow calculation thread.
@@ -241,6 +242,12 @@ public class PowerFlowCalculationThread extends Thread {
 		} // end while
 	}
 	
+	/**
+	 * Integrate from node to node in branch currents.
+	 *
+	 * @param tempEstimatedBranchCurrents the temp estimated branch currents
+	 * @return the hash map
+	 */
 	private HashMap<String, MeasuredBranchCurrent> integrateFromNodeToNodeInBranchCurrents(HashMap<String, MeasuredBranchCurrent> tempEstimatedBranchCurrents) {
 		
 		ArrayList<String> keySet = new ArrayList<>(tempEstimatedBranchCurrents.keySet());
@@ -257,6 +264,32 @@ public class PowerFlowCalculationThread extends Thread {
 		return tempEstimatedBranchCurrents;
 	}
 	
+	/**
+	 * Returns the tree node hash map.
+	 * @return the tree node hash map
+	 */
+	private HashMap<String, DefaultMutableTreeNode> getTreeNodeHashMap() {
+		if (treeNodeHashMap==null) {
+			treeNodeHashMap = new HashMap<>();
+		}
+		return treeNodeHashMap;
+	}
+	/**
+	 * Returns the tree node for the specified network component ID.
+	 *
+	 * @param networkComponentID the network component ID
+	 * @return the tree node
+	 */
+	private DefaultMutableTreeNode getTreeNode(String networkComponentID) {
+		
+		DefaultMutableTreeNode treeNode = this.getTreeNodeHashMap().get(networkComponentID);
+		if (treeNode==null) {
+			// --- Get node from aggregations tree ------------------
+			treeNode = this.calculationStrategy.getGroupController().getGroupTreeModel().getGroupTreeNodeByNetworkID(networkComponentID);
+			this.getTreeNodeHashMap().put(networkComponentID, treeNode);
+		}
+		return treeNode; 
+	}
 	/**
 	 * Returns the current node to power pair hash map that is determined in the child's of the current parent node.
 	 *
@@ -279,14 +312,14 @@ public class PowerFlowCalculationThread extends Thread {
 		for (Integer nodeNumber : nodeNumberList) {
 			
 			// --- Get required information for the further proceeding ----------------------------
-			String networkID = nodeNumberToNetCompIdHashMap.get(nodeNumber);
-			boolean isTransfomer = this.isTransformer(networkID);
+			String networkComponentID = nodeNumberToNetCompIdHashMap.get(nodeNumber);
+			boolean isTransfomer = this.isTransformer(networkComponentID);
 
 			double activePower   = 0;
 			double reactivePower = 0;
 			
 			// --- Try to get the node of the tree to find the energy flow ------------------------
-			DefaultMutableTreeNode treeNode = this.calculationStrategy.getGroupController().getGroupTreeModel().getGroupTreeNodeByNetworkID(networkID);
+			DefaultMutableTreeNode treeNode = this.getTreeNode(networkComponentID);
 			if (treeNode!=null) {
 				
 				FlowsMeasuredGroupMember efmGrouMember = fmGroup.getFlowsMeasuredGroupMember(treeNode);
