@@ -19,6 +19,7 @@
 		<module>de.enflexit.ea.core.blackboard</module>
 		<module>de.enflexit.ea.core.blackboard.db</module>
 		<module>de.enflexit.ea.core.centralExecutiveAgent</module>
+		<module>de.enflexit.ea.core.configuration</module>
 		<module>de.enflexit.ea.core.dashboard</module>
 		<module>de.enflexit.ea.core.dataModel</module>
 		<module>de.enflexit.ea.core.simulation</module>
