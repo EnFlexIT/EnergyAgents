@@ -27,10 +27,12 @@ import energy.optionModel.GoodMeasurement;
 import energy.optionModel.GroupMember;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
+import energy.optionModel.TechnicalSystemGroup;
 import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import energy.schedule.ScheduleController;
 import energy.schedule.ScheduleNotification;
+import energygroup.GroupController.GroupMemberType;
 import energygroup.GroupTreeNodeObject;
 import energygroup.evaluation.AbstractGroupEvaluationStrategy;
 import energygroup.evaluation.AddResultTreeAction;
@@ -357,6 +359,7 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 				// --- First intermediate result ----------------------------------------
 				this.scheduleResult = this.addStateToResults(tsse);
 				this.scheduleResult.setRealTimeSchedule(true);
+				this.updateSubSchedulesInEvaluationProcess();
 			} else {
 				// --- New intermediate result ------------------------------------------
 				this.scheduleResult.setTechnicalSystemStateEvaluation(tsse);
@@ -364,12 +367,52 @@ public abstract class AbstractNetworkCalculationStrategy extends AbstractGroupEv
 				this.applyScheduleLengthRestriction(tsse.getGlobalTime());
 				// --- Update the result view -------------------------------------------
 				getEvaluationProcess().getScheduleController().setChangedAndNotifyObservers(new ScheduleNotification(ScheduleNotification.Reason.ScheduleUpdated, this.scheduleResult));
+				// --- Update the SubSchedules? -----------------------------------------
+				this.updateSubSchedulesInEvaluationProcess();
 				// --- Remind the sub result schedules in the evaluation process ------
-				getEvaluationProcess().addSubSchedules(scheduleResult, getAddResultTreeAction().getSubScheduleHash());
+				this.getEvaluationProcess().addSubSchedules(this.scheduleResult, this.getAddResultTreeAction().getSubScheduleHash());
 				// --- Start to collect the sub results -------------------------------
-				getAddResultTreeAction().doGroupTreeAction();
+				this.getAddResultTreeAction().doGroupTreeAction();
 			}
 		}
+	}
+	
+	/**
+	 * Adds the aggregations sub schedules to the evaluation process. This method considers that a sub system Schedule can be used
+	 * by different SubAggregations and their ScheduleController. Therefore, the methods simply checks for Schedules
+	 * with the same index within a ScheduleList. 
+	 */
+	private void updateSubSchedulesInEvaluationProcess() {
+		
+		if (scheduleResult==null) return;
+		
+		// --- Check if something is to do --------------------------
+		int subSystemCount = this.getGroupController().getGroupTreeModel().getNodeCount();
+		int subResultCount = this.getEvaluationProcess().getSubSchedules(this.scheduleResult).size();
+		if (subResultCount==subSystemCount) return;
+
+		// --- Get the target index of the local result schedule ----
+		int targetIndex = this.getEvaluationProcess().getEvaluationResults().getSchedules().indexOf(this.scheduleResult);
+		if (targetIndex==-1) return;
+		
+		// --- Define the destination instance ----------------------
+		HashMap<DefaultMutableTreeNode, Schedule> subSystemScheduleHashMap = this.getAddResultTreeAction().getSubScheduleHash();
+		
+		// --- Collect all Schedules of the aggregation -------------
+		TechnicalSystemGroup tsg = this.getGroupController().getTechnicalSystemGroup();
+		for (GroupMember gm : tsg.getGroupMember()) {
+			
+			DefaultMutableTreeNode treeNode = this.getGroupController().getGroupTreeModel().getGroupMemberToNodeHash().get(gm);
+			GroupTreeNodeObject gtno = (GroupTreeNodeObject) treeNode.getUserObject();
+			if (gtno.getGroupMemberType()==GroupMemberType.TechnicalSystemSchedule) {
+				ScheduleList sl = gtno.getGroupMemberScheduleController().getScheduleList();
+				if (sl!=null && sl.getSchedules().size()>=(targetIndex+1)) {
+					Schedule schedule = sl.getSchedules().get(targetIndex);
+					subSystemScheduleHashMap.put(treeNode, schedule);
+				}
+			}
+		}
+		
 	}
 	
 	/* (non-Javadoc)
