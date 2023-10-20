@@ -12,10 +12,19 @@ import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 
+/**
+ * The Class SimulationManagerStartArgumentsCheck.
+ *
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
+ */
 public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapter {
 	
 	private HyGridValidationMessage validationMessage;
 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.validation.HyGridValidationAdapter#validateSetup(agentgui.core.project.setup.SimulationSetup)
+	 */
 	@Override
 	public HyGridValidationMessage validateSetup(SimulationSetup setup) {
 		
@@ -57,20 +66,25 @@ public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapte
 	 */
 	private void addStringToValidationMessage(String messageString) {
 		if (this.validationMessage==null) {
-			this.validationMessage = new HyGridValidationMessage("Error checking simulation manager start arguments!", MessageType.Error);
+			this.validationMessage = new HyGridValidationMessage("Error checking simulation manager start arguments!", MessageType.Warning);
 			this.validationMessage.setDescription(messageString + "\n");
 		} else {
 			this.validationMessage.setDescription(this.validationMessage.getDescription() + messageString + "\n");
 		}
 	}
 	
+	/**
+	 * Returns the SimulationManager (SiMa) class element.
+	 *
+	 * @param setup the setup
+	 * @return the SiMa class element
+	 */
 	private AgentClassElement4SimStart getSiMaClassElement(SimulationSetup setup) {
 		for (AgentClassElement4SimStart agentElement : setup.getAgentList()) {
 			if (agentElement.getAgentClassReference().equals(SimulationManager.class.getName())) {
 				return agentElement;
 			}
 		}
-		
 		return null;
 	}
 	

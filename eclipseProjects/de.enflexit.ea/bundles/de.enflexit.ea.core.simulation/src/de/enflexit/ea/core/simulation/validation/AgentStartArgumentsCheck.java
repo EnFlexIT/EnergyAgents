@@ -56,7 +56,7 @@ public class AgentStartArgumentsCheck extends HyGridValidationAdapter {
 	 */
 	private void addStringToValidationMessage(String messageString) {
 		if (this.validationMessage==null) {
-			this.validationMessage = new HyGridValidationMessage("Error checking agent start arguments!", MessageType.Error);
+			this.validationMessage = new HyGridValidationMessage("Error checking agent start arguments!", MessageType.Warning);
 			this.validationMessage.setDescription(messageString + "\n");
 		} else {
 			this.validationMessage.setDescription(this.validationMessage.getDescription() + messageString + "\n");
