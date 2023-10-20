@@ -27,7 +27,7 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 
 	public static final int ROUND_PRECISION = 5;
 	
-	private boolean isDebug = true;
+	private boolean isDebug = false;
 	
 	private double deltaVoltageRelAvgMax = 0.01; // --- 1% ---
 	private int loopCounterMax = 3;
