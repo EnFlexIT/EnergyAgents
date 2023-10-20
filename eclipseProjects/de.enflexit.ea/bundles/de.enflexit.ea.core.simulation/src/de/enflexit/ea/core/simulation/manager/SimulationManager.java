@@ -1096,8 +1096,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					
 			} else if (noteContent instanceof STATE_CONFIRMATION) {
 				// --- Check state confirmation type ----------------------------------------------
-				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION from agent " + agentName);
 				STATE_CONFIRMATION stateConformation = (STATE_CONFIRMATION) noteContent;
+				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION " + stateConformation.toString() + " from agent " + agentName);
 				switch (stateConformation) {
 				case Initialized:
 					this.getAgentsInitialized().add(agentName);
@@ -1109,7 +1109,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					// --- In distribute environments some agents may be slower in response !!----- 
 					// --- => At least have 95 % of expected agents started ----------------------- 
 					// ----------------------------------------------------------------------------
-					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()) * 0.95);
+					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()));
 					if (this.getAgentsSuccessfulStarted().size()>=minStarted &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
 						this.print("Initialization of agents completed (Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!", false);
 						this.resetAgentNotifications();
