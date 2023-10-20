@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.planning.PlanningDispatcherConfiguration.PlannerInformation;
+import energy.planning.EomPlanner.ControlledSystemType;
 import energy.planning.EomPlannerResult;
 
 /**
@@ -133,37 +134,46 @@ public class PlanningDispatcher {
 	
 	/**
 	 * Starts the default planning, which means all strategies configured as planning strategies will be executed.
+	 *
 	 * @param planFrom the time to plan from
 	 * @param planTo the time to plan to
+	 * @return true, if the planning was successfully started
 	 */
-	public void startPlanning(long planFrom, long planTo) {
-		this.startPlanningInThread(null, planFrom, planTo);
+	public boolean startPlanning(long planFrom, long planTo) {
+		return this.startPlanningInThread(null, planFrom, planTo);
 	}
+	
 	/**
 	 * Starts the planning of the specified planner.
 	 *
-	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will
 	 * be used; means that all strategies configured as planning strategies will be executed. 
 	 * @param planFrom the time to plan from
 	 * @param planTo the time to plan to
+	 * @return true, if the planning was successfully started
 	 */
-	public void startPlanning(String plannerName, long planFrom, long planTo) {
-		this.startPlanningInThread(plannerName, planFrom, planTo);
+	public boolean startPlanning(String plannerName, long planFrom, long planTo) {
+		if (this.getOrCreatePlanner(plannerName).getControlledSystemType()==ControlledSystemType.None) {
+			// --- No flexibility available -> planning doesn't make sense ----
+			return false;
+		}
+		return this.startPlanningInThread(plannerName, planFrom, planTo);
 	}
 	
 	/**
 	 * Internally: Starts the planning of the specified planner in a dedicated thread.
 	 *
-	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will  
+	 * @param plannerName the name of the planner (if <code>null</code>, the default planning will
 	 * be used; means that all strategies configured as planning strategies will be executed. 
 	 * @param planFrom the time to plan from
 	 * @param planTo the time to plan to
+	 * @return true, if the planning was successfully started
 	 */
-	private void startPlanningInThread(final String plannerName, final long planFrom, final long planTo) {
+	private boolean startPlanningInThread(final String plannerName, final long planFrom, final long planTo) {
 		
 		if (this.isDoTermination==true) {
 			this.print("The Planning Dispatcher is going to terminate and thus cannot start new planning processes!", true);
-			return;
+			return false;
 		}
 		
 		new Thread(new Runnable() {
@@ -172,6 +182,8 @@ public class PlanningDispatcher {
 				PlanningDispatcher.this.startPlanningInternally(plannerName, planFrom, planTo);
 			}
 		}, this.energyAgent.getLocalName() + "-PlanningExecution").start();
+		
+		return true;
 	}
 	/**
 	 * Internally: Starts the planning of the specified planner.
