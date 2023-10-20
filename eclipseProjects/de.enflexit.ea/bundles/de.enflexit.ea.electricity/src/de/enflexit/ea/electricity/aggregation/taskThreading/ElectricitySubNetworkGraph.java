@@ -15,6 +15,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.ElectricalNodeStateConverter;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
+import de.enflexit.ea.electricity.transformer.TransformerTotalCurrentCalculation;
 import de.enflexit.ea.electricity.transformer.TransformerCalculation;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.helper.NumberHelper;
@@ -252,6 +253,8 @@ public class ElectricitySubNetworkGraph {
 		private String networComponentList;
 		private List<SubNetworkConnection> subNetworkConnectionList;
 		
+		private TransformerTotalCurrentCalculation transformerTotalCurrentCalculation;
+		
 		/**
 		 * Instantiates a new sub network graph node.
 		 *
@@ -263,6 +266,7 @@ public class ElectricitySubNetworkGraph {
 			this.subNetConfig = subNetConfig;
 			this.subNetTaksThread = subNetTaksThread;
 			this.electricalGraphLevel = electricalGraphLevel;
+			this.getTransformersTotalCurrentCalculation();
 		}
 
 		/**
@@ -353,6 +357,17 @@ public class ElectricitySubNetworkGraph {
 			}
 			return this.subNetworkConnectionList;
 		}
+		/**
+		 * Returns the transformers total current calculation.
+		 * @return the transformers total current calculation
+		 */
+		public TransformerTotalCurrentCalculation getTransformersTotalCurrentCalculation() {
+			if (transformerTotalCurrentCalculation==null) {
+				transformerTotalCurrentCalculation = new TransformerTotalCurrentCalculation(this);
+			}
+			return transformerTotalCurrentCalculation;
+		}
+		
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
@@ -360,6 +375,7 @@ public class ElectricitySubNetworkGraph {
 		public String toString() {
 			return "SubNet No. " + this.getSubNetworkID() + " (" + this.getConfiguredRatedVoltage() + " V - graphLevel " + this.getElectricalGraphLevel() + "), " + this.getNetworkComponents().size() + " components";
 		}
+
 	}
 	
 	// ------------------------------------------------------------------------

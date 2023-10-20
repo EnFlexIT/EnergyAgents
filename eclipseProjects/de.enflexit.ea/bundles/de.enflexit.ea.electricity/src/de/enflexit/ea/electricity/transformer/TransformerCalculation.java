@@ -13,14 +13,15 @@ import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
-import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.ElectricalNodeStateConverter;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetworkGraph.SubNetworkConnection;
+import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricitySubNetworkGraph.SubNetworkGraphNode;
 import de.enflexit.ea.electricity.aggregation.taskThreading.ElectricityTaskThreadCoordinator;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.OptionModelController;
+import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.helper.FixedVariableHelper;
 import energy.helper.NumberHelper;
 import energy.helper.ScheduleListHelper;
@@ -108,23 +109,12 @@ public class TransformerCalculation {
 	// --- From here, transformer updates after network calculation -------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
-	 * Updates the transformer state according to the calculation direction of the network calculation.
-	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
+	 * Updates the transformers low voltage site.
+	 * @param subNetworkGraphNode the current sub network graph node
 	 */
-	public void updateTransformerState(boolean isLowVoltageSide) {
-		if (isLowVoltageSide==true) {
-			this.updateLowVoltageSideTransformerState();
-		} else {
-			this.updateHighVoltageSideTransformerState();
-		}
-	}
-	/**
-	 * Updates the transformer state according to the calculation direction of the network calculation.
-	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
-	 */
-	private void updateLowVoltageSideTransformerState() {
+	public void updateLowVoltageSideTransformerState(SubNetworkGraphNode subNetworkGraphNode) {
 	
-		boolean debugThisMethod = false;
+		boolean debugThisMethod = true;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
 		
 		// ----------------------------------------------------------------------------------------
@@ -138,30 +128,23 @@ public class TransformerCalculation {
 		// --- + Update TSSE to provide correct energy flows for next level network calculation 
 		// ----------------------------------------------------------------------------------------
 		
-		TechnicalSystemStateEvaluation tsseWork = this.getTechnicalSystemStateEvaluation();
-		
-		ElectricalNodeState elNodeState = this.subNetworkConnection.getLowVoltageElectricalNodeState();
-		boolean isTriPhase = this.getTransformerDataModel().isLowerVoltage_ThriPhase();
 		String iString = "";
-		if (isTriPhase==true) {
-			// --- Three Phases -------------
-			TriPhaseElectricalNodeState tpElNodeState = (TriPhaseElectricalNodeState) elNodeState;
+		TransformerTotalCurrentCalculation tcc = subNetworkGraphNode.getTransformersTotalCurrentCalculation().calculate();
+		TechnicalSystemStateEvaluation tsseWork = this.getTechnicalSystemStateEvaluation();
+		if (this.getTransformerDataModel().isLowerVoltage_ThriPhase()==true) {
 			
-			UniPhaseElectricalNodeState upElNodeStateL1 = tpElNodeState.getL1();
-			double iRealL1 = this.getCurrentReal(upElNodeStateL1);
-			double iImagL1 = this.getCurrentImag(upElNodeStateL1); 
+			double iRealL1 = tcc.getTotalCurrentReal().get(Phase.L1);
+			double iImagL1 = tcc.getTotalCurrentImag().get(Phase.L1); 
 			double iRealL1Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentRealL1.name(), iRealL1);
 			double iImagL1Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentImagL1.name(), iImagL1);
 			
-			UniPhaseElectricalNodeState upElNodeStateL2 = tpElNodeState.getL2();
-			double iRealL2 = this.getCurrentReal(upElNodeStateL2);
-			double iImagL2 = this.getCurrentImag(upElNodeStateL2);
+			double iRealL2 = tcc.getTotalCurrentReal().get(Phase.L2);
+			double iImagL2 = tcc.getTotalCurrentImag().get(Phase.L2);
 			double iRealL2Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentRealL2.name(), iRealL2);
 			double iImagL2Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentImagL2.name(), iImagL2);
 			
-			UniPhaseElectricalNodeState upElNodeStateL3 = tpElNodeState.getL3();
-			double iRealL3 = this.getCurrentReal(upElNodeStateL3);
-			double iImagL3 = this.getCurrentImag(upElNodeStateL3); 
+			double iRealL3 = tcc.getTotalCurrentReal().get(Phase.L3);
+			double iImagL3 = tcc.getTotalCurrentImag().get(Phase.L3); 
 			double iRealL3Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentRealL3.name(), iRealL3);
 			double iImagL3Old = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentImagL3.name(), iImagL3);
 			
@@ -178,9 +161,8 @@ public class TransformerCalculation {
 			
 		} else {
 			// --- Single Phase -------------
-			UniPhaseElectricalNodeState upElNodeState = (UniPhaseElectricalNodeState) elNodeState;
-			double iReal = this.getCurrentReal(upElNodeState);
-			double iImag = this.getCurrentImag(upElNodeState);
+			double iReal = tcc.getTotalCurrentReal().get(Phase.AllPhases);
+			double iImag = tcc.getTotalCurrentImag().get(Phase.AllPhases);
 			double iRealOld = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentRealAllPhases.name(), iReal);
 			double iImagOld = this.updateIOListValue(tsseWork, TransformerSystemVariable.lvTotaCurrentImagAllPhases.name(), iImag);
 		
@@ -204,7 +186,7 @@ public class TransformerCalculation {
 	 * Updates the transformer state according to the calculation direction of the network calculation.
 	 * @param isLowVoltageSide true, if the network calculation was executed on the low voltage side
 	 */
-	private void updateHighVoltageSideTransformerState() {
+	public void updateHighVoltageSideTransformerState() {
 		
 		boolean debugThisMethod = false;
 		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
@@ -386,32 +368,6 @@ public class TransformerCalculation {
 		double oldValue = fdValue.getValue();
 		fdValue.setValue(newValue);
 		return oldValue;
-	}
-	
-	
-	// ------------------------------------------------------------------------
-	// --- Some electrical calculation methods --------------------------------
-	// ------------------------------------------------------------------------
-	/**
-	 * Returns the electrical current real (iReal) based on the specified UniPhaseElectricalNodeState.
-	 *
-	 * @param upElNodeState the up el node state
-	 * @return the current real
-	 */
-	private double getCurrentReal(UniPhaseElectricalNodeState upElNodeState) {
-		return upElNodeState.getCurrent().getValue() * upElNodeState.getCosPhi();
-	}
-	/**
-	 * Returns the electrical current real (iReal) based on the specified UniPhaseElectricalNodeState.
-	 *
-	 * @param upElNodeState the up el node state
-	 * @return the current real
-	 */
-	private double getCurrentImag(UniPhaseElectricalNodeState upElNodeState) {
-		if (upElNodeState.getSCalculated()!=0) {
-			return upElNodeState.getCurrent().getValue() * (upElNodeState.getQCalculated() / upElNodeState.getSCalculated());
-		}
-		return 0.0;
 	}
 	
 	
