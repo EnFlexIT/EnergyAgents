@@ -27,7 +27,7 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 
 	public static final int ROUND_PRECISION = 5;
 	
-	private boolean isDebug = false;
+	private boolean isDebug = true;
 	
 	private double deltaVoltageRelAvgMax = 0.01; // --- 1% ---
 	private int loopCounterMax = 3;
@@ -137,11 +137,11 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 						boolean isLowVoltageSide = this.getSubNetworkGraph().isLowVoltageSide(subNetConn, subNetGraphNode);
 						if (isLowVoltageSide==true) {
 							subNetConn.setLowVoltageElectricalNodeState(elNodeState);
+							subNetConn.getTransformerCalculation().updateLowVoltageSideTransformerState(subNetGraphNode);
 						} else {
 							subNetConn.setHighVoltageElectricalNodeState(elNodeState);
+							subNetConn.getTransformerCalculation().updateHighVoltageSideTransformerState();
 						}
-						// --- Calculate the transformer state ----------------
-						subNetConn.getTransformerCalculation().updateTransformerState(isLowVoltageSide);
 						
 					} catch (Exception ex) {
 						this.debugPrint("Error updating transformer state for voltage level '" + voltageLevel + " V', " + subNetGraphNode + ", " + subNetConn, true, false);
