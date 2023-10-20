@@ -41,9 +41,9 @@ public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapte
 				String[] startArgs = simulationManagerClassElement.getStartArguments();
 				
 				if (startArgs==null) {
-					this.addStringToValidationMessage("No start arguments specified for the simulaiton manager in the current setup");
+					this.addStringToValidationMessage("No start arguments specified for the simulation manager in the current setup");
 				} else if (startArgs.length<3) {
-					this.addStringToValidationMessage("Not enough arguments specified for the simulaiton manager in the current setup");
+					this.addStringToValidationMessage("Not enough arguments specified for the simulation manager in the current setup");
 				}
 			}
 		}
