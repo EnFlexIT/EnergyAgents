@@ -64,6 +64,14 @@ public class SetupConfigurationTablePanel extends JPanel implements PropertyChan
 		if (jTableSetupConfiguration == null) {
 			jTableSetupConfiguration = new JTable(this.getSetupConfigurationModel().getConfigurationTableModel());
 			jTableSetupConfiguration.setFillsViewportHeight(true);
+			jTableSetupConfiguration.getTableHeader().setReorderingAllowed(false);
+			
+			// --- Set some default renderer -------------
+			// --- => for the header
+			jTableSetupConfiguration.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(jTableSetupConfiguration, this.getSetupConfigurationModel()));
+			// --- => for Boolean values 
+			jTableSetupConfiguration.setDefaultRenderer(Boolean.class, new TableRendererBoolean());
+			
 		}
 		return jTableSetupConfiguration;
 	}

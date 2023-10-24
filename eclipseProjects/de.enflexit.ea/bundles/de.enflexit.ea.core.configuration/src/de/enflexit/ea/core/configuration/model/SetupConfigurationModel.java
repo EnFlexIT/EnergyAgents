@@ -182,7 +182,7 @@ public class SetupConfigurationModel implements Observer {
      * Returns the vector of configurable components.
      * @return the configurable component vector
      */
-    private ConfigurableComponentVector getConfigurableComponentVector() {
+    public ConfigurableComponentVector getConfigurableComponentVector() {
     	if (configurableComponents==null) {
     		configurableComponents = new ConfigurableComponentVector(this.getGraphController());
     	}
@@ -200,7 +200,7 @@ public class SetupConfigurationModel implements Observer {
 	 * Returns - based on the currently available configuration services -  the column vector of the table model.
 	 * @return the column vector
 	 */
-	private Vector<SetupConfigurationAttributeService> getColumnVector() {
+	public Vector<SetupConfigurationAttributeService> getColumnVector() {
 		if (attributeServiceVector==null) {
 			attributeServiceVector = new Vector<>();
 			attributeServiceVector.add(new DescriptionColumn("Description"));

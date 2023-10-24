@@ -62,7 +62,7 @@ public class SetupConfigurationPanel extends JPanel {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
-			jTabbedPane.addTab(" Configuration Table ", null, this.getSetupConfigurationTablePanel(), "Setup Configuration Table");
+			jTabbedPane.addTab(" Configuration Table   ", null, this.getSetupConfigurationTablePanel(), "Setup Configuration Table");
 		}
 		return jTabbedPane;
 	}
