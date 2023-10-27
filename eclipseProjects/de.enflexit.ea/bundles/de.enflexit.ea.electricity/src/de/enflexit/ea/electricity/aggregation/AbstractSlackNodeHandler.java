@@ -191,9 +191,9 @@ public abstract class AbstractSlackNodeHandler {
 		// --- Check for invalid slack node state -----------------------------
 		float errorIndicatingValue = 0;
 		UniPhaseSlackNodeState upSns = createUniPhaseSlackNodeState(errorIndicatingValue);
-		upSns.getVoltageReal().setValue((float) (voltageRealAllPhases / Math.sqrt(3)));
-		upSns.getVoltageImag().setValue((float) (voltageImagAllPhases / Math.sqrt(3)));
-		
+		upSns.getVoltageReal().setValue((float) voltageRealAllPhases);
+		upSns.getVoltageImag().setValue((float) voltageImagAllPhases);
+
 		if (isErrorInUniPhaseSlackNodeState(upSns, errorIndicatingValue)==true) {
 			upSns = null;
 		}
@@ -293,7 +293,7 @@ public abstract class AbstractSlackNodeHandler {
 			TransformerNodeProperties tnp = this.getTransformerNodeProperties();
 			if (tnp!=null && tnp.getRatedVoltage()!=null && tnp.getRatedVoltage().getValue()>0) {
 				// --- Nominate to single phase voltage level -------
-				initialSlackNodeVoltage = (float) (tnp.getRatedVoltage().getValue() / Math.sqrt(3));
+				initialSlackNodeVoltage = (float) tnp.getRatedVoltage().getValue();
 			}
 			System.out.println("[" + this.getClass().getSimpleName() + "] Initial slack node voltage level: " + initialSlackNodeVoltage + " for " + this.getElectricalNetworkConfiguration().getSubNetworkDescriptionID());
 		}

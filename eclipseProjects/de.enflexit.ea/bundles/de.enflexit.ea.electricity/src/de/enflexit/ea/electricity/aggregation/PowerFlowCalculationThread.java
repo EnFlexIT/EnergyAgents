@@ -342,17 +342,8 @@ public class PowerFlowCalculationThread extends Thread {
 							if (domainModel.getPhase()==this.phase) {
 								if (domainModel.getPowerType()==PowerType.ActivePower) {
 									activePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-									if (domainModel.getPhase()==Phase.AllPhases) {
-										// --- Adjustment due to uni-phase power flow calculation -
-										activePower = activePower / 3; 
-									}
-									
 								} else if (domainModel.getPowerType()==PowerType.ReactivePower) {
 									reactivePower = this.getAverageEnergyFlowInWatt(efmInterface.getEnergyFlowMeasured());
-									if (domainModel.getPhase()==Phase.AllPhases) {
-										// --- Adjustment due to uni-phase power flow calculation -
-										reactivePower = reactivePower / 3; 
-									}
 								}
 							}
 						}
