@@ -50,5 +50,14 @@ public interface SetupConfigurationAttribute<T> {
 	 * @return the value
 	 */
 	public T getValue(ConfigurableComponent cComponent);
+
+	/**
+	 * Has to set the specified new value .
+	 *
+	 * @param cComponent the {@link ConfigurableComponent} to work on
+	 * @param newValue the new value to set
+	 */
+	public void setValue(ConfigurableComponent cComponent, Object newValue);
+	
 	
 }

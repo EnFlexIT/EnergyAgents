@@ -67,9 +67,9 @@ public class SetupConfigurationTablePanel extends JPanel implements PropertyChan
 			jTableSetupConfiguration.getTableHeader().setReorderingAllowed(false);
 			
 			// --- Set some default renderer -------------
-			// --- => for the header
+			// --- => ... for the header
 			jTableSetupConfiguration.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(jTableSetupConfiguration, this.getSetupConfigurationModel()));
-			// --- => for Boolean values 
+			// --- => ... for Boolean values 
 			jTableSetupConfiguration.setDefaultRenderer(Boolean.class, new TableRendererBoolean());
 			
 		}
