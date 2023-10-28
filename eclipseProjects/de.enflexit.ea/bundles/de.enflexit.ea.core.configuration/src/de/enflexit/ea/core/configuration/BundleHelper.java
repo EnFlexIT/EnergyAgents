@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.configuration;
 
+import java.io.File;
+
 import javax.swing.ImageIcon;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -17,6 +19,8 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class BundleHelper {
 
+	private static final String PREF_LAST_SELECTED_FILE = "Configurator-Last-Selected-File";
+	
 	private static final String imagePackage = "/images/";
 	
 	private static Bundle localBundle;
@@ -48,6 +52,28 @@ public class BundleHelper {
 		return imageIcon;
 	}
 	
+	/**
+	 * Sets the last selected file of the current bundle.
+	 * @param lastFile the new last selected file
+	 */
+	public static void setLastSelectedFile(File lastFile) {
+		if (lastFile!=null && lastFile.exists()==true) {
+			BundleHelper.getEclipsePreferences().put(PREF_LAST_SELECTED_FILE, lastFile.getAbsolutePath());
+			BundleHelper.saveEclipsePreferences();
+		}
+	}
+	/**
+	 * Returns the last selected file of the current Bundle.
+	 * @return the last selected file
+	 */
+	public static File getLastSelectedFile() {
+		String lastFileString = BundleHelper.getEclipsePreferences().get(PREF_LAST_SELECTED_FILE, null);
+		if (lastFileString!=null && lastFileString.isBlank()==false) {
+			return new File(lastFileString);
+		}
+		return null;
+		
+	}
 	
 	// --------------------------------------------------------------
 	// --- Provider methods to access preferences for this bundle ---
