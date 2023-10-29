@@ -353,5 +353,21 @@ public class SetupConfigurationModel implements Observer {
 	public void setConfigurationToSetup() {
 		new ConfigurationToSetupWriter(this).start();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+
+		int nTableRows   = this.getConfigurationTableModel().getRowCount();
+		int nTableColums = this.getConfigurationTableModel().getColumnCount();
+		
+		String description = "";
+		description += nTableRows + " components ";
+		description += " x " + (nTableColums-1) + " attributes ";
+		description += " = " + ((nTableColums-1) * nTableRows) + " configuration values";
+		return description;
+	}
 	
 }

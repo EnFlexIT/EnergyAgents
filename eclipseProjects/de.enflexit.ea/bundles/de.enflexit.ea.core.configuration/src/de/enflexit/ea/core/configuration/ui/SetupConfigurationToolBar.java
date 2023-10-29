@@ -1,6 +1,8 @@
 package de.enflexit.ea.core.configuration.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -8,7 +10,9 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.enflexit.ea.core.configuration.BundleHelper;
@@ -34,6 +38,8 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 	private JButton jButtonSaveToFile;
 	private JButton jButtonLoadFromFile;
 
+	private JLabel jLabelInfo;
+	private Timer infoTimer;
 	
 	/**
 	 * Instantiates a new setup configuration tool bar.
@@ -56,8 +62,13 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 		this.add(this.getJButtonSaveToFile());
 		this.add(this.getJButtonLoadFromFile());
 		this.addSeparator();
+		
 		this.add(this.getJButtonLoadFromSetup());
 		this.add(this.getJButtonSaveToSetup());
+		this.addSeparator();
+		
+		this.add(this.getJLabelInfo());
+		this.setDefaultInfoText();
 		this.addSeparator();
 	}
 	
@@ -120,6 +131,53 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 		return jButtonLoadFromFile;
 	}
 
+	/**
+	 * Returns the JLabel for the user information.
+	 * @return the j label info
+	 */
+	private JLabel getJLabelInfo() {
+		if (jLabelInfo==null) {
+			jLabelInfo = new JLabel();
+			jLabelInfo.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelInfo.setForeground(new Color(38, 127, 0));
+		}
+		return jLabelInfo;
+	}
+	/**
+	 * Returns the local swing {@link Timer}
+	 * @return the timer
+	 */
+	private Timer getTimer() {
+		if (infoTimer==null) {
+			infoTimer = new Timer(1000 * 3, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SetupConfigurationToolBar.this.setDefaultInfoText();
+				}
+			});
+			infoTimer.setRepeats(false);
+		}
+		return infoTimer;
+	}
+	/**
+	 * Sets the default info text.
+	 */
+	private void setDefaultInfoText() {
+		this.getJLabelInfo().setText("  " + this.configModel.toString() + "  ");
+	}
+	/**
+	 * Sets the info text.
+	 * @param infoText the new info text
+	 */
+	public void setInfoText(String infoText) {
+		
+		if (infoText==null || infoText.isBlank()==true) return;
+		
+		this.getJLabelInfo().setText("  " + infoText + "  ");
+		this.getTimer().restart();
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -139,6 +197,7 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 			File fileSelection = this.getFileSelection(true);
 			if (fileSelection!=null) {
 				new SetupConfigurationFileWriter(this.configModel).write(fileSelection);
+				this.setInfoText("Exportetd table data to file '" + fileSelection.getName() + "'.");
 			}
 			
 		} else if (ae.getSource()==this.getJButtonLoadFromFile()) {
@@ -146,6 +205,7 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 			File fileSelection = this.getFileSelection(false);
 			if (fileSelection!=null) {
 				new SetupConfigurationFileReader(this.configModel).read(fileSelection);
+				this.setInfoText("Imported file '" + fileSelection.getName() + "' to table data.");
 			}
 		}
 	}

@@ -69,26 +69,28 @@ public class SetupConfigurationFileReader {
 					continue;
 				}
 				
-				// --- Convert the value to the column type ----------------------------- 
-				String objectValueString = (String) rowVector.get(rowVectorColumn);
-				Object objectValue = null;
-				
-				Class<?> type = serviceAttribute.getSetupConfigurationAttribute().getType(); 
-				if (type==String.class) {
-					objectValue = objectValueString;
-				} else if (type==Boolean.class) {
-					objectValue = Boolean.parseBoolean(objectValueString);
-				} else if (type==Integer.class) {
-					objectValue = NumberHelper.parseInteger(objectValueString);
-				} else if (type==Float.class) {
-					objectValue = NumberHelper.parseFloat(objectValueString);
-				} else if (type==Double.class) {
-					objectValue = NumberHelper.parseDouble(objectValueString);
-				} else {
-					
-				}
-				// --- Set to table model -----------------------------------------------
 				try {
+					// --- Convert the value to the column type ------------------------- 
+					String objectValueString = (String) rowVector.get(rowVectorColumn);
+					Object objectValue = null;
+					
+					Class<?> type = serviceAttribute.getSetupConfigurationAttribute().getType(); 
+					if (type==String.class) {
+						objectValue = objectValueString;
+					} else if (type==Boolean.class) {
+						objectValue = Boolean.parseBoolean(objectValueString);
+					} else if (type==Integer.class) {
+						objectValue = NumberHelper.parseInteger(objectValueString);
+					} else if (type==Float.class) {
+						objectValue = NumberHelper.parseFloat(objectValueString);
+					} else if (type==Double.class) {
+						objectValue = NumberHelper.parseDouble(objectValueString);
+					} else {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Unknown type '" + type.getClass().getName() + "' for column '" + header + "'; try to use string value.");
+						objectValue = objectValueString;
+					}
+					
+					// --- Set to table model -------------------------------------------
 					this.configModel.getConfigurationTableModel().setValueAt(objectValue, modelRow, modelColumn);
 					
 				} catch (Exception ex) {
