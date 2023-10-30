@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -102,6 +103,13 @@ public class ConfigurableComponent {
 	 */
 	public GraphEnvironmentController getGraphController() {
 		return graphController;
+	}
+	/**
+	 * Returns the current network model.
+	 * @return the network model
+	 */
+	public NetworkModel getNetworkModel() {
+		return this.getGraphController().getNetworkModel();
 	}
 	/**
 	 * Returns the current network component.

@@ -76,6 +76,9 @@ public class SetupConfigurationAttributeService implements Comparable<SetupConfi
 	 * @return the value
 	 */
 	public Object getValue(ConfigurableComponent confComp) {
+		
+		if (confComp==null) return null;
+		
 		Object value = null;
 		try {
 			value = this.getSetupConfigurationAttribute().getValue(confComp);
@@ -92,6 +95,8 @@ public class SetupConfigurationAttributeService implements Comparable<SetupConfi
 	 * @param newValue the new value
 	 */
 	public void setValue(ConfigurableComponent confComp, Object newValue) {
+		
+		if (confComp==null || newValue==null) return;
 		
 		try {
 			this.getSetupConfigurationAttribute().setValue(confComp, newValue);

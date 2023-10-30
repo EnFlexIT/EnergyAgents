@@ -2,8 +2,8 @@ package de.enflexit.ea.core.configuration.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -15,23 +15,22 @@ import javax.swing.table.TableCellRenderer;
 import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
- * The Class TableRendererBoolean.
+ * The Class TableRendererNoEdit.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class TableRendererBoolean extends JCheckBox implements TableCellRenderer, UIResource {
+public class TableRendererNoEdit extends JLabel implements TableCellRenderer, UIResource {
 	
 	private static final long serialVersionUID = -8965685551115502359L;
 	
 	private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
     /**
-     * Instantiates a new table renderer boolean.
+     * Instantiates a new table renderer for cells, where noc value can be configured.
      */
-    public TableRendererBoolean() {
+    public TableRendererNoEdit() {
         super();
-        this.setHorizontalAlignment(JLabel.CENTER);
-        this.setBorderPainted(true);
+        this.setFont(new Font("Dialog", Font.PLAIN, 12));
     }
 
     /* (non-Javadoc)
@@ -40,14 +39,22 @@ public class TableRendererBoolean extends JCheckBox implements TableCellRenderer
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		
+    	int modelColumn = table.convertColumnIndexToModel(column);
+    	Class<?> columnClass = table.getModel().getColumnClass(modelColumn);
+    	if (columnClass==Boolean.class) {
+    		this.setHorizontalAlignment(JLabel.CENTER);
+    	} else {
+    		this.setHorizontalAlignment(JLabel.RIGHT);
+    	}
+    	
     	if (isSelected) {
-			setForeground(table.getSelectionForeground());
+			this.setForeground(table.getSelectionForeground());
 			super.setBackground(table.getSelectionBackground());
 		} else {
-			setForeground(table.getForeground());
-			setBackground(table.getBackground());
+			this.setForeground(table.getForeground());
+			this.setBackground(table.getBackground());
 		}
-		this.setSelected((value != null && ((Boolean) value).booleanValue()));
+		this.setText("   -   ");
 
 		if (hasFocus) {
 			setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));

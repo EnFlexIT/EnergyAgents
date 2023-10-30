@@ -27,6 +27,7 @@ import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
  */
 public class SetupConfigurationModel implements Observer {
 
+	public static final String PROPERTY_MODEL_UI_MESSAGE = "SetupConfigurationModel-UI-Message";
 	public static final String PROPERTY_MODEL_CREATED = "SetupConfigurationModel-Created";
 	
 	private Project project;
@@ -174,6 +175,14 @@ public class SetupConfigurationModel implements Observer {
         this.getPropertyChangeSupport().removePropertyChangeListener(listener);
     }
   
+    /**
+     * Sets the UI message by using the local property change support.
+     * @param message the new UI message
+     */
+    public void setUIMessage(String message) {
+    	this.getPropertyChangeSupport().firePropertyChange(new PropertyChangeEvent(this, PROPERTY_MODEL_UI_MESSAGE, null, message));
+    }
+    
 	
 	// ------------------------------------------------------------------------
 	// --- From here, methods to create and fill the local table model -------- 
@@ -266,11 +275,16 @@ public class SetupConfigurationModel implements Observer {
 				 */
 				@Override
 				public boolean isCellEditable(int row, int column) {
-					// --- First two columns are read only ----------
+					// --- First column is read only ----------------
 					if (column==0) {
 						return false;
 					}
-					return super.isCellEditable(row, column);
+
+					// --- Check if something is to configure -------
+					SetupConfigurationModel scm = SetupConfigurationModel.this;
+					ConfigurableComponent confComponent = (ConfigurableComponent) scm.getConfigurationTableModel().getValueAt(row, 0);
+					SetupConfigurationAttributeService attributeService = scm.getColumnVector().get(column);
+					return confComponent.getRelevantSetupConfigurationAttributeServiceList().contains(attributeService);
 				}
 				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
@@ -363,10 +377,17 @@ public class SetupConfigurationModel implements Observer {
 		int nTableRows   = this.getConfigurationTableModel().getRowCount();
 		int nTableColums = this.getConfigurationTableModel().getColumnCount();
 		
+		int nConfigValues = 0;
+		for (int row = 0; row < this.getConfigurationTableModel().getRowCount(); row++) {
+			for (int col = 0; col < this.getConfigurationTableModel().getColumnCount(); col++) {
+				if (this.getConfigurationTableModel().isCellEditable(row, col)==true) nConfigValues++;
+			}
+		}
+		
 		String description = "";
 		description += nTableRows + " components ";
-		description += " x " + (nTableColums-1) + " attributes ";
-		description += " = " + ((nTableColums-1) * nTableRows) + " configuration values";
+		description += ", " + (nTableColums-1) + " attributes ";
+		description += " => " + nConfigValues + " configurable values";
 		return description;
 	}
 	

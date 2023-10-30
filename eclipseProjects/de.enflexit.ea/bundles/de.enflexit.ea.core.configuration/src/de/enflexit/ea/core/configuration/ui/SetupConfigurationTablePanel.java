@@ -1,12 +1,14 @@
 package de.enflexit.ea.core.configuration.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import de.enflexit.ea.core.configuration.model.SetupConfigurationModel;
@@ -64,16 +66,42 @@ public class SetupConfigurationTablePanel extends JPanel implements PropertyChan
 	}
 	private JTable getJTableSetupConfiguration() {
 		if (jTableSetupConfiguration == null) {
-			jTableSetupConfiguration = new JTable(this.getSetupConfigurationModel().getConfigurationTableModel());
+			jTableSetupConfiguration = new JTable(this.getSetupConfigurationModel().getConfigurationTableModel()) {
+				
+				private static final long serialVersionUID = -7712532981162633821L;
+
+				/* (non-Javadoc)
+				 * @see javax.swing.JTable#getCellRenderer(int, int)
+				 */
+				@Override
+				public TableCellRenderer getCellRenderer(int row, int column) {
+					
+					// --- Convert to model column & row ------------
+					int modelCol = convertColumnIndexToModel(column);
+					int modelRow = convertRowIndexToModel(row);
+					SetupConfigurationModel scm = SetupConfigurationTablePanel.this.getSetupConfigurationModel();
+
+					// --- Check if something is to configure -------
+					if (modelCol>0 && scm.getConfigurationTableModel().isCellEditable(modelRow, modelCol)==false) {
+						// --- Return No-Edit renderer --------------
+						return this.getDefaultRenderer(TableRendererNoEdit.class);
+					}
+					return super.getCellRenderer(row, column);
+				}
+			};
 			jTableSetupConfiguration.setFillsViewportHeight(true);
 			jTableSetupConfiguration.getTableHeader().setReorderingAllowed(false);
 			jTableSetupConfiguration.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			jTableSetupConfiguration.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTableSetupConfiguration.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+			
 			
 			// --- Set some default renderer -------------
 			// --- => ... for the header
 			jTableSetupConfiguration.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(jTableSetupConfiguration, this.getSetupConfigurationModel()));
 			// --- => ... for Boolean values 
 			jTableSetupConfiguration.setDefaultRenderer(Boolean.class, new TableRendererBoolean());
+			jTableSetupConfiguration.setDefaultRenderer(TableRendererNoEdit.class, new TableRendererNoEdit());
 			
 			this.resetTableColumnWidth();
 			

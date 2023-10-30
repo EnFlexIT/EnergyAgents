@@ -54,6 +54,9 @@ public class SetupConfigurationFileWriter {
 		
 		// --- Write the data to the CSV file -----------------------
 		new CsvFileWriter(VALUE_SEPERATOR, DECIMAL_SEPERATOR, NEW_LINE).exportData(file, tableData, headerLine);
+
+		// --- Write UI message -------------------------------------
+		this.configModel.setUIMessage("Exportetd table data to file '" + file.getName() + "'.");
 	}
 	
 }

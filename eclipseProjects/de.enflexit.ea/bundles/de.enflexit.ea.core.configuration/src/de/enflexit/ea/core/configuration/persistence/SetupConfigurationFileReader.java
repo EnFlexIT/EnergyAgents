@@ -101,6 +101,8 @@ public class SetupConfigurationFileReader {
 			} // end column for
 		} // end row for
 		
+		// --- Write UI message ---------------------------------------------------------
+		this.configModel.setUIMessage("Imported file '" + file.getName() + "' to table data.");
 	}
 	
 	

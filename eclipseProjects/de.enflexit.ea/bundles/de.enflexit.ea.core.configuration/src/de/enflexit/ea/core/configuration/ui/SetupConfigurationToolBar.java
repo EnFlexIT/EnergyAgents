@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -12,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -26,7 +29,7 @@ import energy.GlobalInfo;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class SetupConfigurationToolBar extends JToolBar implements ActionListener {
+public class SetupConfigurationToolBar extends JToolBar implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = -4020142646497272018L;
 
@@ -70,6 +73,8 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 		this.add(this.getJLabelInfo());
 		this.setDefaultInfoText();
 		this.addSeparator();
+		
+		this.configModel.addPropertyChangeListener(this);
 	}
 	
 	
@@ -149,7 +154,7 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 	 */
 	private Timer getTimer() {
 		if (infoTimer==null) {
-			infoTimer = new Timer(1000 * 3, new ActionListener() {
+			infoTimer = new Timer(1000 * 4, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					SetupConfigurationToolBar.this.setDefaultInfoText();
@@ -177,6 +182,24 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 		this.getTimer().restart();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+
+		if (evt.getPropertyName().equals(SetupConfigurationModel.PROPERTY_MODEL_UI_MESSAGE)) {
+
+			final String message = (String) evt.getNewValue();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					SetupConfigurationToolBar.this.setInfoText(message);
+				}
+			});
+		}
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -197,7 +220,6 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 			File fileSelection = this.getFileSelection(true);
 			if (fileSelection!=null) {
 				new SetupConfigurationFileWriter(this.configModel).write(fileSelection);
-				this.setInfoText("Exportetd table data to file '" + fileSelection.getName() + "'.");
 			}
 			
 		} else if (ae.getSource()==this.getJButtonLoadFromFile()) {
@@ -205,7 +227,6 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 			File fileSelection = this.getFileSelection(false);
 			if (fileSelection!=null) {
 				new SetupConfigurationFileReader(this.configModel).read(fileSelection);
-				this.setInfoText("Imported file '" + fileSelection.getName() + "' to table data.");
 			}
 		}
 	}

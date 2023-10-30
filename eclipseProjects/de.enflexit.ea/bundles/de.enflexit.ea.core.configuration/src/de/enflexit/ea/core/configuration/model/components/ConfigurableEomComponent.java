@@ -1,13 +1,19 @@
 package de.enflexit.ea.core.configuration.model.components;
 
+import java.io.Serializable;
+
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
+import de.enflexit.eom.awb.adapter.EomAdapter;
+import de.enflexit.eom.awb.adapter.EomDataModelAdapter;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import energy.OptionModelController;
 import energy.optionModel.ScheduleList;
+import energy.optionModel.SystemVariableDefinition;
+import energy.optionModel.SystemVariableDefinitionStaticModel;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import energy.schedule.ScheduleController;
@@ -199,6 +205,94 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 		return gc;
 	}
 	
+	// --------------------------------------------------------------
+	// --- From here, static data model handling --------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the static model instance for the ID-specified {@link SystemVariableDefinitionStaticModel}.
+	 *
+	 * @param sysVarID the ID of the {@link SystemVariableDefinitionStaticModel}
+	 * @return the static model instance
+	 */
+	public Serializable getStaticModelInstance(String sysVarID) {
+		
+		if (sysVarID==null || sysVarID.isBlank()==true) return null;
+		
+		// --- Get the correct OptionModelController --------------------------
+		OptionModelController omc = null;
+		switch (this.getEomModelType()) {
+		case TechnicalSystem:
+			omc = this.getOptionModelController();
+			break;
+		case ScheduleList:
+			// --- Not applicable -----
+			break;
+		case TechnicalSystemGroup:
+			omc = this.getGroupController().getGroupOptionModelController();
+			break;
+		}
+		if (omc==null) return null;
+		
+		// --- Try getting the corresponding SystemVariableDefinition ---------  
+		SystemVariableDefinition sysVarDef = omc.getSystemVariableDefinition(sysVarID);
+		if (sysVarDef instanceof SystemVariableDefinitionStaticModel) {
+			SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) sysVarDef;
+			if (sysVarDefStaticModel!=null) {
+				return omc.getStaticModelInstance(sysVarDefStaticModel);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Sets the static model instance for the ID-specified {@link SystemVariableDefinitionStaticModel}.
+	 *
+	 * @param sysVarID the ID of the {@link SystemVariableDefinitionStaticModel}
+	 * @param dataModelInstance the data model instance to set
+	 */
+	public void setStaticModelInstance(String sysVarID, Serializable dataModelInstance) {
+		
+		if (sysVarID==null || sysVarID.isBlank()==true) return;
+		
+		// --- Get the correct OptionModelController --------------------------
+		OptionModelController omc = null;
+		switch (this.getEomModelType()) {
+		case TechnicalSystem:
+			omc = this.getOptionModelController();
+			break;
+		case ScheduleList:
+			// --- Not applicable -----
+			break;
+		case TechnicalSystemGroup:
+			omc = this.getGroupController().getGroupOptionModelController();
+			break;
+		}
+		if (omc==null) return;
+		
+		// --- Try getting the corresponding SystemVariableDefinition ---------  
+		SystemVariableDefinition sysVarDef = omc.getSystemVariableDefinition(sysVarID);
+		if (sysVarDef instanceof SystemVariableDefinitionStaticModel) {
+			SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) sysVarDef;
+			if (sysVarDefStaticModel!=null) {
+				omc.setStaticModelInstance(sysVarDefStaticModel, dataModelInstance);
+			}
+		}
+	}
+	
+	/**
+	 * Will save the EOM model changes.
+	 */
+	public final void saveEomModelChanges() {
+		
+		EomAdapter eomAdapter = (EomAdapter) this.getNetworkModel().getNetworkComponentAdapter(this.getGraphController(), this.getNetworkComponent());
+		EomDataModelAdapter eomAdapterDM = (EomDataModelAdapter) eomAdapter.getNewDataModelAdapter();
+		eomAdapterDM.setNetworkComponentAdapter(eomAdapter);
+		eomAdapterDM.setGraphEnvironmentController(this.getGraphController());
+		eomAdapterDM.setNetworkComponent(this.getNetworkComponent());
+
+		eomAdapterDM.getDataModelStorageHandler().saveDataModel(this.getNetworkComponent());
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.configuration.model.components.ConfigurableComponent#toString()
 	 */
@@ -220,10 +314,7 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 			description += "TSG(" + this.getTechnicalSystemGroup().getTechnicalSystem().getSystemID() + ")";
 			break;
 		}
-		
-		
 		return description;
 	}
-	
 	
 }
