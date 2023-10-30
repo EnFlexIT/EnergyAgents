@@ -198,5 +198,19 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 		}
 		return gc;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.configuration.model.components.ConfigurableComponent#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		String description = super.toString();
+		// TODO
+		
+		
+		return description;
+	}
+	
 	
 }

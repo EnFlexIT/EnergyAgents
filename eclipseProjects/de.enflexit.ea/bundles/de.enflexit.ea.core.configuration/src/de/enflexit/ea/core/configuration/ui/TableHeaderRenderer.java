@@ -48,7 +48,7 @@ public class TableHeaderRenderer implements TableCellRenderer {
     	
     	// --- Prepare to set Tool tip text ---------------
     	JLabel label = (JLabel) renderer.getTableCellRendererComponent(table, description, isSelected, hasFocus, row, col);
-    	if (this.confModel!=null) {
+    	if (this.confModel!=null && this.confModel.getColumnVector().size()>0) {
     		SetupConfigurationAttributeService attributeService = this.confModel.getColumnVector().get(col);
     		if (! (attributeService instanceof DescriptionColumn)) {
     			String serviceName = attributeService.getServiceName();

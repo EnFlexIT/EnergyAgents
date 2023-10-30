@@ -334,10 +334,11 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			// ----------------------------------------------------------------
 			float cosPhi = branchCosPhi.get(i).floatValue();
 			
-			float pUniPhase = (float) (p.get(nodeIndexFrom).get(nodeIndexTo) * 3);
-			float qUniPhase = (float) (q.get(nodeIndexFrom).get(nodeIndexTo) * 3);
+			float pUniPhase = (float) p.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+			float qUniPhase = (float) q.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+
 			
-			float currentAbs = iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue() * 3;
+			float currentAbs = iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
 			float currentReal = currentAbs * cosPhi;
 			float currentImag = (float) (Math.sqrt(Math.pow(currentAbs, 2) - Math.pow(currentReal, 2)) * (iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue()>0 ? 1 : -1));
 			
@@ -474,12 +475,12 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				// ----------------------------------------------------------------
 				float cosPhiUniPhase = cosPhi.get(i).floatValue();
 				
-				float uKabsUniPhase = (float) (uKabs.get(i) * Math.sqrt(3));
+				float uKabsUniPhase = uKabs.get(i).floatValue();
 				float uKabsRealUniPhase = (float) (uKabsUniPhase * cosPhiUniPhase);
 				float uKabsImagUniPhase = (float) Math.sqrt(Math.pow(uKabsUniPhase, 2) - Math.pow(uKabsRealUniPhase, 2)) * (uKImag.get(i)>0 ? 1 : -1);
 				
-				float nodalPowerRealUniPhase = (float) (nodalPowerReal.get(i) * 3); // --- Adjustment due to uni-phase powerflow calculation
-				float nodalPowerImagUniPhase = (float) (nodalPowerImag.get(i) * 3);	// --- Adjustment due to uni-phase powerflow calculation
+				float nodalPowerRealUniPhase = (float) nodalPowerReal.get(i).floatValue(); // --- Adjustment due to uni-phase powerflow calculation
+				float nodalPowerImagUniPhase = (float) nodalPowerImag.get(i).floatValue();	// --- Adjustment due to uni-phase powerflow calculation
 				
 				// ----------------------------------------------------------------
 				// --- Set to UniPhaseElectricalNodeState -------------------------

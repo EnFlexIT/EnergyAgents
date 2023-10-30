@@ -242,7 +242,7 @@ public class SetupConfigurationModel implements Observer {
 			
 			if (confComp.getRelevantSetupConfigurationAttributeServiceList().contains(attributeService)==true) {
 				// --- Set the current value of that attribute ------   
-				dataRow.add(attributeService.getSetupConfigurationAttribute().getValue(confComp));
+				dataRow.add(attributeService.getValue(confComp));
 				
 			} else {
 				// --- Not relevant - set an indicator value --------
@@ -314,11 +314,26 @@ public class SetupConfigurationModel implements Observer {
 		}
 	}
 	
+	
+	/**
+	 * Recreates the configuration table model in a dedicated thread.
+	 */
+	public void reCreateConfigurationTableModelInThread() {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SetupConfigurationModel.this.reCreateConfigurationTableModel();
+			}
+		}
+		, "Setup Configuration Model - Reading").start();
+	}
+	
 	/**
 	 * (Re) Creates the configuration table model.
 	 * @return the default table model
 	 */
-	private DefaultTableModel reCreateConfigurationTableModel() {
+	public DefaultTableModel reCreateConfigurationTableModel() {
 		
 		// --- Reset locally stored data --------------------------------------
 		if (this.configTableModel!=null) {
@@ -330,6 +345,29 @@ public class SetupConfigurationModel implements Observer {
 		
 		// --- Create a new table model ---------------------------------------
 		return this.getConfigurationTableModel();
+	}
+	
+	/**
+	 * Sets the configuration to setup.
+	 */
+	public void setConfigurationToSetup() {
+		new ConfigurationToSetupWriter(this).start();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+
+		int nTableRows   = this.getConfigurationTableModel().getRowCount();
+		int nTableColums = this.getConfigurationTableModel().getColumnCount();
+		
+		String description = "";
+		description += nTableRows + " components ";
+		description += " x " + (nTableColums-1) + " attributes ";
+		description += " = " + ((nTableColums-1) * nTableRows) + " configuration values";
+		return description;
 	}
 	
 }

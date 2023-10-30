@@ -18,6 +18,8 @@ public class SetupConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = -208261216805973521L;
 
 	private SetupConfigurationModel setupConfigModel;
+	
+	private SetupConfigurationToolBar jToolBarSetupConfiguration;
 	private JTabbedPane jTabbedPane;
 	private SetupConfigurationTablePanel setupConfigurationTablePanel;
 	
@@ -32,8 +34,8 @@ public class SetupConfigurationPanel extends JPanel {
 	 */
 	private void initialize() {
 		this.setLayout(new BorderLayout(0, 0));
-		this.add(this.getJTabbedPane());
-		this.getSetupConfigurationModel();
+		this.add(this.getJToolBarSetupConfiguration(), BorderLayout.NORTH);
+		this.add(this.getJTabbedPane(), BorderLayout.CENTER);
 	}
 	/**
 	 * Disposes the current panel.
@@ -53,6 +55,16 @@ public class SetupConfigurationPanel extends JPanel {
 		return setupConfigModel;
 	}
 	
+	/**
+	 * Returns the SetupConfigurationToolBar.
+	 * @return the JToolBar for the setup configuration
+	 */
+	private SetupConfigurationToolBar getJToolBarSetupConfiguration() {
+		if (jToolBarSetupConfiguration==null) {
+			jToolBarSetupConfiguration = new SetupConfigurationToolBar(this.getSetupConfigurationModel());
+		}
+		return jToolBarSetupConfiguration;
+	}
 	/**
 	 * Returns the local JTabbedPane.
 	 * @return the JTabbedPane
