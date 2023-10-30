@@ -15,9 +15,11 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 
 	private static final long serialVersionUID = -5702357789764106868L;
 	
+	private boolean sendStimulusAnswer;
+	
 	/**
 	 * Instantiates a new abstract simulation integration behaviour.
-	 * @param agent the agent
+	 * @param agent the agent executing this behaviour
 	 */
 	public AbstractSimulationIntegrationBehaviour(Agent agent) {
 		this(agent, false);
@@ -25,14 +27,28 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 
 	/**
 	 * Instantiates a new abstract simulation integration behaviour.
-	 * @param agent the agent
-	 * @param passive the passive
+	 * @param agent the agent executing this behaviour
+	 * @param passive specifies if the simulation sensor is passive
 	 */
 	public AbstractSimulationIntegrationBehaviour(Agent agent, boolean passive) {
+		this(agent, passive, true);
+	}
+	
+	/**
+	 * Instantiates a new abstract simulation integration behaviour.
+	 * @param agent the agent executing this behaviour
+	 * @param passive specifies if the simulation sensor is passive
+	 * @param sendStimulusAnswer specifies if the stimulus answer is sent automatically after performSimulaitonStepTasks is done. If set to false, this must be done in the sub class. 
+	 */
+	public AbstractSimulationIntegrationBehaviour(Agent agent, boolean passive, boolean sendStimulusAnswer) {
 		super(agent, passive);
+		this.sendStimulusAnswer = sendStimulusAnswer;
 		this.initialize();
 	}
 	
+	/**
+	 * Handles the manager notifications for the initialization process.
+	 */
 	private void initialize() {
 		this.sendManagerNotification(STATE_CONFIRMATION.Initialized);
 		
@@ -77,7 +93,9 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 	@Override
 	public final void onEnvironmentStimulus() {
 		Object stateObject = this.performSimulationStepTasks();
-		this.setMyStimulusAnswer(stateObject);
+		if (this.sendStimulusAnswer==true) {
+			this.setMyStimulusAnswer(stateObject);
+		}
 	}
 	
 	/**
