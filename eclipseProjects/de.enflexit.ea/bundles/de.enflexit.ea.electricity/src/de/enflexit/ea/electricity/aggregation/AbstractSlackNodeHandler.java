@@ -538,7 +538,7 @@ public abstract class AbstractSlackNodeHandler {
 				NetworkComponent netCompCheck = dc.getNetworkComponents().get(i);
 				ComponentTypeSettings cts = networkModel.getGeneralGraphSettings4MAS().getCurrentCTS().get(netCompCheck.getType());
 				// --- Check if transformer, agent and based on a EOM model ---
-				if (TransformerHelper.isTransformer(netCompCheck)==true && cts.getAgentClass()!=null && cts.getAdapterClass().equals(EomAdapter.class.getName())==true || cts.getAdapterClass().equals(EnergyAgentAdapter.class.getName())==true) {
+				if (TransformerHelper.isTransformer(netCompCheck)==true && cts.getAgentClass()!=null && cts.getAdapterClass()!=null && (cts.getAdapterClass().equals(EomAdapter.class.getName())==true || cts.getAdapterClass().equals(EnergyAgentAdapter.class.getName())==true)) {
 					// --- Found a transformer with agent and EOM model -------
 					if (netCompCheck.getId().equals(snDesc.getNetworkComponentID())==true) {
 						networkComponentTransformer = netCompCheck;

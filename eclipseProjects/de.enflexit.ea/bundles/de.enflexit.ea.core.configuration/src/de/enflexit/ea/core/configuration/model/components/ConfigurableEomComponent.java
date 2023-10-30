@@ -198,7 +198,7 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 		}
 		return gc;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.configuration.model.components.ConfigurableComponent#toString()
 	 */
@@ -206,7 +206,20 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 	public String toString() {
 		
 		String description = super.toString();
-		// TODO
+		description += " - " + this.getNetworkID() + ":";
+		description += "EOM.";
+
+		switch (this.getEomModelType()) {
+		case TechnicalSystem:
+			description += "TS(" + this.getTechnicalSystem().getSystemID() + ")";
+			break;
+		case ScheduleList:
+			description += "SL(" + this.getScheduleList().getSystemID() + ")";
+			break;
+		case TechnicalSystemGroup:
+			description += "TSG(" + this.getTechnicalSystemGroup().getTechnicalSystem().getSystemID() + ")";
+			break;
+		}
 		
 		
 		return description;

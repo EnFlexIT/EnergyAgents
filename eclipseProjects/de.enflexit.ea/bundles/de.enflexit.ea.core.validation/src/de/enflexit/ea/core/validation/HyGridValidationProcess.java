@@ -211,6 +211,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 		
 		SingleConfigurationEntity configEntityToCheck = SingleConfigurationEntity.EomModels;
 		
+		if (this.getGraphController()==null || this.getGraphController().getNetworkModel()==null) return;
+		
 		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Vector<NetworkComponent> netCompList = networkModel.getNetworkComponentVectorSorted();
 		for (int i = 0; i < netCompList.size(); i++) {

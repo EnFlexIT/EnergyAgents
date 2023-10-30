@@ -10,8 +10,8 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import de.enflexit.ea.core.configuration.SetupConfigurationAttribute;
-import de.enflexit.ea.core.configuration.SetupConfigurationService;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
+import de.enflexit.ea.core.configuration.SetupConfigurationService;
 import de.enflexit.ea.core.configuration.SetupConfigurationServiceHelper;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
@@ -71,7 +71,7 @@ public class ConfigurableComponentVector extends Vector<ConfigurableComponent> {
 		for (NetworkComponent netComp : networkModel.getNetworkComponentVectorSorted()) {
 		
 			ComponentTypeSettings cts = graphSettings.getCurrentCTS().get(netComp.getType());
-
+			
 			// --- General check for the component ----------------------------
 			ConfigurableComponent confComponent = new ConfigurableComponent(this.graphController, netComp, cts);
 			this.addAfterCheckIfComponentWillBeConfigured(confComponent);
@@ -166,9 +166,9 @@ public class ConfigurableComponentVector extends Vector<ConfigurableComponent> {
 			
 			try {
 				// --- Ask, if the service attribute wants to configure the current component -----  
-				willBeConfigured = setupConfAttribute.willBeConfigured(cComponent);
-				if (willBeConfigured==true) {
+				if (setupConfAttribute.willBeConfigured(cComponent)==true) {
 					cComponent.addConfiguredBy(attributeService);
+					willBeConfigured = true;
 				}
 				
 			} catch (Exception ex) {
