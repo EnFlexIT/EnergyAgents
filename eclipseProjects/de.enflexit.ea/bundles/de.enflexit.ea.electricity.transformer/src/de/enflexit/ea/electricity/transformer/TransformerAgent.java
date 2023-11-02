@@ -6,6 +6,7 @@ import de.enflexit.ea.core.AbstractIOReal;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
+import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.ontology.SlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSlackNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSlackNodeState;
@@ -15,6 +16,7 @@ import de.enflexit.ea.core.dataModel.phonebook.EnergyAgentPhoneBookSearchFilter;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookQueryInitiator;
 import jade.content.Concept;
 import jade.content.lang.Codec.CodecException;
+import jade.content.lang.sl.SLCodec;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
@@ -77,6 +79,10 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	@Override
 	protected void setupEnergyAgent() {
 
+		// --- Register Codec and ontology --------------------------
+		this.getContentManager().registerLanguage(new SLCodec());
+		this.getContentManager().registerOntology(HyGridOntology.getInstance());
+		
 		// --- Subscribe with the sensor of interest ----------------
 		AID sensorAID = this.getSensorAID();
 		if (sensorAID!=null) {
@@ -112,6 +118,8 @@ public class TransformerAgent extends AbstractEnergyAgent {
 	 * @param localName the local name
 	 */
 	private void startPhoneBookQueryForLocalName(String localName){
+		
+		if (localName==null) return;
 		AID ceaAID = this.getInternalDataModel().getCentralAgentAID();
 		EnergyAgentPhoneBookSearchFilter searchFilter = EnergyAgentPhoneBookSearchFilter.matchLocalName(localName);
 		PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry> queryInitiator = new PhoneBookQueryInitiator<EnergyAgentPhoneBookEntry>(this, this.getInternalDataModel().getPhoneBook(), ceaAID, searchFilter, true);
