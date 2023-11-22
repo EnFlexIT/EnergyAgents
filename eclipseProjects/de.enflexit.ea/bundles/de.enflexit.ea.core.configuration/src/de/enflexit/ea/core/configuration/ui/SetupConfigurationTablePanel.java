@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -94,7 +95,7 @@ public class SetupConfigurationTablePanel extends JPanel implements PropertyChan
 			jTableSetupConfiguration.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			jTableSetupConfiguration.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableSetupConfiguration.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-			
+			jTableSetupConfiguration.setRowHeight(20);
 			
 			// --- Set some default renderer -------------
 			// --- => ... for the header
@@ -102,6 +103,9 @@ public class SetupConfigurationTablePanel extends JPanel implements PropertyChan
 			// --- => ... for Boolean values 
 			jTableSetupConfiguration.setDefaultRenderer(Boolean.class, new TableRendererBoolean());
 			jTableSetupConfiguration.setDefaultRenderer(TableRendererNoEdit.class, new TableRendererNoEdit());
+			
+			jTableSetupConfiguration.setDefaultRenderer(List.class, new TableRendererList(this.getSetupConfigurationModel()));
+			jTableSetupConfiguration.setDefaultEditor(List.class, new TableEditorList(this.getSetupConfigurationModel()));
 			
 			this.resetTableColumnWidth();
 			

@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import de.enflexit.ea.core.configuration.eom.BundleHelper;
+import de.enflexit.ea.core.configuration.ui.SetupConfigurationTablePanel;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 
 /**
@@ -34,6 +35,8 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 })
 public class SystemConfiguration {
 
+	public static final String DO_NOT_CONFIGURE = "NOT CONFIGURED"; 
+	
 	private List<EomSystem> eomSystemList;
 	private List<SystemBlueprint> systemBlueprintList;
 	
@@ -197,6 +200,26 @@ public class SystemConfiguration {
 	public boolean removeSystemBlueprint(SystemBlueprint systemBlueprint) {
 		if (systemBlueprint==null) return false;
 		return this.getSystemBlueprintList().remove(systemBlueprint);
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- Here, the current configuration options can ----- 
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the configuration options to be used within the {@link SetupConfigurationTablePanel}.
+	 * @return the configuration options
+	 */
+	public List<String> getConfigurationOptions() {
+		
+		List<String> configOptionList = new ArrayList<>();
+		configOptionList.add(DO_NOT_CONFIGURE);
+		
+		for (SystemBlueprint systemBlueprint : this.getSystemBlueprintList()) {
+			String configOoption = systemBlueprint.getID() + (systemBlueprint.getDescription()==null ? "" : " (" + systemBlueprint.getDescription() + ")");
+			configOptionList.add(configOoption);
+		}
+		return configOptionList;
 	}
 	
 	

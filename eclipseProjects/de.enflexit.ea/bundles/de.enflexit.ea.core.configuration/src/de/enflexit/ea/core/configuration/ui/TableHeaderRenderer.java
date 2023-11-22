@@ -18,19 +18,18 @@ import de.enflexit.ea.core.configuration.model.SetupConfigurationModel;
  */
 public class TableHeaderRenderer implements TableCellRenderer {
 
-	private DefaultTableCellRenderer renderer;
+	private DefaultTableCellRenderer headerRenderer;
 	private SetupConfigurationModel confModel;
 
     /**
-     * Instantiates a new table header renderer.
+     * Instantiates a new table header headerRenderer.
      *
      * @param table the table
      * @param confModel the current {@link SetupConfigurationModel}
      */
     public TableHeaderRenderer(JTable table, SetupConfigurationModel confModel) {
-        this.renderer = (DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer();
+        this.headerRenderer = (DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer();
         this.confModel = confModel;
-        //renderer.setHorizontalAlignment(JLabel.CENTER);
     }
 
     /* (non-Javadoc)
@@ -47,7 +46,7 @@ public class TableHeaderRenderer implements TableCellRenderer {
     	}
     	
     	// --- Prepare to set Tool tip text ---------------
-    	JLabel label = (JLabel) renderer.getTableCellRendererComponent(table, description, isSelected, hasFocus, row, col);
+    	JLabel label = (JLabel) this.headerRenderer.getTableCellRendererComponent(table, description, isSelected, hasFocus, row, col);
     	if (this.confModel!=null && this.confModel.getColumnVector().size()>0) {
     		SetupConfigurationAttributeService attributeService = this.confModel.getColumnVector().get(col);
     		if (! (attributeService instanceof DescriptionColumn)) {

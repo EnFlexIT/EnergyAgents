@@ -302,6 +302,9 @@ public class SetupConfigurationModel implements Observer {
 						// --- Get type from column vector ----------
 						SetupConfigurationAttributeService attributeService = (SetupConfigurationAttributeService) this.columnIdentifiers.get(columnIndex);
 						colClass = attributeService.getSetupConfigurationAttribute().getType();
+						if (attributeService.hasConfigurationOptions()==true) {
+							colClass = List.class;
+						}
 						break;
 					}
 

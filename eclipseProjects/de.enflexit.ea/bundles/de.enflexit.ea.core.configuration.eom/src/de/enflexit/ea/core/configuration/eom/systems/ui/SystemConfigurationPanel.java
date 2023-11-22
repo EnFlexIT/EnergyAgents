@@ -499,6 +499,7 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 			jTableSystemBlueprints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableSystemBlueprints.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			jTableSystemBlueprints.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+			jTableSystemBlueprints.setRowHeight(20);
 			
 			jTableSystemBlueprints.setDefaultRenderer(Boolean.class, new TableRendererBoolean());
 			this.setJTableSystemBlueprintsColumnWidth();

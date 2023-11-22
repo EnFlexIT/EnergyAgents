@@ -19,7 +19,7 @@ import de.enflexit.ea.core.configuration.eom.systems.EomSystem;
 import de.enflexit.ea.core.configuration.eom.systems.SystemConfiguration;;
 
 /**
- * The Class EomSystemCellEditorID.
+ * The Class TableEditorList.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -54,7 +54,7 @@ public class EomSystemCellEditorID extends AbstractCellEditor implements TableCe
 			@Override
 			public void editingStopped(ChangeEvent e) {
 				if (EomSystemCellEditorID.this.newID!=null && EomSystemCellEditorID.this.newID.equals(EomSystemCellEditorID.this.oldID)==false && systemConfiguration.getEomSystem(EomSystemCellEditorID.this.newID)==null) {
-					//EomSystemCellEditorID.this.eomSystem.setId(EomSystemCellEditorID.this.newID);
+					//TableEditorList.this.eomSystem.setId(TableEditorList.this.newID);
 					EomSystemCellEditorID.this.systemConfiguration.renameEomSystem(EomSystemCellEditorID.this.oldID, EomSystemCellEditorID.this.newID);
 					EomSystemCellEditorID.this.systemConfiguration.save();
 					EomSystemCellEditorID.this.systemConfigurationPanel.reFillTableSystemBlueprints();

@@ -22,7 +22,6 @@ import de.enflexit.eom.awb.adapter.EomAdapter;
 public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<String> {
 
 	private List<String> eomAdapterClassList;
-	private List<String> configurationOptions;
 
 	private SystemConfigurationManager systemConfigurationManager;
 	private SystemConfigurationPanel systemConfigurationPanel;
@@ -83,12 +82,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	 */
 	@Override
 	public List<String> getConfigurationOptions() {
-		if (configurationOptions==null) {
-			configurationOptions = new ArrayList<>();
-			configurationOptions.add("A - Houshold Load");
-			
-		}
-		return configurationOptions;
+		return this.getSystemConfigurationManager().getSystemConfiguration().getConfigurationOptions();
 	}
 
 	/**
