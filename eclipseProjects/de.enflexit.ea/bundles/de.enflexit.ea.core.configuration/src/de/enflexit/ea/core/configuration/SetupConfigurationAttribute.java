@@ -5,9 +5,11 @@ import java.util.List;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 
 /**
- * The Interface SetupConfigurationService.
+ * The Interface SetupConfigurationAttribute provides the corpus of methods to work
+ * on single value within a AWB / Energy Agent project.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ * @param <T> the generic type that has to be a data primitive
  */
 public interface SetupConfigurationAttribute<T> {
 	
@@ -32,6 +34,12 @@ public interface SetupConfigurationAttribute<T> {
 	public Class<? extends T> getType();
 
 	/**
+	 * Has to return the configuration options for this configuration attribute.
+	 * @return the configuration options
+	 */
+	public List<T> getConfigurationOptions();
+
+	/**
 	 * Enables to indicate that the specified potential {@link ConfigurableComponent} will be configured by the current {@link SetupConfigurationAttribute}.
 	 *
 	 * @param cComponent the {@link ConfigurableComponent} to check
@@ -39,12 +47,6 @@ public interface SetupConfigurationAttribute<T> {
 	 */
 	public boolean willBeConfigured(ConfigurableComponent cComponent);
 	
-	/**
-	 * Has to return the configuration options for this configuration attribute.
-	 * @return the configuration options
-	 */
-	public List<T> getConfigurationOptions();
-
 	/**
 	 * Has to return the currently configured value form the designated component or object.
 	 *

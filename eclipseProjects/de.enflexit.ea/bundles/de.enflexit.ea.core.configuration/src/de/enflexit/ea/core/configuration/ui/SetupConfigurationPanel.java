@@ -2,11 +2,17 @@ package de.enflexit.ea.core.configuration.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
+import de.enflexit.ea.core.configuration.SetupConfigurationAttributeWithUI;
+import de.enflexit.ea.core.configuration.SetupConfigurationServiceHelper;
 import de.enflexit.ea.core.configuration.model.SetupConfigurationModel;
 
 /**
@@ -41,6 +47,19 @@ public class SetupConfigurationPanel extends JPanel {
 	 * Disposes the current panel.
 	 */
 	public void dispose() {
+		
+		// --- Dispose individual configuration panel ---------------
+		List<SetupConfigurationAttributeService> attributeServiceListWithUIs = SetupConfigurationServiceHelper.getSetupConfigurationAttributeListWithUIs();
+		for (SetupConfigurationAttributeService attrbuteService : attributeServiceListWithUIs) {
+			try {
+				SetupConfigurationAttributeWithUI<?> attribute = (SetupConfigurationAttributeWithUI<?>) attrbuteService.getSetupConfigurationAttribute();
+				attribute.disposeAttributeConfigurationPanel();
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		// --- Dispose the SetupConfigurationModel ------------------
 		this.getSetupConfigurationModel().dispose();
 	}
 
@@ -75,6 +94,24 @@ public class SetupConfigurationPanel extends JPanel {
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.addTab(" Configuration Table   ", null, this.getSetupConfigurationTablePanel(), "Setup Configuration Table");
+			
+			// --- Get the individual attribute UI components -----------------
+			List<SetupConfigurationAttributeService> attributeServiceListWithUIs = SetupConfigurationServiceHelper.getSetupConfigurationAttributeListWithUIs();
+			for (SetupConfigurationAttributeService attrbuteService : attributeServiceListWithUIs) {
+				
+				try {
+					SetupConfigurationAttributeWithUI<?> attribute = (SetupConfigurationAttributeWithUI<?>) attrbuteService.getSetupConfigurationAttribute();
+					JComponent component = attribute.getAttributeConfigurationPanel();
+					if (component!=null) {
+						component.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+						jTabbedPane.addTab(" " + attrbuteService.getAttributeName() + "   ", null, component, "Setup Configuration Table");
+					}
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
 		}
 		return jTabbedPane;
 	}

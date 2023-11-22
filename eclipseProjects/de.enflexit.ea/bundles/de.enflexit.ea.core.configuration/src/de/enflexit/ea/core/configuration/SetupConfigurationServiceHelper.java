@@ -40,4 +40,24 @@ public class SetupConfigurationServiceHelper {
 		return attributeServiceList;
 	}
 	
+	/**
+	 * Returns the list of {@link SetupConfigurationAttributeService}s that provide an additional configuration UI in a sorted manner.
+	 * @return the setup configuration attribute list
+	 */
+	public static List<SetupConfigurationAttributeService> getSetupConfigurationAttributeListWithUIs() {
+		
+		List<SetupConfigurationAttributeService> attributeServiceList = new ArrayList<>();
+		for (SetupConfigurationService service : getRegisteredServices()) {
+			for (SetupConfigurationAttribute<?> attribute : service.getConfigurationAttributeList()) {
+				if (attribute instanceof SetupConfigurationAttributeWithUI) {
+					attributeServiceList.add(new SetupConfigurationAttributeService(service, attribute));
+				}
+			}
+		}
+		// --- Sort the list of attributes ----------------
+		Collections.sort(attributeServiceList);
+		
+		return attributeServiceList;
+	}
+	
 }
