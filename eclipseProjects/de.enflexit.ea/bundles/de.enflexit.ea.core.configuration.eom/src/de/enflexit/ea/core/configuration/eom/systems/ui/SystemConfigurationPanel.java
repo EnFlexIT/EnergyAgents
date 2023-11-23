@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.configuration.eom.systems.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -7,10 +8,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -62,6 +65,7 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 	private DefaultTableModel tableModelSystemBlueprints;
 	
 	private SystemBlueprint systemBlueprintInEdit;
+	private JButton jButtonSystemBlueprintNotice;
 	
 	/**
 	 * Instantiates a new system configuration panel.
@@ -272,9 +276,9 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 			jPanelSystemBluePrints = new JPanel();
 			
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
 			gridBagLayout.rowHeights = new int[]{0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 			gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 			jPanelSystemBluePrints.setLayout(gridBagLayout);
 			
@@ -284,19 +288,25 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 			gbc_jLabelSystemBlueprints.gridx = 0;
 			gbc_jLabelSystemBlueprints.gridy = 0;
 			jPanelSystemBluePrints.add(getJLabelSystemBlueprints(), gbc_jLabelSystemBlueprints);
+			GridBagConstraints gbc_jButtonSystemBlueprintNotice = new GridBagConstraints();
+			gbc_jButtonSystemBlueprintNotice.insets = new Insets(0, 10, 0, 0);
+			gbc_jButtonSystemBlueprintNotice.anchor = GridBagConstraints.WEST;
+			gbc_jButtonSystemBlueprintNotice.gridx = 1;
+			gbc_jButtonSystemBlueprintNotice.gridy = 0;
+			jPanelSystemBluePrints.add(getJButtonSystemBlueprintNotice(), gbc_jButtonSystemBlueprintNotice);
 			GridBagConstraints gbc_jButtonAddSystemBlueprint = new GridBagConstraints();
 			gbc_jButtonAddSystemBlueprint.insets = new Insets(0, 10, 0, 0);
 			gbc_jButtonAddSystemBlueprint.anchor = GridBagConstraints.EAST;
-			gbc_jButtonAddSystemBlueprint.gridx = 1;
+			gbc_jButtonAddSystemBlueprint.gridx = 2;
 			gbc_jButtonAddSystemBlueprint.gridy = 0;
 			jPanelSystemBluePrints.add(getJButtonAddSystemBlueprint(), gbc_jButtonAddSystemBlueprint);
 			GridBagConstraints gbc_jButtonRemoveSystemBlueprint = new GridBagConstraints();
 			gbc_jButtonRemoveSystemBlueprint.insets = new Insets(0, 5, 0, 0);
-			gbc_jButtonRemoveSystemBlueprint.gridx = 2;
+			gbc_jButtonRemoveSystemBlueprint.gridx = 3;
 			gbc_jButtonRemoveSystemBlueprint.gridy = 0;
 			jPanelSystemBluePrints.add(getJButtonRemoveSystemBlueprint(), gbc_jButtonRemoveSystemBlueprint);
 			GridBagConstraints gbc_jScrollPaneSystemBlueprints = new GridBagConstraints();
-			gbc_jScrollPaneSystemBlueprints.gridwidth = 3;
+			gbc_jScrollPaneSystemBlueprints.gridwidth = 4;
 			gbc_jScrollPaneSystemBlueprints.fill = GridBagConstraints.BOTH;
 			gbc_jScrollPaneSystemBlueprints.gridx = 0;
 			gbc_jScrollPaneSystemBlueprints.gridy = 1;
@@ -311,6 +321,18 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 			jLabelSystemBlueprints.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelSystemBlueprints;
+	}
+	private JButton getJButtonSystemBlueprintNotice() {
+		if (jButtonSystemBlueprintNotice == null) {
+			jButtonSystemBlueprintNotice = new JButton("Please note or check!");
+			jButtonSystemBlueprintNotice.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonSystemBlueprintNotice.setForeground(new Color(0, 0, 169));
+			jButtonSystemBlueprintNotice.setSize(new Dimension(180, 26));
+			jButtonSystemBlueprintNotice.setMaximumSize(new Dimension(180, 26));
+			jButtonSystemBlueprintNotice.setMinimumSize(new Dimension(180, 26));
+			jButtonSystemBlueprintNotice.addActionListener(this);
+		}
+		return jButtonSystemBlueprintNotice;
 	}
 	private JButton getJButtonAddSystemBlueprint() {
 		if (jButtonAddSystemBlueprint == null) {
@@ -647,6 +669,38 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 				}
 			}
 
+		} else if (ae.getSource()==this.getJButtonSystemBlueprintNotice()) {
+			// --- Check for configuration errors -------------------			
+			int messageTpye = JOptionPane.INFORMATION_MESSAGE;
+			String bluePrintStateUpdate = "<b>No errors were found in the current blueprint configuration!</b>";
+			
+			// --- Get list of configuration issues -----------------
+			List<String> currConfigInforamtion = this.getSystemConfiguration().getFaultySystemBlueprintConfigurationInformations();
+			if (currConfigInforamtion.size()>0) {
+				messageTpye = JOptionPane.ERROR_MESSAGE;
+				bluePrintStateUpdate = "<b>Errors in the current blueprint configuration:</b><br>";
+				for (String partState : currConfigInforamtion) {
+					bluePrintStateUpdate += "- " + partState + "<br>"; 
+				}
+			}
+			
+			// --- Build-up blueprint notice ------------------------
+			String title   = "Notice for Blueprint Configuration";
+			String message = "<html>";
+			message += "<p>";
+			message += "In case that a new aggregation is to be created, <b>exactly one EOM-System</b> within a blueprint configuration<br>";
+			message += "must be selected that can be used as a starting point for the new aggregation.<br>";
+			message += "Thereto, additionally select that EOM-System (a <b>TechnicalSystemGroup</b>) that is the desired base for the new aggregation!<br>";
+			message += "<br></p>";
+			message += "<p>";
+			message += bluePrintStateUpdate;
+			message += "<br>";
+			message += "</p>";
+			message += "</html>";
+			
+			// --- Show blueprint notice ----------------------------
+			JOptionPane.showMessageDialog(this, message, title, messageTpye);
+			
 		}
 	}
 	

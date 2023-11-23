@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import de.enflexit.ea.core.configuration.eom.BundleHelper;
 import de.enflexit.ea.core.configuration.ui.SetupConfigurationTablePanel;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
+import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 
 /**
  * The Class SystemConfiguration.
@@ -201,10 +202,97 @@ public class SystemConfiguration {
 		if (systemBlueprint==null) return false;
 		return this.getSystemBlueprintList().remove(systemBlueprint);
 	}
+
+	
+	/**
+	 * Returns a list of textual information about faulty blueprint configurations.
+	 * @return the configuration information
+	 */
+	public List<String> getFaultySystemBlueprintConfigurationInformations() {
+		
+		List<String> infoList = new ArrayList<>();
+		
+		for (SystemBlueprint systemBlueprint : this.getSystemBlueprintList()) {
+			String info = this.getFaultySystemBlueprintConfigurationInformation(systemBlueprint);
+			if (info!=null) {
+				infoList.add(info);
+			}
+		}
+		return infoList;
+	}
+	/**
+	 * Returns textual information about the current blueprint configuration .
+	 *
+	 * @param systemBlueprint the system blueprint
+	 * @return the configuration information
+	 */
+	public String getFaultySystemBlueprintConfigurationInformation(SystemBlueprint systemBlueprint) {
+		
+		String info = "";
+
+		if (systemBlueprint.getEomSystemIdList().size()==0) {
+			info = "Blueprint '" + systemBlueprint.getID() + "' does not contain any EOM-System!";
+		}
+		
+		if (info.isBlank()==true && this.requiresAggregation(systemBlueprint)==true && this.containsSingleTechnicalSystemGroup(systemBlueprint)==false) {
+			info = "Blueprint '" + systemBlueprint.getID() + "' requiers but does not contain a TechnicalSystemGroup to be used as aggregation base!";
+		}
+		
+		if (info.isBlank()==true && this.requiresAggregation(systemBlueprint)==false && this.getNumberOfTechnicalSystemGroup(systemBlueprint)>0) {
+			info = "Blueprint '" + systemBlueprint.getID() + "' contains a TechnicalSystemGroup that is not required!";
+		}
+		
+		if (info.isBlank()) info=null;
+		return info;
+	}
+	/**
+	 * Checks if the specified SystemBlueprint requires to build an aggregation.
+	 *
+	 * @param systemBlueprint the system blueprint
+	 * @return true, if successful
+	 */
+	public boolean requiresAggregation(SystemBlueprint systemBlueprint) {
+		
+		boolean requiresAggregation = false;
+		
+		int noOfSystem = systemBlueprint.getEomSystemIdList().size();
+		int noOfTSGs = this.getNumberOfTechnicalSystemGroup(systemBlueprint);
+		
+		if (noOfSystem-noOfTSGs>1) {
+			requiresAggregation = true;
+		}
+		return requiresAggregation;
+	}
+	/**
+	 * Checks if the specified {@link SystemBlueprint} definition contains a single TechnicalSystemGroup.
+	 *
+	 * @param systemBlueprint the system blueprint
+	 * @return true, if just one TechnicalSystemGroup is defined for the SystemBlueprint 
+	 */
+	public boolean containsSingleTechnicalSystemGroup(SystemBlueprint systemBlueprint) {
+		return (this.getNumberOfTechnicalSystemGroup(systemBlueprint)==1);
+	}
+	/**
+	 * Returns the number of TechnicalSystemGroup elements defined in the specified {@link SystemBlueprint}.
+	 *
+	 * @param systemBlueprint the system blueprint
+	 * @return the number of technical system group
+	 */
+	public int getNumberOfTechnicalSystemGroup(SystemBlueprint systemBlueprint) {
+	
+		int tsgCounter = 0;
+		for (String eomSystemID : systemBlueprint.getEomSystemIdList()) {
+			EomSystem eomSystem = this.getEomSystem(eomSystemID);
+			if (eomSystem!=null && eomSystem.getEomModelType()==EomModelType.TechnicalSystemGroup) {
+				tsgCounter++;
+			}
+		}
+		return tsgCounter;
+	}
 	
 	
 	// ------------------------------------------------------------------------
-	// --- Here, the current configuration options can ----- 
+	// --- Here, the current configuration options can ------------------------ 
 	// ------------------------------------------------------------------------
 	/**
 	 * Returns the configuration options to be used within the {@link SetupConfigurationTablePanel}.
