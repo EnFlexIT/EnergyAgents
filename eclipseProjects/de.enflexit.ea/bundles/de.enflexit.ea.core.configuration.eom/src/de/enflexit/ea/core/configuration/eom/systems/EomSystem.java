@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
 
+import de.enflexit.common.SerialClone;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation;;
@@ -149,6 +150,17 @@ public class EomSystem implements DataModelNetworkElement {
 	public Object getDataModel() {
 		return eomDataModel;
 	}
+	/**
+	 * Returns a copy of the currently defined EOM model.
+	 * @return the data model copy
+	 */
+	public Object getDataModelCopy() {
+		if (this.eomDataModel!=null) {
+			return SerialClone.clone(this.eomDataModel);
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.DataModelNetworkElement#setDataModel(java.lang.Object)
 	 */

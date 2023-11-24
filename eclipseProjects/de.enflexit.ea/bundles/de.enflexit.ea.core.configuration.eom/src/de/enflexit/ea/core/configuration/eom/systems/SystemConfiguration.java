@@ -36,7 +36,7 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 })
 public class SystemConfiguration {
 
-	public static final String DO_NOT_CONFIGURE = "NOT CONFIGURED"; 
+	public static final String NOT_CONFIGURED = "NOT CONFIGURED"; 
 	
 	private List<EomSystem> eomSystemList;
 	private List<SystemBlueprint> systemBlueprintList;
@@ -185,8 +185,11 @@ public class SystemConfiguration {
 	 */
 	public SystemBlueprint getSystemBlueprint(String id) {
 		
+		if (id==null || id.isBlank()==true) return null;
+		
 		for (SystemBlueprint systemBlueprint : this.getSystemBlueprintList()) {
-			if (systemBlueprint.getID().equals(id)==true) {
+			if (id.equalsIgnoreCase(systemBlueprint.getID())==true || 
+				id.equalsIgnoreCase( (systemBlueprint.getID() + " (" + systemBlueprint.getDescription() + ")") )==true) {
 				return systemBlueprint;
 			}
 		}
@@ -289,7 +292,21 @@ public class SystemConfiguration {
 		}
 		return tsgCounter;
 	}
-	
+	/**
+	 * Returns the EOMSystem of the specified {@link SystemBlueprint} that is a TechnicalSystemGroup.
+	 *
+	 * @param systemBlueprint the system blueprint
+	 * @return the eom system technical system group
+	 */
+	public EomSystem getEomSystemTechnicalSystemGroup(SystemBlueprint systemBlueprint) {
+		for (String eomSystemID : systemBlueprint.getEomSystemIdList()) {
+			EomSystem eomSystem = this.getEomSystem(eomSystemID);
+			if (eomSystem!=null && eomSystem.getEomModelType()==EomModelType.TechnicalSystemGroup) {
+				return eomSystem;
+			}
+		}
+		return null;
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- Here, the current configuration options can ------------------------ 
@@ -301,7 +318,7 @@ public class SystemConfiguration {
 	public List<String> getConfigurationOptions() {
 		
 		List<String> configOptionList = new ArrayList<>();
-		configOptionList.add(DO_NOT_CONFIGURE);
+		configOptionList.add(NOT_CONFIGURED);
 		
 		for (SystemBlueprint systemBlueprint : this.getSystemBlueprintList()) {
 			String configOoption = systemBlueprint.getID() + (systemBlueprint.getDescription()==null ? "" : " (" + systemBlueprint.getDescription() + ")");

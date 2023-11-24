@@ -5,14 +5,18 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 
 import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeWithUI;
+import de.enflexit.ea.core.configuration.eom.systems.EomModelCreator;
+import de.enflexit.ea.core.configuration.eom.systems.SystemConfiguration;
 import de.enflexit.ea.core.configuration.eom.systems.SystemConfigurationManager;
 import de.enflexit.ea.core.configuration.eom.systems.ui.SystemConfigurationPanel;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 import de.enflexit.eom.awb.adapter.EomAdapter;
+import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 
 /**
  * The Class EomSetupConfiguration.
@@ -21,6 +25,8 @@ import de.enflexit.eom.awb.adapter.EomAdapter;
  */
 public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<String> {
 
+	private static final String STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID = "Blueprint-ID";
+	
 	private List<String> eomAdapterClassList;
 
 	private SystemConfigurationManager systemConfigurationManager;
@@ -123,8 +129,13 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	@Override
 	public String getValue(ConfigurableComponent cComponent) {
 		
-		
-		return null;
+		// --- Check the assigned value in the NetworkComponents storage settings -------
+		NetworkComponent netComp = cComponent.getNetworkComponent();
+		String systemBlueprintID = netComp.getDataModelStorageSettings()!=null ? netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID) : null;
+		if (systemBlueprintID==null || this.getConfigurationOptions().contains(systemBlueprintID)==false) {
+			systemBlueprintID = this.getConfigurationOptions().get(0);
+		}
+		return systemBlueprintID;
 	}
 	
 	/* (non-Javadoc)
@@ -134,11 +145,32 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	public void setValue(ConfigurableComponent cComponent, Object newValue) {
 		
 		if (newValue==null) return;
+		String systemBlueprintID = (String) newValue;
+		if (systemBlueprintID==null || this.getConfigurationOptions().contains(systemBlueprintID)==false) {
+			// --- Nothing to do in this case ---------------------------------
+			return;
+		}
 		
-		String systemType = (String) newValue;
+		// --- Check if NetworkComponent already contains that blueprint ------ 
+		NetworkComponent netComp = cComponent.getNetworkComponent();
+		if (netComp.getDataModel()!=null && 
+			netComp.getDataModelStorageSettings()!=null && 
+			netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID)!=null &&
+			netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID).equals(systemBlueprintID)==true) {
+			// --- Blueprint was already assigned to the NetworkComponent -----
+			return;
+		}
 		
+		// --- Create a new EOM model system based on the blueprint -----------
+		EomModelCreator eomModelCreator = new EomModelCreator(this.getSystemConfigurationManager().getSystemConfiguration(), systemBlueprintID, netComp);
+		netComp.setDataModel(eomModelCreator.getEomModel());
+		netComp.setDataModelStorageSettings(eomModelCreator.getStorageSettings());
 		
+		// --- Save the EOM file ----------------------------------------------
+		new EomDataModelStorageHandler(null).saveDataModel(netComp);
 		
+		// --- Finally remind the SystemBlueprint ID -------------------------- 
+		netComp.getDataModelStorageSettings().put(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, systemBlueprintID);
 		
 	}
 }

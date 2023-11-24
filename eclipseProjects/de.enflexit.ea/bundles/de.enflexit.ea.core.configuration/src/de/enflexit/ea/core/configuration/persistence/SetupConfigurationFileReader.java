@@ -63,6 +63,9 @@ public class SetupConfigurationFileReader {
 				// --- Find the correct model column in the destination table ----------- 
 				String header = this.getDataHeaderHashMap().get(rowVectorColumn);
 				SetupConfigurationAttributeService serviceAttribute = this.getAttributeServiceHashMap().get(header);
+				Class<?> type = serviceAttribute.getSetupConfigurationAttribute().getType();
+				if (type==null) continue;
+				
 				Integer modelColumn = this.getAttributeColumnIndexHashMap().get(serviceAttribute);  
 				if (modelColumn==null) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] No table model column could be found with a header named '" + header + "'; skipping column!");
@@ -74,9 +77,13 @@ public class SetupConfigurationFileReader {
 					String objectValueString = (String) rowVector.get(rowVectorColumn);
 					Object objectValue = null;
 					
-					Class<?> type = serviceAttribute.getSetupConfigurationAttribute().getType(); 
 					if (type==String.class) {
 						objectValue = objectValueString;
+						if (serviceAttribute.hasConfigurationOptions()) {
+							// --- Check for correct configuration option ---------------
+							objectValue = serviceAttribute.getConfigurationOption(objectValue);
+						}
+						
 					} else if (type==Boolean.class) {
 						objectValue = Boolean.parseBoolean(objectValueString);
 					} else if (type==Integer.class) {

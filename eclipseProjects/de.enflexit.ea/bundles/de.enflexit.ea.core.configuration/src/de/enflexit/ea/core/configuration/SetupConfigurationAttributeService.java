@@ -125,6 +125,63 @@ public class SetupConfigurationAttributeService implements Comparable<SetupConfi
 	}
 	
 	/**
+	 * Returns the configuration option that can be identified by the specified object value.
+	 *
+	 * @param objectValue the object value
+	 * @return the configuration option
+	 */
+	public Object getConfigurationOption(Object objectValue) {
+
+		Class<?> type = this.getSetupConfigurationAttribute().getType();
+		if (type==String.class) {
+			// ------------------------------------------------------
+			// --- For String configuration options -----------------
+			// ------------------------------------------------------			
+			String configOptionFound = null;
+			String stringValue = (String) objectValue;
+
+			// --- Check if option is somehow in the list -----------
+			@SuppressWarnings("unchecked")
+			List<String> configOptionList = (List<String>) this.getConfigurationOptions();		
+			if (stringValue==null || stringValue.isBlank()==true) {
+				// --- For null or empty strings --------------------
+				configOptionFound = configOptionList.get(0);
+				
+			} else if (configOptionList.contains(stringValue)==true) {
+				// --- Found option in list -------------------------
+				configOptionFound = stringValue;
+				
+			} else {
+				// --- Search for an equivalent ---------------------
+				for (String stringConfigOption : configOptionList) {
+					// --- Get the short form of the option --------- 
+					int cutPos = stringConfigOption.indexOf("(");
+					String stringConfigOptionShort = cutPos!=-1 ? stringConfigOption.substring(0, cutPos).trim() : stringConfigOption;
+					// --- Check lower case of original -------------
+					if (stringConfigOption.toLowerCase().trim().equals( stringValue.toLowerCase().trim() ) == true) {
+						configOptionFound = stringConfigOption;
+						break;
+					}
+					// --- Check lower case of short ----------------
+					if (stringConfigOptionShort.toLowerCase().trim().equals( stringValue.toLowerCase().trim() ) == true) {
+						configOptionFound = stringConfigOption;
+						break;
+					}
+				}
+				
+			}
+			// --- Change object value? ----------------------------- 
+			if (configOptionFound!=null) {
+				objectValue = configOptionFound;
+			} else {
+				objectValue = configOptionList.get(0);
+			}
+		
+		}
+		return objectValue;
+	}
+	
+	/**
 	 * Returns the simple service name.
 	 * @return the service name
 	 */
