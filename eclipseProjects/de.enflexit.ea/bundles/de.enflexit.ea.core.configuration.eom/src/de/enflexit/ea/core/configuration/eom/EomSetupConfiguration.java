@@ -11,7 +11,6 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeWithUI;
 import de.enflexit.ea.core.configuration.eom.systems.EomModelCreator;
-import de.enflexit.ea.core.configuration.eom.systems.SystemConfiguration;
 import de.enflexit.ea.core.configuration.eom.systems.SystemConfigurationManager;
 import de.enflexit.ea.core.configuration.eom.systems.ui.SystemConfigurationPanel;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
