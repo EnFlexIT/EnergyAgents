@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.configuration.eom;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.EnergyAgentAdapter;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeWithUI;
 import de.enflexit.ea.core.configuration.eom.systems.EomModelCreator;
+import de.enflexit.ea.core.configuration.eom.systems.SystemConfiguration;
 import de.enflexit.ea.core.configuration.eom.systems.SystemConfigurationManager;
 import de.enflexit.ea.core.configuration.eom.systems.ui.SystemConfigurationPanel;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
@@ -144,32 +146,64 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	public void setValue(ConfigurableComponent cComponent, Object newValue) {
 		
 		if (newValue==null) return;
-		String systemBlueprintID = (String) newValue;
-		if (systemBlueprintID==null || this.getConfigurationOptions().contains(systemBlueprintID)==false) {
-			// --- Nothing to do in this case ---------------------------------
+		String newSystemBlueprintID = (String) newValue;
+		if (newSystemBlueprintID==null || this.getConfigurationOptions().contains(newSystemBlueprintID)==false) {
+			// --- Nothing to assign ---
 			return;
 		}
 		
-		// --- Check if NetworkComponent already contains that blueprint ------ 
+		// --- Get old blueprint ID ------------------------------------------- 
 		NetworkComponent netComp = cComponent.getNetworkComponent();
-		if (netComp.getDataModel()!=null && 
-			netComp.getDataModelStorageSettings()!=null && 
-			netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID)!=null &&
-			netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID).equals(systemBlueprintID)==true) {
-			// --- Blueprint was already assigned to the NetworkComponent -----
+		Object dataModel = netComp.getDataModel(); 
+		String oldSystemBlueprintID = null;
+		if (dataModel!=null && netComp.getDataModelStorageSettings()!=null) {
+			// --- Get old blueprint ID ---------------------------------------
+			oldSystemBlueprintID = netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID); 
+		}
+		// --- Blueprint already assigned to the NetworkComponent? ------------
+		if (newSystemBlueprintID.equals(oldSystemBlueprintID)==true) return;
+
+
+		// --- Consider SystemConfiguration.NOT_CONFIGURED --------------------
+		if (newSystemBlueprintID.equals(SystemConfiguration.NOT_CONFIGURED)==true ) {
+			if (oldSystemBlueprintID!=null) {
+				// --- Remove model file -------------------------------------- 
+				this.removeEomModelFile(netComp);
+				// --- Empty data model and storage settings ------------------
+				netComp.setDataModel(null);
+				netComp.setDataModelStorageSettings(null);
+			}
 			return;
 		}
-		
+			
 		// --- Create a new EOM model system based on the blueprint -----------
-		EomModelCreator eomModelCreator = new EomModelCreator(this.getSystemConfigurationManager().getSystemConfiguration(), systemBlueprintID, netComp);
-		netComp.setDataModel(eomModelCreator.getEomModel());
-		netComp.setDataModelStorageSettings(eomModelCreator.getStorageSettings());
-		
-		// --- Save the EOM file ----------------------------------------------
-		new EomDataModelStorageHandler(null).saveDataModel(netComp);
-		
-		// --- Finally remind the SystemBlueprint ID -------------------------- 
-		netComp.getDataModelStorageSettings().put(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, systemBlueprintID);
-		
+		EomModelCreator eomModelCreator = new EomModelCreator(this.getSystemConfigurationManager().getSystemConfiguration(), newSystemBlueprintID, netComp);
+		if (eomModelCreator.getEomModel()!=null) {
+			// --- Remove previous model file ---------------------------------
+			this.removeEomModelFile(netComp);
+			// --- Set model and storage settings -----------------------------
+			netComp.setDataModel(eomModelCreator.getEomModel());
+			netComp.setDataModelStorageSettings(eomModelCreator.getStorageSettings());
+			// --- Finally remind the SystemBlueprint ID ---------------------- 
+			netComp.getDataModelStorageSettings().put(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, newSystemBlueprintID);
+		}
+
 	}
+	
+	/**
+	 * Removes the EOM model file.
+	 * @param netComp the NetworkComponent
+	 */
+	private void removeEomModelFile(NetworkComponent netComp) {
+	
+		File fileToDelete = EomDataModelStorageHandler.getEomModelFile(BundleHelper.getProject(), netComp);
+		if (fileToDelete!=null && fileToDelete.exists()==true) {
+			try {
+				fileToDelete.delete();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
 }

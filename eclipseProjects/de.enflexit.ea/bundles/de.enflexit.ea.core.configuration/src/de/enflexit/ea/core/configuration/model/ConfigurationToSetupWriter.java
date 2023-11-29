@@ -6,7 +6,6 @@ import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
-import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
 
 /**
  * The Class ConfigurationToSetupWriter.
@@ -18,7 +17,7 @@ public class ConfigurationToSetupWriter extends Thread {
 	private static final String THREAD_NAME = "Setup Configuration Model - Writing";
 	
 	private SetupConfigurationModel configModel;
-	private Vector<EomModelWriterThread> eomModelWriterThreads;
+	private Vector<DataModelWriterThread> dataModelWriterThreads;
 	
 	/**
 	 * Instantiates a new configuration to setup writer.
@@ -60,10 +59,9 @@ public class ConfigurationToSetupWriter extends Thread {
 			configComponent.saveAgentStartArguments();
 			
 			// --- Save EOM model changes -----------------
-			if (configComponent.isEomModel()==true) {
+			if (configComponent.isEomModel()==true || configComponent.containsEomModel()) {
 				// --- Create new extra save thread -------
-				ConfigurableEomComponent eomComponent = (ConfigurableEomComponent) configComponent;
-				EomModelWriterThread eomModelThread = new EomModelWriterThread(eomComponent);
+				DataModelWriterThread eomModelThread = new DataModelWriterThread(configComponent);
 				this.getEomModelWriterThreads().add(eomModelThread);
 				eomModelThread.start();
 			}
@@ -87,35 +85,37 @@ public class ConfigurationToSetupWriter extends Thread {
 		this.configModel.getProject().save();
 		// --- Set UI message -----------------------------
 		this.configModel.setUIMessage("Wrote table data and saved setup!");
+		// --- Recreate table model ----------------------- 
+		this.configModel.reCreateConfigurationTableModel();
 	}
 	
 	/**
-	 * Returns the vector of EomModelWriterThread.
+	 * Returns the vector of DataModelWriterThread.
 	 * @return the eom model writer threads
 	 */
-	private Vector<EomModelWriterThread> getEomModelWriterThreads() {
-		if (eomModelWriterThreads==null) {
-			eomModelWriterThreads = new Vector<>();
+	private Vector<DataModelWriterThread> getEomModelWriterThreads() {
+		if (dataModelWriterThreads==null) {
+			dataModelWriterThreads = new Vector<>();
 		}
-		return eomModelWriterThreads;
+		return dataModelWriterThreads;
 	}
 	
 	
 	/**
-	 * The Class EomModelWriterThread.
+	 * The Class DataModelWriterThread.
 	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
 	 */
-	private class EomModelWriterThread extends Thread {
+	private class DataModelWriterThread extends Thread {
 		
-		private ConfigurableEomComponent eomComponent;
+		private ConfigurableComponent cComponent;
 		
 		/**
-		 * Instantiates a EomModelWriterThread.
-		 * @param eomComponent the ConfigurableEomComponent to save
+		 * Instantiates a DataModelWriterThread.
+		 * @param cComponent the ConfigurableComponent to save
 		 */
-		public EomModelWriterThread(ConfigurableEomComponent eomComponent) {
-			this.eomComponent = eomComponent;
-			this.setName(THREAD_NAME + " (" + eomComponent.toString() + ")");
+		public DataModelWriterThread(ConfigurableComponent cComponent) {
+			this.cComponent = cComponent;
+			this.setName(THREAD_NAME + " (" + cComponent.toString() + ")");
 		}
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
@@ -123,7 +123,7 @@ public class ConfigurationToSetupWriter extends Thread {
 		@Override
 		public void run() {
 			try {
-				this.eomComponent.saveEomModelChanges();
+				this.cComponent.saveDataModel();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {

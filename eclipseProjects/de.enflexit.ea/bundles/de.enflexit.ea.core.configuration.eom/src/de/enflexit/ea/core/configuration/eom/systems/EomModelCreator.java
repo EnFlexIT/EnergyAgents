@@ -122,17 +122,27 @@ public class EomModelCreator {
 		
 		if (this.eomModel==null) return;
 		
-		Project project = BundleHelper.getProject(); 
-		File eomModelFile = EomDataModelStorageHandler.getFileSuggestion(project, this.networkComponent);
-		String relativePath = EomDataModelStorageHandler.getRelativeProjectPath(project, eomModelFile);
-		
+		// --- Define EomModelType ----------------------------------
+		EomModelType eomModelType = null; 
 		if (this.eomModel instanceof TechnicalSystem) {
-			this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.TechnicalSystem.toString());
+			eomModelType = EomModelType.TechnicalSystem; 
 		} else if (this.eomModel instanceof ScheduleList) {
-			this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
+			eomModelType = EomModelType.ScheduleList;
 		} else if (this.eomModel instanceof TechnicalSystemGroup) {
-			this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.TechnicalSystemGroup.toString());
+			eomModelType = EomModelType.TechnicalSystemGroup;
 		}
+
+		// --- Get EOM file suggestion and relative path ------------
+		String networkElementSimpleClassName = this.networkComponent.getClass().getSimpleName();
+		String networkElementID = this.networkComponent.getId();
+		String networkComponentType = this.networkComponent.getType();
+		
+		Project project = BundleHelper.getProject(); 
+		File eomModelFile = EomDataModelStorageHandler.getFileSuggestion(project, networkElementSimpleClassName, networkElementID, eomModelType, networkComponentType);
+		String relativePath = EomDataModelStorageHandler.getRelativeProjectPath(project, eomModelFile);
+
+		// --- Put into storage settings ----------------------------
+		this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, eomModelType.toString());
 		this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
 		this.getStorageSettings().put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, relativePath);
 	}

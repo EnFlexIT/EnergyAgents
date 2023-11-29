@@ -6,8 +6,6 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
-import de.enflexit.eom.awb.adapter.EomAdapter;
-import de.enflexit.eom.awb.adapter.EomDataModelAdapter;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import energy.OptionModelController;
@@ -277,20 +275,6 @@ public class ConfigurableEomComponent extends ConfigurableComponent {
 				omc.setStaticModelInstance(sysVarDefStaticModel, dataModelInstance);
 			}
 		}
-	}
-	
-	/**
-	 * Will save the EOM model changes.
-	 */
-	public final void saveEomModelChanges() {
-		
-		EomAdapter eomAdapter = (EomAdapter) this.getNetworkModel().getNetworkComponentAdapter(this.getGraphController(), this.getNetworkComponent());
-		EomDataModelAdapter eomAdapterDM = (EomDataModelAdapter) eomAdapter.getNewDataModelAdapter();
-		eomAdapterDM.setNetworkComponentAdapter(eomAdapter);
-		eomAdapterDM.setGraphEnvironmentController(this.getGraphController());
-		eomAdapterDM.setNetworkComponent(this.getNetworkComponent());
-
-		eomAdapterDM.getDataModelStorageHandler().saveDataModel(this.getNetworkComponent());
 	}
 	
 	/* (non-Javadoc)

@@ -388,7 +388,7 @@ public class SystemConfiguration {
 	 */
 	public static SystemConfiguration load(File file) {
 		
-		if (file.exists()==false) return null;
+		if (file==null || file.exists()==false) return null;
 		
 		SystemConfiguration sysConfig = null;
 		

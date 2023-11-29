@@ -7,6 +7,9 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
+import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
+import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
@@ -20,6 +23,9 @@ import de.enflexit.common.ontology.AgentStartArguments;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
 import de.enflexit.ea.core.configuration.SetupConfigurationService;
+import energy.optionModel.ScheduleList;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemGroup;
 
 /**
  * The abstract class ConfigurableComponent serves as base class for specific aspects that may be configured 
@@ -79,6 +85,26 @@ public class ConfigurableComponent {
 	 * @return true, if the current ConfigurableComponent is for an EOM model
 	 */
 	public boolean isEomModel() {
+		return false;
+	}
+	
+	/**
+	 * Check if the NetworwokComponent Contains an EOM model - even if {@link #isEomModel()} 
+	 * tells us that the component is not a EOM model.
+	 * @return true, if {@link #isEomModel()} is true or if the NetworkComponents data model contains an EOM model
+	 */
+	public boolean containsEomModel() {
+		
+		if (this.isEomModel()==true) return true;
+		
+		Object dataModel = this.getNetworkComponent().getDataModel();
+		if (dataModel instanceof TechnicalSystem) {
+			return true;
+		} else if (dataModel instanceof ScheduleList) {
+			return true;
+		} else if (dataModel instanceof TechnicalSystemGroup) {
+			return true;
+		}
 		return false;
 	}
 	
@@ -270,6 +296,22 @@ public class ConfigurableComponent {
 		this.getAgentClassElement4SimStart().setStartArguments(this.getOntologyInstanceViewer().getConfigurationXML());
 	}
 	
+	/**
+	 * Saves the data model of the {@link NetworkComponent}.
+	 */
+	public void saveDataModel() {
+		
+		NetworkComponentAdapter netCompAdapt = this.getNetworkModel().getNetworkComponentAdapter(this.getGraphController(), this.getNetworkComponent());
+		NetworkComponentAdapter4DataModel netCompAdapt4DM = netCompAdapt.getStoredDataModelAdapter();
+		netCompAdapt4DM.setNetworkComponentAdapter(netCompAdapt);
+		netCompAdapt4DM.setGraphEnvironmentController(this.getGraphController());
+		netCompAdapt4DM.setNetworkComponent(this.getNetworkComponent());
+		
+		AbstractDataModelStorageHandler storageHandler = netCompAdapt4DM.getDataModelStorageHandlerInternal();
+		if (storageHandler!=null) {
+			storageHandler.saveDataModel(this.getNetworkComponent());
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.configuration.eom.systems;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener;
 import de.enflexit.ea.core.configuration.eom.BundleHelper;
 
 /**
@@ -7,7 +9,7 @@ import de.enflexit.ea.core.configuration.eom.BundleHelper;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class SystemConfigurationManager {
+public class SystemConfigurationManager implements ApplicationListener {
 
 	private SystemConfiguration systemConfiguration;
 	
@@ -15,6 +17,7 @@ public class SystemConfigurationManager {
 	 * Instantiates a new system configuration manager.
 	 */
 	public SystemConfigurationManager() {
+		Application.addApplicationListener(this);
 		this.initialize();
 	}
 	/**
@@ -47,6 +50,20 @@ public class SystemConfigurationManager {
 	 */
 	public void saveSettings() {
 		this.getSystemConfiguration().save();
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		
+		if (event.getApplicationEvent() == ApplicationEvent.PROJECT_CLOSED) {
+			this.setSystemConfiguration(null);
+		} else if (event.getApplicationEvent() == ApplicationEvent.PROJECT_FOCUSED) {
+			this.initialize();
+		}
+		
 	}
 	
 	
