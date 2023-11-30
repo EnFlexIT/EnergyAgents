@@ -41,8 +41,6 @@ public class ConfigurableComponent {
 	private NetworkComponent networkComponent;
 	private ComponentTypeSettings componentTypeSettings;
 
-	private OntologyInstanceViewer ontologyInstanceViewer;
-	
 	private AgentStartArguments agentStartArguments;
 	private Object[] configuredAgentStartArguments;
 	
@@ -183,13 +181,30 @@ public class ConfigurableComponent {
 	 * Returns the {@link AgentStartArguments} if the current component is defined with an agent class .
 	 * @return the agent start argument
 	 */
-	public AgentStartArguments getAgentStartArgumentTypes() {
+	public AgentStartArguments getAgentStartArguments() {
 		if (this.intendsAgentStartArguments()==true && agentStartArguments==null) {
 			agentStartArguments = this.getProject().getAgentStartConfiguration().getAgentStartArguments(this.getComponentTypeSettings().getAgentClass());
 		}
 		return agentStartArguments;
 	}
+	/**
+	 * Returns the ontology class references for the start arguments.
+	 * @return the ontology class references
+	 */
+	private String[] getOntologyClassReferences() {
 
+		AgentStartArguments agentStartArguments = this.getAgentStartArguments();
+		if (agentStartArguments==null || agentStartArguments.getStartArguments().size()==0) return null;
+
+		String[] ontoClassReference = new String[agentStartArguments.getStartArguments().size()];
+		for (int i = 0; i < agentStartArguments.getStartArguments().size(); i++) {
+			AgentStartArgument agetStartArgument = agentStartArguments.getStartArguments().get(i);
+			ontoClassReference[i] = agetStartArgument.getOntologyReference();
+		}
+		return ontoClassReference;
+	}
+	
+	
 	/**
 	 * Returns the configured start arguments for the current component.
 	 * @return the configured start arguments
@@ -206,7 +221,7 @@ public class ConfigurableComponent {
 		if (this.intendsAgentStartArguments()==true && configuredAgentStartArguments==null) {
 			
 			// --- Get required start arguments --------------------- 
-			Vector<AgentStartArgument> asaVector = this.getAgentStartArgumentTypes().getStartArguments();
+			Vector<AgentStartArgument> asaVector = this.getAgentStartArguments().getStartArguments();
 			// --- Get configured arguments -------------------------
 			AgentClassElement4SimStart ace4SimStart = this.getAgentClassElement4SimStart();
 			
@@ -247,7 +262,7 @@ public class ConfigurableComponent {
 	 */
 	private Object[] createAgentStartArguments() {
 		
-		Vector<AgentStartArgument> asaVector = this.getAgentStartArgumentTypes().getStartArguments();
+		Vector<AgentStartArgument> asaVector = this.getAgentStartArguments().getStartArguments();
 		
 		Object[] newAgentStartArguments = new Object[asaVector.size()];
 		for (int i = 0; i < asaVector.size(); i++) {
@@ -262,16 +277,6 @@ public class ConfigurableComponent {
 	}
 	
 	/**
-	 * Returns the ontology instance viewer that enable to convert start arguments between instances and XML.
-	 * @return the ontology instance viewer
-	 */
-	private OntologyInstanceViewer getOntologyInstanceViewer() {
-		if (ontologyInstanceViewer==null) {
-			ontologyInstanceViewer = new OntologyInstanceViewer(this.getProject().getOntologyVisualisationHelper(), this.getProject().getAgentStartConfiguration(), this.getComponentTypeSettings().getAgentClass()); 
-		}
-		return ontologyInstanceViewer;
-	}
-	/**
 	 * This method will return the Object Array for the start argument of an agent.
 	 *
 	 * @param ace4SimStart the AgentClassElement4SimStart
@@ -279,8 +284,7 @@ public class ConfigurableComponent {
 	 */
 	private Object[] loadStartArguments(AgentClassElement4SimStart ace4SimStart) {
 		if (ace4SimStart!=null && ace4SimStart.getStartArguments()!=null) {
-			this.getOntologyInstanceViewer().setConfigurationXML(ace4SimStart.getStartArguments());
-			return this.getOntologyInstanceViewer().getConfigurationInstances();
+			return OntologyInstanceViewer.getInstancesOfXMLArray(ace4SimStart.getStartArguments(), this.getOntologyClassReferences(), this.getProject().getOntologyVisualisationHelper());
 		}
 		return null;
 	}
@@ -292,8 +296,8 @@ public class ConfigurableComponent {
 		if (this.configuredAgentStartArguments==null) return;
 		
 		// --- Get the array of XML representations of the start arguments ----
-		this.getOntologyInstanceViewer().setConfigurationInstances(configuredAgentStartArguments);
-		this.getAgentClassElement4SimStart().setStartArguments(this.getOntologyInstanceViewer().getConfigurationXML());
+		String[] xmlArray = OntologyInstanceViewer.getXMLArrayOfInstances(configuredAgentStartArguments, this.getOntologyClassReferences(), this.getProject().getOntologyVisualisationHelper());
+		this.getAgentClassElement4SimStart().setStartArguments(xmlArray);
 	}
 	
 	/**
