@@ -225,8 +225,10 @@ public class SetupConfigurationToolBar extends JToolBar implements ActionListene
 		} else if (ae.getSource()==this.getJButtonLoadFromFile()) {
 			// --- Loads CSV data to the table --------------------------------
 			File fileSelection = this.getFileSelection(false);
-			if (fileSelection!=null) {
+			if (fileSelection!=null && fileSelection.exists()==true) {
 				new SetupConfigurationFileReader(this.configModel).read(fileSelection);
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Configuration file not found!");
 			}
 		}
 	}

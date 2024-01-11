@@ -29,7 +29,8 @@ public class SetupConfigurationServiceHelper {
 	public static List<SetupConfigurationAttributeService> getSetupConfigurationAttributeList() {
 		
 		List<SetupConfigurationAttributeService> attributeServiceList = new ArrayList<>();
-		for (SetupConfigurationService service : getRegisteredServices()) {
+		List<SetupConfigurationService> serviceList = getRegisteredServices();
+		for (SetupConfigurationService service : serviceList) {
 			for (SetupConfigurationAttribute<?> attribute : service.getConfigurationAttributeList()) {
 				attributeServiceList.add(new SetupConfigurationAttributeService(service, attribute));
 			}
