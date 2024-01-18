@@ -124,6 +124,8 @@ public class ConfigurationToSetupWriter extends Thread {
 		public void run() {
 			try {
 				this.cComponent.saveDataModel();
+			} catch (StackOverflowError se) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] StackOverflow at " + this.getName());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {

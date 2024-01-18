@@ -12,6 +12,7 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import energy.EomControllerStorageSettings;
 import energy.optionModel.GroupMember;
+import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystemGroup;
 import energy.persistence.ScheduleList_StorageHandler;
 
@@ -128,6 +129,10 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
 						groupMember.getControlledSystem().getStorageSettings().clear();
 						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(aggregationFolderPath.toFile()));
+						
+						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
+						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
+						groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
 					}
 				} else {
 					System.err.println("[" + this.getClass().getSimpleName() + "] Schedule list file not found - expecting it at " + scheduleListFile.getPath());
