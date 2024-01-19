@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
+import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
 
 /**
  * The Class ConfigurationToSetupWriter.
@@ -43,6 +44,7 @@ public class ConfigurationToSetupWriter extends Thread {
 		
 		this.configModel.setUIMessage("Writing table data to setup ...");
 		
+		Vector<DataModelWriterThread> writerThreads = new Vector<>();
 		Vector<SetupConfigurationAttributeService> configColumns = this.configModel.getColumnVector();
 		// --- Get table model row by row -----------------
 		DefaultTableModel configTable = this.configModel.getConfigurationTableModel();
@@ -60,13 +62,21 @@ public class ConfigurationToSetupWriter extends Thread {
 			
 			// --- Save EOM model changes -----------------
 			if (configComponent.isEomModel()==true || configComponent.containsEomModel()) {
-				// --- Create new extra save thread -------
-				DataModelWriterThread eomModelThread = new DataModelWriterThread(configComponent);
-				this.getEomModelWriterThreads().add(eomModelThread);
-				eomModelThread.start();
+				
+				// --- Don't start a separate saving thread for sub systems ---
+				boolean isEomSubSystem = (configComponent instanceof ConfigurableEomComponent) && (((ConfigurableEomComponent)configComponent).isSubSystem());
+				if (isEomSubSystem==false) {
+					// --- Create new extra save thread ---
+					writerThreads.add(new DataModelWriterThread(configComponent));
+				}
 			}
 		}
 		
+		// --- Execute threads ----------------------------
+		for (DataModelWriterThread writerThread : writerThreads) {
+			this.getEomModelWriterThreads().add(writerThread);
+			writerThread.start();
+		}
 		
 		if (this.getEomModelWriterThreads().size()>0) {
 			// --- Wait for the end of the saving tasks ---
@@ -126,6 +136,7 @@ public class ConfigurationToSetupWriter extends Thread {
 				this.cComponent.saveDataModel();
 			} catch (StackOverflowError se) {
 				System.err.println("[" + this.getClass().getSimpleName() + "] StackOverflow at " + this.getName());
+				se.printStackTrace();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {

@@ -23,7 +23,7 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	 */
 	@Override
 	public String getColumnHeader() {
-		return "Schedule List File";
+		return "EOM Schedule List File";
 	}
 
 	/* (non-Javadoc)
@@ -131,7 +131,8 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(aggregationFolderPath.toFile()));
 						
 						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
+						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
+//						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
 						groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
 					}
 				} else {
