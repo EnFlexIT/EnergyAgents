@@ -145,7 +145,8 @@ public class SetupConfigurationAttributeService implements Comparable<SetupConfi
 			List<String> configOptionList = (List<String>) this.getConfigurationOptions();		
 			if (stringValue==null || stringValue.isBlank()==true) {
 				// --- For null or empty strings --------------------
-				configOptionFound = configOptionList.get(0);
+//				configOptionFound = configOptionList.get(0);
+				return null;
 				
 			} else if (configOptionList.contains(stringValue)==true) {
 				// --- Found option in list -------------------------
