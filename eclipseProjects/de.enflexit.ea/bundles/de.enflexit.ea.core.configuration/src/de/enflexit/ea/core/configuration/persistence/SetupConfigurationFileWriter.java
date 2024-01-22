@@ -17,7 +17,7 @@ import energy.helper.NumberHelper;
 public class SetupConfigurationFileWriter {
 
 	public static final String DECIMAL_SEPERATOR = NumberHelper.getLocalDecimalSeparator();
-	public static final String VALUE_SEPERATOR = DECIMAL_SEPERATOR.equals(",") ? ";" : ",";
+	public static final String VALUE_SEPERATOR = ";";
 	public static final String NEW_LINE = Application.getGlobalInfo().getNewLineSeparator();
 	
 	private SetupConfigurationModel configModel;
