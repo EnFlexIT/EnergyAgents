@@ -10,8 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.core.configuration.eom,
  de.enflexit.ea.core.configuration.eom.systems,
  de.enflexit.ea.core.configuration.eom.systems.ui
-Service-Component: OSGI-INF/eomSetupConfigurationService.xml,
- OSGI-INF/eomScheduleListConfigurationService.xml
+Service-Component: OSGI-INF/eomSetupConfigurationService.xml
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.eom.awbAdapter,

@@ -18,12 +18,18 @@ import energy.persistence.ScheduleList_StorageHandler;
 
 public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 
+	/**
+	 * If just a file name is specified, it will be assumed to be located in this sub directory of the setup's EOM files directory.
+	 */
+	protected static final String SCHEDULES_DEFAULT_SUBDIR = "schedules";
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.configuration.SetupConfigurationAttribute#getColumnHeader()
 	 */
 	@Override
 	public String getColumnHeader() {
-		return "EOM Schedule List File";
+		return "EOM b) Schedule List File";
 	}
 
 	/* (non-Javadoc)
@@ -101,6 +107,7 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	 */
 	@Override
 	public void setValue(ConfigurableComponent cComponent, Object newValue) {
+		
 		if (newValue!=null && newValue instanceof String) {
 			
 			ConfigurableEomComponent eomComponent = (ConfigurableEomComponent) cComponent;
@@ -108,7 +115,7 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 			String fileNameString = (String) newValue;
 			if (fileNameString.contains(File.separator)==false) {
 				// --- File name only, assume default path ----------
-				String relativeFilePath = ScheduleListConfigurationService.SCHEDULES_DEFAULT_SUBDIR + File.separator + fileNameString;
+				String relativeFilePath = ScheduleListFile.SCHEDULES_DEFAULT_SUBDIR + File.separator + fileNameString;
 				File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
 				Path aggregationFolderPath = defaultAggregationFile.getParentFile().toPath();
 				Path scheduleListPath = aggregationFolderPath.resolve(relativeFilePath);

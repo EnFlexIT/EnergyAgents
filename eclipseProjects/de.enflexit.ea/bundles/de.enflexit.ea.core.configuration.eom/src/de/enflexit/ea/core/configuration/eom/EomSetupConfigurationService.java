@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.enflexit.ea.core.configuration.SetupConfigurationAttribute;
 import de.enflexit.ea.core.configuration.SetupConfigurationService;
+import de.enflexit.ea.core.configuration.eom.scheduleList.ScheduleListFile;
 
 /**
  * The Class EomSetupConfigurationService provides .
@@ -23,6 +24,7 @@ public class EomSetupConfigurationService implements SetupConfigurationService {
 		if (attributeList==null) {
 			attributeList = new ArrayList<>();
 			attributeList.add(new EomSetupConfiguration());
+			attributeList.add(new ScheduleListFile());
 		}
 		return attributeList;
 	}

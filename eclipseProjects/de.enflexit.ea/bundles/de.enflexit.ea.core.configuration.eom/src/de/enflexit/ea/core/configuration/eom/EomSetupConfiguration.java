@@ -38,7 +38,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	 */
 	@Override
 	public String getColumnHeader() {
-		return "EOM Setup Type";
+		return "EOM a) Setup Type";
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.configuration.SetupConfigurationAttribute#getDescription()
