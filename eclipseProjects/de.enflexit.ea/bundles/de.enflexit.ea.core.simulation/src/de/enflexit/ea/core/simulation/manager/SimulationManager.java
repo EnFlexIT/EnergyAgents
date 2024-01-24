@@ -125,7 +125,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	protected void setup() {
 
 		// --- Set debugging option -------------------------------------------
-		this.debug = true;
+		this.debug = false;
 		this.isDoPerformanceMeasurements = false;
 		
 		// --- Start the BlackBoardAgent --------------------------------------
