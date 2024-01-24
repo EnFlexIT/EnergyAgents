@@ -91,6 +91,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
+	private List<String> additionalSimAgentClasses;
+
 	private Integer averageOfAgentAnswersExpected;
 	private HashSet<String> agentsInitialized;
 	private HashSet<String> agentsSuccessfulStarted;
@@ -115,8 +117,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	
 	private DashboardSubscriptionResponder dashboardSubscriptionResponder;
 	
-	private List<String> additionalSimAgentClasses;
-	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#setup()
@@ -125,7 +125,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	protected void setup() {
 
 		// --- Set debugging option -------------------------------------------
-		this.debug = false;
+		this.debug = true;
 		this.isDoPerformanceMeasurements = false;
 		
 		// --- Start the BlackBoardAgent --------------------------------------
@@ -986,7 +986,19 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return this.numberOfExecutedDeviceAgents;
 	}
-	
+	/**
+	 * Gets the additional simulation agent classes, i.e. classes of agents that the SimulationManager 
+	 * will expect an answer from in addition to the EnergyAgent subclasses.
+	 * @return the additional simulation agent classes
+	 */
+	private List<String> getAdditionalSimAgentClasses() {
+		if (additionalSimAgentClasses==null) {
+			// --- If not configured, provide an empty list to avoid null pointers.
+			additionalSimAgentClasses = new ArrayList<>();
+		}
+		return additionalSimAgentClasses;
+	}
+
 	/**
 	 * Returns the average of agent answers expected.
 	 * @return the average of agent answers expected
@@ -1463,19 +1475,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 			return timeToSleep;
 		}
-	}
-	
-	/**
-	 * Gets the additional simulation agent classes, i.e. classes of agents that the SimulationManager 
-	 * will expect an answer from in addition to the EnergyAgent subclasses.
-	 * @return the additional simulation agent classes
-	 */
-	private List<String> getAdditionalSimAgentClasses() {
-		if (additionalSimAgentClasses==null) {
-			// --- If not configured, provide an empty list to avoid null pointers.
-			additionalSimAgentClasses = new ArrayList<>();
-		}
-		return additionalSimAgentClasses;
 	}
 	
 }
