@@ -5,13 +5,20 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.controller.GraphEnvironmentController;
+import org.awb.env.networkModel.settings.ComponentTypeSettings;
+
 import agentgui.core.application.Application;
+import agentgui.core.environment.EnvironmentController;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttribute;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation;
+import de.enflexit.eom.awb.adapter.csvScheduleStructure.ScheduleListCsvStructureFileService;
 import energy.EomControllerStorageSettings;
 import energy.optionModel.GroupMember;
 import energy.optionModel.ScheduleList;
@@ -171,13 +178,19 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
 						storageSettings.setSaveGroupMemberModelAsLoaded(true);
 						storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
+						
+						File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
+						if (csvStructureFile!=null && csvStructureFile.exists()) {
+							storageSettings.setCsvStructureFile(csvStructureFile);
+						}
+						
 						groupMember.getControlledSystem().getStorageSettings().clear();
 						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(aggregationFolderPath.toFile()));
 						
 						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
-//						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
+						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
 						groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
+						
 					} else {
 						// --- Handle stand-alone schedule list ---------------
 						Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
@@ -190,7 +203,14 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, scheduleListRelativePath.toString());
 						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
 						
+						// --- Find and set the correct CSV structure file --------------
+						File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
+						if (csvStructureFile!=null && csvStructureFile.exists()) {
+							storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_CSV_SRTUCTURE_FILE, csvStructureFile.getName());
+						}
+						
 						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
+						//TODO Generate EomControllerStorageSettings
 						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
 						cComponent.getNetworkComponent().setDataModel(scheduleList);
 						
@@ -212,6 +232,55 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	private TechnicalSystemGroup getParentTechnicalSystemGroup(ConfigurableComponent cComponent) {
 		if (cComponent.getNetworkComponent().getDataModel() instanceof TechnicalSystemGroup) {
 			return (TechnicalSystemGroup) cComponent.getNetworkComponent().getDataModel();
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets the correct csv structure file for the domain of a network component.
+	 * @param networkComponent the network component
+	 * @return the csv structure file
+	 */
+	private File getCsvStructureFile(NetworkComponent networkComponent, File csvScheduleFile) {
+		
+		GraphEnvironmentController graphEnvironmentController = this.getGraphEnvironmentController();
+		
+		if (graphEnvironmentController!=null) {
+			// --- Get the domain for the network element ---------------------
+			ComponentTypeSettings cts = this.getGraphEnvironmentController().getComponentTypeSettings().get(networkComponent.getType());
+			String domain = cts.getDomain();
+			
+			// --- Get the list of available structure file providers --------- 
+			List<ScheduleListCsvStructureFileService> structureFileServices = ServiceFinder.findServices(ScheduleListCsvStructureFileService.class, true);
+			if (structureFileServices!=null) {
+				
+				
+				// --- Use the first one that provides a matching file --------
+				for (ScheduleListCsvStructureFileService structureFileService : structureFileServices) {
+					String structureFileName = structureFileService.getCsvStructureFilePathForDomain(domain);
+					if (structureFileName.contains(File.separator)==false) {
+						Path scheduleFolderPath = csvScheduleFile.getParentFile().toPath();
+						File structureFile = scheduleFolderPath.resolve(structureFileName).toFile();
+						
+						if (structureFile!=null && structureFile.exists()) {
+							return structureFile;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the graph environment controller.
+	 * @return the graph environment controller
+	 */
+	private GraphEnvironmentController getGraphEnvironmentController() {
+		EnvironmentController environmentController = Application.getProjectFocused().getEnvironmentController();
+		if (environmentController instanceof GraphEnvironmentController) {
+			return (GraphEnvironmentController) environmentController;
 		} else {
 			return null;
 		}
