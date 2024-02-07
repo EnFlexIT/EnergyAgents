@@ -11,8 +11,10 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
 import agentgui.core.application.Application;
 import agentgui.core.environment.EnvironmentController;
+import de.enflexit.common.PathHandling;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttribute;
+import de.enflexit.ea.core.configuration.eom.EomSetupConfiguration;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
@@ -195,13 +197,26 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						// --- Handle stand-alone schedule list ---------------
 						Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
 						Path scheduleListRelativePath = projectFolderPath.relativize(scheduleListPath);
+						String scheduleRelativePathString = PathHandling.getPathName4LocalOS(scheduleListRelativePath.toString());
+						
 						
 						TreeMap<String, String> storageSettings = cComponent.getNetworkComponent().getDataModelStorageSettings();
+						
+						// --- Remember the previously configured blueprint ID
+						String blueprintID = storageSettings.get(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID); 
+						
 						storageSettings.clear();
 						
 						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
-						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, scheduleListRelativePath.toString());
+						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, scheduleRelativePathString);
 						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
+						
+						
+						// --- If a blueprint ID was set, set it again --------
+						if (blueprintID!=null) {
+							storageSettings.put(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, blueprintID);
+						}
+						
 						
 						// --- Find and set the correct CSV structure file --------------
 						File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
@@ -210,7 +225,7 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						}
 						
 						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-						//TODO Generate EomControllerStorageSettings
+						slsh.setCsvStructureFile(csvStructureFile);
 						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
 						cComponent.getNetworkComponent().setDataModel(scheduleList);
 						

@@ -26,7 +26,7 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
  */
 public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<String> {
 
-	private static final String STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID = "Blueprint-ID";
+	public static final String STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID = "Blueprint-ID";
 	
 	private List<String> eomAdapterClassList;
 
