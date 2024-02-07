@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 import agentgui.core.application.Application;
+import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.common.properties.Properties;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttribute;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableComponent;
 import de.enflexit.ea.core.configuration.model.components.ConfigurableEomComponent;
@@ -24,6 +27,8 @@ import energy.persistence.ScheduleList_StorageHandler;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ScheduleListFile implements SetupConfigurationAttribute<String> {
+	
+	public static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "schedulesFolder";
 
 	/**
 	 * If just a file name is specified, it will be assumed to be located in this sub directory of the setup's EOM files directory.
@@ -148,10 +153,8 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 			String fileNameString = (String) newValue;
 			if (fileNameString.contains(File.separator)==false) {
 				// --- File name only, assume default path ----------
-				String relativeFilePath = ScheduleListFile.SCHEDULES_DEFAULT_SUBDIR + File.separator + fileNameString;
-				File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
-				Path aggregationFolderPath = defaultAggregationFile.getParentFile().toPath();
-				Path scheduleListPath = aggregationFolderPath.resolve(relativeFilePath);
+				
+				Path scheduleListPath = this.getSchedulesFolderPath().resolve(fileNameString);
 				
 				File scheduleListFile = scheduleListPath.toFile();
 				
@@ -168,11 +171,13 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 							parentTSG.setPartitionedGroupModel(true);
 						}
 						
+						File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
+						
 						EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
 						storageSettings.setSaveGroupMemberModelAsLoaded(true);
 						storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
 						groupMember.getControlledSystem().getStorageSettings().clear();
-						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(aggregationFolderPath.toFile()));
+						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(defaultAggregationFile.getParentFile()));
 						
 						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
 						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
@@ -215,6 +220,36 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 		} else {
 			return null;
 		}
+	}
+	
+	private Path getSchedulesFolderPath() {
+		Project currentProject = Application.getProjectFocused();
+		SimulationSetup currentSetup = currentProject.getSimulationSetups().getCurrSimSetup();
+		
+		// --- Get the schedules folder from the setup properties, if configured --------
+		Properties setupProperties = currentSetup.getProperties();
+		String schedulesFolder = setupProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER);
+		
+		// --- If not found, check the project properties -------------------------------
+		if (schedulesFolder==null) {
+			Properties projectProperties = currentProject.getProperties();
+			schedulesFolder = projectProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER);
+		}
+		
+		Path schedulesFolderPath = null;
+		if (schedulesFolder != null) {
+			// --- If a folder was configured, create the corresponding full path -------
+			Path projectFolderPath = new File(currentProject.getProjectFolderFullPath()).toPath();
+			schedulesFolderPath = projectFolderPath.resolve(schedulesFolder);
+		} else {
+			// --- If still not found, use the default path -----------------------------
+			String envPath = currentProject.getEnvSetupPath();
+			String setupName = currentProject.getSimulationSetupCurrent();
+			schedulesFolder = envPath + File.separator + setupName + File.separator + SCHEDULES_DEFAULT_SUBDIR;
+			schedulesFolderPath = new File(schedulesFolder).toPath();
+		}
+		
+		return schedulesFolderPath;
 	}
 
 }
