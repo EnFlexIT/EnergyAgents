@@ -339,7 +339,10 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					break;
 					
 				case HyGridAbstractEnvironmentModel:
-					message = validator.validateHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());
+					HyGridAbstractEnvironmentModel hyGridAbsModel = this.getHyGridAbstractEnvironmentModel();
+					if (hyGridAbsModel!=null) {
+						message = validator.validateHyGridAbstractEnvironmentModel(hyGridAbsModel);
+					}
 					break;
 					
 				default:
@@ -593,7 +596,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	private HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
 		
 		HyGridAbstractEnvironmentModel hygAbsEnvModel = null;
-		if (this.getProject().getUserRuntimeObject() instanceof HyGridAbstractEnvironmentModel) {
+		if (this.getProject()!=null && this.getProject().getUserRuntimeObject() instanceof HyGridAbstractEnvironmentModel) {
 			// --- Get HyGrid model from project --------------------
 			hygAbsEnvModel = (HyGridAbstractEnvironmentModel) this.getProject().getUserRuntimeObject(); 
 			
