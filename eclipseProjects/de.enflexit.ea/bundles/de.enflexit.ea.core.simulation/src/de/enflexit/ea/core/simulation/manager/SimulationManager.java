@@ -87,6 +87,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
 	private boolean isHeadlessOperation;
+	private boolean isHideNetworkModelInSimulationStep;
 	private boolean showDashboard;
 	private boolean isPaused;
 
@@ -134,18 +135,30 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- work on the start arguments for the simulation manager ---------
 		Object[] args = this.getArguments();
 		if (args!=null) {
+			
 			// --- SimpleBoolean for headless operation -----------------------
-			Simple_Boolean sBool = (Simple_Boolean) args[0];
-			this.setHeadlessOperation(sBool.getBooleanValue());
+			int argIndex = 0;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				Simple_Boolean sBool = (Simple_Boolean) args[argIndex];
+				this.setHeadlessOperation(sBool.getBooleanValue());
+			}
+			
+			// --- Boolean for hiding the NetworkModel in a simulation step ---
+			argIndex = 1;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setHideNetworkModelInSimulationStep(((Simple_Boolean)args[argIndex]).getBooleanValue());
+			}
 			
 			// --- SimpleBoolean for dashboard configuration ------------------
-			if (args.length>1 && args[1] instanceof Simple_Boolean) {
-				this.setShowDashboard(((Simple_Boolean)args[1]).getBooleanValue());
+			argIndex = 2;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setShowDashboard(((Simple_Boolean)args[argIndex]).getBooleanValue());
 			}
 
 			// --- Check if additional simulation agent classes have been configured
-			if (args.length>2 && args[2] instanceof Simple_String) {
-				String simAgentsArgument = ((Simple_String)args[2]).getStringValue();
+			argIndex = 3;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_String) {
+				String simAgentsArgument = ((Simple_String)args[argIndex]).getStringValue();
 				if (simAgentsArgument!=null) {
 					String[] simAgentClassNames = simAgentsArgument.split(";");
 					if (simAgentClassNames.length>0) {
@@ -386,6 +399,21 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.isHeadlessOperation = isHeadlessOperation;
 	}
 
+	/**
+	 * Checks if is hide network model in simulation step.
+	 * @return true, if is hide network model in simulation step
+	 */
+	public boolean isHideNetworkModelInSimulationStep() {
+		return isHideNetworkModelInSimulationStep;
+	}
+	/**
+	 * Sets the hide network model in simulation step.
+	 * @param isHideNetworkModelInSimulationStep the new hide network model in simulation step
+	 */
+	public void setHideNetworkModelInSimulationStep(boolean isHideNetworkModelInSimulationStep) {
+		this.isHideNetworkModelInSimulationStep = isHideNetworkModelInSimulationStep;
+	}
+	
 	/**
 	 * Checks if is show dashboard.
 	 * @return true, if is show dashboard
@@ -720,7 +748,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 						this.statSimulationEndTime = System.currentTimeMillis();
 						this.print("Finalize Simulation!", false);
 						this.getTimeModelContinuous().setExecuted(false);
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.stepSimulation();
 						break;
 					}
 				}
@@ -836,12 +864,33 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			this.getControlBehaviourRTStateUpdateAnswered().clear();
 
 			// --- Start next simulation step -------------------------------------------
-			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+			this.stepSimulation();
 			this.statSimulationStepsDiscrete++;
 			this.setEndTimeNextSimulationStep();
 		
 			
 		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Will step the simulation according to the specified start arguments.
+	 */
+	private void stepSimulation() {
+		
+		try {
+			
+			EnvironmentModel envModel = this.getEnvironmentModel();
+			if (this.isHideNetworkModelInSimulationStep()==true) {
+				envModel = new EnvironmentModel();
+				envModel.setTimeModel(this.getEnvironmentModel().getTimeModel());
+				envModel.setAbstractEnvironment(this.getEnvironmentModel().getAbstractEnvironment());
+				envModel.setDisplayEnvironment(null);
+			}
+			this.stepSimulation(envModel, this.getNumberOfExpectedDeviceAgents());
+			
+		} catch (ServiceException ex) {
 			ex.printStackTrace();
 		}
 	}

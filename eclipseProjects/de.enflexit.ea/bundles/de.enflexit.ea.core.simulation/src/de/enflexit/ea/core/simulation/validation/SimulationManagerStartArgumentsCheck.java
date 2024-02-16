@@ -28,19 +28,22 @@ public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapte
 	@Override
 	public HyGridValidationMessage validateSetup(SimulationSetup setup) {
 		
-		Vector<AgentStartArgument> configuredArguments =this.getProject().getAgentStartConfiguration().get(SimulationManager.class.getName());
+		Vector<AgentStartArgument> configuredArguments = this.getProject().getAgentStartConfiguration().get(SimulationManager.class.getName());
 		
-		if (configuredArguments==null || configuredArguments.size()>3) {
-			this.addStringToValidationMessage("Not enough start arguments configured for the Simulation Manager class! At least three arguments are required: headlessOperation (boolean), showDashboard(boolean) and simulationSgentClasses(String)!");
+		if (configuredArguments==null || configuredArguments.size()!=4) {
+			this.addStringToValidationMessage("Not enough start arguments configured for the Simulation Manager class! At least four arguments are required: isHeadlessOperation (Simple_Boolean), isHideNetworkModelInSimulationStep (Simple_Boolean), showDashboard(Simple_Boolean) and additionalSimAgentClasses (comma separated String)!");
 		} else {
 			if (configuredArguments.get(0).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager first argument: Must be boolean!");
+				this.addStringToValidationMessage("Wrong data type for Simulation Manager first argument: Must be Simple_Boolean for 'isHeadlessOperation'!");
 			}
 			if (configuredArguments.get(1).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager second argument: Must be boolean!");
+				this.addStringToValidationMessage("Wrong data type for Simulation Manager second argument: Must be Simple_Boolean for 'isHideNetworkModelInSimulationStep'!");
 			}
-			if (configuredArguments.get(2).getOntologyReference().equals(Simple_String.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager first argument: Must be a String!");
+			if (configuredArguments.get(2).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
+				this.addStringToValidationMessage("Wrong data type for Simulation Manager third argument: Must be Simple_Boolean for 'showDashboard'!");
+			}
+			if (configuredArguments.get(3).getOntologyReference().equals(Simple_String.class.getName())==false) {
+				this.addStringToValidationMessage("Wrong data type for Simulation Manager fourth argument: Must be a Simple_String for 'additionalSimAgentClasses'!");
 			}
 			
 			AgentClassElement4SimStart simulationManagerClassElement = this.getSiMaClassElement(setup);
