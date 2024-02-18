@@ -314,12 +314,12 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 		
 		// --- Get the schedules folder from the setup properties, if configured --------
 		Properties setupProperties = currentSetup.getProperties();
-		String schedulesFolder = setupProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER);
+		String schedulesFolder = PathHandling.getPathName4LocalOS(setupProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER));
 		
 		// --- If not found, check the project properties -------------------------------
 		if (schedulesFolder==null) {
 			Properties projectProperties = currentProject.getProperties();
-			schedulesFolder = projectProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER);
+			schedulesFolder = PathHandling.getPathName4LocalOS(projectProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER));
 		}
 		
 		Path schedulesFolderPath = null;
