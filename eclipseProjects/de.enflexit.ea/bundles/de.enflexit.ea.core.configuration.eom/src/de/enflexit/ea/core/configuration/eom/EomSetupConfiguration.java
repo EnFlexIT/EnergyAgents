@@ -168,7 +168,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 		if (newSystemBlueprintID.equals(SystemConfiguration.NOT_CONFIGURED)==true ) {
 			if (oldSystemBlueprintID!=null) {
 				// --- Remove model file -------------------------------------- 
-				this.removeEomModelFile(netComp);
+				//this.removeEomModelFile(netComp);
 				// --- Empty data model and storage settings ------------------
 				netComp.setDataModel(null);
 				netComp.setDataModelStorageSettings(null);
@@ -180,7 +180,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 		EomModelCreator eomModelCreator = new EomModelCreator(this.getSystemConfigurationManager().getSystemConfiguration(), newSystemBlueprintID, netComp);
 		if (eomModelCreator.getEomModel()!=null) {
 			// --- Remove previous model file ---------------------------------
-			this.removeEomModelFile(netComp);
+			//this.removeEomModelFile(netComp);
 			// --- Set model and storage settings -----------------------------
 			netComp.setDataModel(eomModelCreator.getEomModel());
 			netComp.setDataModelStorageSettings(eomModelCreator.getStorageSettings());
@@ -194,6 +194,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 	 * Removes the EOM model file.
 	 * @param netComp the NetworkComponent
 	 */
+	@SuppressWarnings("unused")
 	private void removeEomModelFile(NetworkComponent netComp) {
 	
 		File fileToDelete = EomDataModelStorageHandler.getEomModelFile(BundleHelper.getProject(), netComp);
