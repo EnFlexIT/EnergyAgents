@@ -161,7 +161,7 @@ public class EomSetupConfiguration implements SetupConfigurationAttributeWithUI<
 			oldSystemBlueprintID = netComp.getDataModelStorageSettings().get(STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID); 
 		}
 		// --- Blueprint already assigned to the NetworkComponent? ------------
-		if (newSystemBlueprintID.equals(oldSystemBlueprintID)==true) return;
+		//if (newSystemBlueprintID.equals(oldSystemBlueprintID)==true) return;
 
 
 		// --- Consider SystemConfiguration.NOT_CONFIGURED --------------------
