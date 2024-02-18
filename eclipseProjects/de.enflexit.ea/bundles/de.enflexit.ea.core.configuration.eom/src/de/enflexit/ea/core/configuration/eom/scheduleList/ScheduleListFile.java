@@ -143,9 +143,11 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	 */
 	private GroupMember getScheduleListGroupMember(ConfigurableEomComponent eomComponent) {
 		TechnicalSystemGroup tsg = (TechnicalSystemGroup) eomComponent.getNetworkComponent().getDataModel();
-		for (GroupMember groupMember : tsg.getGroupMember()) {
-			if (groupMember.getNetworkID().equals(eomComponent.getNetworkID())) {
-				return groupMember;
+		if (tsg!=null) {
+			for (GroupMember groupMember : tsg.getGroupMember()) {
+				if (groupMember.getNetworkID().equals(eomComponent.getNetworkID())) {
+					return groupMember;
+				}
 			}
 		}
 		return null;
@@ -157,7 +159,7 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	@Override
 	public void setValue(ConfigurableComponent cComponent, Object newValue) {
 		
-		if (newValue!=null && newValue instanceof String) {
+		if (newValue!=null && newValue instanceof String && ((String)newValue).isEmpty()==false) {
 			
 			String fileNameString = (String) newValue;
 			if (fileNameString.contains(File.separator)==false) {
@@ -174,29 +176,32 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						
 						GroupMember groupMember = this.getScheduleListGroupMember(eomComponent);
 						
-						// --- Set the parent TSG to partitioned saving, if necessary -------------
-						TechnicalSystemGroup parentTSG = this.getParentTechnicalSystemGroup(cComponent);
-						if (parentTSG!=null && parentTSG.isPartitionedGroupModel()==false) {
-							parentTSG.setPartitionedGroupModel(true);
+						if (groupMember!=null) {
+						
+							// --- Set the parent TSG to partitioned saving, if necessary -------------
+							TechnicalSystemGroup parentTSG = this.getParentTechnicalSystemGroup(cComponent);
+							if (parentTSG!=null && parentTSG.isPartitionedGroupModel()==false) {
+								parentTSG.setPartitionedGroupModel(true);
+							}
+							
+							File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
+							
+							EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
+							storageSettings.setSaveGroupMemberModelAsLoaded(true);
+							storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
+							
+							File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
+							if (csvStructureFile!=null && csvStructureFile.exists()) {
+								storageSettings.setCsvStructureFile(csvStructureFile);
+							}
+							
+							groupMember.getControlledSystem().getStorageSettings().clear();
+							groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(defaultAggregationFile.getParentFile()));
+							
+							ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
+							ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
+							groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
 						}
-						
-						File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
-						
-						EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
-						storageSettings.setSaveGroupMemberModelAsLoaded(true);
-						storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
-						
-						File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
-						if (csvStructureFile!=null && csvStructureFile.exists()) {
-							storageSettings.setCsvStructureFile(csvStructureFile);
-						}
-						
-						groupMember.getControlledSystem().getStorageSettings().clear();
-						groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(defaultAggregationFile.getParentFile()));
-						
-						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-						ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
-						groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
 						
 					} else {
 						// --- Handle stand-alone schedule list ---------------
