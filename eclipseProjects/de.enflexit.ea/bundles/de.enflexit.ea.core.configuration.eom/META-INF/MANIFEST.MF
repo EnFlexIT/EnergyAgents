@@ -8,10 +8,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.core.configuration.eom,
+ de.enflexit.ea.core.configuration.eom.scheduleList,
  de.enflexit.ea.core.configuration.eom.systems,
- de.enflexit.ea.core.configuration.eom.systems.ui
-Service-Component: OSGI-INF/eomSetupConfigurationService.xml
+ de.enflexit.ea.core.configuration.eom.systems.ui,
+ de.enflexit.ea.core.configuration.eom.validation
+Service-Component: OSGI-INF/eomSetupConfigurationService.xml,
+ OSGI-INF/eomSetupConfigValidationService.xml
 Require-Bundle: de.enflexit.common,
+ de.enflexit.ea.core.validation,
  de.enflexit.eom.core,
  de.enflexit.eom.awbAdapter,
  de.enflexit.eom.database,
