@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import de.enflexit.common.DateTimeHelper;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.planning.PlanningDispatcherConfiguration.PlannerInformation;
 import energy.planning.EomPlanner.ControlledSystemType;
@@ -153,6 +154,16 @@ public class PlanningDispatcher {
 	 * @return true, if the planning was successfully started
 	 */
 	public boolean startPlanning(String plannerName, long planFrom, long planTo) {
+		
+		boolean isDebug = false;
+		String agentToDebug = "LV6.201 Bus 25";
+		String plannerToDebug = "marketPlanner";
+		if (isDebug==true && this.energyAgent.getLocalName().equals(agentToDebug)==true && plannerName.equals(plannerToDebug)==true) {
+			String timeFrom = DateTimeHelper.getTimeAsString(planFrom);
+			String timeTo 	= DateTimeHelper.getTimeAsString(planTo);
+			System.out.println("[" + this.energyAgent.getLocalName() + "] Starting '" + plannerName + "' from " + timeFrom + " to " + timeTo);
+		}
+		
 		if (this.getOrCreatePlanner(plannerName).getControlledSystemType()==ControlledSystemType.None) {
 			// --- No flexibility available -> planning doesn't make sense ----
 			return false;
