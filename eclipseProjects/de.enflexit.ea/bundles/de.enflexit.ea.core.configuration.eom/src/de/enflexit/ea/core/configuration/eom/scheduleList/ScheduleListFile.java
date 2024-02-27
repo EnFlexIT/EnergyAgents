@@ -37,7 +37,7 @@ import energy.persistence.ScheduleList_StorageHandler;
  */
 public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	
-	private static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "schedulesFolder";
+	public static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "schedulesFolder";
 
 	/**
 	 * If just a file name is specified, it will be assumed to be located in this sub directory of the setup's EOM files directory.
@@ -322,13 +322,13 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 		String schedulesFolder = PathHandling.getPathName4LocalOS(setupProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER));
 		
 		// --- If not found, check the project properties -------------------------------
-		if (schedulesFolder==null) {
+		if (schedulesFolder==null || schedulesFolder.isEmpty()==true) {
 			Properties projectProperties = currentProject.getProperties();
 			schedulesFolder = PathHandling.getPathName4LocalOS(projectProperties.getStringValue(PROPERTIES_KEY_SCHEDULES_FOLDER));
 		}
 		
 		Path schedulesFolderPath = null;
-		if (schedulesFolder != null) {
+		if (schedulesFolder != null && schedulesFolder.isEmpty()==false) {
 			// --- If a folder was configured, create the corresponding full path -------
 			Path projectFolderPath = new File(currentProject.getProjectFolderFullPath()).toPath();
 			schedulesFolderPath = projectFolderPath.resolve(schedulesFolder);
