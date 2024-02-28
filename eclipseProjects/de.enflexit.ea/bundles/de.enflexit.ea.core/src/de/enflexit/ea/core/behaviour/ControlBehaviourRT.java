@@ -17,6 +17,7 @@ import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.EnergyAgentIO;
+import de.enflexit.ea.core.EnergyAgentPerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
@@ -562,6 +563,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Set marker that new measurements arrived -----------------------------
 			this.receivedNewMeasurements = true;
 			
+			this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CONTROL_BEHAVIOUR_RT);
+			
 			// --- Are we in discrete simulations ? -------------------------------------
 			switch (this.getTimeModelType()) {
 			case TimeModelContinuous:
@@ -580,6 +583,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.action();
 				break;
 			}
+			this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CONTROL_BEHAVIOUR_RT);
 		}
 	}
 	/* (non-Javadoc)
@@ -595,6 +599,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			this.currentTime = this.agentIOBehaviour.getTime();
 			try {
 				// --- Case separation for single or multiple systems ---------
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_STRATEGY_EXECUTION);
 				if (this.typeOfControlledSystem!=null) {
 					this.debugPrint("executing real time strategy ...", false);
 					switch (this.typeOfControlledSystem) {
@@ -614,6 +619,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				ex.printStackTrace();
 				
 			} finally {
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_STRATEGY_EXECUTION);
 				this.receivedNewMeasurements = false;
 			}
 		}
@@ -669,9 +675,18 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					}
 					
 					// --- Things to do for TechnicalSystems ------------------
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
 					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
+					
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
 					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
+					
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
 					this.rtEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
+					
 					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				}
 					
@@ -811,10 +826,20 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					ds.setEomPlannerResultForDecisions(eomPR);	
 				}
 				
+				
 				// --- Things to do for TechnicalSystemGroupss ----------------
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
+				
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
+				
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
 				this.rtGroupEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
+				
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
 			} catch (Exception ex) {

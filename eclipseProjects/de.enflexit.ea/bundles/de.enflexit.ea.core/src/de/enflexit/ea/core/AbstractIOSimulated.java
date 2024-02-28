@@ -450,7 +450,9 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			FixedVariableList ioSettings = this.getStateInputStream().getIOSettings(simTime, tsseAnswer);
 
 			// --- Callback method to interfere before the new measurements are committed to the agent
-			this.getDiscreteSimulationEvent().internalBeforeMeasurementCommit();
+			if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+				this.getDiscreteSimulationEvent().internalBeforeMeasurementCommit();
+			}
 			
 			// --- Set IO Settings of this behaviour --------------------------
 			// --- => In discrete simulations, ControlBehaviourRT will not  
@@ -645,7 +647,9 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 	 */
 	protected void commitMeasurementsToAgent() {
 		// --- Callback method to interfere before the agent makes its control decision
-		this.getDiscreteSimulationEvent().internalBeforeControlDecision();
+		if (this.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
+			this.getDiscreteSimulationEvent().internalBeforeControlDecision();
+		}
 		this.getInternalDataModel().setMeasurementsFromSystem(this.getMeasurementsFromSystem());
 	}
 	
