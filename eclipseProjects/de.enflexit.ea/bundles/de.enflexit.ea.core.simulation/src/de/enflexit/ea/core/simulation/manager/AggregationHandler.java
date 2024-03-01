@@ -63,7 +63,7 @@ public class AggregationHandler extends AbstractAggregationHandler {
 		
 		// --- Clear list of pending systems for a discrete simulation -------- 
 		if (this.getHyGridAbstractEnvironmentModel().getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			this.getDiscreteIteratingSystemsStateTypeLog().clear();
+			this.clearDiscreteIteratingSystemsStateTypeLog();
 		}
 		super.setAgentAnswers(agentAnswers);
 	}

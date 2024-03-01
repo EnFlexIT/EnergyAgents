@@ -114,8 +114,8 @@ public class TransformerCalculation {
 	 */
 	public void updateLowVoltageSideTransformerState(SubNetworkGraphNode subNetworkGraphNode) {
 	
-		boolean debugThisMethod = true;
-		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
+		boolean debugThisMethod = false;
+		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV2.101-LV6.201-Trafo 1");
 		
 		// ----------------------------------------------------------------------------------------
 		// --- What's ToDo here? ------------------------------------------------------------------
@@ -189,7 +189,7 @@ public class TransformerCalculation {
 	public void updateHighVoltageSideTransformerState() {
 		
 		boolean debugThisMethod = false;
-		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV-Transformer-1");
+		debugThisMethod = debugThisMethod && this.subNetworkConnection.getConnectingNetworkComponentID().equals("MV2.101-LV6.201-Trafo 1");
 		
 		// ----------------------------------------------------------------------------------------
 		// --- What's ToDo here? ------------------------------------------------------------------
