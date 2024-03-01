@@ -30,7 +30,9 @@ public class SchedulesFolderPropertiesCheck extends HyGridValidationAdapter {
 	@Override
 	public HyGridValidationMessage validateSetup(SimulationSetup setup) {
 		// --- Check if the schedules folder property is present in the setup properties.
-		this.checkForEntry(setup.getProperties());
+		if (setup!=null) {
+			this.checkForEntry(setup.getProperties());
+		}
 		return super.validateSetup(setup);
 	}
 	

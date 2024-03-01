@@ -335,7 +335,9 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					break;
 					
 				case NetworkModel:
-					message = validator.validateNetworkModel(this.getGraphController().getNetworkModel());
+					if (this.getGraphController()!=null) {
+						message = validator.validateNetworkModel(this.getGraphController().getNetworkModel());
+					}
 					break;
 					
 				case HyGridAbstractEnvironmentModel:
