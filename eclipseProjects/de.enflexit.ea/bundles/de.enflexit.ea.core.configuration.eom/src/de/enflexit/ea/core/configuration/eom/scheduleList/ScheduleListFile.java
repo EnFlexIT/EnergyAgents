@@ -37,7 +37,7 @@ import energy.persistence.ScheduleList_StorageHandler;
  */
 public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	
-	public static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "schedulesFolder";
+	public static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "eomConfigService.csvSchedulesFolder";
 
 	/**
 	 * If just a file name is specified, it will be assumed to be located in this sub directory of the setup's EOM files directory.
