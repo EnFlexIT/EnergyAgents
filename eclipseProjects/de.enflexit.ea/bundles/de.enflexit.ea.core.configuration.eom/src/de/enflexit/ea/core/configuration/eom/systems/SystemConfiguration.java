@@ -32,7 +32,8 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SystemConfiguration", propOrder = {
     "eomSystemList",
-    "systemBlueprintList"
+    "systemBlueprintList",
+    "useAggregationsAlsoForSingleSubsystems"
 })
 public class SystemConfiguration {
 
@@ -40,6 +41,7 @@ public class SystemConfiguration {
 	
 	private List<EomSystem> eomSystemList;
 	private List<SystemBlueprint> systemBlueprintList;
+	private boolean useAggregationsAlsoForSingleSubsystems;
 	
 	
 	// ------------------------------------------------------------------------
@@ -255,14 +257,19 @@ public class SystemConfiguration {
 	 * @return true, if successful
 	 */
 	public boolean requiresAggregation(SystemBlueprint systemBlueprint) {
-		
+
 		boolean requiresAggregation = false;
 		
 		int noOfSystem = systemBlueprint.getEomSystemIdList().size();
 		int noOfTSGs = this.getNumberOfTechnicalSystemGroup(systemBlueprint);
+		int noOfSubSystems = noOfSystem - noOfTSGs;
 		
-		if (noOfSystem-noOfTSGs>1) {
+		if (noOfSubSystems > 1) {
 			requiresAggregation = true;
+		} else if (noOfSubSystems==1) {
+			if (noOfTSGs>0) {
+				requiresAggregation = this.isUseAggregationsAlsoForSingleSubsystems();
+			}
 		}
 		return requiresAggregation;
 	}
@@ -307,9 +314,25 @@ public class SystemConfiguration {
 		}
 		return null;
 	}
+
+	/**
+	 * Checks if is use aggregations also for single subsystems.
+	 * @return true, if is use aggregations also for single subsystems
+	 */
+	public boolean isUseAggregationsAlsoForSingleSubsystems() {
+		return useAggregationsAlsoForSingleSubsystems;
+	}
+	/**
+	 * Sets to use aggregations also for single subsystems or not.
+	 * @param useAggregationsAlsoForSingleSubsystems the new use aggregations also for single subsystems
+	 */
+	public void setUseAggregationsAlsoForSingleSubsystems(boolean useAggregationsAlsoForSingleSubsystems) {
+		this.useAggregationsAlsoForSingleSubsystems = useAggregationsAlsoForSingleSubsystems;
+	}
+	
 	
 	// ------------------------------------------------------------------------
-	// --- Here, the current configuration options can ------------------------ 
+	// --- Here, the current configuration options are provided --------------- 
 	// ------------------------------------------------------------------------
 	/**
 	 * Returns the configuration options to be used within the {@link SetupConfigurationTablePanel}.

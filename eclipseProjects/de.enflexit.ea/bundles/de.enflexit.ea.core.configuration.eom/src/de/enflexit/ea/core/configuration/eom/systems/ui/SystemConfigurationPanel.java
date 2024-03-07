@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.configuration.eom.systems.ui;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -8,12 +9,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -26,6 +25,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.ea.core.configuration.eom.BundleHelper;
 import de.enflexit.ea.core.configuration.eom.systems.EomSystem;
 import de.enflexit.ea.core.configuration.eom.systems.SystemBlueprint;
@@ -324,7 +324,7 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 	}
 	private JButton getJButtonSystemBlueprintNotice() {
 		if (jButtonSystemBlueprintNotice == null) {
-			jButtonSystemBlueprintNotice = new JButton("Please note or check!");
+			jButtonSystemBlueprintNotice = new JButton("Hints & Further Options");
 			jButtonSystemBlueprintNotice.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonSystemBlueprintNotice.setForeground(new Color(0, 0, 169));
 			jButtonSystemBlueprintNotice.setSize(new Dimension(180, 26));
@@ -670,36 +670,13 @@ public class SystemConfigurationPanel extends JSplitPane implements ActionListen
 			}
 
 		} else if (ae.getSource()==this.getJButtonSystemBlueprintNotice()) {
-			// --- Check for configuration errors -------------------			
-			int messageTpye = JOptionPane.INFORMATION_MESSAGE;
-			String bluePrintStateUpdate = "<b>No errors were found in the current blueprint configuration!</b>";
-			
-			// --- Get list of configuration issues -----------------
-			List<String> currConfigInforamtion = this.getSystemConfiguration().getFaultySystemBlueprintConfigurationInformations();
-			if (currConfigInforamtion.size()>0) {
-				messageTpye = JOptionPane.ERROR_MESSAGE;
-				bluePrintStateUpdate = "<b>Errors in the current blueprint configuration:</b><br>";
-				for (String partState : currConfigInforamtion) {
-					bluePrintStateUpdate += "- " + partState + "<br>"; 
-				}
-			}
-			
-			// --- Build-up blueprint notice ------------------------
-			String title   = "Notice for Blueprint Configuration";
-			String message = "<html>";
-			message += "<p>";
-			message += "In case that a new aggregation is to be created, <b>exactly one EOM-System</b> within a blueprint configuration<br>";
-			message += "must be selected that can be used as a starting point for the new aggregation.<br>";
-			message += "Thereto, additionally select that EOM-System (a <b>TechnicalSystemGroup</b>) that is the desired base for the new aggregation!<br>";
-			message += "<br></p>";
-			message += "<p>";
-			message += bluePrintStateUpdate;
-			message += "<br>";
-			message += "</p>";
-			message += "</html>";
-			
-			// --- Show blueprint notice ----------------------------
-			JOptionPane.showMessageDialog(this, message, title, messageTpye);
+			// --- Show popup for hints and options -----------------
+			Dialog owner = OwnerDetection.getOwnerDialogForComponent(getJButtonSystemBlueprintNotice());
+			SystemConfigurationOptions configInfoDialog = new SystemConfigurationOptions(owner, this.systemConfigurationManager);
+			// --- Set position -------------------------------------
+			int posX = (int) getJButtonSystemBlueprintNotice().getLocationOnScreen().getX();
+			int posY = (int) getJButtonSystemBlueprintNotice().getLocationOnScreen().getY() - configInfoDialog.getHeight(); 
+			configInfoDialog.setLocation(posX, posY);
 			
 		}
 	}

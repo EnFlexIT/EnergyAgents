@@ -42,6 +42,8 @@ public class ConfigurationToSetupWriter extends Thread {
 	 */
 	public void writeToSetup() {
 		
+		long nextWriteTime = 0;
+		long nextWriteTimeDelta = 500;
 		this.configModel.setUIMessage("Writing table data to setup ...");
 		
 		Vector<DataModelWriterThread> writerThreads = new Vector<>();
@@ -49,6 +51,13 @@ public class ConfigurationToSetupWriter extends Thread {
 		// --- Get table model row by row -----------------
 		DefaultTableModel configTable = this.configModel.getConfigurationTableModel();
 		for (int row = 0; row < configTable.getRowCount(); row++) {
+			
+			// --- Write UI-Message -----------------------
+			if (System.currentTimeMillis()>=nextWriteTime) {
+				this.configModel.setUIMessage("Writing table data to setup for table row " + (row+1) + " / " + configTable.getRowCount() + " ...");
+				nextWriteTime = System.currentTimeMillis() + nextWriteTimeDelta;
+			}
+			
 			// --- Get all attributes / columns ----------- 
 			ConfigurableComponent configComponent = (ConfigurableComponent) configTable.getValueAt(row, 0);
 			for (int column = 1; column < configColumns.size(); column++) {
@@ -82,7 +91,7 @@ public class ConfigurationToSetupWriter extends Thread {
 			// --- Wait for the end of the saving tasks ---
 			while (this.getEomModelWriterThreads().size()>0) {
 				try {
-					this.configModel.setUIMessage("Waiting for EOM model saving ...");
+					this.configModel.setUIMessage("Waiting for " + this.getEomModelWriterThreads().size() + " EOM models to be saved ...");
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
