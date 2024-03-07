@@ -51,6 +51,7 @@ import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.RTControlRegistration;
+import de.enflexit.eom.awb.adapter.AbstractEomStorageHandler;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
@@ -87,7 +88,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
 	private boolean isHeadlessOperation;
-	private boolean isHideNetworkModelInSimulationStep;
+	private boolean removeEomModelsAfterAggregationBuild;
+	private boolean hideNetworkModelInSimulationStep;
 	private boolean showDashboard;
 	private boolean isPaused;
 
@@ -144,20 +146,26 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				this.setHeadlessOperation(sBool.getBooleanValue());
 			}
 			
+			// --- Boolean for remove EOM-Models After Aggregation Build ------
+			argIndex++;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setRemoveEomModelsAfterAggregationBuild(((Simple_Boolean)args[argIndex]).getBooleanValue());
+			}
+			
 			// --- Boolean for hiding the NetworkModel in a simulation step ---
-			argIndex = 1;
+			argIndex++;
 			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
 				this.setHideNetworkModelInSimulationStep(((Simple_Boolean)args[argIndex]).getBooleanValue());
 			}
 			
 			// --- SimpleBoolean for dashboard configuration ------------------
-			argIndex = 2;
+			argIndex++;
 			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
 				this.setShowDashboard(((Simple_Boolean)args[argIndex]).getBooleanValue());
 			}
 
 			// --- Check if additional simulation agent classes have been configured
-			argIndex = 3;
+			argIndex++;
 			if (args.length>argIndex && args[argIndex] instanceof Simple_String) {
 				String simAgentsArgument = ((Simple_String)args[argIndex]).getStringValue();
 				if (simAgentsArgument!=null) {
@@ -171,23 +179,35 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		
 		// --- super.setup() will get the copy of current EnvironmentModel ----
 		super.setup();
-		// --- Ensure to reset the time model (applies to the discrete) -------
-		this.resetTimeModel();
-		// --- Get the current NetworkModel -----------------------------------
-		this.getBlackboard().setNetworkModel((NetworkModel) this.getDisplayEnvironment());
+		
+		// --- Get current NetworkModel ---------------------------------------
+		NetworkModel networkModel = (NetworkModel) this.getDisplayEnvironment();
+		// --- Ensure to setup the AggregationHandler -------------------------
+		this.getAggregationHandler();
+		
 		// --- Get settings for Display- and Energy- notifications ------------ 
 		this.hygridSettings = (HyGridAbstractEnvironmentModel) this.getAbstractEnvironment();
 		this.hygridSettings.setTimeModelType(this.getTimeModel());
-
+		// --- Ensure to reset the time model (applies to the discrete) -------
+		this.resetTimeModel();
+		
 		// --- Create 'No-System' - ScheduleList's ----------------------------
 		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelDiscrete());	
+			new NoSystemScheduleListCreator(networkModel, this.getTimeModelDiscrete());	
 		} else if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
-			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelContinuous());
+			new NoSystemScheduleListCreator(networkModel, this.getTimeModelContinuous());
 		}
 		
+		// --- Remove EOM model from NetworkComponents ------------------------
+		if (this.isRemoveEomModelsAfterAggregationBuild()==true) {
+			this.removeEomModelsFromNetworkComponents(networkModel);
+		}
+		
+		// --- Get the current NetworkModel -----------------------------------
+		this.getBlackboard().setNetworkModel(networkModel);
 		// --- Prepare the aggregation handler --------------------------------
 		this.getBlackboard().setAggregationHandler(this.getAggregationHandler());
+
 		// --- If measurements are activated, configure aggregation handler ---
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
@@ -196,6 +216,18 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- Start the dashboard responder if configured --------------------
 		if (this.showDashboard==true) {
 			this.addBehaviour(this.getDashboardSubscriptionResponder());
+		}
+	}
+	/**
+	 * Removes the EOM models from the NetworkComponents within the environment model.
+	 * @param networkModel the network model to work on
+	 */
+	private void removeEomModelsFromNetworkComponents(NetworkModel networkModel) {
+		Vector<NetworkComponent> netComps = ((NetworkModel) this.getDisplayEnvironment()).getNetworkComponentVectorSorted();
+		for (NetworkComponent netComp : netComps) {
+			if (AbstractEomStorageHandler.getEomModelType(netComp)!=null) {
+				netComp.setDataModel(null);
+			}
 		}
 	}
 
@@ -401,18 +433,33 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	}
 
 	/**
+	 * Checks if is removes the EOM models after aggregation build.
+	 * @return true, if is removes the EOM models after aggregation build
+	 */
+	public boolean isRemoveEomModelsAfterAggregationBuild() {
+		return removeEomModelsAfterAggregationBuild;
+	}
+	/**
+	 * Sets to remove EOM-models after aggregation build.
+	 * @param removeEomModelsAfterAggregationBuild the new removes the eom models after aggregation build
+	 */
+	public void setRemoveEomModelsAfterAggregationBuild(boolean removeEomModelsAfterAggregationBuild) {
+		this.removeEomModelsAfterAggregationBuild = removeEomModelsAfterAggregationBuild;
+	}
+	
+	/**
 	 * Checks if is hide network model in simulation step.
 	 * @return true, if is hide network model in simulation step
 	 */
 	public boolean isHideNetworkModelInSimulationStep() {
-		return isHideNetworkModelInSimulationStep;
+		return hideNetworkModelInSimulationStep;
 	}
 	/**
 	 * Sets the hide network model in simulation step.
-	 * @param isHideNetworkModelInSimulationStep the new hide network model in simulation step
+	 * @param hideNetworkModelInSimulationStep the new hide network model in simulation step
 	 */
 	public void setHideNetworkModelInSimulationStep(boolean isHideNetworkModelInSimulationStep) {
-		this.isHideNetworkModelInSimulationStep = isHideNetworkModelInSimulationStep;
+		this.hideNetworkModelInSimulationStep = isHideNetworkModelInSimulationStep;
 	}
 	
 	/**
@@ -545,7 +592,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					} else {
 						break;
 					}
-					
 				} catch (InterruptedException ie) {
 					//ie.printStackTrace();
 				}
@@ -627,6 +673,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- Wait for the Blackboard jobs to be done ------------------------
 		this.getBlackboard().waitForBlackboardWorkingThread(null);
 	}
+	
 	
 	/**
 	 * Returns the dashboard subscription responder.

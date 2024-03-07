@@ -30,32 +30,35 @@ public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapte
 		
 		Vector<AgentStartArgument> configuredArguments = this.getProject().getAgentStartConfiguration().get(SimulationManager.class.getName());
 		
-		if (configuredArguments==null || configuredArguments.size()!=4) {
-			this.addStringToValidationMessage("Not enough start arguments configured for the Simulation Manager class! At least four arguments are required: isHeadlessOperation (Simple_Boolean), isHideNetworkModelInSimulationStep (Simple_Boolean), showDashboard(Simple_Boolean) and additionalSimAgentClasses (comma separated String)!");
+		if (configuredArguments==null || configuredArguments.size()!=5) {
+			this.addStringToValidationMessage("Not enough start arguments are configured for the SimulationManager agent! \n\nAt least five arguments are required: \n- isHeadlessOperation (Simple_Boolean), \n- removeEomModelsAfterAggregationBuild (Simple_Boolean), \n- isHideNetworkModelInSimulationStep (Simple_Boolean), \n- showDashboard (Simple_Boolean) and \n- additionalSimAgentClasses (Simple_String with comma separated String-values)!");
 		} else {
 			if (configuredArguments.get(0).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager first argument: Must be Simple_Boolean for 'isHeadlessOperation'!");
+				this.addStringToValidationMessage("Wrong data type for SimulationManagers first argument: Must be Simple_Boolean for 'isHeadlessOperation'!");
 			}
 			if (configuredArguments.get(1).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager second argument: Must be Simple_Boolean for 'isHideNetworkModelInSimulationStep'!");
+				this.addStringToValidationMessage("Wrong data type for SimulationManagers second argument: Must be Simple_Boolean for 'removeEomModelsAfterAggregationBuild'!");
 			}
 			if (configuredArguments.get(2).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager third argument: Must be Simple_Boolean for 'showDashboard'!");
+				this.addStringToValidationMessage("Wrong data type for SimulationManagers third argument: Must be Simple_Boolean for 'isHideNetworkModelInSimulationStep'!");
 			}
-			if (configuredArguments.get(3).getOntologyReference().equals(Simple_String.class.getName())==false) {
-				this.addStringToValidationMessage("Wrong data type for Simulation Manager fourth argument: Must be a Simple_String for 'additionalSimAgentClasses'!");
+			if (configuredArguments.get(3).getOntologyReference().equals(Simple_Boolean.class.getName())==false) {
+				this.addStringToValidationMessage("Wrong data type for SimulationManagers fourth argument: Must be Simple_Boolean for 'showDashboard'!");
+			}
+			if (configuredArguments.get(4).getOntologyReference().equals(Simple_String.class.getName())==false) {
+				this.addStringToValidationMessage("Wrong data type for SimulationManagers fifth argument: Must be a Simple_String for 'additionalSimAgentClasses'!");
 			}
 			
 			AgentClassElement4SimStart simulationManagerClassElement = this.getSiMaClassElement(setup);
 			if (simulationManagerClassElement==null) {
-				this.addStringToValidationMessage("No simulation manager configured in the current setup");
+				this.addStringToValidationMessage("No SimulationManager is configured in the current setup");
 			} else {
 				String[] startArgs = simulationManagerClassElement.getStartArguments();
 				
 				if (startArgs==null) {
-					this.addStringToValidationMessage("No start arguments specified for the simulation manager in the current setup");
+					this.addStringToValidationMessage("No start arguments are specified for the simulation manager in the current setup");
 				} else if (startArgs.length<3) {
-					this.addStringToValidationMessage("Not enough arguments specified for the simulation manager in the current setup");
+					this.addStringToValidationMessage("Not enough arguments are specified for the simulation manager in the current setup");
 				}
 			}
 		}
@@ -69,7 +72,7 @@ public class SimulationManagerStartArgumentsCheck extends HyGridValidationAdapte
 	 */
 	private void addStringToValidationMessage(String messageString) {
 		if (this.validationMessage==null) {
-			this.validationMessage = new HyGridValidationMessage("Error checking simulation manager start arguments!", MessageType.Warning);
+			this.validationMessage = new HyGridValidationMessage("SimulationManagers start argument configuration is not correct!", MessageType.Error);
 			this.validationMessage.setDescription(messageString + "\n");
 		} else {
 			this.validationMessage.setDescription(this.validationMessage.getDescription() + messageString + "\n");
