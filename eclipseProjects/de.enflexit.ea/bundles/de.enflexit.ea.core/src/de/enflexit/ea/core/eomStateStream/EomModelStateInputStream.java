@@ -144,6 +144,12 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		NetworkComponent netComp = this.getIoSimulated().getNetworkComponent();
 		Object dataModelOfNetworkComponent = netComp.getDataModel();
 
+		// --- First check for data model -------------------------------------
+		if (dataModelOfNetworkComponent==null) {
+			// --- Try to load from storage settings --------------------------
+			dataModelOfNetworkComponent = EomModelLoader.loadEomModel(netComp);
+		}
+		
 		// --- Check data model and prepare -----------------------------------
 		if (dataModelOfNetworkComponent==null) {
 			// --- No data model specified for NetworkComponent ---------------

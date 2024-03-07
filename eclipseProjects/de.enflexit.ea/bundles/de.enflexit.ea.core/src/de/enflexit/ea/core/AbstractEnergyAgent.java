@@ -36,6 +36,7 @@ import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.deployment.StartArgument;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
+import de.enflexit.ea.core.eomStateStream.EomModelLoader;
 import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
@@ -774,6 +775,15 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					// --------------------------------------------------------
 					// --- Check the data model of the network component ------
 					Object dm = netComp.getDataModel();
+
+					// --------------------------------------------------------
+					// --- Load EOM model from file settings? -----------------
+					if (dm==null) {
+						dm = EomModelLoader.loadEomModel(netComp);
+					}
+					
+					// --------------------------------------------------------
+					// --- Case Separation EOM model type ---------------------
 					if (dm instanceof ScheduleList) {
 						// ----------------------------------------------------
 						// --- ScheduleList -----------------------------------

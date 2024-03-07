@@ -227,7 +227,7 @@ public class IOSimulated extends AbstractIOSimulated {
 
 		// ----------------------------------------------------------
 		// --- Check if a voltage level request is required ---------
-		if (intDM.getTransformerDataModel().isControlBasedOnNodeVoltage()==true) {
+		if (intDM.getTransformerDataModel()!=null && intDM.getTransformerDataModel().isControlBasedOnNodeVoltage()==true) {
 			String controlNodeID = intDM.getTransformerDataModel().getControlNodeID();
 			if (controlNodeID!=null && controlNodeID.isEmpty()==false) {
 				SingleRequestSpecifier voltageLevelRequest = new SingleRequestSpecifier(ElectricityRequestObjective.VoltageLevels, intDM.getTransformerDataModel().getControlNodeID());
