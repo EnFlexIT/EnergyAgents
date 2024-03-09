@@ -76,6 +76,23 @@ public class DatabaseHandler {
 		this.setSession(null);
 	}
 	
+	/**
+	 * Does a transaction roll back.
+	 * @param transaction the transaction
+	 */
+	private void doTransactionRollBack(Transaction transaction) {
+		
+		try {
+			if (transaction!=null) {
+				transaction.rollback();
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			// --- Dispose session to renew handler state - 
+			this.dispose();
+		}
+	}
 	
 	// --------------------------------------------------------------
 	// --- From here, creating a new ExecutionID --------------------
@@ -143,14 +160,17 @@ public class DatabaseHandler {
 			transaction = this.getSession().beginTransaction();
 			this.getSession().save(dataOverview);
 			this.getSession().flush();
-			this.getSession().clear();
+			
 			transaction.commit();
 			successful = true;
 			
 		} catch (Exception ex) {
-			if (transaction!=null) transaction.rollback();
+			this.doTransactionRollBack(transaction);
 			ex.printStackTrace();
 			successful = false;
+			
+		} finally {
+			this.getSession().clear();
 		}
 		return successful;
 	}
@@ -256,12 +276,14 @@ public class DatabaseHandler {
 			
 			// --- Saving in own transaction? ---
 			sessionToUse.flush();
-			sessionToUse.clear();
 			transaction.commit();
 			
 		} catch (Exception ex) {
-			if (transaction!=null) transaction.rollback();
+			this.doTransactionRollBack(transaction);
 			ex.printStackTrace();
+			
+		} finally {
+			this.getSession().clear();
 		}
 	}
 	
@@ -276,7 +298,7 @@ public class DatabaseHandler {
 		return this.saveStateResultUsingNativeSQL(networkStateList, this.getSession());
 	}
 	/**
-	 * Saves the specified state results by using the native SQL interface.
+	 * Saves the specified state results by using the native SQL interface of Hibernate.
 	 *
 	 * @param networkStateList the network state list
 	 * @return true, if successful
@@ -285,12 +307,45 @@ public class DatabaseHandler {
 		
 		if (networkStateList==null || networkStateList.size()==0) return false;
 		
+		boolean successful = true;
+		int maxListSize = 20;
+		
+		if (networkStateList.size()<=maxListSize) {
+			// --- Less. Save all at once ---------------------------
+			return this.saveStateResultUsingNativeSQLChunked(networkStateList, sessionToUse);
+			
+		} else {
+			// --- To much. Save in portions ------------------------
+			List<AbstractStateResult> nslChunked = new ArrayList<>();
+			for (int i = 0; i < networkStateList.size(); i++) {
+				
+				nslChunked.add(networkStateList.get(i));
+				if (nslChunked.size()>=maxListSize) {
+					// --- Save reduced list size -------------------
+					successful = successful && this.saveStateResultUsingNativeSQLChunked(nslChunked, sessionToUse);
+					// --- Create new chunk list --------------------
+					nslChunked = new ArrayList<>();
+				}
+			}
+		}
+		return successful;
+	}
+	/**
+	 * Saves the specified state results by using the native SQL interface.
+	 *
+	 * @param networkStateList the network state list
+	 * @return true, if successful
+	 */
+	private boolean saveStateResultUsingNativeSQLChunked(List<? extends AbstractStateResult> networkStateList, Session sessionToUse) {
+		
+		if (networkStateList==null || networkStateList.size()==0) return false;
+		
 		boolean successful = false;
 		Transaction transaction = null;
 		boolean isOpenTransaction = sessionToUse.getTransaction()!=null && sessionToUse.getTransaction().isActive();
 		
 		// ------------------------------------------------
-		// --- Create native SQL statement --  
+		// --- Create native SQL statement ---------------- 
 		String sql = "INSERT INTO "; 
 		try {
 			
@@ -330,16 +385,18 @@ public class DatabaseHandler {
 			// --- Saving in own transaction? ---
 			if (isOpenTransaction==false) {
 				sessionToUse.flush();
-				sessionToUse.clear();
 				transaction.commit();
 			}
 			successful = true;
 			
 		} catch (Exception ex) {
-			if (transaction!=null) transaction.rollback();
+			this.doTransactionRollBack(transaction);
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error execution '" + sql + "'");
 			ex.printStackTrace();
 			successful = false;
+			
+		} finally {
+			sessionToUse.clear();
 		}
 		return successful;
 	}
