@@ -62,6 +62,24 @@ public class DatabaseHandler {
 	}
 	
 	/**
+	 * Does a transaction roll back.
+	 * @param transaction the transaction
+	 */
+	private void doTransactionRollBack(Transaction transaction) {
+		
+		try {
+			if (transaction!=null) {
+				transaction.rollback();
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			// --- Dispose session to renew handler state - 
+			this.dispose();
+		}
+	}
+	
+	/**
 	 * Saves or updates the data for an executed simulation.
 	 *
 	 * @param simulationOverview the simulation overview to save to database
@@ -86,17 +104,17 @@ public class DatabaseHandler {
 			transaction = this.getSession().beginTransaction();
 			this.getSession().saveOrUpdate(simulationOverview);
 			this.getSession().flush();
-			this.getSession().clear();
 			transaction.commit();
 
 			// --- Save the properties ------------------------------
 			successful = this.saveOrUpdateSimulationPropertiesOverview(simulationPropertiesList, simulationOverview.getIdSimulation());
 					
 		} catch (Exception ex) {
-			if (transaction!=null) transaction.rollback();
+			this.doTransactionRollBack(transaction);
 			ex.printStackTrace();
 			successful = false;
 		} finally {
+			this.getSession().clear();
 			if (simulationPropertiesList!=null) {
 				simulationOverview.setSimulationProperties(simulationPropertiesList);
 			}
@@ -125,18 +143,18 @@ public class DatabaseHandler {
 				this.getSession().saveOrUpdate(simProp);
 				this.getSession().flush();
 			}
-			this.getSession().clear();
 			transaction.commit();
 			successful = true;
 			
 		} catch (Exception ex) {
-			if (transaction!=null) transaction.rollback();
+			this.doTransactionRollBack(transaction);
 			ex.printStackTrace();
 			successful = false;
+			
+		} finally {
+			this.getSession().clear();
 		}
 		return successful;
 	}
-	
-	
 
 }
