@@ -267,16 +267,21 @@ public class DatabaseHandler {
 				return;
 			}
 			
-			// --- Saving in own transaction? --- 
-			transaction = sessionToUse.beginTransaction();
-			
+			// --- Saving in one transaction? --- 
+			boolean useOneTransaction = true;
+			if (useOneTransaction) {
+				transaction = sessionToUse.beginTransaction();
+			}
+			// --- Save result lists ------------
 			this.saveStateResultUsingNativeSQL(networkState.getNodeResultList(), sessionToUse);
 			this.saveStateResultUsingNativeSQL(networkState.getEdgeResultList(), sessionToUse);
 			this.saveStateResultUsingNativeSQL(networkState.getTrafoResultList(), sessionToUse);
 			
-			// --- Saving in own transaction? ---
+			// --- Saving in one transaction? ---
 			sessionToUse.flush();
-			transaction.commit();
+			if (useOneTransaction==true) {
+				transaction.commit();
+			}
 			
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
