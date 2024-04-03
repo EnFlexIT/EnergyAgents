@@ -332,6 +332,9 @@ public class DatabaseHandler {
 					nslChunked = new ArrayList<>();
 				}
 			}
+			// --- Save remaining state results ---------------------
+			successful = successful && this.saveStateResultUsingNativeSQLChunked(nslChunked, sessionToUse);
+			
 		}
 		return successful;
 	}
