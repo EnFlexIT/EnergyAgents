@@ -112,17 +112,17 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			FixedDouble lvTotaCurrentRealL1 = (FixedDouble) this.getOptionModelController().getVariableState(tss.getIOlist(), TransformerSystemVariable.lvTotaCurrentRealL1.name());
 			double lvCurrRealL1 = lvTotaCurrentRealL1==null ? 0.0 : lvTotaCurrentRealL1.getValue();
 			checkCurrent += lvCurrRealL1;
-			if (checkCurrent>0) return true;	// may accelerate execution
+			if (checkCurrent!=0.0) return true;	// may accelerate execution
 			
 			FixedDouble lvTotaCurrentRealL2 = (FixedDouble) this.getOptionModelController().getVariableState(tss.getIOlist(), TransformerSystemVariable.lvTotaCurrentRealL2.name());
 			double lvCurrRealL2 = lvTotaCurrentRealL2==null ? 0.0 : lvTotaCurrentRealL2.getValue();
 			checkCurrent += lvCurrRealL2;
-			if (checkCurrent>0) return true;	// may accelerate execution
+			if (checkCurrent!=0.0) return true;	// may accelerate execution
 			
 			FixedDouble lvTotaCurrentRealL3 = (FixedDouble) this.getOptionModelController().getVariableState(tss.getIOlist(), TransformerSystemVariable.lvTotaCurrentRealL3.name());
 			double lvCurrRealL3 = lvTotaCurrentRealL3==null ? 0.0 : lvTotaCurrentRealL3.getValue();
 			checkCurrent += lvCurrRealL3;
-			if (checkCurrent>0) return true;	// may accelerate execution
+			if (checkCurrent!=0.0) return true;	// may accelerate execution
 			
 			checkCurrent = lvCurrRealL1 + lvCurrRealL2 + lvCurrRealL3; 
 		}
@@ -199,7 +199,7 @@ public class TransformerPowerEvaluationCalculation extends AbstractEvaluationCal
 			FixedDouble fdmTransHVRealAllPhases = (FixedDouble) TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.hvVoltageRealAllPhases.name());
 			if (fdmTransHVRealAllPhases!=null) {
 				double mHVRealAllPhases = fdmTransHVRealAllPhases.getValue();
-				if (mHVRealAllPhases==0) {
+				if (mHVRealAllPhases==0.0) {
 					// --- Check if the transformer is used -------------------
 					if (this.isTransformerUsed(tss)==true) {
 						// --- Use the above voltage level as fallback --------
