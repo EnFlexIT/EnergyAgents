@@ -2,7 +2,7 @@ package de.enflexit.ea.core.blackboard.db.dataModel;
 
 import java.util.Calendar;
 
-public class TrafoResult  extends AbstractStateResult {
+public class TrafoResult extends AbstractStateResult {
 
 	private static final long serialVersionUID = 1151410790396704632L;
 	
@@ -10,6 +10,16 @@ public class TrafoResult  extends AbstractStateResult {
 	private String idTrafo;	
 	private Calendar timestamp;
 	
+	// --- For a HV UniPhaseElectricalNodeState -----------
+	private double hvVoltageAllReal;
+	private double hvVoltageAllImag;
+	private double hvVoltageAllAbs;
+	private double hvCurrentAll;
+	private double hvCosPhiAll;
+	private double hvPowerPAll;
+	private double hvPowerQAll;
+	
+	// --- For a HV TriPhaseElectricalNodeState -----------
 	private double hvVoltageL1Real;
 	private double hvVoltageL1Imag;
 	private double hvVoltageL1Abs;
@@ -36,6 +46,16 @@ public class TrafoResult  extends AbstractStateResult {
 	private double hvPowerQ3;
 	
 	
+	// --- For a HV UniPhaseElectricalNodeState -----------
+	private double lvVoltageAllReal;
+	private double lvVoltageAllImag;
+	private double lvVoltageAllAbs;
+	private double lvCurrentAll;
+	private double lvCosPhiAll;
+	private double lvPowerPAll;
+	private double lvPowerQAll;
+	
+	// --- For a LV TriPhaseElectricalNodeState -----------
 	private double lvVoltageL1Real;
 	private double lvVoltageL1Imag;
 	private double lvVoltageL1Abs;
@@ -61,10 +81,11 @@ public class TrafoResult  extends AbstractStateResult {
 	private double lvPowerP3;
 	private double lvPowerQ3;
 	
-	
+	// --- LV 
 	private double voltageReal;
 	private double voltageImag;
-	private double voltageViolations;	
+	private double voltageViolations;
+	
 	private double residualLoadP;
 	private double residualLoadQ;	
 	private double trafoUtilization;	
@@ -96,6 +117,55 @@ public class TrafoResult  extends AbstractStateResult {
 	}
 	
 	
+	// --- For a HV UniPhaseElectricalNodeState -----------
+	public double getHvVoltageAllReal() {
+		return hvVoltageAllReal;
+	}
+	public void setHvVoltageAllReal(double hvVoltageAllReal) {
+		this.hvVoltageAllReal = hvVoltageAllReal;
+	}
+	public double getHvVoltageAllImag() {
+		return hvVoltageAllImag;
+	}
+	public void setHvVoltageAllImag(double hvVoltageAllImag) {
+		this.hvVoltageAllImag = hvVoltageAllImag;
+	}
+	public double getHvVoltageAllAbs() {
+		return hvVoltageAllAbs;
+	}
+	public void setHvVoltageAllAbs(double hvVoltageAllAbs) {
+		this.hvVoltageAllAbs = hvVoltageAllAbs;
+	}
+	
+	public double getHvCurrentAll() {
+		return hvCurrentAll;
+	}
+	public void setHvCurrentAll(double hvCurrentAll) {
+		this.hvCurrentAll = hvCurrentAll;
+	}
+	
+	public double getHvCosPhiAll() {
+		return hvCosPhiAll;
+	}
+	public void setHvCosPhiAll(double hvCosPhiAll) {
+		this.hvCosPhiAll = hvCosPhiAll;
+	}
+	
+	public double getHvPowerPAll() {
+		return hvPowerPAll;
+	}
+	public void setHvPowerPAll(double hvPowerPAll) {
+		this.hvPowerPAll = hvPowerPAll;
+	}
+	public double getHvPowerQAll() {
+		return hvPowerQAll;
+	}
+	public void setHvPowerQAll(double hvPowerQAll) {
+		this.hvPowerQAll = hvPowerQAll;
+	}
+	
+	
+	// --- For a HV TriPhaseElectricalNodeState -----------
 	public double getHvVoltageL1Real() {
 		return hvVoltageL1Real;
 	}
@@ -234,10 +304,58 @@ public class TrafoResult  extends AbstractStateResult {
 	}
 	
 	
-	
+	// --- For a LV UniPhaseElectricalNodeState -----------
 	public double getLvVoltageL1Real() {
 		return lvVoltageL1Real;
 	}
+	public double getLvVoltageAllReal() {
+		return lvVoltageAllReal;
+	}
+	public void setLvVoltageAllReal(double lvVoltageAllReal) {
+		this.lvVoltageAllReal = lvVoltageAllReal;
+	}
+	public double getLvVoltageAllImag() {
+		return lvVoltageAllImag;
+	}
+	public void setLvVoltageAllImag(double lvVoltageAllImag) {
+		this.lvVoltageAllImag = lvVoltageAllImag;
+	}
+	public double getLvVoltageAllAbs() {
+		return lvVoltageAllAbs;
+	}
+	public void setLvVoltageAllAbs(double lvVoltageAllAbs) {
+		this.lvVoltageAllAbs = lvVoltageAllAbs;
+	}
+	
+	public double getLvCurrentAll() {
+		return lvCurrentAll;
+	}
+	public void setLvCurrentAll(double lvCurrentAll) {
+		this.lvCurrentAll = lvCurrentAll;
+	}
+	
+	public double getLvCosPhiAll() {
+		return lvCosPhiAll;
+	}
+	public void setLvCosPhiAll(double lvCosPhiAll) {
+		this.lvCosPhiAll = lvCosPhiAll;
+	}
+	
+	public double getLvPowerPAll() {
+		return lvPowerPAll;
+	}
+	public void setLvPowerPAll(double lvPowerPAll) {
+		this.lvPowerPAll = lvPowerPAll;
+	}
+	public double getLvPowerQAll() {
+		return lvPowerQAll;
+	}
+	public void setLvPowerQAll(double lvPowerQAll) {
+		this.lvPowerQAll = lvPowerQAll;
+	}
+	
+	
+	// --- For a LV TriPhaseElectricalNodeState -----------
 	public void setLvVoltageL1Real(double lvVoltageL1Real) {
 		this.lvVoltageL1Real = lvVoltageL1Real;
 	}
@@ -503,6 +621,16 @@ public class TrafoResult  extends AbstractStateResult {
 		valueString += "'" + AbstractStateResult.getTimeStampAsSQLString(this.getTimestamp()) + "',";
 		
 		
+		valueString += this.getHvVoltageAllReal() + ",";
+		valueString += this.getHvVoltageAllImag() + ",";
+		valueString += this.getHvVoltageAllAbs() + ",";
+		valueString += this.getHvCurrentAll() + ",";
+
+		valueString += this.getHvCosPhiAll() + ",";
+		valueString += this.getHvPowerPAll() + ",";
+		valueString += this.getHvPowerQAll() + ",";
+		
+		
 		valueString += this.getHvVoltageL1Real() + ",";
 		valueString += this.getHvVoltageL1Imag() + ",";
 		valueString += this.getHvVoltageL1Abs() + ",";
@@ -532,6 +660,15 @@ public class TrafoResult  extends AbstractStateResult {
 		valueString += this.getHvPowerP3() + ",";
 		valueString += this.getHvPowerQ3() + ",";
 		
+		
+		valueString += this.getLvVoltageAllReal() + ",";
+		valueString += this.getLvVoltageAllImag() + ",";
+		valueString += this.getLvVoltageAllAbs() + ",";
+		valueString += this.getLvCurrentAll() + ",";
+
+		valueString += this.getLvCosPhiAll() + ",";
+		valueString += this.getLvPowerPAll() + ",";
+		valueString += this.getLvPowerQAll() + ",";
 		
 		
 		valueString += this.getLvVoltageL1Real() + ",";
@@ -564,10 +701,10 @@ public class TrafoResult  extends AbstractStateResult {
 		valueString += this.getLvPowerQ3() + ",";
 		
 		
-		
 		valueString += this.getVoltageReal() + ",";
 		valueString += this.getVoltageImag() + ",";
 		valueString += this.getVoltageViolations() + ",";		
+		
 		
 		valueString += this.getResidualLoadP() + ",";
 		valueString += this.getResidualLoadQ() + ",";
