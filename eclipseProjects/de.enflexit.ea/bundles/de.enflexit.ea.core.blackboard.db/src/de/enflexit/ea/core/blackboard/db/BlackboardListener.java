@@ -590,7 +590,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			// --- Get the ID reminded ---------------------------------------- 
 			String remindedID = nodeElementList.get(i); // --- may be a NetworkComponent ID ---
 			HashMap<AbstractElectricalNetworkConfiguration, ElectricalNodeState> elNodeStateHashMap = graphNodeStates.get(remindedID);
-			if (elNodeStateHashMap==null) {
+			if (elNodeStateHashMap==null || elNodeStateHashMap.size()==0) {
 				String graphNodeID = this.getGraphNodeIDFromNetworkComponentID(remindedID);
 				if (graphNodeID!=null) {
 					elNodeStateHashMap = graphNodeStates.get(graphNodeID);
