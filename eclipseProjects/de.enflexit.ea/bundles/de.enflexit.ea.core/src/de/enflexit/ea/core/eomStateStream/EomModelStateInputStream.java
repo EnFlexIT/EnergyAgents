@@ -22,6 +22,8 @@ import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.EvaluationProcess;
+import energy.helper.TechnicalSystemGroupHelper;
+import energy.helper.TechnicalSystemHelper;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
@@ -144,6 +146,9 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		NetworkComponent netComp = this.getIoSimulated().getNetworkComponent();
 		Object dataModelOfNetworkComponent = netComp.getDataModel();
 
+		// --- Get the start time of simulation -------------------------------
+		Long startTime = this.getIoSimulated().getTime();
+		
 		// --- First check for data model -------------------------------------
 		if (dataModelOfNetworkComponent==null) {
 			// --- Try to load from storage settings --------------------------
@@ -200,6 +205,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					// --- TechnicalSystem ------------------------------------
 					// --------------------------------------------------------
 					TechnicalSystem technicalSystem = (TechnicalSystem) dataModelOfNetworkComponent;
+					TechnicalSystemHelper.adjustEvaluationStartTime(technicalSystem, startTime);
 					OptionModelController omc = new OptionModelController();
 					omc.setTechnicalSystem(technicalSystem);
 					omc.setControllingAgent(this.getIoSimulated().getEnergyAgent());
@@ -235,6 +241,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					// --- TechnicalSystemGroup -------------------------------
 					// --------------------------------------------------------
 					TechnicalSystemGroup systemGroup = (TechnicalSystemGroup) dataModelOfNetworkComponent;
+					TechnicalSystemGroupHelper.adjustEvaluationStartTime(systemGroup, startTime);
 					GroupController gc = new GroupController();
 					gc.setTechnicalSystemGroup(systemGroup);
 					OptionModelController omc = gc.getGroupOptionModelController();

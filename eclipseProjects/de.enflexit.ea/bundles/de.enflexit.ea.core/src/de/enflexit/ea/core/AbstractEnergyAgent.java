@@ -50,6 +50,8 @@ import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
 import energy.FixedVariableList;
+import energy.helper.TechnicalSystemGroupHelper;
+import energy.helper.TechnicalSystemHelper;
 import energy.optionModel.FixedVariable;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
@@ -792,8 +794,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					} else if (dm instanceof TechnicalSystem){
 						// ----------------------------------------------------
 						// --- TechnicalSystems -------------------------------
+						TechnicalSystem ts = (TechnicalSystem) dm;
+						TechnicalSystemHelper.adjustEvaluationStartTime(ts, this.getEnergyAgentIO().getTime());
 						if (this.getInternalDataModel().getBundleModelForTechnicalSystem()==null) {
-							this.getInternalDataModel().getOptionModelController().setTechnicalSystem((TechnicalSystem) dm);
+							this.getInternalDataModel().getOptionModelController().setTechnicalSystem(ts);
 							if (this.getInternalDataModel().getOptionModelController().getEvaluationStrategyRT()!=null) {
 								
 								// --- Add a real time control, if configured ---------
@@ -809,7 +813,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					} else if (dm instanceof TechnicalSystemGroup){
 						// ----------------------------------------------------
 						// --- TechnicalSystemGroup ---------------------------
-						this.getInternalDataModel().getGroupController().setTechnicalSystemGroup((TechnicalSystemGroup) dm);
+						TechnicalSystemGroup tsg = (TechnicalSystemGroup) dm;
+						TechnicalSystemGroupHelper.adjustEvaluationStartTime(tsg, this.getEnergyAgentIO().getTime());
+						this.getInternalDataModel().getGroupController().setTechnicalSystemGroup(tsg);
 						if (this.getInternalDataModel().getGroupController().getGroupOptionModelController().getEvaluationStrategyRT()!=null) {
 							// --- Add a real time control, if configured -----
 							// --- => For testbed agents, this is to early ! -- 
