@@ -29,6 +29,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 			return this.calculatePF();
 
 		} catch (Exception ex) {
+			System.err.println("[" + Thread.currentThread().getName() + "." + this.getClass().getSimpleName() + "] Error while executing power flow calculation: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return false;
