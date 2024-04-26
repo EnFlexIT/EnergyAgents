@@ -423,9 +423,16 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private void sendDiscreteSimulationsStepToSimulationManager() {
 		
 		if (this.isSimulation()==false || this.getTimeModelType()==TimeModelType.TimeModelContinuous) return;
+
+		// --------------------------------------------------------------------------------------------------
+		// --- In case that no individual DiscreteIteratorInterface was implemented in a RT-strategy, the ---
+		// --- DiscreteSimulationStep will be send by the AbstractIOSimulated within a simulation step    ---
+		// --- already (with a state DiscreteSystemStateType.Final).                                      ---
+		// --- Thus, the DiscreteSimulationStep needs not to be sent again and this method can be skipped!--- 
+		// --------------------------------------------------------------------------------------------------
 		
 		AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
-		if (ioSimulated!=null) {
+		if ( (ioSimulated!=null && ioSimulated.requiresEnvironmentModelInformation()==true) || this.getDiscreteSystemStateType()!=null) {
 			ioSimulated.sendManagerNotification(this.getDiscreteSimulationStep());
 		}
 	}
@@ -493,8 +500,10 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 		return dsStep;
 	}
 	/**
-	 * Returns the DiscreteSystemStateType as returned by the current evaluation strategy.
-	 * @return the discrete system state type
+	 * Returns the DiscreteSystemStateType as returned by the current real-time evaluation strategy 
+	 * or <code>null</code>, if no {@link DiscreteIteratorInterface} is implemented.
+	 * 
+	 * @return the individual DiscreteSystemStateType or <code>null</code>
 	 */
 	private DiscreteSystemStateType getDiscreteSystemStateType() {
 		
