@@ -944,6 +944,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				envModel.setTimeModel(this.getEnvironmentModel().getTimeModel());
 				envModel.setAbstractEnvironment(this.getEnvironmentModel().getAbstractEnvironment());
 				envModel.setDisplayEnvironment(null);
+				envModel.setProjectProperties(this.getEnvironmentModel().getProjectProperties());
+				envModel.setSetupProperties(this.getEnvironmentModel().getSetupProperties());
 			}
 			this.stepSimulation(envModel, this.getNumberOfExpectedDeviceAgents());
 			

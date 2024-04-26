@@ -139,6 +139,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			// --- Initialize network model and component -------------------------------
 			EnvironmentModel environmentModel = Application.getProjectFocused().getEnvironmentController().getEnvironmentModel();
 			if (environmentModel!=null) {
+				// --- Set project and setup properties ---------------------------------
+				this.getInternalDataModel().setProjectProperties(environmentModel.getProjectProperties());
+				this.getInternalDataModel().setSetupProperties(environmentModel.getSetupProperties());
+				
 				// --- Set the time model type according to the environment model -------
 				HyGridAbstractEnvironmentModel abstractEnvironmentModel = (HyGridAbstractEnvironmentModel) environmentModel.getAbstractEnvironment();
 				abstractEnvironmentModel.setTimeModelType(environmentModel.getTimeModel());

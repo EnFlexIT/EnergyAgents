@@ -87,6 +87,8 @@ public abstract class AbstractIOSimulated extends Behaviour implements EnergyAge
 			this.setEnvironmentModel(environmentModel);
 			
 			// --- Put some information to the agents internal data model ---------------
+			this.getInternalDataModel().setProjectProperties(environmentModel.getProjectProperties());
+			this.getInternalDataModel().setSetupProperties(environmentModel.getSetupProperties());
 			this.getInternalDataModel().setHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());
 			this.getInternalDataModel().setNetworkModel(this.getNetworkModel(), false);
 			this.getInternalDataModel().setNetworkComponent(this.getNetworkComponent());

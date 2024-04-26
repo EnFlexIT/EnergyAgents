@@ -102,6 +102,8 @@ public class ProxyAgentSimulationServiceBehaviour extends SimulationServiceBehav
 				EnvironmentModel environmentModelToSend = new EnvironmentModel();
 				environmentModelToSend.setTimeModel(this.myEnvironmentModel.getTimeModel());
 				environmentModelToSend.setAbstractEnvironment(this.myEnvironmentModel.getAbstractEnvironment());
+				environmentModelToSend.setProjectProperties(this.myEnvironmentModel.getProjectProperties());
+				environmentModelToSend.setSetupProperties(this.myEnvironmentModel.getSetupProperties());
 				
 				// --- Create an ACL message containing the environment model and send it ------------
 				ACLMessage environmentStimulusMessage = this.createMessage(ProxyAgent.CONVERSATION_ID_ENVIRONMENT_STIMULUS, environmentModelToSend);
