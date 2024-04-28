@@ -881,6 +881,9 @@ public abstract class AbstractAggregationHandler {
 			this.getLastNetworkComponentUpdates().put(networkComponentID, tsseNew);
 		}
 		
+		// --- Apply ScheduleLengthRestriction ----------------------
+		schedule.applyScheduleLengthRestriction();
+		
 		// --- Do controller and visualization update ---------------
 		this.notifyScheduleListObserver(sc, ScheduleNotification.Reason.ScheduleUpdated, schedule);
 	}

@@ -51,6 +51,7 @@ import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.RTControlRegistration;
+import de.enflexit.ea.core.simulation.manager.SimulationManagerMonitor.MonitorAction;
 import de.enflexit.eom.awb.adapter.AbstractEomStorageHandler;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
@@ -97,6 +98,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private List<String> additionalSimAgentClasses;
 
 	private Integer averageOfAgentAnswersExpected;
+	private HashSet<String> agentsKnown;
 	private HashSet<String> agentsInitialized;
 	private HashSet<String> agentsSuccessfulStarted;
 
@@ -106,6 +108,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private List<EnvironmentNotification> dssNotificationList;
 	private boolean isUpdatedDiscreteSimulationStep;
 	
+	private SimulationManagerMonitor monitor;
 	private AggregationHandler aggregationHandler;
 	private Blackboard blackboard;
 	
@@ -132,6 +135,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- Set debugging option -------------------------------------------
 		this.debug = false;
 		this.isDoPerformanceMeasurements = false;
+		
+		// --- Start SimulationManagerMonitor ---------------------------------
+		this.getSimulationManagerMonitor();
 		
 		// --- Start the BlackBoardAgent --------------------------------------
 		this.startBlackBoardAgent();
@@ -242,6 +248,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getAggregationHandler().terminate();
 		this.getBlackboard().stopBlackboardListenerServiceThread();
 		this.removeSimulationBehaviour();
+		this.getSimulationManagerMonitor().setDoTerminate(true);
 	}
 	
 	
@@ -601,6 +608,30 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	}
 	
 	// --------------------------------------------------------------------------------------------
+	// --- SimulationManagerMonitor handling ------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Returns the SimulationManager monitor thread.
+	 * @return the simulation manager monitor
+	 */
+	public SimulationManagerMonitor getSimulationManagerMonitor() {
+		if (monitor==null) {
+			monitor = new SimulationManagerMonitor(this, 10 * 1000l);
+			monitor.start();
+		}
+		return monitor;
+	}
+	/**
+	 * Sets the current monitor action.
+	 *
+	 * @param action the action
+	 * @param maxWaitTime the max wait time
+	 */
+	public void setMonitorAction(MonitorAction action, long maxWaitTime) {
+		this.getSimulationManagerMonitor().setMonitorAction(action, maxWaitTime);
+	}
+	
+	// --------------------------------------------------------------------------------------------
 	// --- Blackboard handling --------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
@@ -751,6 +782,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				simState.setState(STATE.A_DistributeEnvironmentModel);
 				this.print("Initially distribute Environment Model to " + this.getNumberOfExpectedDeviceAgents() + " agents!", false);
 				this.distributeEnvironmentModel(false);
+				this.setMonitorAction(MonitorAction.DistributeEnvironmentModel, 60 * 1000);
 				
 			} else if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
 				// --------------------------------------------------------------------------------
@@ -766,9 +798,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					case TimeModelDiscrete: // ---------------------------------------------------
 						this.getControlBehaviourRTStateUpdateAnswered().clear();
 						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.setMonitorAction(MonitorAction.DiscreteSimulation_ExecuteSimulation, 60 * 1000);
 						this.statSimulationStepsDiscrete++;
 						this.setEndTimeNextSimulationStep();
-						// --- Disable NetworkModel updates within GUI ----------------------------
+						// --- Disable NetworkModel updates of DisplayAgent -----------------------
 						this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
 						break;
 
@@ -776,6 +809,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 						this.getNetworkCalculationExecuter();
 						this.getTimeModelContinuous().setExecuted(true);
 						this.distributeEnvironmentModel(true);
+						this.setMonitorAction(null, 60 * 1000);
 						break;
 					}
 				}
@@ -807,6 +841,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				// --- Finalize simulation --------------------------------------------------------
 				// --------------------------------------------------------------------------------
 				this.resetEndTimeNextSimulationStep();
+				this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 			}
 			
 		} catch (Exception ex) {
@@ -849,6 +884,20 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		boolean isPendingControlBehaviourRTStateUpdate = this.isPendingControlBehaviourRTStateUpdate();
 		
 		isDoNextSimulationStep = isPendingSystemInPartSequence==false && isPendingSysteminSimulationStep==false && isPendingControlBehaviourRTStateUpdate==false; 
+
+		// --- Set the monitoring state ---------------------------------------------
+		if (isPendingSystemInPartSequence==true) {
+			this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingAnswerOfIteratingSystem, 10 * 1000);
+		} else {
+			if (isPendingSysteminSimulationStep==true) {
+				this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingFinalAnswerOfIteratingSystem, 10 * 1000);
+			} else {
+				if (isPendingControlBehaviourRTStateUpdate==true) {
+					this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingControlBehaviourRTStateUpdate, 10 * 1000);
+				}
+			}
+		}
+		
 		
 		// --------------------------------------------------------------------------
 		// --- In case of any discrete iterating system -----------------------------
@@ -948,12 +997,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				envModel.setSetupProperties(this.getEnvironmentModel().getSetupProperties());
 			}
 			this.stepSimulation(envModel, this.getNumberOfExpectedDeviceAgents());
+			this.setMonitorAction(MonitorAction.DiscreteSimulation_StepSimulation, 60 * 1000);
 			
 		} catch (ServiceException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#proceedAgentAnswers(java.util.Hashtable)
@@ -967,7 +1016,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- should have send a kind of 'OK'-message or a new system state --
 		// --------------------------------------------------------------------
 		if (agentAnswers!=null && agentAnswers.size()>0) {
-			
+
 			try {
 				// --- Get current time ---------------------------------------
 				long currTime = this.getTime();
@@ -979,7 +1028,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					String displayTextNumbers = "(Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!";
 					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states " + displayTextNumbers + ".");
 					// --- Error during simulation? ---------------------------
-					if (agentAnswers.size()!=this.getAverageOfAgentAnswersExpected()) {
+					if (agentAnswers.size()!=this.getNumberOfExpectedDeviceAgents() && agentAnswers.size()!=this.getAverageOfAgentAnswersExpected()) {
 						this.print("Received " + agentAnswers.size() + " instead of " + this.getAverageOfAgentAnswersExpected() + " expected answers from agents in simulation.", true);
 					}
 					if (this.isDebugDiscreteSimulationSchedule==true) {
@@ -1074,9 +1123,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 							} else {
 								simulationAgentClass = false;
 							}
+							// --- Remember the result ------------------------
 							simulationAgentClasses.put(className, simulationAgentClass);
 							
-							// --- Remember the result ------------------------
 							
 						} catch (NoClassDefFoundError e) {
 							e.printStackTrace();
@@ -1088,6 +1137,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					// --- Agent available? -----------------------------------
 					if (simulationAgentClass==true) {
 						this.numberOfExecutedDeviceAgents++;
+						this.getAgentsKnown().add(netComp.getId());
 					}
 				}
 			}
@@ -1123,10 +1173,20 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	// --- Handling / counting of involved agents during start ------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
+	 * Returns the agent known.
+	 * @return the agent known
+	 */
+	public HashSet<String> getAgentsKnown() {
+		if (agentsKnown==null) {
+			agentsKnown = new HashSet<>();
+		}
+		return agentsKnown;
+	}
+	/**
 	 * Returns the agents that were initialized for the simulation.
 	 * @return the agents initialized
 	 */
-	private HashSet<String> getAgentsInitialized() {
+	public HashSet<String> getAgentsInitialized() {
 		if (agentsInitialized==null) {
 			agentsInitialized = new HashSet<String>();
 		}
@@ -1136,7 +1196,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Return the agents that were successfully started for the simulation.
 	 * @return the agents successful started
 	 */
-	private HashSet<String> getAgentsSuccessfulStarted() {
+	public HashSet<String> getAgentsSuccessfulStarted() {
 		if (agentsSuccessfulStarted==null) {
 			agentsSuccessfulStarted = new HashSet<String>();
 		}
@@ -1152,7 +1212,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Returns the agents that registered for this simulation.
 	 * @return the agents registered
 	 */
-	private Vector<EnvironmentNotification> getAgentNotifications() {
+	public Vector<EnvironmentNotification> getAgentNotifications() {
 		if (agentsNotifications==null) {
 			agentsNotifications = new Vector<EnvironmentNotification>();
 		}
@@ -1230,8 +1290,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					// --- In distribute environments some agents may be slower in response !!----- 
 					// --- => At least have 95 % of expected agents started ----------------------- 
 					// ----------------------------------------------------------------------------
-					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()));
-					if (this.getAgentsSuccessfulStarted().size()>=minStarted &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
+					if (this.getAgentsSuccessfulStarted().size()>=this.getNumberOfExpectedDeviceAgents() &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
 						this.print("Initialization of agents completed (Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!", false);
 						this.resetAgentNotifications();
 						this.doNextSimulationStep();	
@@ -1314,6 +1373,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				this.print("Finalisation of simulation completed!", false);
 				this.printRuntimeStatistics();
 				this.resetAgentNotifications();
+				this.setMonitorAction(null, 30 * 1000);
 				this.doNextSimulationStep();
 			}
 		}
