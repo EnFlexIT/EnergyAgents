@@ -2,11 +2,13 @@ package de.enflexit.ea.core.simulation.manager;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import de.enflexit.common.DateTimeHelper;
 import jade.core.AID;
@@ -225,30 +227,25 @@ public class SimulationManagerMonitor extends Thread {
 			break;
 			
 		case DiscreteSimulation_AwaitingAnswerOfIteratingSystem:
-			this.simulationManager.getAggregationHandler().getDiscreteIteratingSystems();
-			this.simulationManager.getAggregationHandler().getDiscreteIteratingSystemsStateTypeLog();
-			
+			this.reactOnExpiredAnswerOfIteratingSystem(this.simulationManager.getAggregationHandler().getDiscreteIteratingSystems(), this.simulationManager.getAggregationHandler().getDiscreteIteratingSystemsStateTypeLog());
 			break;
 			
 		case DiscreteSimulation_AwaitingFinalAnswerOfIteratingSystem:
-			this.simulationManager.getAggregationHandler().getDiscreteIteratingSystemsStateTypeLog();
-			
+			this.reactOnExpiredFinalAnswerOfIteratingSystem(this.simulationManager.getAggregationHandler().getDiscreteIteratingSystemsStateTypeLog());
 			break;
 			
 		case DiscreteSimulation_AwaitingControlBehaviourRTStateUpdate:
-			this.simulationManager.getControlBehaviourRTStateUpdateAnswered();
-			this.simulationManager.getControlBehaviourRTStateUpdateSources();
-			
+			this.reactOnExpiredControlBehaviourRTStateUpdate(this.simulationManager.getControlBehaviourRTStateUpdateSources(), this.simulationManager.getControlBehaviourRTStateUpdateAnswered());
 			break;
 			
 		case StopSimulation:
 			// --- Check if all agents confirmed stop -------------------------
-			this.simulationManager.getAgentNotifications();
+			this.reactOnExpiredStopSimulation(this.simulationManager.getAgentsKnown(), this.simulationManager.getAgentNotifications());
 			break;
 		}
-			
 	}
 	
+
 	/**
 	 * React on expired distribute environment model.
 	 *
@@ -340,8 +337,81 @@ public class SimulationManagerMonitor extends Thread {
 		this.print("=> " + msg);
 		this.print("=> " + mainMsg + ", " + containerMsg);
 		this.print("=> " + notAnswered);
-		
 	}
 	
+	/**
+	 * React on expired answer of iterating system.
+	 *
+	 * @param iteratingAgents the iterating agents
+	 * @param iteratingSystemStateLog the iteration state log
+	 */
+	private void reactOnExpiredAnswerOfIteratingSystem(HashSet<String> iteratingAgents, HashMap<String, DiscreteSystemStateType> iteratingSystemStateLog) {
+		
+		List<String> expiredItSys = new ArrayList<>(iteratingAgents);
+		for (String agentAnswered : iteratingSystemStateLog.keySet()) {
+			expiredItSys.remove(agentAnswered);
+		}
+
+		String msg = expiredItSys.size() + " expired iteration answers from: " + String.join(", ", expiredItSys);
+		this.print("=> " + msg);
+	}
+	
+	/**
+	 * React on expired final answer of iterating system.
+	 *
+	 * @param iterationStateLog the iteration state log
+	 */
+	private void reactOnExpiredFinalAnswerOfIteratingSystem(HashMap<String, DiscreteSystemStateType> iterationStateLog) {
+		
+		List<String> expiredFinalItSys = new ArrayList<>();
+		for (String agentAnswered : iterationStateLog.keySet()) {
+			DiscreteSystemStateType dssType = iterationStateLog.get(agentAnswered);
+			if (dssType==null || dssType==DiscreteSystemStateType.Iteration) {
+				expiredFinalItSys.add(agentAnswered);
+			}
+		}
+		
+		String msg = expiredFinalItSys.size() + " expired FINAL iteration answers from " + String.join(", ",  expiredFinalItSys);
+		this.print("=> " + msg);
+	}
+	
+	/**
+	 * React on expired control behaviour RT state updates.
+	 *
+	 * @param expectedAgents the expected agents that should answer
+	 * @param agentsAnswered the agent names that already answered
+	 */
+	private void reactOnExpiredControlBehaviourRTStateUpdate(HashSet<String> expectedAgents, HashSet<String> agentsAnswered) {
+		
+		List<String> pendingAnswers = new ArrayList<>(expectedAgents);
+		pendingAnswers.removeAll(agentsAnswered);
+		if (pendingAnswers.size()>0) {
+			Collections.sort(pendingAnswers);
+			String updateSnglPlur = pendingAnswers.size()==1 ? "update" : "updates";
+			String msg = "Missing " + pendingAnswers.size() + " ControlBehaviourRT state " + updateSnglPlur + " from: {" + String.join(", ", pendingAnswers) + "}";
+			this.print("=> " + msg);
+		}
+	}
+	
+	/**
+	 * React on expired stop simulation.
+	 *
+	 * @param agentsKnown the agents known
+	 * @param agentNotifications the agent notifications
+	 */
+	private void reactOnExpiredStopSimulation(HashSet<String> agentsKnown, Vector<EnvironmentNotification> agentNotifications) {
+		
+		List<String> expiredAgents = new ArrayList<>(agentsKnown);
+		for (EnvironmentNotification envNote : agentNotifications) {
+			expiredAgents.remove(envNote.getSender().getLocalName());
+		}
+		
+		if (expiredAgents.size()>0) {
+			Collections.sort(expiredAgents);
+			String confirmationSnglPlur = expiredAgents.size()==1 ? "confirmation" : "confirmations";
+			String msg = "Missing " + expiredAgents.size() + " " + confirmationSnglPlur + " of simulation finalization from: {" + String.join(", ", expiredAgents) + "}";
+			this.print("=> " + msg);
+		}
+	}
 	
 }
