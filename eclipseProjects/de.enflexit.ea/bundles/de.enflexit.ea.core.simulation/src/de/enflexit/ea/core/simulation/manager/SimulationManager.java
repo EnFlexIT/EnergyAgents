@@ -1285,6 +1285,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					break;
 
 				case Done:
+					this.getAgentsInitialized().add(agentName);
 					this.getAgentsSuccessfulStarted().add(agentName);
 					// ----------------------------------------------------------------------------
 					// --- In distribute environments some agents may be slower in response !!----- 
