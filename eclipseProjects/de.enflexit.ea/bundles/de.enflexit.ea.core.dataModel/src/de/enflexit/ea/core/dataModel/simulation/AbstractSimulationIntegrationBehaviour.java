@@ -1,6 +1,8 @@
 package de.enflexit.ea.core.dataModel.simulation;
 
 import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
+import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
+import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import jade.core.Agent;
 import jade.core.Location;
@@ -59,6 +61,30 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 			this.sendManagerNotification(STATE_CONFIRMATION.Error);
 		}
 	}
+	
+	/**
+	 * Returns the HyGridAbstractEnvironmentModel currently provided by the SimulationServcie.
+	 * @return the current HyGridAbstractEnvironmentModel
+	 */
+	protected HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
+		if (this.myEnvironmentModel!=null) {
+			return (HyGridAbstractEnvironmentModel) this.myEnvironmentModel.getAbstractEnvironment();
+		}
+		return null;
+	}
+	/**
+	 * Returns the current simulation state.
+	 * @return the simulation state
+	 * @see STATE
+	 */
+	protected STATE getSimulationState() {
+		HyGridAbstractEnvironmentModel hyGridAbsEnvModel = this.getHyGridAbstractEnvironmentModel();
+		if (hyGridAbsEnvModel!=null) {
+			return hyGridAbsEnvModel.getSimulationStatus().getState();
+		}
+		return null;
+	}
+	
 	/**
 	 * Override this method to implement behaviour-specific setup tasks.
 	 * @return true, if successfully done
@@ -72,6 +98,16 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 	 */
 	@Override
 	public final void onEnvironmentStimulus() {
+		
+		// ---- Check if the simulation is finalized ----------------
+		STATE simulationState = this.getSimulationState();
+		if (simulationState!=null && simulationState==STATE.C_StopSimulation) {
+			this.finalizeSimulation();
+			this.sendManagerNotification(STATE_CONFIRMATION.Done);
+			return;
+		}
+		
+		// --- Do the discrete simulation step tasks ----------------
 		Object stateObject = this.performSimulationStepTasks();
 		if (this.sendStimulusAnswer==true) {
 			this.setMyStimulusAnswer(stateObject);
@@ -96,5 +132,11 @@ public abstract class AbstractSimulationIntegrationBehaviour extends SimulationS
 	 */
 	@Override
 	public void setMigration(Location newLocation) { }
+	
+	/**
+	 * Will be called if the simulation is about to be finalized. Overwrite this 
+	 * method, if you want to do finalization tasks.
+	 */
+	public void finalizeSimulation() {};
 	
 }
