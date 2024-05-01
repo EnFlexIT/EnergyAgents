@@ -830,6 +830,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 						simState.setState(STATE.C_StopSimulation);
 						this.statSimulationEndTime = System.currentTimeMillis();
 						this.print("Finalize Simulation!", false);
+						this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 						this.getTimeModelContinuous().setExecuted(false);
 						this.stepSimulation();
 						break;
@@ -841,7 +842,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				// --- Finalize simulation --------------------------------------------------------
 				// --------------------------------------------------------------------------------
 				this.resetEndTimeNextSimulationStep();
-				this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 			}
 			
 		} catch (Exception ex) {
@@ -958,8 +958,8 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
 				this.statSimulationEndTime = System.currentTimeMillis();
 				this.print("Finalize Simulation!", false);
+				this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 				this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
-				
 			}
 			
 			// --- Clear discrete simulation step logs ----------------------------------
@@ -997,7 +997,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				envModel.setSetupProperties(this.getEnvironmentModel().getSetupProperties());
 			}
 			this.stepSimulation(envModel, this.getNumberOfExpectedDeviceAgents());
-			this.setMonitorAction(MonitorAction.DiscreteSimulation_StepSimulation, 60 * 1000);
+			if (this.hygridSettings.getSimulationStatus().getState()!=STATE.C_StopSimulation) {
+				this.setMonitorAction(MonitorAction.DiscreteSimulation_StepSimulation, 60 * 1000);
+			}
 			
 		} catch (ServiceException ex) {
 			ex.printStackTrace();
