@@ -41,7 +41,9 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 
 	private static final String ACTIVE_POWER = "Active Power";
 	private static final String REACTIVE_POWER = "Reactive Power";
-	private static final String VOLTAGE = "Voltage";
+	private static final String NODE_VOLTAGE_ABS = "Voltage (abs)";
+	private static final String NODE_VOLTAGE_REAL = "Voltage (real)";
+	private static final String NODE_VOLTAGE_IMAG = "Voltage (imag)";
 	private static final String CURRENT = "Current";
 	private static final String UTILIZATION = "Utilization";
 	
@@ -104,9 +106,15 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			Vector<Float> floatVectorVoltage = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 			int tsIndex = -1;
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageImag().getValue());
 			
 			// --- Add a layout notification, if configured so ----------------------
 			this.addGraphElementLayoutForNodes(tsSettings, uniNodeState);
@@ -309,7 +317,9 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		timeSeriesForNodes.add(this.createTimeSeries(ACTIVE_POWER, powerUnit));
 		timeSeriesForNodes.add(this.createTimeSeries(REACTIVE_POWER, powerUnit));
 		// --- Voltage ----------------------------------------------
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG, "V"));
 		return timeSeriesForNodes;
 	}
 

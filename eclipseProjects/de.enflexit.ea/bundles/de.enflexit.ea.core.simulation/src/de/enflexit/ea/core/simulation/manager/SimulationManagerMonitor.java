@@ -336,7 +336,7 @@ public class SimulationManagerMonitor extends Thread {
 		String msg = "No. of Agents: " + noOfAgents + ", No. of Agents that reacted: " + agentsAnswered.size() + ".";
 		this.print("=> " + msg);
 		this.print("=> " + mainMsg + ", " + containerMsg);
-		this.print("=> " + notAnswered);
+		if (notAnswered.isBlank()==false) this.print("=> " + notAnswered);
 	}
 	
 	/**

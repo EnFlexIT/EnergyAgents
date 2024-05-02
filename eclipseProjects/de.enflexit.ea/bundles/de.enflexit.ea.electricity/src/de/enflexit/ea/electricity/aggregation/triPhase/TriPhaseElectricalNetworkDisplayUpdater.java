@@ -51,9 +51,17 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 	private static final String REACTIVE_POWER_L2 = "Reactive Power L2";
 	private static final String REACTIVE_POWER_L3 = "Reactive Power L3";
 
-	private static final String VOLTAGE_L1 = "Voltage L1";
-	private static final String VOLTAGE_L2 = "Voltage L2";
-	private static final String VOLTAGE_L3 = "Voltage L3";
+	private static final String NODE_VOLTAGE_ABS_L1 = "Voltage L1 (abs)";
+	private static final String NODE_VOLTAGE_ABS_L2 = "Voltage L2 (abs)";
+	private static final String NODE_VOLTAGE_ABS_L3 = "Voltage L3 (abs)";
+	
+	private static final String NODE_VOLTAGE_REAL_L1 = "Voltage L1 (real)";
+	private static final String NODE_VOLTAGE_REAL_L2 = "Voltage L2 (real)";
+	private static final String NODE_VOLTAGE_REAL_L3 = "Voltage L3 (real)";
+	
+	private static final String NODE_VOLTAGE_IMAG_L1 = "Voltage L1 (imag)";
+	private static final String NODE_VOLTAGE_IMAG_L2 = "Voltage L2 (imag)";
+	private static final String NODE_VOLTAGE_IMAG_L3 = "Voltage L3 (imag)";
 	
 	private static final String CURRENT_L1 = "Current L1";
 	private static final String CURRENT_L2 = "Current L2";
@@ -126,18 +134,36 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			Vector<Float> floatVectorVoltage = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 			int tsIndex = -1;
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L1);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L1);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L1);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L1);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageImag().getValue());
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L2);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L2);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L2);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L2);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageImag().getValue());
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L3);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L3);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageAbs().getValue());
-
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L3);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L3);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageImag().getValue());
+			
 			// --- Add a layout notification, if configured so ----------------------
 			this.addGraphElementLayoutForNodes(tsSettings, triNodeState);
 
@@ -147,7 +173,7 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			UpdateTimeSeries udtsEnergyFlowStateEnd = null;
 			
 			// --- Update minimum and maximum voltages ------------------------
-			float nodeMinimumVoltage = Math.min(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL2().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
+			float nodeMinimumVoltage = Math.min(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL3().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
 			float nodeMaximumVoltage = Math.max(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL2().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
 			this.updateNetworkMinimumNodeVoltage(nodeMinimumVoltage);
 			this.updateNetworkMaximumNodeVoltage(nodeMaximumVoltage);
@@ -375,9 +401,15 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		timeSeriesForNodes.add(this.createTimeSeries(ACTIVE_POWER_L3, powerUnit));
 		timeSeriesForNodes.add(this.createTimeSeries(REACTIVE_POWER_L3, powerUnit));
 		// --- Voltage ----------------------------------------------
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L1, "V"));
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L2, "V"));
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L3, "V"));
 		
 		return timeSeriesForNodes;
 	}

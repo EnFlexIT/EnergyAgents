@@ -416,6 +416,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		if (pfc == null) return;
 		
 		Vector<Double> uKabs  = pfc.getNodalVoltageAbs();
+		Vector<Double> uKIreal = pfc.getNodalVoltageReal();
 		Vector<Double> uKImag = pfc.getNodalVoltageImag();
 		Vector<Double> cosPhi = pfc.getNodalCosPhi();
 		Vector<Double> nodalPowerReal = pfc.getNodalPowerReal();
@@ -470,17 +471,21 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			}
 			if (uKabs != null) {
 				
-				// ----------------------------------------------------------------
-				// --- Do required calculations -----------------------------------
-				// ----------------------------------------------------------------
+				// ------------------------------------------------------------
+				// --- Do required calculations -------------------------------
+				// ------------------------------------------------------------
 				float cosPhiUniPhase = cosPhi.get(i).floatValue();
 				
 				float uKabsUniPhase = uKabs.get(i).floatValue();
-				float uKabsRealUniPhase = (float) (uKabsUniPhase * cosPhiUniPhase);
-				float uKabsImagUniPhase = (float) Math.sqrt(Math.pow(uKabsUniPhase, 2) - Math.pow(uKabsRealUniPhase, 2)) * (uKImag.get(i)>0 ? 1 : -1);
+				float uKabsRealUniPhase = uKIreal.get(i).floatValue();
+				float uKabsImagUniPhase = uKImag.get(i).floatValue();
 				
-				float nodalPowerRealUniPhase = (float) nodalPowerReal.get(i).floatValue(); // --- Adjustment due to uni-phase powerflow calculation
-				float nodalPowerImagUniPhase = (float) nodalPowerImag.get(i).floatValue();	// --- Adjustment due to uni-phase powerflow calculation
+				float nodalPowerRealUniPhase = (float) nodalPowerReal.get(i).floatValue();
+				float nodalPowerImagUniPhase = (float) nodalPowerImag.get(i).floatValue();
+
+				// --- In the following legacy code of previous approach --------- 
+				//float uKabsRealUniPhase = (float) (uKabsUniPhase * cosPhiUniPhase);
+				//float uKabsImagUniPhase = (float) Math.sqrt(Math.pow(uKabsUniPhase, 2) - Math.pow(uKabsRealUniPhase, 2)) * (uKImag.get(i)>0 ? 1 : -1);
 				
 				// ----------------------------------------------------------------
 				// --- Set to UniPhaseElectricalNodeState -------------------------

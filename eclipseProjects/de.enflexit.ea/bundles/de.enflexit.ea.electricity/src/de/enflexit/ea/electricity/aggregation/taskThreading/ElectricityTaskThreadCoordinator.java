@@ -118,7 +118,7 @@ public class ElectricityTaskThreadCoordinator extends AbstractTaskThreadCoordina
 			// --- Get Nodes for this voltage level from the graph ------------
 			List<SubNetworkGraphNode> networksAtVoltageLevel = this.getSubNetworkGraph().getConnectedSubNetworkGraphNodes(voltageLevel);
 			if (networksAtVoltageLevel.size()==0) continue;
-			
+
 			// --- Set task threads to execute network calculations -----------
 			networksAtVoltageLevel.forEach(subNetGraphNode -> this.setTaskThreadToCalculateSubNetworkGraphNode(subNetGraphNode, timeUntil, rebuildDecisionGraph));
 			// --- Execute power flow calculation -----------------------------
