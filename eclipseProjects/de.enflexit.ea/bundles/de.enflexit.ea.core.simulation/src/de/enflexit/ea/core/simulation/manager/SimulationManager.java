@@ -105,7 +105,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private Vector<EnvironmentNotification> agentsNotifications;
 	
 	private long endTimeNextSimulationStep;
-	private List<EnvironmentNotification> dssNotificationList;
 	private boolean isUpdatedDiscreteSimulationStep;
 	
 	private SimulationManagerMonitor monitor;
@@ -1327,10 +1326,12 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				return;
 				
 			} else if (envNote.getNotification() instanceof DiscreteSimulationStep) {
-				// ---------------------------------------------------------------------------------
 				// --- Got a new DiscreteSimulationStep from a system ------------------------------
-				// ---------------------------------------------------------------------------------
-				this.processAvailableDiscreteSimulationSteps();
+				this.getAggregationHandler().setAgentAnswer(envNote);
+				if (this.isDiscreteSimulationStepForCurrentTimeStep((DiscreteSimulationStep) envNote.getNotification())==true) {
+					this.isUpdatedDiscreteSimulationStep = true;
+					this.doNextSimulationStep();
+				}
 				return;
 				
 			} else if (envNote.getNotification() instanceof ControlBehaviourRTStateUpdate) {
@@ -1381,48 +1382,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			}
 		}
 	}
-	
-	
-	/**
-	 * Returns the locally used discrete simulation step notification vector.
-	 * @return the discrete simulation step notification vector
-	 */
-	private List<EnvironmentNotification> getDiscreteSimulationStepNotificationList() {
-		if (dssNotificationList==null) {
-			dssNotificationList = new ArrayList<>();
-		}
-		return dssNotificationList;
-	}
-	/**
-	 * Will process all available discrete simulation steps from {@link #getNotifications()}.
-	 */
-	private void processAvailableDiscreteSimulationSteps() {
-		
-		// --- Collect all DiscreteSimulationSteps from notification queue ---- 
-		this.getDiscreteSimulationStepNotificationList().addAll(this.getNotificationsByConentType(DiscreteSimulationStep.class));
-		
-		// --- Check if messages are complete ---------------------------------
-		if (this.getDiscreteSimulationStepNotificationList().size()==this.getAggregationHandler().getDiscreteIteratingSystems().size()) {
-			
-			boolean isUpdatedDsStep = false;
-			// --- Update aggregation ----------------------------------------
-			for (EnvironmentNotification dssEnvNote : this.getDiscreteSimulationStepNotificationList()) {
-				this.getAggregationHandler().setAgentAnswer(dssEnvNote);
-				if (isUpdatedDsStep==false && this.isDiscreteSimulationStepForCurrentTimeStep((DiscreteSimulationStep) dssEnvNote.getNotification())==true) {
-					isUpdatedDsStep = true;
-				}
-			}
-			// --- Update, try executing next step ---------------------------- 
-			if (isUpdatedDsStep==true) {
-				this.isUpdatedDiscreteSimulationStep = true;
-				this.doNextSimulationStep();
-			}
-			// --- Clear local list ------------------------------------------- 
-			this.getDiscreteSimulationStepNotificationList().clear();
-		}
-	}
-	
-	
 	/**
 	 * Checks if the specified DiscreteSimulationStep is for the current time step.
 	 *

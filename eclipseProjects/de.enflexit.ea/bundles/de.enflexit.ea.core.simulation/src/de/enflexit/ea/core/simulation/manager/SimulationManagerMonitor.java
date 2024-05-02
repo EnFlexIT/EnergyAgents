@@ -50,6 +50,9 @@ public class SimulationManagerMonitor extends Thread {
 	private Long currentMaxWaitTime;
 	private long defaultMaxWaitTime = 10 * 1000;
 	
+	private int repetitionCounter = 0;
+	
+	
 	/**
 	 * Instantiates a new simulation manager monitor.
 	 *
@@ -118,6 +121,7 @@ public class SimulationManagerMonitor extends Thread {
 					if (this.currentAction!=null && this.currentAction.equals(action)==true && System.currentTimeMillis()>=endTime) {
 						// --- Action took too long ----------------- 
 						try {
+							this.repetitionCounter++;
 							this.printOnExpiredAction(waitTime);
 							this.reactOnExpiredAction();
 							
@@ -169,7 +173,11 @@ public class SimulationManagerMonitor extends Thread {
 		// --- Set local action ---------------------------
 		if (actionDescription==null || actionDescription.isBlank()==true) {
 			this.currentAction = null;
+			this.repetitionCounter = 0;
 		} else {
+			if (this.currentAction==null || actionDescription.equals(this.currentAction)==false) {
+				this.repetitionCounter = 0;
+			}
 			this.currentAction = actionDescription;
 		}
 		// --- Set maximum wait time for the action -------
@@ -193,7 +201,7 @@ public class SimulationManagerMonitor extends Thread {
 	 * @param waitTime the wait time
 	 */
 	private void printOnExpiredAction(long waitTime) {
-		this.print("The reaction on '" + this.currentAction + "' takes longer than expected (waiting time was " + (waitTime / 1000)  + " s - " + DateTimeHelper.getTimeAsString(System.currentTimeMillis()) + ")!");
+		this.print("The reaction on '" + this.currentAction + "' takes longer than expected (waiting time was " + (waitTime / 1000)  + " s, " + this.repetitionCounter + " repetition, " + DateTimeHelper.getTimeAsString(System.currentTimeMillis()) + ")!");
 	}
 	/**
 	 * Prints the specified message to the console.
