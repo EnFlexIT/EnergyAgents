@@ -6,7 +6,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.ea.core.ui.PlanningInformation;
 import energy.planning.EomPlannerResult;
 import energy.planning.ui.EomPlannerResultPanel;
@@ -55,11 +54,8 @@ public class JPanelPlannerInformation extends JTabbedPane {
 	 * Initializes this panel JTabbed Pane.
 	 */
 	private void initialize() {
-		
-		this.setUI(new AwbBasicTabbedPaneUI());
 		this.setFont(new Font("Dialog", Font.PLAIN, 12));
 		this.addTab(" Settings ", this.getJPanelPlanningProperties());
-		
 	}
 	
 	/**

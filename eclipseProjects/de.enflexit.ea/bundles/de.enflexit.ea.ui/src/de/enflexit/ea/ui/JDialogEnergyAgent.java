@@ -12,7 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.AbstractEnergyAgent;
@@ -105,7 +104,6 @@ public class JDialogEnergyAgent extends JDialog {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setBorder(BorderFactory.createEmptyBorder());
 			jTabbedPane.addTab(" General Information ", null, getJPanelGeneralInformation(), null);
 			jTabbedPane.addTab(" Real-Time Information ", null, getJPanelRealTimeInformation(), null);

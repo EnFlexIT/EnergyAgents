@@ -6,7 +6,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.ea.core.ui.RealTimeInformation;
 import energy.EomController;
 import energy.OptionModelController;
@@ -70,7 +69,6 @@ public class JPanelRealTimeInformation extends JSplitPane {
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jTabbedPane;

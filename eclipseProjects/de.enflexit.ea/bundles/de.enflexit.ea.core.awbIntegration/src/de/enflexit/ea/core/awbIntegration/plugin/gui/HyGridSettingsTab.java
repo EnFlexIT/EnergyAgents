@@ -43,7 +43,6 @@ import de.enflexit.common.Observer;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.db.hibernate.gui.DatabaseSelectionPanel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
@@ -1300,7 +1299,6 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 	private JTabbedPane getJTabbedPaneColorSettings() {
 		if (jTabbedPaneColorSettings==null) {
 			jTabbedPaneColorSettings = new JTabbedPane();
-			jTabbedPaneColorSettings.setUI(new AwbBasicTabbedPaneUI());
 			List<GraphElementLayoutService> layoutServiceList = ServiceFinder.findServices(GraphElementLayoutService.class);
 			for (int i = 0; i < layoutServiceList.size(); i++) {
 				GraphElementLayoutService layoutService = layoutServiceList.get(i);

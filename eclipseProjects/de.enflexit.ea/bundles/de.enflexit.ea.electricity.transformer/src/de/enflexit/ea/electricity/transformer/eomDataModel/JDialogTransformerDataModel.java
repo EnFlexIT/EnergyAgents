@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel;
@@ -93,7 +92,6 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 	private JTabbedPane getJTabbedPaneStaticModel() {
 		if (jTabbedPaneStaticModel == null) {
 			jTabbedPaneStaticModel = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPaneStaticModel.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneStaticModel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jTabbedPaneStaticModel.addTab("Base Settings", null, getJPanelTransformerBaseSettings(), null);
 			jTabbedPaneStaticModel.addTab("Control Settings", null, getJPanelTransformerControlSettings(), null);

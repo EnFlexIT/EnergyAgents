@@ -9,7 +9,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeWithUI;
 import de.enflexit.ea.core.configuration.SetupConfigurationServiceHelper;
@@ -92,7 +91,6 @@ public class SetupConfigurationPanel extends JPanel {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			jTabbedPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.addTab(" Configuration Table   ", null, this.getSetupConfigurationTablePanel(), "Setup Configuration Table");
 			
 			// --- Get the individual attribute UI components -----------------

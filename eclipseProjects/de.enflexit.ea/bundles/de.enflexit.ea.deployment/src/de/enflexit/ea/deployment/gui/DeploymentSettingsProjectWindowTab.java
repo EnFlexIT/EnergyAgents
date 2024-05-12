@@ -16,7 +16,6 @@ import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
@@ -128,7 +127,6 @@ public class DeploymentSettingsProjectWindowTab extends JPanel {
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane==null) {
 			tabbedPane = new JTabbedPane();
-			tabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			tabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			tabbedPane.addTab("Database Settings", this.getjScrollPaneDatabaseSettingsPanel());
 			tabbedPane.setToolTipTextAt(TAB_INDEX_DATABASE_SETTINGS, Language.translate("Configure the database settings", Language.EN));
