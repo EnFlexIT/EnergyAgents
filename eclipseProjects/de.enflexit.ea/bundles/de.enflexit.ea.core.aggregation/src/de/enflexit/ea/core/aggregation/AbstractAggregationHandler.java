@@ -1419,24 +1419,27 @@ public abstract class AbstractAggregationHandler {
 		for (int i=0; i<services.size(); i++) {
 			
 			Class <? extends AbstractTaskThreadCoordinator> coordinatorClass = services.get(i).getTaskThreadCoordinator();
-			List<String> domainList = services.get(i).getDomainIdList();
 			
-			AbstractTaskThreadCoordinator ttc = ttcHashMap.get(coordinatorClass.getName());
-			if (ttc==null) {
-				// --- Create instance of task thread coordinator ---
-				try {
-					// --- Initiate and remind coordinator ----------
-					ttc = coordinatorClass.getDeclaredConstructor().newInstance();
-					ttc.setAggregationHandler(this);
-					ttcHashMap.put(coordinatorClass.getName(), ttc);
-					
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-					ex.printStackTrace();
+			if (coordinatorClass!=null) {
+				List<String> domainList = services.get(i).getDomainIdList();
+				
+				AbstractTaskThreadCoordinator ttc = ttcHashMap.get(coordinatorClass.getName());
+				if (ttc==null) {
+					// --- Create instance of task thread coordinator ---
+					try {
+						// --- Initiate and remind coordinator ----------
+						ttc = coordinatorClass.getDeclaredConstructor().newInstance();
+						ttc.setAggregationHandler(this);
+						ttcHashMap.put(coordinatorClass.getName(), ttc);
+						
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+						ex.printStackTrace();
+					}
 				}
+				
+				// --- Register domains --------------------------------- 
+				if (ttc!=null) ttc.registerDomains(domainList);
 			}
-			
-			// --- Register domains --------------------------------- 
-			if (ttc!=null) ttc.registerDomains(domainList);
 		}
 		
 		// --- Return values of HashMap -----------------------------
