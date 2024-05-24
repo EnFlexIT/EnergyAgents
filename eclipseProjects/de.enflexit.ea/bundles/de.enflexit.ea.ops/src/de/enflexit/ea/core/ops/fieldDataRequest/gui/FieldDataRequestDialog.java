@@ -7,8 +7,8 @@ import javax.swing.JOptionPane;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import agentgui.core.application.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
 import de.enflexit.eom.database.gui.ScheduleListSelectionRangePanel;
 
@@ -96,7 +96,7 @@ public class FieldDataRequestDialog extends JDialog implements ActionListener{
 		this.setSize(800, 400);
 		this.setModal(true);
 		
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
 	/**

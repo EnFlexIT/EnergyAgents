@@ -18,8 +18,8 @@ import javax.swing.Timer;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.configuration.BundleHelper;
 
 /**
@@ -76,7 +76,7 @@ public class SetupConfigurationDialog extends JDialog implements ApplicationList
 		gbc_setupConfigurationPanel.gridy = 0;
 		this.getContentPane().add(getSetupConfigurationPanel(), gbc_setupConfigurationPanel);
 
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 		this.setVisible(true);
 	}
 

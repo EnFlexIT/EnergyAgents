@@ -12,8 +12,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import javax.swing.JTabbedPane;
 import java.awt.GridBagConstraints;
@@ -83,7 +83,7 @@ public class JDialogEnergyAgent extends JDialog {
 		gbc_jTabbedPane.gridy = 0;
 		this.getContentPane().add(this.getJTabbedPane(), gbc_jTabbedPane);
 	
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 		
 	}
 	
