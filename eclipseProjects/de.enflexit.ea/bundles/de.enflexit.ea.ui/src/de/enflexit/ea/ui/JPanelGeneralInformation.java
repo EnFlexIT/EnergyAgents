@@ -17,6 +17,7 @@ public class JPanelGeneralInformation extends JPanel {
 
 	private static final long serialVersionUID = -1052414258048129787L;
 
+	private JDialogEnergyAgent jDialogEnergyAgent;
 	private PropertiesPanel propertiesPanel;
 	
 	/**
@@ -24,21 +25,10 @@ public class JPanelGeneralInformation extends JPanel {
 	 * @param jDialogEnergyAgent the JDialog of the energy agent
 	 */
 	public JPanelGeneralInformation(JDialogEnergyAgent jDialogEnergyAgent) {
+		this.jDialogEnergyAgent = jDialogEnergyAgent;
 		this.initialize();
-		this.setDisplayInformation(jDialogEnergyAgent);
+		this.updateView();
 	}
-	/**
-	 * Sets the display information.
-	 */
-	private void setDisplayInformation(final JDialogEnergyAgent jDialogEnergyAgent) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JPanelGeneralInformation.this.getJPanelProperties().setProperties(jDialogEnergyAgent.getEnergyAgent().getGeneralInformation());
-			}
-		});
-	}
-	
 	/**
 	 * Initialize.
 	 */
@@ -66,5 +56,24 @@ public class JPanelGeneralInformation extends JPanel {
 			propertiesPanel = new PropertiesPanel(null, "Energy Agent State", true);
 		}
 		return propertiesPanel;
+	}
+	
+	
+	/**
+	 * Updates the view according to the state of the energy agent.
+	 */
+	public void updateView() {
+		this.setDisplayInformation();
+	}
+	/**
+	 * Sets the display information.
+	 */
+	private void setDisplayInformation() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JPanelGeneralInformation.this.getJPanelProperties().setProperties(JPanelGeneralInformation.this.jDialogEnergyAgent.getEnergyAgent().getGeneralInformation());
+			}
+		});
 	}
 }

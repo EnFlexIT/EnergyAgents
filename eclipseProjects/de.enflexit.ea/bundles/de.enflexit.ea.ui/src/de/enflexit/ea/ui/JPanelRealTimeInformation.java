@@ -24,33 +24,25 @@ public class JPanelRealTimeInformation extends JSplitPane {
 
 	private static final long serialVersionUID = 7714692252010988662L;
 	
+	private JDialogEnergyAgent jDialogEnergyAgent;
+	
 	private PropertiesPanel jPanelRealTimeProperties;
 	private JTabbedPane jTabbedPane;
 	private TechnicalSystemStatePanel technicalSystemStatePanel;
+	
 	
 	/**
 	 * Instantiates a new j panel real time information.
 	 * @param jDialogEnergyAgent the j dialog energy agent
 	 */
 	public JPanelRealTimeInformation(JDialogEnergyAgent jDialogEnergyAgent) {
+		this.jDialogEnergyAgent = jDialogEnergyAgent;
 		this.initialize();
-		this.setDisplayInformation(jDialogEnergyAgent);
+		this.updateView();
 	}
-
 	/**
-	 * Sets the display information.
+	 * Initialize.
 	 */
-	private void setDisplayInformation(final JDialogEnergyAgent jDialogEnergyAgent) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				RealTimeInformation rtInfo = jDialogEnergyAgent.getEnergyAgent().getRealTimeInformation();
-				JPanelRealTimeInformation.this.getJPanelRealTimeProperties().setProperties(rtInfo);
-				JPanelRealTimeInformation.this.getTechnicalSystemStatePanel(rtInfo.getEomController()).setTechnicalSystemStateTime(rtInfo.getTechnicalSystemStateEvaluation());
-			}
-		});
-	}
-	
 	private void initialize() {
 		this.setOneTouchExpandable(true);
 		this.setDividerSize(5);
@@ -97,6 +89,27 @@ public class JPanelRealTimeInformation extends JSplitPane {
 			this.getJTabbedPane().addTab(" System State ", technicalSystemStatePanel);
 		}
 		return technicalSystemStatePanel;
+	}
+
+	/**
+	 * Updates the view according to the state of the energy agent.
+	 */
+	public void updateView() {
+		this.setDisplayInformation();
+	}
+
+	/**
+	 * Sets the display information.
+	 */
+	private void setDisplayInformation() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				RealTimeInformation rtInfo = JPanelRealTimeInformation.this.jDialogEnergyAgent.getEnergyAgent().getRealTimeInformation();
+				JPanelRealTimeInformation.this.getJPanelRealTimeProperties().setProperties(rtInfo);
+				JPanelRealTimeInformation.this.getTechnicalSystemStatePanel(rtInfo.getEomController()).setTechnicalSystemStateTime(rtInfo.getTechnicalSystemStateEvaluation());
+			}
+		});
 	}
 	
 }

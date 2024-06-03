@@ -28,6 +28,8 @@ public class JDialogEnergyAgent extends JDialog {
 	private static final long serialVersionUID = -2867085753299220850L;
 
 	private AbstractEnergyAgent energyAgent;
+	
+	private JMenuBarEnergyAgent jMenuBarEnergyAgent;
 	private JTabbedPane jTabbedPane;
 	private JPanelGeneralInformation jPanelGeneralInformation;
 	private JPanelRealTimeInformation jPanelRealTimeInformation;
@@ -77,6 +79,8 @@ public class JDialogEnergyAgent extends JDialog {
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		this.getContentPane().setLayout(gridBagLayout);
 		
+		this.setJMenuBar(this.getJMenuBarEnergyAgent());
+		
 		GridBagConstraints gbc_jTabbedPane = new GridBagConstraints();
 		gbc_jTabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_jTabbedPane.gridx = 0;
@@ -84,7 +88,15 @@ public class JDialogEnergyAgent extends JDialog {
 		this.getContentPane().add(this.getJTabbedPane(), gbc_jTabbedPane);
 	
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.Window#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		this.getJMenuBarEnergyAgent().dispose();
 	}
 	
 	/**
@@ -93,11 +105,19 @@ public class JDialogEnergyAgent extends JDialog {
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {
-    			setVisible(false);
+    			JDialogEnergyAgent.this.setVisible(false);
+    			JDialogEnergyAgent.this.dispose();
             }
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+    
+    private JMenuBarEnergyAgent getJMenuBarEnergyAgent() {
+    	if (jMenuBarEnergyAgent==null) {
+    		jMenuBarEnergyAgent = new JMenuBarEnergyAgent(this);
+    	}
+    	return jMenuBarEnergyAgent;
     }
     
 	private JTabbedPane getJTabbedPane() {
@@ -128,6 +148,16 @@ public class JDialogEnergyAgent extends JDialog {
 			jPanelPlannerInformation = new JPanelPlannerInformation(this);
 		}
 		return jPanelPlannerInformation;
+	}
+
+	/**
+	 * Update dialog.
+	 */
+	public void updateDialog() {
+		
+		this.getJPanelGeneralInformation().updateView();
+		this.getJPanelRealTimeInformation().updateView();
+		this.getJPanelPlannerInformation().updateView();
 	}
 	
 }

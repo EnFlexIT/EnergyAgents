@@ -243,11 +243,14 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	@Override
 	protected final void takeDown() {
 		
-		// --- Stop test ticker behaviour? --------------------------
+		// --- Stop test ticker behaviour? ------------------------------------
 		if (this.testTickerBehaviour!=null) {
 			this.removeBehaviour(this.testTickerBehaviour);
 			this.testTickerBehaviour = null;
 		}
+		
+		// --- Close UI -------------------------------------------------------
+		this.getUIConnector().closeUI();
 		
 		// --- Stop the log writer --------------------------------------------
 		this.stopSystemStateLogWriter();

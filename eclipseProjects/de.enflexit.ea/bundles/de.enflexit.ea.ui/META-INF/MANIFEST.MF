@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Swing UI
 Bundle-SymbolicName: de.enflexit.ea.ui
 Bundle-Version: 0.0.1.qualifier
-Export-Package: de.enflexit.ea.ui
+Export-Package: de.enflexit.ea.ui,
+ de.enflexit.ea.ui.planning
 Import-Package: agentgui.core.application,
  agentgui.core.config,
  agentgui.core.gui,

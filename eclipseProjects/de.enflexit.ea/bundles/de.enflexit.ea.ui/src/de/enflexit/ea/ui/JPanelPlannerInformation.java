@@ -19,6 +19,7 @@ public class JPanelPlannerInformation extends JTabbedPane {
 
 	private static final long serialVersionUID = -2222117009782469384L;
 	
+	private JDialogEnergyAgent jDialogEnergyAgent;
 	private PropertiesPanel jPanelPlanningProperties;
 	
 	
@@ -27,27 +28,9 @@ public class JPanelPlannerInformation extends JTabbedPane {
 	 * @param jDialogEnergyAgent the j dialog energy agent
 	 */
 	public JPanelPlannerInformation(JDialogEnergyAgent jDialogEnergyAgent) {
+		this.jDialogEnergyAgent = jDialogEnergyAgent;
 		this.initialize();
-		this.setDisplayInformation(jDialogEnergyAgent);
-	}
-	
-	/**
-	 * Sets the display information.
-	 */
-	private void setDisplayInformation(final JDialogEnergyAgent jDialogEnergyAgent) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				PlanningInformation plInfo = jDialogEnergyAgent.getEnergyAgent().getPlanningInformation();
-				 JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
-				 JPanelPlannerInformation.this.addPlannerResult("Real Time Planner Result", plInfo.getRealTimePlannerResult());
-				 if (plInfo.getPlannerResultTreeMap()!=null) {
-					 for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
-						 JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
-					 }
-				 }
-			}
-		});
+		this.updateView();
 	}
 	
 	/**
@@ -79,5 +62,39 @@ public class JPanelPlannerInformation extends JTabbedPane {
 		if (eomPlannerResult==null) return; 
 		this.addTab(tabTitle, new EomPlannerResultPanel(eomPlannerResult));
 	}
+	/**
+	 * Removes all EomPlannerResults and their panel .
+	 */
+	private void removeEomPlannerResults() {
+		while ((this.getTabCount()-1) > 0) {
+			this.removeTabAt(this.getTabCount()-1);
+		}
+	}
 	
+	
+	/**
+	 * Updates the view according to the state of the energy agent.
+	 */
+	public void updateView() {
+		this.setDisplayInformation();
+	}
+	/**
+	 * Sets the display information.
+	 */
+	private void setDisplayInformation() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				PlanningInformation plInfo = JPanelPlannerInformation.this.jDialogEnergyAgent.getEnergyAgent().getPlanningInformation();
+				JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
+				JPanelPlannerInformation.this.removeEomPlannerResults();
+				JPanelPlannerInformation.this.addPlannerResult("Real Time Planner Result", plInfo.getRealTimePlannerResult());
+				if (plInfo.getPlannerResultTreeMap() != null) {
+					for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
+						JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
+					}
+				}
+			}
+		});
+	}
 }

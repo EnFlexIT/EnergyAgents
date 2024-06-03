@@ -67,7 +67,7 @@ public class GeneralInformation extends Properties {
 		// --- Type of controlled system ------------------
 		this.setStringValue(group + ".TypeOfControlledSystem", intDM.getTypeOfControlledSystem().name());
 		// --- Type of controlled system ------------------
-		this.setStringValue(group + ".CentralAgentAID", intDM.getCentralAgentAID().getName());
+		this.setStringValue(group + ".CentralAgentAID", intDM.getCentralAgentAID()!=null ? intDM.getCentralAgentAID().getName() : "");
 		// --- LoggingMode --------------------------------
 		this.setStringValue(group + ".LoggingMode", intDM.getLoggingMode().name());
 		

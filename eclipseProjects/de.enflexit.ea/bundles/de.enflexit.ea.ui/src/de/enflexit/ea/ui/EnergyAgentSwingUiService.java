@@ -72,4 +72,29 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 		return windowAdapter;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.ui.EnergyAgentUiService#updateUI(de.enflexit.ea.core.AbstractEnergyAgent)
+	 */
+	@Override
+	public void updateUI(AbstractEnergyAgent energyAgent) {
+		
+		JDialogEnergyAgent eaDialog = this.getAgentDialogHashMap().get(energyAgent);
+		if (eaDialog!=null) {
+			eaDialog.updateDialog();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.ui.EnergyAgentUiService#closeUI(de.enflexit.ea.core.AbstractEnergyAgent)
+	 */
+	@Override
+	public void closeUI(AbstractEnergyAgent energyAgent) {
+		
+		JDialogEnergyAgent eaDialog = this.getAgentDialogHashMap().get(energyAgent);
+		if (eaDialog!=null) {
+			eaDialog.setVisible(false);
+			eaDialog.dispose();
+			this.getAgentDialogHashMap().remove(energyAgent);
+		}
+	}
+
 }

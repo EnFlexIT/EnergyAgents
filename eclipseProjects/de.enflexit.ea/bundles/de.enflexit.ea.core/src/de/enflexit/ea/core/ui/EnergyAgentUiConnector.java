@@ -7,7 +7,7 @@ import de.enflexit.ea.core.AbstractEnergyAgent;
 
 /**
  * The Class EnergyAgentUiConnector is used by an energy agent 
- * to transfer internal information to the UI.
+ * to transfer internal information to an UI.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -51,7 +51,6 @@ public class EnergyAgentUiConnector {
 		return true;
 	}
 	
-	
 	/**
 	 * Opens or focuses the UI of the energy agent.
 	 */
@@ -60,7 +59,21 @@ public class EnergyAgentUiConnector {
 			this.getEnergyAgentUiServices().forEach(service -> service.openOrFocusUI(this.energyAgent));
 		}
 	} 
-	
-	
+	/**
+	 * Updates the EnergyAgents UI.
+	 */
+	public void updateUI() {
+		if (this.isUiServiceAvailable(false)==true) {
+			this.getEnergyAgentUiServices().forEach(service -> service.updateUI(this.energyAgent));
+		}
+	}
+	/**
+	 * Closes the EnergyAgents UI.
+	 */
+	public void closeUI() { 
+		if (this.isUiServiceAvailable(false)==true) {
+			this.getEnergyAgentUiServices().forEach(service -> service.closeUI(this.energyAgent));
+		}
+	}
 	
 }
