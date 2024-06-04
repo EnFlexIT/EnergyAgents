@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.ui.planning.ManualPlanningHandler;
+import de.enflexit.ea.ui.planning.ManualPlanningRealTimeSelection;
 
 /**
  * The Class JMenuBarEnergyAgent.
@@ -27,6 +28,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	
 	private JMenu jMenuPlanningTimeSettings;
 		private JMenuItem jMenuItemManualPlanning;
+		private JMenuItem jMenuItemManualPlanningRealTimeSelection;
 	
 	// --- From here handler for specific tasks --------------- 
 	private ManualPlanningHandler manualPlanningHandler;
@@ -95,6 +97,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		if (jMenuPlanningTimeSettings==null) {
 			jMenuPlanningTimeSettings = new JMenu("Planning Tools");
 			jMenuPlanningTimeSettings.add(this.getJMenuItemManualPlanning());
+			jMenuPlanningTimeSettings.add(this.getJMenuItemManualPlanningRealTimeSelection());
 		}
 		return jMenuPlanningTimeSettings;
 	}
@@ -107,6 +110,14 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		return jMenuItemManualPlanning;
 	}
 	
+	private JMenuItem getJMenuItemManualPlanningRealTimeSelection() {
+		if (jMenuItemManualPlanningRealTimeSelection==null) {
+			jMenuItemManualPlanningRealTimeSelection = new JMenuItem("Take current plan for real-time execution");
+			jMenuItemManualPlanningRealTimeSelection.addActionListener(this);
+		}
+		return jMenuItemManualPlanningRealTimeSelection;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -115,11 +126,14 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJMenuItemUpdateUI()) {
-			this.jDialogEnergyAgent.updateDialog();
+			this.jDialogEnergyAgent.updateView();
 			
 		} else if (ae.getSource()==this.getJMenuItemManualPlanning()) {
-			// --- Execute a manual planning process ----------------
+			// --- Execute a manual planning process --------------------------
 			this.getManualPlanningHandler().openOrFocusManualPlanning();
+		} else if (ae.getSource()==this.getJMenuItemManualPlanningRealTimeSelection()) {
+			// --- Take current plan selection for real-time execution --------
+			new ManualPlanningRealTimeSelection(this.jDialogEnergyAgent).setSelectedPlanForRealTimeExecution();
 		}
 	}
 	

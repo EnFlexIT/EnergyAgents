@@ -131,19 +131,19 @@ public class JDialogEnergyAgent extends JDialog {
 		}
 		return jTabbedPane;
 	}
-	private JPanelGeneralInformation getJPanelGeneralInformation() {
+	public JPanelGeneralInformation getJPanelGeneralInformation() {
 		if (jPanelGeneralInformation == null) {
 			jPanelGeneralInformation = new JPanelGeneralInformation(this);
 		}
 		return jPanelGeneralInformation;
 	}
-	private JPanelRealTimeInformation getJPanelRealTimeInformation() {
+	public JPanelRealTimeInformation getJPanelRealTimeInformation() {
 		if (jPanelRealTimeInformation == null) {
 			jPanelRealTimeInformation = new JPanelRealTimeInformation(this);
 		}
 		return jPanelRealTimeInformation;
 	}
-	private JPanelPlannerInformation getJPanelPlannerInformation() {
+	public JPanelPlannerInformation getJPanelPlannerInformation() {
 		if (jPanelPlannerInformation == null) {
 			jPanelPlannerInformation = new JPanelPlannerInformation(this);
 		}
@@ -153,7 +153,7 @@ public class JDialogEnergyAgent extends JDialog {
 	/**
 	 * Update dialog.
 	 */
-	public void updateDialog() {
+	public void updateView() {
 		
 		this.getJPanelGeneralInformation().updateView();
 		this.getJPanelRealTimeInformation().updateView();

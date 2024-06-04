@@ -80,7 +80,7 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 		
 		JDialogEnergyAgent eaDialog = this.getAgentDialogHashMap().get(energyAgent);
 		if (eaDialog!=null) {
-			eaDialog.updateDialog();
+			eaDialog.updateView();
 		}
 	}
 	/* (non-Javadoc)

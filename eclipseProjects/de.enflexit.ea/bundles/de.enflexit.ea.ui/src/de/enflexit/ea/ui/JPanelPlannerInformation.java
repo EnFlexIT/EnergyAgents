@@ -1,11 +1,15 @@
 package de.enflexit.ea.ui;
 
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.Window;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.ea.core.ui.PlanningInformation;
 import energy.planning.EomPlannerResult;
 import energy.planning.ui.EomPlannerResultPanel;
@@ -18,6 +22,8 @@ import energy.planning.ui.EomPlannerResultPanel;
 public class JPanelPlannerInformation extends JTabbedPane {
 
 	private static final long serialVersionUID = -2222117009782469384L;
+	
+	private static final String TAB_HEADER_REAL_TIME_PLANNING = "Real Time Planner Result";
 	
 	private JDialogEnergyAgent jDialogEnergyAgent;
 	private PropertiesPanel jPanelPlanningProperties;
@@ -71,6 +77,45 @@ public class JPanelPlannerInformation extends JTabbedPane {
 		}
 	}
 	
+	/**
+	 * Returns the EomPlannerResult as selected in the UI.
+	 * @return the EomPlannerResult as selected
+	 */
+	public EomPlannerResult getEomPlannerResultAsSelected() {
+		
+		Window owner = OwnerDetection.getOwnerWindowForComponent(this);
+		String msgTitle = "Selection of Planning Result";
+		String msg = null;
+		
+		EomPlannerResult plannerResult = null;
+		int slSelectionIndex = -1;
+		
+		// --- Try to get the current selection -------------------------------
+		int tabSelected = this.getSelectedIndex();
+		Component compSelected = this.getComponentAt(tabSelected);
+		if (compSelected instanceof EomPlannerResultPanel && this.getTitleAt(tabSelected).equals(TAB_HEADER_REAL_TIME_PLANNING)==false) {
+			EomPlannerResultPanel resultPanel = (EomPlannerResultPanel) compSelected;
+			plannerResult = resultPanel.getEomPlannerResult();
+			// --- Which Schedule was selected within the ScheduleList? -------
+			slSelectionIndex = resultPanel.getSelectedScheduleListIndex();
+			if (slSelectionIndex==-1) {
+				msg = "No actual Schedule was select within the selected planning result.";
+				JOptionPane.showMessageDialog(owner, msg, msgTitle, JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			
+		} else {
+			msg = "Please select a Schedule within a planning result for this action!";
+			if (this.getTitleAt(tabSelected).equals(TAB_HEADER_REAL_TIME_PLANNING)==true) {
+				msg += "\n\nThe currently selected tab '" + TAB_HEADER_REAL_TIME_PLANNING + "' contains \nthe later destination for this action.";
+			}
+			JOptionPane.showMessageDialog(owner, msg, msgTitle, JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		// --- Extract the selected EomPlannerResult --------------------------
+		return plannerResult.getEomPlannerResultFromIndexPosition(slSelectionIndex);
+	}
 	
 	/**
 	 * Updates the view according to the state of the energy agent.
@@ -88,7 +133,7 @@ public class JPanelPlannerInformation extends JTabbedPane {
 				PlanningInformation plInfo = JPanelPlannerInformation.this.jDialogEnergyAgent.getEnergyAgent().getPlanningInformation();
 				JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
 				JPanelPlannerInformation.this.removeEomPlannerResults();
-				JPanelPlannerInformation.this.addPlannerResult("Real Time Planner Result", plInfo.getRealTimePlannerResult());
+				JPanelPlannerInformation.this.addPlannerResult(TAB_HEADER_REAL_TIME_PLANNING, plInfo.getRealTimePlannerResult());
 				if (plInfo.getPlannerResultTreeMap() != null) {
 					for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
 						JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
@@ -97,4 +142,6 @@ public class JPanelPlannerInformation extends JTabbedPane {
 			}
 		});
 	}
+
+	
 }

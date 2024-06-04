@@ -184,7 +184,7 @@ public class ManualPlanningHandler extends Planner {
 		if (isExecuted==false) {
 			EomPlannerEvent planerEvent = new EomPlannerEvent(PlannerEventType.PlanningFinalized, this);
 			this.getEnergyAgent().getPlanningDispatcherManager().onPlannerEvent(planerEvent);
-			this.jDialogEnergyAgent.updateDialog();
+			this.jDialogEnergyAgent.updateView();
 		}
 	}
 	
