@@ -8,8 +8,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
 import de.enflexit.ea.ui.planning.ManualPlanningHandler;
-import de.enflexit.ea.ui.planning.ManualPlanningRealTimeSelection;
+import energy.planning.EomPlannerResult;
 
 /**
  * The Class JMenuBarEnergyAgent.
@@ -59,6 +60,14 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		if (this.getJMenuPlanningSettings().getMenuComponentCount()>0) this.add(this.getJMenuPlanningSettings());
 	}
 	
+	/**
+	 * Dispose.
+	 */
+	public void dispose() {
+		
+		if (this.manualPlanningHandler!=null) this.manualPlanningHandler.dispose();
+		this.manualPlanningHandler = null;
+	}
 	
 	// --------------------------------------------------------------
 	// --- From here, GeneralSettings -------------------------------
@@ -133,7 +142,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 			this.getManualPlanningHandler().openOrFocusManualPlanning();
 		} else if (ae.getSource()==this.getJMenuItemManualPlanningRealTimeSelection()) {
 			// --- Take current plan selection for real-time execution --------
-			new ManualPlanningRealTimeSelection(this.jDialogEnergyAgent).setSelectedPlanForRealTimeExecution();
+			this.setSelectedPlanForRealTimeExecution();
 		}
 	}
 	
@@ -148,13 +157,22 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		return manualPlanningHandler;
 	}
 
+
 	/**
-	 * Dispose.
+	 * Opens the manual planning perspective.
 	 */
-	public void dispose() {
-		
-		if (this.manualPlanningHandler!=null) this.manualPlanningHandler.dispose();
-		this.manualPlanningHandler = null;
+	public void setSelectedPlanForRealTimeExecution() {
+
+		AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> pdm = this.jDialogEnergyAgent.getEnergyAgent().getPlanningDispatcherManager();
+		if (pdm!=null) {
+			// --- Get the selection as EomPlannerResult ------------ 
+			EomPlannerResult eomPlannerResult = this.jDialogEnergyAgent.getJPanelPlannerInformation().getEomPlannerResultAsSelected();
+			if (eomPlannerResult==null) return;
+			
+			EomPlannerResult rtPlannerResult = pdm.getPlannerResultForRealTimeExecution();
+			rtPlannerResult.append(eomPlannerResult);
+			this.jDialogEnergyAgent.updateView();
+		}
 	}
 	
 }
