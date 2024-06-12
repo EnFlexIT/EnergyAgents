@@ -353,7 +353,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 				SetupExtension setEx = this.getInternalDataModel().getHyGridAbstractEnvironmentModel().getSetupExtension();
 				if (setEx!=null) {
 					AgentDeploymentInformation agentInfo = setEx.getDeploymentGroupsHelper().getAgentDeploymentInformation(this.getLocalName());
-					operatingMode = agentInfo.getAgentOperatingMode();
+					if (agentInfo!=null) {
+						operatingMode = agentInfo.getAgentOperatingMode();
+					}
 				}
 			}
 			// --- Use 'real' as backup solution ----------------------------------------

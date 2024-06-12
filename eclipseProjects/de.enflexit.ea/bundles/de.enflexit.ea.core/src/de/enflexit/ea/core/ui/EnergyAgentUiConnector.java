@@ -16,7 +16,6 @@ public class EnergyAgentUiConnector {
 	private AbstractEnergyAgent energyAgent;
 	private List<EnergyAgentUiService> uiServiceList;
 	
-	
 	/**
 	 * Instantiates a new energy agent UI connector.
 	 * @param energyAgent the energy agent
@@ -26,10 +25,18 @@ public class EnergyAgentUiConnector {
 	}
 
 	/**
+	 * Returns the current energy agent instance.
+	 * @return the energy agent
+	 */
+	protected AbstractEnergyAgent getEnergyAgent() {
+		return energyAgent;
+	}
+	
+	/**
 	 * Returns the list of currently registered EnergyAgentUiService instances.
 	 * @return the list of EnergyAgentUiService
 	 */
-	private List<EnergyAgentUiService> getEnergyAgentUiServices() {
+	protected List<EnergyAgentUiService> getEnergyAgentUiServices() {
 		if (uiServiceList==null) {
 			uiServiceList = ServiceFinder.findServices(EnergyAgentUiService.class); 
 		}
@@ -41,10 +48,10 @@ public class EnergyAgentUiConnector {
 	 * @param isWriteErrorMessage the indicator to write error messages (or not)
 	 * @return true, if is ui service available
 	 */
-	private boolean isUiServiceAvailable(boolean isWriteErrorMessage) {
+	protected boolean isUiServiceAvailable(boolean isWriteErrorMessage) {
 		if (this.getEnergyAgentUiServices().size()==0) {
 			if (isWriteErrorMessage==true) {
-				System.err.println("[" + this.getClass().getSimpleName() + "|" + this.energyAgent.getLocalName() + "] No EnergyAgentUiService could be found!");
+				System.err.println("[" + this.getClass().getSimpleName() + "|" + this.getClass().getSimpleName() + "|" + this.energyAgent.getLocalName() + "] No EnergyAgentUiService could be found!");
 			}
 			return false;
 		}

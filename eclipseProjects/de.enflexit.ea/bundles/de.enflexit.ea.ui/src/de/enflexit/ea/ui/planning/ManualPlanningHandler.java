@@ -1,9 +1,13 @@
 package de.enflexit.ea.ui.planning;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -11,7 +15,8 @@ import javax.swing.SwingUtilities;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.planning.Planner;
-import de.enflexit.ea.ui.JDialogEnergyAgent;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModelInterface;
 import energy.OptionModelController;
 import energy.optionModel.gui.ApplicationDialog;
 import energy.optionModel.gui.ApplicationFrame;
@@ -30,9 +35,9 @@ import energygroup.gui.GroupTree.GroupNodeCaptionStyle;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ManualPlanningHandler extends Planner {
+public class ManualPlanningHandler extends Planner implements PropertyChangeListener {
 
-	private JDialogEnergyAgent jDialogEnergyAgent;
+	private SwingUiModelInterface swingUiModelInterface;
 	
 	private Window planningWindow;
 	private WindowAdapter planningFrameAdapter;
@@ -43,9 +48,10 @@ public class ManualPlanningHandler extends Planner {
 	 * Instantiates a new manual planning handler.
 	 * @param jDialogEnergyAgent the parent JDialogEnergyAgent
 	 */
-	public ManualPlanningHandler(JDialogEnergyAgent jDialogEnergyAgent) {
-		super(jDialogEnergyAgent.getEnergyAgent(), "ManualPlanner");
-		this.jDialogEnergyAgent = jDialogEnergyAgent;
+	public ManualPlanningHandler(SwingUiModelInterface swingUiModelInterface) {
+		super(swingUiModelInterface.getEnergyAgent(), "ManualPlanner");
+		this.swingUiModelInterface = swingUiModelInterface;
+		this.swingUiModelInterface.addPropertyListener(this);
 	}
 
 	/**
@@ -54,16 +60,6 @@ public class ManualPlanningHandler extends Planner {
 	 */
 	public boolean isDisposed() {
 		return isDisposed;
-	}
-	/**
-	 * Dispose.
-	 */
-	public void dispose() {
-		if (this.getPlanningWindow()!=null) {
-			this.getPlanningWindow().setVisible(false);
-			this.getPlanningWindow().dispose();
-			return;
-		}
 	}
 	
 	/**
@@ -119,7 +115,7 @@ public class ManualPlanningHandler extends Planner {
 	 */
 	public void openOrFocusManualPlanning() {
 
-		// --- UI is already open=> focus it ------------------------
+		// --- UI is already open=> focus it ----------------------------------
 		if (this.getPlanningWindow()!=null) {
 			this.getPlanningWindow().toFront();
 			this.getPlanningWindow().requestFocus();
@@ -127,32 +123,33 @@ public class ManualPlanningHandler extends Planner {
 		}
 		
 		String agentName = this.getEnergyAgent().getLocalName();
-		Window ownerWindow = this.jDialogEnergyAgent.getOwner();
+		Window ownerWindow = ((Window)this.swingUiModelInterface).getOwner();
+		if (ownerWindow==null) ownerWindow = ((Window)this.swingUiModelInterface); 
 		
 		switch (this.getControlledSystemType()) {
 		case None:
-			// --- Nothing to plan ------------------------
+			// --- Nothing to plan --------------------------------------------
 			String msg = "Energy Agent '" + agentName + "' does not control any system and thus allows no manual planning!";
 			JOptionPane.showMessageDialog(ownerWindow, msg, "Manual Planning for " + agentName, JOptionPane.WARNING_MESSAGE);
 			break;
 			
 		case TechnicalSystem:
-			// --- A TechnicalSystem under control --------
+			// --- A TechnicalSystem under control ----------------------------
 			this.getOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
-			// --- Create and show UI ---------------------
+			// --- Create and show UI -----------------------------------------
 			ApplicationDialog appDialog = new ApplicationDialog(ownerWindow, this.getOptionModelController(), MainPanelView.EvaluationView);
 			appDialog.setTitle("Planning for TechnicalSystem controlled by agent '" + agentName + "'");
 			this.setPlanningWindow(appDialog);
 			break;
 			
 		case TechnicalSystemGroup:
-			// --- A TechnicalSystemGroup under control ---
+			// --- A TechnicalSystemGroup under control -----------------------
 			this.getGroupController().getGroupOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
-			// --- Create and show UI ---------------------			
+			// --- Create and show UI -----------------------------------------		
 			GroupApplicationDialog groupAppDialog = new GroupApplicationDialog(ownerWindow, this.getGroupController(), MainPanelView.EvaluationView);
 			groupAppDialog.setTitle("Planning for TechnicalSystemGroup controlled by agent '" + agentName + "'");
 			this.setPlanningWindow(groupAppDialog);
-			// --- Set GroupTree to required style -------- 
+			// --- Set GroupTree to required style ----------------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -162,12 +159,19 @@ public class ManualPlanningHandler extends Planner {
 			break;
 		}
 		
-		// --- Adjust dialog size and position ------------
+		// --- Adjust dialog size and position --------------------------------
 		if (this.getPlanningWindow()!=null && ownerWindow!=null) {
-			Integer newWidth  = (int)(ownerWindow.getWidth() * 0.75); 
-			Integer newHeigth = (int)(ownerWindow.getHeight() * 0.75);
+			double scale = 0.75;
+			Integer newWidth  = (int)(ownerWindow.getWidth()  * scale); 
+			Integer newHeigth = (int)(ownerWindow.getHeight() * scale);
+			// --- Check against screen size to avoid that view is to small ---
+			Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+			if (newWidth <= (screenDimension.getWidth() * scale)) {
+				newWidth  = (int) (screenDimension.getWidth()  * scale);
+				newHeigth = (int) (screenDimension.getHeight() * scale);
+			}
 			this.getPlanningWindow().setSize(newWidth, newHeigth);
-			WindowSizeAndPostionController.setJDialogPositionOnScreen(this.getPlanningWindow(), JDialogPosition.ScreenTopLeft);
+			WindowSizeAndPostionController.setJDialogPositionOnScreen(this.getPlanningWindow(), JDialogPosition.ScreenCenter);
 		}
 	}
 
@@ -184,8 +188,32 @@ public class ManualPlanningHandler extends Planner {
 		if (isExecuted==false) {
 			EomPlannerEvent planerEvent = new EomPlannerEvent(PlannerEventType.PlanningFinalized, this);
 			this.getEnergyAgent().getPlanningDispatcherManager().onPlannerEvent(planerEvent);
-			this.jDialogEnergyAgent.updateView();
+			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateView);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		if (evt.getNewValue() instanceof PropertyEvent == false) return;
+		PropertyEvent pe = (PropertyEvent) evt.getNewValue();
+		switch (pe) {
+		case CloseView:
+			if (this.getPlanningWindow()!=null) {
+				this.getPlanningWindow().setVisible(false);
+				this.getPlanningWindow().dispose();
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+		
+		
 	}
 	
 }

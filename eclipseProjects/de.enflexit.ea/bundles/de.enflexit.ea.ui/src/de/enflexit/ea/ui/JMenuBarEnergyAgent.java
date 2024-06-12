@@ -9,18 +9,21 @@ import javax.swing.JMenuItem;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import de.enflexit.ea.ui.planning.ManualPlanningHandler;
 import energy.planning.EomPlannerResult;
 
 /**
  * The Class JMenuBarEnergyAgent.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 
 	private static final long serialVersionUID = -5873831194278618L;
 
-	private JDialogEnergyAgent jDialogEnergyAgent;
+	private SwingUiModelInterface swingUiModelInterface;
 	
 	private JMenu jMenuGeneralSettings;
 		private JMenuItem jMenuItemUpdateUI;
@@ -39,8 +42,8 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	 * Instantiates a new JMenuBarEnergyAgent.
 	 * @param energyAgent the energy agent
 	 */
-	public JMenuBarEnergyAgent(JDialogEnergyAgent jDialogEnergyAgent) {
-		this.jDialogEnergyAgent = jDialogEnergyAgent;
+	public JMenuBarEnergyAgent(SwingUiModelInterface swingUiModelInterface) {
+		this.swingUiModelInterface = swingUiModelInterface;
 		this.initialize();
 	}
 	/**
@@ -48,7 +51,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	 * @return the energy agent
 	 */
 	public AbstractEnergyAgent getEnergyAgent() {
-		return this.jDialogEnergyAgent.getEnergyAgent();
+		return this.swingUiModelInterface.getEnergyAgent();
 	}
 	
 	/**
@@ -60,14 +63,6 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		if (this.getJMenuPlanningSettings().getMenuComponentCount()>0) this.add(this.getJMenuPlanningSettings());
 	}
 	
-	/**
-	 * Dispose.
-	 */
-	public void dispose() {
-		
-		if (this.manualPlanningHandler!=null) this.manualPlanningHandler.dispose();
-		this.manualPlanningHandler = null;
-	}
 	
 	// --------------------------------------------------------------
 	// --- From here, GeneralSettings -------------------------------
@@ -135,11 +130,12 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJMenuItemUpdateUI()) {
-			this.jDialogEnergyAgent.updateView();
+			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateView);
 			
 		} else if (ae.getSource()==this.getJMenuItemManualPlanning()) {
 			// --- Execute a manual planning process --------------------------
 			this.getManualPlanningHandler().openOrFocusManualPlanning();
+			
 		} else if (ae.getSource()==this.getJMenuItemManualPlanningRealTimeSelection()) {
 			// --- Take current plan selection for real-time execution --------
 			this.setSelectedPlanForRealTimeExecution();
@@ -152,7 +148,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	 */
 	private ManualPlanningHandler getManualPlanningHandler() {
 		if (manualPlanningHandler==null || manualPlanningHandler.isDisposed()==true) {
-			manualPlanningHandler = new ManualPlanningHandler(this.jDialogEnergyAgent);
+			manualPlanningHandler = new ManualPlanningHandler(this.swingUiModelInterface);
 		}
 		return manualPlanningHandler;
 	}
@@ -163,15 +159,15 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	 */
 	public void setSelectedPlanForRealTimeExecution() {
 
-		AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> pdm = this.jDialogEnergyAgent.getEnergyAgent().getPlanningDispatcherManager();
+		AbstractPlanningDispatcherManager<? extends AbstractEnergyAgent> pdm = this.swingUiModelInterface.getEnergyAgent().getPlanningDispatcherManager();
 		if (pdm!=null) {
 			// --- Get the selection as EomPlannerResult ------------ 
-			EomPlannerResult eomPlannerResult = this.jDialogEnergyAgent.getJPanelPlannerInformation().getEomPlannerResultAsSelected();
+			EomPlannerResult eomPlannerResult = (EomPlannerResult) this.swingUiModelInterface.collectUiData(UiDataCollection.PlannerResultAsSelected);
 			if (eomPlannerResult==null) return;
 			
 			EomPlannerResult rtPlannerResult = pdm.getPlannerResultForRealTimeExecution();
 			rtPlannerResult.append(eomPlannerResult);
-			this.jDialogEnergyAgent.updateView();
+			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateView);
 		}
 	}
 	

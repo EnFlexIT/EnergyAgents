@@ -3,6 +3,8 @@ package de.enflexit.ea.ui;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Window;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -11,6 +13,8 @@ import javax.swing.SwingUtilities;
 import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.ea.core.ui.PlanningInformation;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import energy.planning.EomPlannerResult;
 import energy.planning.ui.EomPlannerResultPanel;
 
@@ -19,13 +23,13 @@ import energy.planning.ui.EomPlannerResultPanel;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelPlannerInformation extends JTabbedPane {
+public class JPanelPlannerInformation extends JTabbedPane implements PropertyChangeListener {
 
 	private static final long serialVersionUID = -2222117009782469384L;
 	
 	private static final String TAB_HEADER_REAL_TIME_PLANNING = "Real Time Planner Result";
 	
-	private JDialogEnergyAgent jDialogEnergyAgent;
+	private SwingUiModelInterface swingUiModelInterface;
 	private PropertiesPanel jPanelPlanningProperties;
 	
 	
@@ -33,10 +37,11 @@ public class JPanelPlannerInformation extends JTabbedPane {
 	 * Instantiates a new j panel real time information.
 	 * @param jDialogEnergyAgent the j dialog energy agent
 	 */
-	public JPanelPlannerInformation(JDialogEnergyAgent jDialogEnergyAgent) {
-		this.jDialogEnergyAgent = jDialogEnergyAgent;
+	public JPanelPlannerInformation(SwingUiModelInterface swingUiModelInterface) {
+		this.swingUiModelInterface = swingUiModelInterface;
+		this.swingUiModelInterface.addPropertyListener(this);
 		this.initialize();
-		this.updateView();
+		this.setDisplayInformation();
 	}
 	
 	/**
@@ -81,7 +86,7 @@ public class JPanelPlannerInformation extends JTabbedPane {
 	 * Returns the EomPlannerResult as selected in the UI.
 	 * @return the EomPlannerResult as selected
 	 */
-	public EomPlannerResult getEomPlannerResultAsSelected() {
+	private EomPlannerResult getEomPlannerResultAsSelected() {
 		
 		Window owner = OwnerDetection.getOwnerWindowForComponent(this);
 		String msgTitle = "Selection of Planning Result";
@@ -117,12 +122,7 @@ public class JPanelPlannerInformation extends JTabbedPane {
 		return plannerResult.getEomPlannerResultFromIndexPosition(slSelectionIndex);
 	}
 	
-	/**
-	 * Updates the view according to the state of the energy agent.
-	 */
-	public void updateView() {
-		this.setDisplayInformation();
-	}
+	
 	/**
 	 * Sets the display information.
 	 */
@@ -130,7 +130,7 @@ public class JPanelPlannerInformation extends JTabbedPane {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				PlanningInformation plInfo = JPanelPlannerInformation.this.jDialogEnergyAgent.getEnergyAgent().getPlanningInformation();
+				PlanningInformation plInfo = JPanelPlannerInformation.this.swingUiModelInterface.getEnergyAgent().getPlanningInformation();
 				JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
 				JPanelPlannerInformation.this.removeEomPlannerResults();
 				JPanelPlannerInformation.this.addPlannerResult(TAB_HEADER_REAL_TIME_PLANNING, plInfo.getRealTimePlannerResult());
@@ -143,5 +143,34 @@ public class JPanelPlannerInformation extends JTabbedPane {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		if (evt instanceof SwingUiDataCollector) {
+			UiDataCollection uiCollection = (UiDataCollection) evt.getNewValue();
+			switch (uiCollection) {
+			case PlannerResultAsSelected:
+				SwingUiDataCollector dataCollector = (SwingUiDataCollector) evt;
+				dataCollector.setCollectedData(this.getEomPlannerResultAsSelected());
+				break;
+			}
+			
+		} else {
+			PropertyEvent pe = (PropertyEvent) evt.getNewValue();
+			switch (pe) {
+			case UpdateView:
+				this.setDisplayInformation();
+				break;
+
+			default:
+				break;
+			}
+			
+		}
+		
+	}
 	
 }

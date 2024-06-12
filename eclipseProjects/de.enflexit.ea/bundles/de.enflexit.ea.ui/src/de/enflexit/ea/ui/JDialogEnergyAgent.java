@@ -6,6 +6,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -15,6 +17,9 @@ import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.AbstractEnergyAgent;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
+
 import javax.swing.JTabbedPane;
 import java.awt.GridBagConstraints;
 
@@ -23,17 +28,20 @@ import java.awt.GridBagConstraints;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JDialogEnergyAgent extends JDialog {
+public class JDialogEnergyAgent extends JDialog implements SwingUiModelInterface, PropertyChangeListener {
 
 	private static final long serialVersionUID = -2867085753299220850L;
 
 	private AbstractEnergyAgent energyAgent;
-	
+	private SwingUiModelInterface propertyModel;
+
 	private JMenuBarEnergyAgent jMenuBarEnergyAgent;
 	private JTabbedPane jTabbedPane;
 	private JPanelGeneralInformation jPanelGeneralInformation;
 	private JPanelRealTimeInformation jPanelRealTimeInformation;
 	private JPanelPlannerInformation jPanelPlannerInformation;
+	private JPanelPlanningEvents jPanelPlanningEvents;
+	
 	
 	/**
 	 * Instantiates a new JDialog energy agent.
@@ -44,7 +52,26 @@ public class JDialogEnergyAgent extends JDialog {
 		this.setEnergyAgent(energyAgent);
 		this.initialize();
 	}
+
 	
+	/**
+	 * Returns the local property model for the UI.
+	 * @return the property model
+	 */
+	private SwingUiModelInterface getSwingUiModel() {
+		if (propertyModel==null) {
+			propertyModel = new SwingUiModel(this.getEnergyAgent());
+			propertyModel.addPropertyListener(this);
+		}
+		return propertyModel;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#getEnergyAgent()
+	 */
+	@Override
+	public AbstractEnergyAgent getEnergyAgent() {
+		return energyAgent;
+	}
 	/**
 	 * Sets the local energy agent.
 	 * @param energyAgent the new energy agent
@@ -52,13 +79,35 @@ public class JDialogEnergyAgent extends JDialog {
 	public void setEnergyAgent(AbstractEnergyAgent energyAgent) {
 		this.energyAgent = energyAgent;
 	}
-	/**
-	 * Return the local energy agent.
-	 * @return the energy agent
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#addPropertyListener(java.beans.PropertyChangeListener)
 	 */
-	public AbstractEnergyAgent getEnergyAgent() {
-		return energyAgent;
+	@Override
+	public void addPropertyListener(PropertyChangeListener listener) {
+		this.getSwingUiModel().addPropertyListener(listener);
 	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#removePropertyListener(java.beans.PropertyChangeListener)
+	 */
+	@Override
+	public void removePropertyListener(PropertyChangeListener listener) {
+		this.getSwingUiModel().removePropertyListener(listener);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#firePropertyEvent(de.enflexit.ea.ui.SwingUiModel.PropertyEvent)
+	 */
+	@Override
+	public void firePropertyEvent(PropertyEvent event) {
+		this.getSwingUiModel().firePropertyEvent(event);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#collectUiData(de.enflexit.ea.ui.SwingUiModel.UiDataCollection)
+	 */
+	@Override
+	public Object collectUiData(UiDataCollection dataType) {
+		return this.getSwingUiModel().collectUiData(dataType);
+	}
+	
 	
 	/**
 	 * Initialize.
@@ -90,15 +139,6 @@ public class JDialogEnergyAgent extends JDialog {
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.Window#dispose()
-	 */
-	@Override
-	public void dispose() {
-		super.dispose();
-		this.getJMenuBarEnergyAgent().dispose();
-	}
-	
 	/**
      * Registers the escape key stroke in order to close this dialog.
      */
@@ -128,6 +168,7 @@ public class JDialogEnergyAgent extends JDialog {
 			jTabbedPane.addTab(" General Information ", null, getJPanelGeneralInformation(), null);
 			jTabbedPane.addTab(" Real-Time Information ", null, getJPanelRealTimeInformation(), null);
 			jTabbedPane.addTab(" Planner Information ", null, getJPanelPlannerInformation(), null);
+			jTabbedPane.addTab(" Control Assistant ", null, getJPanelPlanningEvents(), null);
 		}
 		return jTabbedPane;
 	}
@@ -149,15 +190,37 @@ public class JDialogEnergyAgent extends JDialog {
 		}
 		return jPanelPlannerInformation;
 	}
-
-	/**
-	 * Update dialog.
+	public JPanelPlanningEvents getJPanelPlanningEvents() {
+		if (jPanelPlanningEvents==null) {
+			jPanelPlanningEvents = new JPanelPlanningEvents(this);
+		}
+		return jPanelPlanningEvents;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
-	public void updateView() {
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
 		
-		this.getJPanelGeneralInformation().updateView();
-		this.getJPanelRealTimeInformation().updateView();
-		this.getJPanelPlannerInformation().updateView();
+		if (evt.getNewValue() instanceof PropertyEvent == false) return;
+		PropertyEvent pEvent = (PropertyEvent) evt.getNewValue();
+		switch (pEvent) {
+		case ShowOrFocusView:
+			if (this.isVisible()==true) {
+				this.requestFocusInWindow();
+			} else {
+				this.setVisible(true);
+			}
+			break;
+		case CloseView:
+			this.setVisible(false);
+			this.dispose();
+			break;
+		default:
+			break;
+		}
 	}
 	
 }

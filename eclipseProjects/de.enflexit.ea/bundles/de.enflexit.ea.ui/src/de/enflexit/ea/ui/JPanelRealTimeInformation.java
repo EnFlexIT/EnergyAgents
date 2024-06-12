@@ -7,6 +7,8 @@ import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.ea.core.ui.RealTimeInformation;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import energy.EomController;
 import energy.OptionModelController;
 import energy.evaluation.gui.TechnicalSystemStatePanel;
@@ -14,17 +16,19 @@ import energy.schedule.ScheduleController;
 import energygroup.GroupController;
 
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * The Class JPanelRealTimeInformation.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelRealTimeInformation extends JSplitPane {
+public class JPanelRealTimeInformation extends JSplitPane implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 7714692252010988662L;
 	
-	private JDialogEnergyAgent jDialogEnergyAgent;
+	private SwingUiModelInterface swingUiModelInterface;
 	
 	private PropertiesPanel jPanelRealTimeProperties;
 	private JTabbedPane jTabbedPane;
@@ -33,12 +37,14 @@ public class JPanelRealTimeInformation extends JSplitPane {
 	
 	/**
 	 * Instantiates a new j panel real time information.
-	 * @param jDialogEnergyAgent the j dialog energy agent
+	 *
+	 * @param swingUiModelInterface the swing ui model interface
 	 */
-	public JPanelRealTimeInformation(JDialogEnergyAgent jDialogEnergyAgent) {
-		this.jDialogEnergyAgent = jDialogEnergyAgent;
+	public JPanelRealTimeInformation(SwingUiModelInterface swingUiModelInterface) {
+		this.swingUiModelInterface = swingUiModelInterface;
+		this.swingUiModelInterface.addPropertyListener(this);
 		this.initialize();
-		this.updateView();
+		this.setDisplayInformation();
 	}
 	/**
 	 * Initialize.
@@ -92,24 +98,35 @@ public class JPanelRealTimeInformation extends JSplitPane {
 	}
 
 	/**
-	 * Updates the view according to the state of the energy agent.
-	 */
-	public void updateView() {
-		this.setDisplayInformation();
-	}
-
-	/**
 	 * Sets the display information.
 	 */
 	private void setDisplayInformation() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				RealTimeInformation rtInfo = JPanelRealTimeInformation.this.jDialogEnergyAgent.getEnergyAgent().getRealTimeInformation();
+				RealTimeInformation rtInfo = JPanelRealTimeInformation.this.swingUiModelInterface.getEnergyAgent().getRealTimeInformation();
 				JPanelRealTimeInformation.this.getJPanelRealTimeProperties().setProperties(rtInfo);
 				JPanelRealTimeInformation.this.getTechnicalSystemStatePanel(rtInfo.getEomController()).setTechnicalSystemStateTime(rtInfo.getTechnicalSystemStateEvaluation());
 			}
 		});
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		if (evt.getNewValue() instanceof UiDataCollection) return;
+		
+		PropertyEvent pe = (PropertyEvent) evt.getNewValue(); 
+		switch (pe) {
+		case UpdateView:
+			this.setDisplayInformation();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
