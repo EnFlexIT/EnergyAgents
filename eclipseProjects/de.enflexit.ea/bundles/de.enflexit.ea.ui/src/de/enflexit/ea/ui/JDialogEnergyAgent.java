@@ -40,7 +40,7 @@ public class JDialogEnergyAgent extends JDialog implements SwingUiModelInterface
 	private JPanelGeneralInformation jPanelGeneralInformation;
 	private JPanelRealTimeInformation jPanelRealTimeInformation;
 	private JPanelPlannerInformation jPanelPlannerInformation;
-	private JPanelPlanningEvents jPanelPlanningEvents;
+	private JPanelEomPlanningEventTreeMap jPanelEomPlanningEventTreeMap;
 	
 	
 	/**
@@ -190,11 +190,11 @@ public class JDialogEnergyAgent extends JDialog implements SwingUiModelInterface
 		}
 		return jPanelPlannerInformation;
 	}
-	public JPanelPlanningEvents getJPanelPlanningEvents() {
-		if (jPanelPlanningEvents==null) {
-			jPanelPlanningEvents = new JPanelPlanningEvents(this);
+	public JPanelEomPlanningEventTreeMap getJPanelPlanningEvents() {
+		if (jPanelEomPlanningEventTreeMap==null) {
+			jPanelEomPlanningEventTreeMap = new JPanelEomPlanningEventTreeMap(this);
 		}
-		return jPanelPlanningEvents;
+		return jPanelEomPlanningEventTreeMap;
 	}
 	
 	

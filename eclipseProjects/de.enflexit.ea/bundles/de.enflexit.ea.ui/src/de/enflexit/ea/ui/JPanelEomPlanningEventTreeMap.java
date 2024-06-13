@@ -13,7 +13,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.ui.PlanningInformation;
@@ -21,19 +24,17 @@ import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
 import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import energy.planning.EomPlannerResult;
 import energy.planning.events.EomPlanningEvent;
-import energy.planning.events.EomPlanningEventList;
+import energy.planning.events.EomPlanningEventTreeMap;
 
 /**
- * The Class JPanelPlanningEvents.
+ * The Class JPanelEomPlanningEventTreeMap.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelPlanningEvents extends JSplitPane implements PropertyChangeListener {
+public class JPanelEomPlanningEventTreeMap extends JSplitPane implements PropertyChangeListener {
 
 	private static final long serialVersionUID = -5338320863998070171L;
 
 	private SwingUiModelInterface swingUiModelInterface;
-	
-	private JPanel jPanelRight;
 	
 	private JPanel jPanelLeft;
 	private JLabel JLabelHeaderLeft;
@@ -41,34 +42,30 @@ public class JPanelPlanningEvents extends JSplitPane implements PropertyChangeLi
 	private DefaultListModel<EomPlanningEvent> listModel;
 	private JList<EomPlanningEvent> jListEvents;
 	
+	private JPanelEomPlanningEvent jPanelRight;
+
 	
 	/**
 	 * Instantiates a new j panel planning events.
 	 * @param eomPlanningEventList the eom planning event list
 	 */
-	public JPanelPlanningEvents(SwingUiModelInterface swingUiModelInterface) {
+	public JPanelEomPlanningEventTreeMap(SwingUiModelInterface swingUiModelInterface) {
 		this.swingUiModelInterface = swingUiModelInterface;
 		this.swingUiModelInterface.addPropertyListener(this);
 		this.initialize();
 		this.setDisplayInformation();
 	}
 	private void initialize() {
-		this.setResizeWeight(0.333);
-		this.setDividerLocation(0.33);
-		this.setDividerSize(8);
-		this.setRightComponent(this.getJPanelRight());
+		this.setRightComponent(this.getJPanelEomPlanningEvent());
 		this.setLeftComponent(this.getJPanelLeft());
+		this.setDividerSize(8);
+		this.setResizeWeight(0.333);
+		this.setDividerLocation(500);
 	}
 
-	private JPanel getJPanelRight() {
+	private JPanelEomPlanningEvent getJPanelEomPlanningEvent() {
 		if (jPanelRight == null) {
-			jPanelRight = new JPanel();
-			GridBagLayout gbl_jPanelRight = new GridBagLayout();
-			gbl_jPanelRight.columnWidths = new int[]{0};
-			gbl_jPanelRight.rowHeights = new int[]{0};
-			gbl_jPanelRight.columnWeights = new double[]{Double.MIN_VALUE};
-			gbl_jPanelRight.rowWeights = new double[]{Double.MIN_VALUE};
-			jPanelRight.setLayout(gbl_jPanelRight);
+			jPanelRight = new JPanelEomPlanningEvent();
 		}
 		return jPanelRight;
 	}
@@ -106,13 +103,15 @@ public class JPanelPlanningEvents extends JSplitPane implements PropertyChangeLi
 		return jScrollPaneLeft;
 	}
 	
-	private void fillList(EomPlanningEventList eomPlanningEventList) {
+	private void fillList(EomPlanningEventTreeMap eomPlanningEventTreeMap) {
 		
 		this.getListModel().clear();
-		if (eomPlanningEventList==null) return;
-		if (eomPlanningEventList.size()==0) return;
+		if (eomPlanningEventTreeMap==null) return;
+		if (eomPlanningEventTreeMap.size()==0) return;
 		
-		eomPlanningEventList.forEach(plEvent -> this.getListModel().addElement(plEvent));
+		for (long timeStamp: eomPlanningEventTreeMap.keySet()) {
+			this.getListModel().addElement(eomPlanningEventTreeMap.get(timeStamp));
+		}
 	}
 	
 	public DefaultListModel<EomPlanningEvent> getListModel() {
@@ -124,12 +123,24 @@ public class JPanelPlanningEvents extends JSplitPane implements PropertyChangeLi
 	private JList<EomPlanningEvent> getJListEvents() {
 		if (jListEvents == null) {
 			jListEvents = new JList<>(this.getListModel());
+			jListEvents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jListEvents.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListEvents.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent lsEvt) {
+					if (lsEvt.getValueIsAdjusting()==true) return;
+					EomPlanningEvent plEvt = JPanelEomPlanningEventTreeMap.this.getJListEvents().getSelectedValue();
+					if (plEvt!=null) {
+						JPanelEomPlanningEventTreeMap.this.getJPanelEomPlanningEvent().setEomPlanningEvent(plEvt);
+					}
+				}
+			});
 		}
 		return jListEvents;
 	}
 	private JLabel getJLabelHeaderLeft() {
 		if (JLabelHeaderLeft == null) {
-			JLabelHeaderLeft = new JLabel("Control Events");
+			JLabelHeaderLeft = new JLabel("Control Event Time Table");
 			JLabelHeaderLeft.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return JLabelHeaderLeft;
@@ -144,23 +155,23 @@ public class JPanelPlanningEvents extends JSplitPane implements PropertyChangeLi
 			@Override
 			public void run() {
 				
-				AbstractEnergyAgent energyAgent = JPanelPlanningEvents.this.swingUiModelInterface.getEnergyAgent();
+				AbstractEnergyAgent energyAgent = JPanelEomPlanningEventTreeMap.this.swingUiModelInterface.getEnergyAgent();
 				PlanningInformation plInfo = energyAgent.getPlanningInformation();
 				EomPlannerResult rtPlan = plInfo.getRealTimePlannerResult();
 				if (rtPlan==null || rtPlan.getMainScheduleList()==null || rtPlan.getMainScheduleList().getSchedules().size()==0) return;
 				
-				EomPlanningEventList eomPlEvtList = null;
+				EomPlanningEventTreeMap eomPlEvtList = null;
 				switch (energyAgent.getInternalDataModel().getTypeOfControlledSystem()) {
 				case None:
 					break;
 				case TechnicalSystem:
-					eomPlEvtList = new EomPlanningEventList(energyAgent.getInternalDataModel().getOptionModelController(), rtPlan, 0);
+					eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getOptionModelController(), rtPlan, 0);
 					break;
 				case TechnicalSystemGroup:
-					eomPlEvtList = new EomPlanningEventList(energyAgent.getInternalDataModel().getGroupController(), rtPlan, 0);
+					eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getGroupController(), rtPlan, 0);
 					break;
 				}
-				JPanelPlanningEvents.this.fillList(eomPlEvtList);
+				JPanelEomPlanningEventTreeMap.this.fillList(eomPlEvtList);
 			}
 		});
 	}
