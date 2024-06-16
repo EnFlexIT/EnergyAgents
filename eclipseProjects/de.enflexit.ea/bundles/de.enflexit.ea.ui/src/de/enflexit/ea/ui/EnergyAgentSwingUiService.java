@@ -18,18 +18,35 @@ import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
  */
 public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 
-	private HashMap<AbstractEnergyAgent, SwingUiModelInterface> agentDialogHashMap;
+	private HashMap<AbstractEnergyAgent, EnergyAgentWindowInterface> agentDialogHashMap;
 	private WindowAdapter windowAdapter;
 	
 	/**
 	 * Returns the agent<->dialog hash map with agents that are currently opened.
 	 * @return the agent dialog hash map
 	 */
-	private HashMap<AbstractEnergyAgent, SwingUiModelInterface> getAgentDialogHashMap() {
+	private HashMap<AbstractEnergyAgent, EnergyAgentWindowInterface> getAgentDialogHashMap() {
 		if (agentDialogHashMap==null) {
 			agentDialogHashMap = new HashMap<>();
 		}
 		return agentDialogHashMap;
+	}
+	/**
+	 * Returns s the energy agent for the specified EnergyAgentWindowInterface (in fact a JDialog or a JFrame)
+	 *
+	 * @param eaWindow the EnergyAgentWindowInterface to search for
+	 * @return the energy agent found for the specified EnergyAgentWindowInterface
+	 */
+	private AbstractEnergyAgent getEnergyAgentFromWindow(EnergyAgentWindowInterface eaWindow) {
+		
+		if (eaWindow!=null) {
+			for (AbstractEnergyAgent energyAgent : this.getAgentDialogHashMap().keySet()) {
+				if (this.getAgentDialogHashMap().get(energyAgent).equals(eaWindow)==true) {
+					return energyAgent;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -42,19 +59,18 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 			@Override
 			public void run() {
 				
-				SwingUiModelInterface uiModelInterface = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
-				if (uiModelInterface==null) {
+				EnergyAgentWindowInterface eaWindow = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
+				if (eaWindow==null) {
 					// --- Open the default UI for an EnergyAgent -----------
 					JDialogEnergyAgent eaDialogDefault = new JDialogEnergyAgent(Application.getMainWindow(), energyAgent);
 					eaDialogDefault.addWindowListener(EnergyAgentSwingUiService.this.getWindowAdapter());
 					EnergyAgentSwingUiService.this.getAgentDialogHashMap().put(energyAgent, eaDialogDefault);
-					uiModelInterface = eaDialogDefault;
+					eaWindow = eaDialogDefault;
 				}
-				uiModelInterface.firePropertyEvent(PropertyEvent.ShowOrFocusView);
+				eaWindow.firePropertyEvent(PropertyEvent.ShowOrFocusView);
 			}
 		});
 	}
-
 	/**
 	 * Returns the window adapter that reacts on closing a energy agent dialog.
 	 * @return the window adapter
@@ -65,9 +81,13 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 				@Override
 				public void windowClosing(WindowEvent we) {
 					try {
-						SwingUiModelInterface eaDialog = (SwingUiModelInterface) we.getWindow();
-						eaDialog.firePropertyEvent(PropertyEvent.CloseView);
-						EnergyAgentSwingUiService.this.getAgentDialogHashMap().remove(eaDialog.getEnergyAgent());
+						EnergyAgentWindowInterface eaWindow = (EnergyAgentWindowInterface) we.getWindow();
+						eaWindow.firePropertyEvent(PropertyEvent.CloseView);
+						AbstractEnergyAgent energyAgent = EnergyAgentSwingUiService.this.getEnergyAgentFromWindow(eaWindow);
+						if (energyAgent!=null) {
+							EnergyAgentSwingUiService.this.getAgentDialogHashMap().remove(energyAgent);
+						}
+						
 					} catch (Exception ex) {
 						System.err.println("[" + EnergyAgentSwingUiService.class.getSimpleName() + "] Error whil trying to close energy agent dialog:");
 						ex.printStackTrace();
@@ -87,9 +107,9 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				SwingUiModelInterface eaDialog = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
-				if (eaDialog!=null) {
-					eaDialog.firePropertyEvent(PropertyEvent.UpdateView);
+				EnergyAgentWindowInterface eaWindow = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
+				if (eaWindow!=null) {
+					eaWindow.firePropertyEvent(PropertyEvent.UpdateView);
 				}
 			}
 		});
@@ -103,9 +123,9 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				SwingUiModelInterface eaDialog = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
-				if (eaDialog!=null) {
-					eaDialog.firePropertyEvent(PropertyEvent.CloseView);
+				EnergyAgentWindowInterface eaWindow = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
+				if (eaWindow!=null) {
+					eaWindow.firePropertyEvent(PropertyEvent.CloseView);
 					EnergyAgentSwingUiService.this.getAgentDialogHashMap().remove(energyAgent);
 				}
 			}

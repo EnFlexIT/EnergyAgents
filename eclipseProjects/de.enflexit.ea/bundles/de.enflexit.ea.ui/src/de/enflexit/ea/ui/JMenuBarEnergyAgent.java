@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.planning.AbstractPlanningDispatcherManager;
+import de.enflexit.ea.ui.SwingUiFocusDescription.FocusTo;
 import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
 import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import de.enflexit.ea.ui.planning.ManualPlanningHandler;
@@ -33,6 +34,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	private JMenu jMenuPlanningTimeSettings;
 		private JMenuItem jMenuItemManualPlanning;
 		private JMenuItem jMenuItemManualPlanningRealTimeSelection;
+		private JMenuItem jMenuItemNextPlannerEvent;
 	
 	// --- From here handler for specific tasks --------------- 
 	private ManualPlanningHandler manualPlanningHandler;
@@ -77,6 +79,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	private JMenuItem getJMenuItemUpdateUI() {
 		if (jMenuItemUpdateUI==null) {
 			jMenuItemUpdateUI = new JMenuItem("Refresh View");
+			jMenuItemUpdateUI.setIcon(BundleHelper.getImageIcon("Refresh.png"));
 			jMenuItemUpdateUI.addActionListener(this);
 		}
 		return jMenuItemUpdateUI;
@@ -102,6 +105,8 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 			jMenuPlanningTimeSettings = new JMenu("Planning Tools");
 			jMenuPlanningTimeSettings.add(this.getJMenuItemManualPlanning());
 			jMenuPlanningTimeSettings.add(this.getJMenuItemManualPlanningRealTimeSelection());
+			jMenuPlanningTimeSettings.addSeparator();
+			jMenuPlanningTimeSettings.add(this.getJMenuItemNextPlannerEvent());
 		}
 		return jMenuPlanningTimeSettings;
 	}
@@ -109,6 +114,7 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	private JMenuItem getJMenuItemManualPlanning() {
 		if (jMenuItemManualPlanning==null) {
 			jMenuItemManualPlanning = new JMenuItem("Manual Planning ...");
+			jMenuItemManualPlanning.setIcon(BundleHelper.getImageIcon("Planning.png"));
 			jMenuItemManualPlanning.addActionListener(this);
 		}
 		return jMenuItemManualPlanning;
@@ -117,9 +123,19 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 	private JMenuItem getJMenuItemManualPlanningRealTimeSelection() {
 		if (jMenuItemManualPlanningRealTimeSelection==null) {
 			jMenuItemManualPlanningRealTimeSelection = new JMenuItem("Take current plan for real-time execution");
+			jMenuItemManualPlanningRealTimeSelection.setIcon(BundleHelper.getImageIcon("PlanSelection.png"));
 			jMenuItemManualPlanningRealTimeSelection.addActionListener(this);
 		}
 		return jMenuItemManualPlanningRealTimeSelection;
+	}
+	
+	private JMenuItem getJMenuItemNextPlannerEvent() {
+		if (jMenuItemNextPlannerEvent==null) {
+			jMenuItemNextPlannerEvent = new JMenuItem("Show Next Planner Event");
+			jMenuItemNextPlannerEvent.setIcon(BundleHelper.getImageIcon("Search.png"));
+			jMenuItemNextPlannerEvent.addActionListener(this);
+		}
+		return jMenuItemNextPlannerEvent;
 	}
 	
 	
@@ -139,6 +155,12 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		} else if (ae.getSource()==this.getJMenuItemManualPlanningRealTimeSelection()) {
 			// --- Take current plan selection for real-time execution --------
 			this.setSelectedPlanForRealTimeExecution();
+			
+		} else if (ae.getSource()==this.getJMenuItemNextPlannerEvent()) {
+			// --- Show next planning event -----------------------------------
+			this.swingUiModelInterface.fireFocusEvent(new SwingUiFocusDescription(FocusTo.Tab, JPanelEnergyAgent.TAB_TITLE_CONTROL_ASSISTANT));
+			this.swingUiModelInterface.fireFocusEvent(new SwingUiFocusDescription(FocusTo.NextPlanningEvent, null));
+			
 		}
 	}
 	
@@ -152,7 +174,6 @@ public class JMenuBarEnergyAgent extends JMenuBar implements ActionListener {
 		}
 		return manualPlanningHandler;
 	}
-
 
 	/**
 	 * Opens the manual planning perspective.

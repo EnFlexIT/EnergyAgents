@@ -14,12 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.ui.PlanningInformation;
+import de.enflexit.ea.ui.SwingUiFocusDescription.FocusTo;
 import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
 import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 import energy.planning.EomPlannerResult;
@@ -44,6 +44,7 @@ public class JPanelEomPlanningEventTreeMap extends JSplitPane implements Propert
 	
 	private JPanelEomPlanningEvent jPanelRight;
 
+	private EomPlanningEventTreeMap eomPlanningEventTreeMap;
 	
 	/**
 	 * Instantiates a new j panel planning events.
@@ -146,34 +147,57 @@ public class JPanelEomPlanningEventTreeMap extends JSplitPane implements Propert
 		return JLabelHeaderLeft;
 	}
 	
+	/**
+	 * Returns the current EomPlanningEventTreeMap.
+	 * @return the eom planning event tree map
+	 */
+	private EomPlanningEventTreeMap getEomPlanningEventTreeMap() {
+		return eomPlanningEventTreeMap;
+	}
+	/**
+	 * Sets the EomPlanningEventTreeMap.
+	 * @param eomPlanningEventTreeMap the new eom planning event tree map
+	 */
+	private  void setEomPlanningEventTreeMap(EomPlanningEventTreeMap eomPlanningEventTreeMap) {
+		this.eomPlanningEventTreeMap = eomPlanningEventTreeMap;
+		this.fillList(eomPlanningEventTreeMap);
+	}
+	/**
+	 * Return the next EomPlanningEvent.
+	 * @return the next eom planning event
+	 */
+	private EomPlanningEvent getNextEomPlanningEvent() {
+		
+		EomPlanningEvent planEvent = null;
+		if (this.getEomPlanningEventTreeMap()!=null) {
+			long currTime = this.swingUiModelInterface.getEnergyAgent().getEnergyAgentIO().getTime();
+			planEvent = this.getEomPlanningEventTreeMap().getNextPlanningEvent(currTime);
+		}
+		return planEvent;
+	}
 	
 	/**
 	 * Sets the display information.
 	 */
 	private void setDisplayInformation() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				
-				AbstractEnergyAgent energyAgent = JPanelEomPlanningEventTreeMap.this.swingUiModelInterface.getEnergyAgent();
-				PlanningInformation plInfo = energyAgent.getPlanningInformation();
-				EomPlannerResult rtPlan = plInfo.getRealTimePlannerResult();
-				if (rtPlan==null || rtPlan.getMainScheduleList()==null || rtPlan.getMainScheduleList().getSchedules().size()==0) return;
-				
-				EomPlanningEventTreeMap eomPlEvtList = null;
-				switch (energyAgent.getInternalDataModel().getTypeOfControlledSystem()) {
-				case None:
-					break;
-				case TechnicalSystem:
-					eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getOptionModelController(), rtPlan, 0);
-					break;
-				case TechnicalSystemGroup:
-					eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getGroupController(), rtPlan, 0);
-					break;
-				}
-				JPanelEomPlanningEventTreeMap.this.fillList(eomPlEvtList);
-			}
-		});
+		
+		AbstractEnergyAgent energyAgent = JPanelEomPlanningEventTreeMap.this.swingUiModelInterface.getEnergyAgent();
+		PlanningInformation plInfo = energyAgent.getPlanningInformation();
+		EomPlannerResult rtPlan = plInfo.getRealTimePlannerResult();
+		if (rtPlan==null || rtPlan.getMainScheduleList()==null || rtPlan.getMainScheduleList().getSchedules().size()==0) return;
+		
+		EomPlanningEventTreeMap eomPlEvtList = null;
+		switch (energyAgent.getInternalDataModel().getTypeOfControlledSystem()) {
+		case None:
+			break;
+		case TechnicalSystem:
+			eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getOptionModelController(), rtPlan, 0);
+			break;
+		case TechnicalSystemGroup:
+			eomPlEvtList = new EomPlanningEventTreeMap(energyAgent.getInternalDataModel().getGroupController(), rtPlan, 0);
+			break;
+		}
+		this.setEomPlanningEventTreeMap(eomPlEvtList);
 	}
 	
 	/* (non-Javadoc)
@@ -182,14 +206,32 @@ public class JPanelEomPlanningEventTreeMap extends JSplitPane implements Propert
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		if (evt.getNewValue() instanceof UiDataCollection) return;
+		// --- UiDataCollection events --------------------
+		if (evt instanceof SwingUiDataCollector) {
+			UiDataCollection uiDataCollection = (UiDataCollection) evt.getNewValue();
+			switch (uiDataCollection) {
+			case NextPlannerEvent:
+				SwingUiDataCollector dataCollector = (SwingUiDataCollector) evt;
+				dataCollector.setCollectedData(this.getNextEomPlanningEvent());
+				break;
+			default:
+				break;
+			}
+			return;
+		}
 		
+		// --- Simple UI events --------------------------- 
 		PropertyEvent pe = (PropertyEvent) evt.getNewValue(); 
 		switch (pe) {
 		case UpdateView:
 			this.setDisplayInformation();
 			break;
-
+		case FocusEvent:
+			SwingUiFocusEvent focusEvent = (SwingUiFocusEvent) evt;
+			if (focusEvent.getFocusDescription().getFocusTo()==FocusTo.NextPlanningEvent) {
+				this.getJListEvents().setSelectedValue(this.getNextEomPlanningEvent(), true);
+			}
+			
 		default:
 			break;
 		}

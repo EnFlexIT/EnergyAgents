@@ -20,12 +20,13 @@ public class SwingUiModel implements SwingUiModelInterface {
 		ShowOrFocusView,
 		UpdateView, 
 		CloseView,
+		FocusEvent
 	}
 	
 	public enum UiDataCollection {
-		PlannerResultAsSelected
+		PlannerResultAsSelected,
+		NextPlannerEvent
 	}
-
 	
 	private AbstractEnergyAgent energyAgent;
 	
@@ -86,6 +87,17 @@ public class SwingUiModel implements SwingUiModelInterface {
 		}
 	}
 	/* (non-Javadoc)
+	 * @see de.enflexit.ea.ui.SwingUiModelInterface#fireTabFocusEvent(java.lang.String)
+	 */
+	@Override
+	public void fireFocusEvent(SwingUiFocusDescription focusDescription) {
+		if (focusDescription==null) return;
+		SwingUiFocusEvent dataRequest = new SwingUiFocusEvent(this, PropertyEvent.FocusEvent.name(), null, PropertyEvent.FocusEvent, focusDescription);
+		for (PropertyChangeListener pcl : this.getPropertyChangeListener()) {
+			pcl.propertyChange(dataRequest);
+		}
+	}
+	/* (non-Javadoc)
 	 * @see de.enflexit.ea.ui.SwingUiModelInterface#collectUiData(de.enflexit.ea.ui.SwingUiModel.UiDataCollection)
 	 */
 	@Override
@@ -97,5 +109,6 @@ public class SwingUiModel implements SwingUiModelInterface {
 		}
 		return dataRequest.getCollectedData();
 	}
+
 	
 }

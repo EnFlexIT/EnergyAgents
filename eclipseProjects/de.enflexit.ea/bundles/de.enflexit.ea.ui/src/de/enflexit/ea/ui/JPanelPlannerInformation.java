@@ -5,10 +5,10 @@ import java.awt.Font;
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.common.swing.OwnerDetection;
@@ -32,6 +32,7 @@ public class JPanelPlannerInformation extends JTabbedPane implements PropertyCha
 	private SwingUiModelInterface swingUiModelInterface;
 	private PropertiesPanel jPanelPlanningProperties;
 	
+	private boolean isPauseViewUpdater;
 	
 	/**
 	 * Instantiates a new j panel real time information.
@@ -62,24 +63,34 @@ public class JPanelPlannerInformation extends JTabbedPane implements PropertyCha
 		}
 		return jPanelPlanningProperties;
 	}
+	
 	/**
 	 * Adds the specified planner result to the local tabbed pane.
 	 *
 	 * @param tabTitle the tab title
-	 * @param eomPlannerResult the eom planner result
+	 * @param eomPlannerResult the EomPlannerResult
+	 * @return true, if a tab was added 
 	 */
-	private void addPlannerResult(String tabTitle, EomPlannerResult eomPlannerResult) {
-		
-		if (eomPlannerResult==null) return; 
+	private boolean addPlannerResult(String tabTitle, EomPlannerResult eomPlannerResult) {
+		if (eomPlannerResult==null) return false; 
 		this.addTab(tabTitle, new EomPlannerResultPanel(eomPlannerResult));
+		return true;
 	}
 	/**
-	 * Removes all EomPlannerResults and their panel .
+	 * Returns a HashMap with all EomPlannerResultPanel currently shown.
+	 * @return the HashMap of EomPlannerResultPanel
 	 */
-	private void removeEomPlannerResults() {
-		while ((this.getTabCount()-1) > 0) {
-			this.removeTabAt(this.getTabCount()-1);
+	private HashMap<String, EomPlannerResultPanel> getEomPlannerResultPanel() {
+		
+		HashMap<String, EomPlannerResultPanel> plannerPanelHashMap = new HashMap<>();
+		for (int i = 1; i < this.getTabCount(); i++) {
+			String tabTitle   = this.getTitleAt(i);
+			Component tabComp = this.getComponentAt(i);
+			if (tabComp instanceof EomPlannerResultPanel) {
+				plannerPanelHashMap.put(tabTitle, (EomPlannerResultPanel) tabComp);
+			}
 		}
+		return plannerPanelHashMap;
 	}
 	
 	/**
@@ -127,20 +138,52 @@ public class JPanelPlannerInformation extends JTabbedPane implements PropertyCha
 	 * Sets the display information.
 	 */
 	private void setDisplayInformation() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				PlanningInformation plInfo = JPanelPlannerInformation.this.swingUiModelInterface.getEnergyAgent().getPlanningInformation();
-				JPanelPlannerInformation.this.getJPanelPlanningProperties().setProperties(plInfo);
-				JPanelPlannerInformation.this.removeEomPlannerResults();
-				JPanelPlannerInformation.this.addPlannerResult(TAB_HEADER_REAL_TIME_PLANNING, plInfo.getRealTimePlannerResult());
-				if (plInfo.getPlannerResultTreeMap() != null) {
-					for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
-						JPanelPlannerInformation.this.addPlannerResult(plannerName, plInfo.getPlannerResultTreeMap().get(plannerName));
-					}
+		
+		PlanningInformation plInfo = this.swingUiModelInterface.getEnergyAgent().getPlanningInformation();
+		this.getJPanelPlanningProperties().setProperties(plInfo);
+		
+		// --- Get all EomPlannerResultPanel ------------------------
+		HashMap<String, EomPlannerResultPanel> resultPanelHM = this.getEomPlannerResultPanel();
+		
+		// --- Set / update tab for real time planning --------------
+		EomPlannerResultPanel resultPanel = resultPanelHM.get(TAB_HEADER_REAL_TIME_PLANNING);
+		if (resultPanel!=null) {
+			resultPanel.setEomPlannerResult(plInfo.getRealTimePlannerResult());
+			resultPanelHM.remove(TAB_HEADER_REAL_TIME_PLANNING);
+		} else {
+			this.addPlannerResult(TAB_HEADER_REAL_TIME_PLANNING, plInfo.getRealTimePlannerResult());
+		}
+		
+		// --- Set or update further planning results ---------------
+		if (plInfo.getPlannerResultTreeMap() != null) {
+			for (String plannerName : plInfo.getPlannerResultTreeMap().keySet()) {
+				// --- Get planner result an panel ------------------
+				EomPlannerResult plannerResult = plInfo.getPlannerResultTreeMap().get(plannerName);
+				resultPanel = resultPanelHM.get(plannerName);
+				if (resultPanel!=null) {
+					resultPanel.setEomPlannerResult(plannerResult);
+					resultPanelHM.remove(plannerName);
+				} else {
+					this.addPlannerResult(plannerName, plannerResult);
 				}
 			}
-		});
+		}
+		
+		// --- Remove the remaining EomPlannerResultPanel -----------
+		for (String oldPlannerName : resultPanelHM.keySet()) {
+			this.remove(resultPanelHM.get(oldPlannerName));
+		}
+		
+		// --- Update the view again --------------------------------
+		try {
+			this.isPauseViewUpdater = true;
+			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateView);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			this.isPauseViewUpdater = false;
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -156,21 +199,23 @@ public class JPanelPlannerInformation extends JTabbedPane implements PropertyCha
 				SwingUiDataCollector dataCollector = (SwingUiDataCollector) evt;
 				dataCollector.setCollectedData(this.getEomPlannerResultAsSelected());
 				break;
+			default:
+				break;
 			}
 			
 		} else {
 			PropertyEvent pe = (PropertyEvent) evt.getNewValue();
 			switch (pe) {
 			case UpdateView:
-				this.setDisplayInformation();
+				if (this.isPauseViewUpdater==false) {
+					this.setDisplayInformation();
+				}
 				break;
 
 			default:
 				break;
 			}
-			
 		}
-		
 	}
 	
 }

@@ -38,6 +38,12 @@ public interface SwingUiModelInterface {
 	public void firePropertyEvent(PropertyEvent event);
 
 	/**
+	 * Fires a focus event.
+	 * @param focusDescription the focus description
+	 */
+	public void fireFocusEvent(SwingUiFocusDescription focusDescription);
+	
+	/**
 	 * Enables to collect data from the UI.
 	 *
 	 * @param dataType the data type

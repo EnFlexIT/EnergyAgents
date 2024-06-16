@@ -3,7 +3,6 @@ package de.enflexit.ea.ui;
 import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.ea.core.ui.RealTimeInformation;
@@ -101,14 +100,9 @@ public class JPanelRealTimeInformation extends JSplitPane implements PropertyCha
 	 * Sets the display information.
 	 */
 	private void setDisplayInformation() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				RealTimeInformation rtInfo = JPanelRealTimeInformation.this.swingUiModelInterface.getEnergyAgent().getRealTimeInformation();
-				JPanelRealTimeInformation.this.getJPanelRealTimeProperties().setProperties(rtInfo);
-				JPanelRealTimeInformation.this.getTechnicalSystemStatePanel(rtInfo.getEomController()).setTechnicalSystemStateTime(rtInfo.getTechnicalSystemStateEvaluation());
-			}
-		});
+		RealTimeInformation rtInfo = JPanelRealTimeInformation.this.swingUiModelInterface.getEnergyAgent().getRealTimeInformation();
+		JPanelRealTimeInformation.this.getJPanelRealTimeProperties().setProperties(rtInfo);
+		JPanelRealTimeInformation.this.getTechnicalSystemStatePanel(rtInfo.getEomController()).setTechnicalSystemStateTime(rtInfo.getTechnicalSystemStateEvaluation());
 	}
 	
 	/* (non-Javadoc)

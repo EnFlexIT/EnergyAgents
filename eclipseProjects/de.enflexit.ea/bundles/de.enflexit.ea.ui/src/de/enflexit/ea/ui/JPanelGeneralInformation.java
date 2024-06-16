@@ -6,7 +6,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
@@ -69,12 +68,7 @@ public class JPanelGeneralInformation extends JPanel implements PropertyChangeLi
 	 * Sets the display information.
 	 */
 	private void setDisplayInformation() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JPanelGeneralInformation.this.getJPanelProperties().setProperties(JPanelGeneralInformation.this.swingUiModelInterface.getEnergyAgent().getGeneralInformation());
-			}
-		});
+		JPanelGeneralInformation.this.getJPanelProperties().setProperties(JPanelGeneralInformation.this.swingUiModelInterface.getEnergyAgent().getGeneralInformation());
 	}
 	
 	/* (non-Javadoc)

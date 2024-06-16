@@ -1,5 +1,6 @@
 package de.enflexit.ea.ui.planning;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -12,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.planning.Planner;
@@ -123,8 +125,7 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 		}
 		
 		String agentName = this.getEnergyAgent().getLocalName();
-		Window ownerWindow = ((Window)this.swingUiModelInterface).getOwner();
-		if (ownerWindow==null) ownerWindow = ((Window)this.swingUiModelInterface); 
+		Window ownerWindow = OwnerDetection.getOwnerWindowForComponent((Component)this.swingUiModelInterface);
 		
 		switch (this.getControlledSystemType()) {
 		case None:
