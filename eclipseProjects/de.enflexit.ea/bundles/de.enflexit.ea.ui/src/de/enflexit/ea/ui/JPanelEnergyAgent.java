@@ -226,10 +226,11 @@ public class JPanelEnergyAgent extends JPanel implements SwingUiModelInterface, 
 		PropertyEvent pEvent = (PropertyEvent) evt.getNewValue();
 		switch (pEvent) {
 		case UpdateView:
+		case UpdateTreeView:
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JPanelEnergyAgent.this.getJTreeJTabbedPane().reBuildView();
+					JPanelEnergyAgent.this.getJTreeJTabbedPane().reBuildTree();
 				}
 			});
 			break;

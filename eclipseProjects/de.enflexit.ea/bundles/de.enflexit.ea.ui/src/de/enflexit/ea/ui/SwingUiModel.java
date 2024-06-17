@@ -18,7 +18,8 @@ public class SwingUiModel implements SwingUiModelInterface {
 	
 	public enum PropertyEvent {
 		ShowOrFocusView,
-		UpdateView, 
+		UpdateView,
+		UpdateTreeView,
 		CloseView,
 		FocusEvent
 	}

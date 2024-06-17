@@ -177,7 +177,7 @@ public class JPanelPlannerInformation extends JTabbedPane implements PropertyCha
 		// --- Update the view again --------------------------------
 		try {
 			this.isPauseViewUpdater = true;
-			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateView);
+			this.swingUiModelInterface.firePropertyEvent(PropertyEvent.UpdateTreeView);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
