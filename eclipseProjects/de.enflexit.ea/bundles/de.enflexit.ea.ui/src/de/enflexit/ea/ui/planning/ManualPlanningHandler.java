@@ -188,7 +188,7 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 	 */
 	private void adjustEvaluationTimeRange() {
 		
-		boolean isDebug = true;
+		boolean isDebug = false;
 		
 		// --- Get current time settings --------------------------------------
 		long currTime = this.getEnergyAgent().getEnergyAgentIO().getTime();
@@ -220,11 +220,11 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 		// --- Apply evaluation time range to current system ------------------
 		switch (this.getControlledSystemType()) {
 		case TechnicalSystem:
-			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystem(this.getOptionModelController().getTechnicalSystem(), newStartTime, newEndTime, this.getOptionModelController());
+			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystem(this.getOptionModelController().getTechnicalSystem(), newStartTime, newEndTime, null);
 			break;
 			
 		case TechnicalSystemGroup:
-			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystemGroup(this.getGroupController().getTechnicalSystemGroup(), newStartTime, newEndTime, this.getGroupController());
+			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystemGroup(this.getGroupController().getTechnicalSystemGroup(), newStartTime, newEndTime, null);
 			break;
 		default:
 			break;
