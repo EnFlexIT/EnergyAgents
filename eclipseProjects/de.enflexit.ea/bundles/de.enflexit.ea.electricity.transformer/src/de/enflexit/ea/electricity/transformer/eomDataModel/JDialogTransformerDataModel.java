@@ -3,10 +3,10 @@ package de.enflexit.ea.electricity.transformer.eomDataModel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -49,7 +49,7 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 	 * @param owner the owner
 	 * @param staticModel the static model
 	 */
-	public JDialogTransformerDataModel(Frame owner, AbstractStaticModel staticModel) {
+	public JDialogTransformerDataModel(Window owner, AbstractStaticModel staticModel) {
 		super(owner, staticModel);
 		this.setTransformerDataModel((TransformerDataModel) staticModel.getStaticDataModel());
 		this.initialize();

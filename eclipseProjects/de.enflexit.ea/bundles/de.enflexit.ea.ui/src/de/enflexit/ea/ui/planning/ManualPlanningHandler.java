@@ -125,14 +125,17 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 
 		// --- UI is already open=> focus it ----------------------------------
 		if (this.getPlanningWindow()!=null) {
+			// --- Focus the Dialog -------------------
 			this.getPlanningWindow().toFront();
 			this.getPlanningWindow().requestFocus();
 			return;
 		}
 		
+		
+		// --- Create UI, according to the system under control ---------------
 		String agentName = this.getEnergyAgent().getLocalName();
 		Window ownerWindow = OwnerDetection.getOwnerWindowForComponent((Component)this.swingUiModelInterface);
-		
+				
 		switch (this.getControlledSystemType()) {
 		case None:
 			// --- Nothing to plan --------------------------------------------
@@ -146,6 +149,7 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			this.getOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
 			// --- Create and show UI -----------------------------------------
 			ApplicationDialog appDialog = new ApplicationDialog(ownerWindow, this.getOptionModelController(), MainPanelView.EvaluationView);
+			appDialog.getMainPanel().getMainPanelToolBar().setGroupIntegrated();
 			appDialog.setTitle("Planning for TechnicalSystem controlled by agent '" + agentName + "'");
 			this.setPlanningWindow(appDialog);
 			break;
@@ -156,15 +160,9 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			this.getGroupController().getGroupOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
 			// --- Create and show UI -----------------------------------------		
 			GroupApplicationDialog groupAppDialog = new GroupApplicationDialog(ownerWindow, this.getGroupController(), MainPanelView.EvaluationView);
+			groupAppDialog.getGroupMainPanel().getMainPanelToolBar().setGroupIntegrated();
 			groupAppDialog.setTitle("Planning for TechnicalSystemGroup controlled by agent '" + agentName + "'");
 			this.setPlanningWindow(groupAppDialog);
-			// --- Set GroupTree to required style ----------------------------
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					ManualPlanningHandler.this.getGroupController().setChangedAndNotifyObservers(new GroupNotification(Reason.GroupTreeViewChanged, GroupNodeCaptionStyle.Both));
-				}
-			});
 			break;
 		}
 		
@@ -182,7 +180,46 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			this.getPlanningWindow().setSize(newWidth, newHeigth);
 			WindowSizeAndPostionController.setJDialogPositionOnScreen(this.getPlanningWindow(), JDialogPosition.ScreenCenter);
 		}
+		
+		// --- Post processing tasks to be done in Swing ----------------------
+		if (this.getPlanningWindow()==null) return;
+		final Window eomOwnerDialog = this.getPlanningWindow();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				switch (ManualPlanningHandler.this.getControlledSystemType()) {
+				case None:
+					break;
+				case TechnicalSystem:
+					ManualPlanningHandler.this.showConfigurationHints(eomOwnerDialog);
+					break;
+				case TechnicalSystemGroup:
+					// --- Set GroupTree to required style --------------------
+					ManualPlanningHandler.this.getGroupController().setChangedAndNotifyObservers(new GroupNotification(Reason.GroupTreeViewChanged, GroupNodeCaptionStyle.Both));
+					ManualPlanningHandler.this.showConfigurationHints(eomOwnerDialog);
+					break;
+				}
+			}
+		});
 	}
+	/**
+	 * Show configuration hints.
+	 * @param owner the owner
+	 */
+	private void showConfigurationHints(Window owner) {
+		
+		String title = "To Do's for a manual planning !!!";
+		String msg = "Before starting a manual planning process, please cross check the folowing settings:\n";
+		msg += "- check if the evaluation time range is correct,\n";
+		msg += "- check if the initial system states are defined correctly,\n";
+		msg += "- check the current storage loads,\n";
+		msg += "- check if the required measurement data is available and\n";
+		msg += "- check if the required cost data is available.\n";
+		JOptionPane.showMessageDialog(owner, msg, title, JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	// TODO: Take previous planner operating state
+	
 	/**
 	 * Will adjust the evaluation time range according to the current time or the previous RT-planning end time.
 	 */
@@ -194,13 +231,21 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 		long currTime = this.getEnergyAgent().getEnergyAgentIO().getTime();
 		long currEvalStartTime = this.getCurrentOptionModelController().getEvaluationProcess().getStartTime();
 		long currEvalEndTime = this.getCurrentOptionModelController().getEvaluationProcess().getEndTime();
-		long currEvalTimeDiff = currEvalEndTime - currEvalStartTime;
+		
+		if (isDebug==true) {
+			String currTimeString = DateTimeHelper.getDateTimeAsString(currTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
+			String currEvalStartTimeString = DateTimeHelper.getDateTimeAsString(currEvalStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
+			String currEvalEndTimeString = DateTimeHelper.getDateTimeAsString(currEvalEndTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
+			System.err.println("[" + this.getClass().getSimpleName() + "] CurrTime: " + currTimeString + ", Eval Start: " + currEvalStartTimeString + ", Eval End: " + currEvalEndTimeString);
+		}
 		
 		// --- Is there something to do? --------------------------------------
 		if (currEvalStartTime > currTime) return;
+		if (currTime>=currEvalStartTime & currTime<=currEvalEndTime) return;
+		
 		
 		// --- Calculate new start time ---------------------------------------
-		long newStartTime = this.getNewStartTime(currTime, currEvalStartTime);
+		long newStartTime = this.getNewStartTime(currTime);
 		if (this.getEnergyAgent().getPlanningInformation().getRealTimePlannerResult()!=null) {
 			// --- Get current real time planning end time --------------------
 			long rtPlannerEndTime = this.getEnergyAgent().getPlanningInformation().getRealTimePlannerResult().getStopTime();
@@ -208,66 +253,56 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 				newStartTime = rtPlannerEndTime;
 			}
 		}
-		long newEndTime = newStartTime + currEvalTimeDiff;
+		
+		// --- Calculate end time ---------------------------------------------
+		long defaultTimeDiff = DateTimeHelper.MILLISECONDS_FOR_HOUR * 12;
+		long newEndTime = newStartTime + defaultTimeDiff;
 		
 		if (isDebug==true) {
-			String currTimeString = DateTimeHelper.getDateTimeAsString(currTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
-			String currEvalStartTimeString = DateTimeHelper.getDateTimeAsString(currEvalStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
-			String newTimeString = DateTimeHelper.getDateTimeAsString(newStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
-			System.err.println("[" + this.getClass().getSimpleName() + "] CurrTime: " + currTimeString + ", Eval Start: " + currEvalStartTimeString + ", New Time: " + newTimeString);
+			String newStartTimeString = DateTimeHelper.getDateTimeAsString(newStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
+			String newEndTimeString = DateTimeHelper.getDateTimeAsString(newEndTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
+			System.err.println("[" + this.getClass().getSimpleName() + "] => New Eval Start: " + newStartTimeString + ", New Eval End: " + newEndTimeString);
+			System.err.println();
 		}
 		
 		// --- Apply evaluation time range to current system ------------------
 		switch (this.getControlledSystemType()) {
 		case TechnicalSystem:
-			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystem(this.getOptionModelController().getTechnicalSystem(), newStartTime, newEndTime, null);
+			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystem(this.getOptionModelController().getTechnicalSystem(), newStartTime, newEndTime, this.getOptionModelController());
 			break;
-			
 		case TechnicalSystemGroup:
-			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystemGroup(this.getGroupController().getTechnicalSystemGroup(), newStartTime, newEndTime, null);
+			EvaluationTimeRangeHelper.adjustEvaluationTimeForTechnicalSystemGroup(this.getGroupController().getTechnicalSystemGroup(), newStartTime, newEndTime, this.getGroupController());
 			break;
 		default:
 			break;
 		}
 	}
-	
 	/**
 	 * Return a new start time.
 	 *
 	 * @param currTime the current time
-	 * @param currEvalStartTime the current evaluation start time
 	 * @return the new start time
 	 */
-	private long getNewStartTime(long currTime, long currEvalStartTime) {
+	private long getNewStartTime(long currTime) {
 		
 		boolean isDebug = false;
-		long newTime = 0;
 		
 		// --- Move time frame ahead current time -----------------------------
-		long moveTimeWith = DateTimeHelper.MILLISECONDS_FOR_MONTH_30; // --- Month = default ---
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(GlobalInfo.getInstance().getZoneIdOfApplication()));
-		cal.setTime(new Date(currEvalStartTime));
-		if (cal.get(Calendar.MILLISECOND)!=0) {
-			moveTimeWith = cal.get(Calendar.MILLISECOND);
-		} else if (cal.get(Calendar.SECOND)!=0) {
-			moveTimeWith = DateTimeHelper.MILLISECONDS_FOR_SECOND * cal.get(Calendar.SECOND);
-		} else if (cal.get(Calendar.MINUTE)!=0) {
-			moveTimeWith = DateTimeHelper.MILLISECONDS_FOR_MINUTE * cal.get(Calendar.MINUTE);			
-		} else if (cal.get(Calendar.HOUR)!=0) {
-			moveTimeWith = DateTimeHelper.MILLISECONDS_FOR_HOUR;
-		}
+		cal.setTime(new Date(currTime));
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
 		
-		// --- Calculate new time ---------------------------------------------
-		long offsetFactor = (currTime - currEvalStartTime) / moveTimeWith; 
-		newTime = currEvalStartTime + (offsetFactor * moveTimeWith); 
-		while (newTime<=currTime) {
-			newTime += moveTimeWith;	
-		}
+		// --- Add one hour to that time --------------------------------------
+		cal.add(Calendar.HOUR, 1);
+		
+		long newTime = cal.getTimeInMillis();
+		
 		if (isDebug==true) {
 			String currTimeString = DateTimeHelper.getDateTimeAsString(currTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
-			String currEvalStartTimeString = DateTimeHelper.getDateTimeAsString(currEvalStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
 			String newTimeString = DateTimeHelper.getDateTimeAsString(newTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
-			System.err.println("[" + this.getClass().getSimpleName() + "] CurrTime: " + currTimeString + ", Eval Start: " + currEvalStartTimeString + ", New Time: " + newTimeString);
+			System.err.println("[" + this.getClass().getSimpleName() + "] CurrTime: " + currTimeString + " => New Time: " + newTimeString);
 		}
 		return newTime;
 	}

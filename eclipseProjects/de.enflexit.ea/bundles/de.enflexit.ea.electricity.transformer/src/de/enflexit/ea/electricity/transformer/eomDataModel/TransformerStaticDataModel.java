@@ -1,6 +1,6 @@
 package de.enflexit.ea.electricity.transformer.eomDataModel;
 
-import java.awt.Frame;
+import java.awt.Window;
 import java.io.Serializable;
 
 import de.enflexit.ea.electricity.transformer.TransformerDataModel;
@@ -107,10 +107,10 @@ public class TransformerStaticDataModel extends AbstractStaticModel {
 	}
 	
 	/* (non-Javadoc)
-	 * @see energy.optionModel.gui.sysVariables.AbstractStaticModel#getNewModelDialog(java.awt.Frame)
+	 * @see energy.optionModel.gui.sysVariables.AbstractStaticModel#getNewModelDialog(java.awt.Window)
 	 */
 	@Override
-	public AbstractStaticModelDialog getNewModelDialog(Frame owner) {
+	public AbstractStaticModelDialog getNewModelDialog(Window owner) {
 		return new JDialogTransformerDataModel(owner, this);
 	}
 
