@@ -11,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
@@ -26,11 +27,17 @@ import de.enflexit.ea.ui.SwingUiModelInterface;
 import energy.GlobalInfo;
 import energy.OptionModelController;
 import energy.helper.EvaluationTimeRangeHelper;
+import energy.optionModel.GroupMember;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemGroup;
+import energy.optionModel.TechnicalSystemStateEvaluation;
+import energy.optionModel.TechnicalSystemStateTime;
 import energy.optionModel.gui.ApplicationDialog;
 import energy.optionModel.gui.ApplicationFrame;
 import energy.optionModel.gui.MainPanel.MainPanelView;
 import energy.planning.EomPlannerEvent;
 import energy.planning.EomPlannerEvent.PlannerEventType;
+import energy.planning.EomPlannerResult;
 import energygroup.GroupController;
 import energygroup.GroupNotification;
 import energygroup.GroupNotification.Reason;
@@ -51,6 +58,8 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 	private WindowAdapter planningFrameAdapter;
 
 	private boolean isDisposed;
+	private long defaultEvaluationDurationMillis = DateTimeHelper.MILLISECONDS_FOR_HOUR * 12; // 12 hours
+	
 	
 	/**
 	 * Instantiates a new manual planning handler.
@@ -145,7 +154,9 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			
 		case TechnicalSystem:
 			// --- A TechnicalSystem under control ----------------------------
-			this.adjustEvaluationTimeRange();
+			if (this.adjustInitialStateToRealTimePlanningResult()==false) {
+				this.adjustEvaluationTimeRange();
+			}
 			this.getOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
 			// --- Create and show UI -----------------------------------------
 			ApplicationDialog appDialog = new ApplicationDialog(ownerWindow, this.getOptionModelController(), MainPanelView.EvaluationView);
@@ -156,7 +167,9 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			
 		case TechnicalSystemGroup:
 			// --- A TechnicalSystemGroup under control -----------------------
-			this.adjustEvaluationTimeRange();
+			if (this.adjustInitialStateToRealTimePlanningResult()==false) {
+				this.adjustEvaluationTimeRange();
+			}
 			this.getGroupController().getGroupOptionModelController().getEvaluationProcess().addEvaluationProcessListener(this);
 			// --- Create and show UI -----------------------------------------		
 			GroupApplicationDialog groupAppDialog = new GroupApplicationDialog(ownerWindow, this.getGroupController(), MainPanelView.EvaluationView);
@@ -202,6 +215,7 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 			}
 		});
 	}
+	
 	/**
 	 * Show configuration hints.
 	 * @param owner the owner
@@ -218,7 +232,78 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 		JOptionPane.showMessageDialog(owner, msg, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	// TODO: Take previous planner operating state
+	
+	/**
+	 * Adjusts the initial states to the last real time planning result.
+	 * @return true, if successful
+	 */
+	private boolean adjustInitialStateToRealTimePlanningResult() {
+		
+		// --- Check if a real-time result is available -------------
+		if (this.getEnergyAgent().getPlanningInformation().getRealTimePlannerResult()==null) return false;
+		
+		// --- Get the planner result -------------------------------
+		EomPlannerResult eomResult = this.getEnergyAgent().getPlanningInformation().getRealTimePlannerResult();
+		long timeFrom = eomResult.getStopTime();
+		
+		// --- Apply evaluation time range to current system ------------------
+		switch (this.getControlledSystemType()) {
+		case TechnicalSystem:
+			this.adjustInitialStateToRealTimePlanningResult(eomResult, timeFrom, this.getOptionModelController().getTechnicalSystem(), null);
+			break;
+		case TechnicalSystemGroup:
+			this.adjustInitialStateToRealTimePlanningResult(eomResult, timeFrom, this.getGroupController().getTechnicalSystemGroup(), null);
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+	/**
+	 * Adjust the initial state of the specified TechnicalSystem to real time planning result.
+	 *
+	 * @param eomResult the EomPlannerResult that represents the real-time planner result
+	 * @param time the time to use
+	 * @param ts the TechnicalSystem to set
+	 * @param networkID the network ID
+	 */
+	private void adjustInitialStateToRealTimePlanningResult(EomPlannerResult eomResult, long time, TechnicalSystem ts, String networkID) {
+		
+		if (ts.getEvaluationSettings()==null)  return;
+		
+		// --- Adjust initial state -----------------------
+		TechnicalSystemStateEvaluation tsseResult = eomResult.getTechnicalSystemStateEvaluation(networkID, time);
+		if (tsseResult==null) return;
+		
+		List<TechnicalSystemStateTime> stateList = ts.getEvaluationSettings().getEvaluationStateList();
+		stateList.set(0, tsseResult);
+		// --- Adjust time of final state -----------------
+		stateList.get(stateList.size()-1).setGlobalTime(tsseResult.getGlobalTime() + this.defaultEvaluationDurationMillis);
+		
+	}
+	/**
+	 * Adjust the initial state of the specified TechnicalSystemGroup to real time planning result.
+	 *
+	 * @param eomResult the EomPlannerResult that represents the real-time planner result
+	 * @param time the time to use
+	 * @param ts the TechnicalSystem to set
+	 * @param networkID the network ID
+	 */
+	private void adjustInitialStateToRealTimePlanningResult(EomPlannerResult eomResult, long time, TechnicalSystemGroup tsg, String networkID) {
+		
+		// --- Adjust top level TechnicalSystem ---------------------
+		this.adjustInitialStateToRealTimePlanningResult(eomResult, time, tsg.getTechnicalSystem(), networkID);
+		
+		// --- Adjust child systems ---------------------------------
+		for (GroupMember gm : tsg.getGroupMember()) {
+			String subNetworkID = gm.getNetworkID();
+			if (gm.getControlledSystem().getTechnicalSystem()!=null) {
+				this.adjustInitialStateToRealTimePlanningResult(eomResult, time, gm.getControlledSystem().getTechnicalSystem(), subNetworkID);
+			} else if (gm.getControlledSystem().getTechnicalSystemGroup()!=null) {
+				this.adjustInitialStateToRealTimePlanningResult(eomResult, time, gm.getControlledSystem().getTechnicalSystemGroup(), subNetworkID);
+			}
+		}
+	}
 	
 	/**
 	 * Will adjust the evaluation time range according to the current time or the previous RT-planning end time.
@@ -255,9 +340,7 @@ public class ManualPlanningHandler extends Planner implements PropertyChangeList
 		}
 		
 		// --- Calculate end time ---------------------------------------------
-		long defaultTimeDiff = DateTimeHelper.MILLISECONDS_FOR_HOUR * 12;
-		long newEndTime = newStartTime + defaultTimeDiff;
-		
+		long newEndTime = newStartTime + this.defaultEvaluationDurationMillis;
 		if (isDebug==true) {
 			String newStartTimeString = DateTimeHelper.getDateTimeAsString(newStartTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
 			String newEndTimeString = DateTimeHelper.getDateTimeAsString(newEndTime, DateTimeHelper.DEFAULT_TIME_FORMAT_PATTERN, GlobalInfo.getInstance().getZoneIdOfApplication());
