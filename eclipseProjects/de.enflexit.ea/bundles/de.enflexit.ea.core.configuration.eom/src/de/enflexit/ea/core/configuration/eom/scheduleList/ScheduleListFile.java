@@ -2,6 +2,7 @@ package de.enflexit.ea.core.configuration.eom.scheduleList;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -38,7 +39,7 @@ import energy.persistence.ScheduleList_StorageHandler;
 public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 	
 	public static final String PROPERTIES_KEY_SCHEDULES_FOLDER = "eomConfigService.csvSchedulesFolder";
-
+	
 	/**
 	 * If just a file name is specified, it will be assumed to be located in this sub directory of the setup's EOM files directory.
 	 */
@@ -118,6 +119,15 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 						String fullPath = storageSettings.getCurrentFile().getPath();
 						String fileName = fullPath.substring(fullPath.lastIndexOf(File.separator)+1);
 						return fileName;
+					} else if (storageSettings.getCsvScheduleFilesList()!=null) {
+						ArrayList<String> fileNames = new ArrayList<>();
+						for (File file : storageSettings.getCsvScheduleFilesList()) {
+							String fullPath = file.getPath();
+							String fileName = fullPath.substring(fullPath.lastIndexOf(File.separator)+1);
+							fileNames.add(fileName);
+						}
+						
+						return String.join(EomControllerStorageSettings.MULTIPLE_FILES_SEPARATOR, fileNames);
 					}
 					
 				} else {
@@ -161,95 +171,117 @@ public class ScheduleListFile implements SetupConfigurationAttribute<String> {
 		
 		if (newValue!=null && newValue instanceof String && ((String)newValue).isEmpty()==false) {
 			
-			String fileNameString = (String) newValue;
-			if (fileNameString.contains(File.separator)==false) {
-				// --- File name only, assume default path ----------
+			String stringFromConfig = (String) newValue;
+			
+			String[] fileNames = stringFromConfig.split(EomControllerStorageSettings.MULTIPLE_FILES_SEPARATOR);
+			
+			if (fileNames.length>1) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Breakpoint!");
+			}
+			
+			ArrayList<File> filesList = new ArrayList<>();
+			
+			for (int i=0; i<fileNames.length; i++) {
+				String fileNameString = fileNames[i];
+				File scheduleListFile;
 				
-				Path scheduleListPath = this.getSchedulesFolderPath().resolve(fileNameString);
-				
-				File scheduleListFile = scheduleListPath.toFile();
-				
-				if (scheduleListFile.exists()) {
-					if (cComponent instanceof ConfigurableEomComponent) {
-						// --- Handle for aggregation sub systems -------------
-						ConfigurableEomComponent eomComponent = (ConfigurableEomComponent) cComponent;
-						
-						GroupMember groupMember = this.getScheduleListGroupMember(eomComponent);
-						
-						if (groupMember!=null) {
-						
-							// --- Set the parent TSG to partitioned saving, if necessary -------------
-							TechnicalSystemGroup parentTSG = this.getParentTechnicalSystemGroup(cComponent);
-							if (parentTSG!=null && parentTSG.isPartitionedGroupModel()==false) {
-								parentTSG.setPartitionedGroupModel(true);
-							}
-							
-							File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
-							
-							EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
-							storageSettings.setSaveGroupMemberModelAsLoaded(true);
-							storageSettings.setCurrentFile(scheduleListFile, ScheduleList_StorageHandler.class);
-							
-							File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
-							if (csvStructureFile!=null && csvStructureFile.exists()) {
-								storageSettings.setCsvStructureFile(csvStructureFile);
-							}
-							
-							groupMember.getControlledSystem().getStorageSettings().clear();
-							groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(defaultAggregationFile.getParentFile()));
-							
-							ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-							ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
-							groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
-						}
-						
-					} else {
-						// --- Handle stand-alone schedule list ---------------
-						Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
-						Path scheduleListRelativePath = projectFolderPath.relativize(scheduleListPath);
-						
-						// --- Get or create the storage settings TreeMap ----- 
-						TreeMap<String, String> storageSettings = cComponent.getNetworkComponent().getDataModelStorageSettings();
-						if (storageSettings==null) {
-							storageSettings = new TreeMap<>();
-						}
-						
-						// --- Remember the previously configured blueprint ID
-						String blueprintID = storageSettings.get(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID); 
-						
-						storageSettings.clear();
-						
-						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
-						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, scheduleListRelativePath.toString());
-						storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
-						
-						
-						// --- If a blueprint ID was set, set it again --------
-						if (blueprintID!=null) {
-							storageSettings.put(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, blueprintID);
-						}
-						
-						
-						// --- Find and set the correct CSV structure file --------------
-						File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
-						if (csvStructureFile!=null && csvStructureFile.exists()) {
-							storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_CSV_SRTUCTURE_FILE, csvStructureFile.getName());
-						}
-						
-						ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
-						slsh.setCsvStructureFile(csvStructureFile);
-						ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
-						cComponent.getNetworkComponent().setDataModel(scheduleList);
-						
-					}
+				if (fileNameString.contains(File.separator)==false) {
+					// --- File name only, assume default path ----------------
+					scheduleListFile = this.getSchedulesFolderPath().resolve(fileNameString).toFile();
+				} else {
+					// --- File name contains path, assume absolute -----------
+					scheduleListFile = new File(fileNameString);
+				}
 					
+				if (scheduleListFile.exists()) {
+					filesList.add(scheduleListFile);
 				} else {
 					System.err.println("[" + this.getClass().getSimpleName() + "] Schedule list file not found - expecting it at " + scheduleListFile.getPath());
 				}
+					
+			}
+			
+			if (cComponent instanceof ConfigurableEomComponent) {
+				// --- Handle for aggregation sub systems -------------
+				ConfigurableEomComponent eomComponent = (ConfigurableEomComponent) cComponent;
+				
+				GroupMember groupMember = this.getScheduleListGroupMember(eomComponent);
+				
+				if (groupMember!=null) {
+					
+					// --- Set the parent TSG to partitioned saving, if necessary -------------
+					TechnicalSystemGroup parentTSG = this.getParentTechnicalSystemGroup(cComponent);
+					if (parentTSG!=null && parentTSG.isPartitionedGroupModel()==false) {
+						parentTSG.setPartitionedGroupModel(true);
+					}
+					
+					File defaultAggregationFile = EomDataModelStorageHandler.getFileSuggestion(Application.getProjectFocused(), cComponent.getNetworkComponent());
+					
+					EomControllerStorageSettings storageSettings = new EomControllerStorageSettings();
+					storageSettings.setSaveGroupMemberModelAsLoaded(true);
+					storageSettings.setCsvScheduleFilesList(filesList, ScheduleList_StorageHandler.class);
+					
+					File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), filesList.get(0));
+					if (csvStructureFile!=null && csvStructureFile.exists()) {
+						storageSettings.setCsvStructureFile(csvStructureFile);
+					}
+					
+					groupMember.getControlledSystem().getStorageSettings().clear();
+					groupMember.getControlledSystem().getStorageSettings().addAll(storageSettings.toControlledSystemStorageSettings(defaultAggregationFile.getParentFile()));
+					
+					ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
+					ScheduleList scheduleList = slsh.loadModelInstance(storageSettings);
+					
+					groupMember.getControlledSystem().setTechnicalSystemSchedules(scheduleList);
+				}
+				
+			} else {
+				// --- Handle stand-alone schedule list ---------------
+				//TODO implement support for multiple files
+
+				File scheduleListFile = filesList.get(0);
+				
+				Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
+				Path scheduleListRelativePath = projectFolderPath.relativize(scheduleListFile.toPath());
+				
+				// --- Get or create the storage settings TreeMap ----- 
+				TreeMap<String, String> storageSettings = cComponent.getNetworkComponent().getDataModelStorageSettings();
+				if (storageSettings==null) {
+					storageSettings = new TreeMap<>();
+				}
+				
+				// --- Remember the previously configured blueprint ID
+				String blueprintID = storageSettings.get(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID); 
+				
+				storageSettings.clear();
+				
+				storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
+				storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, scheduleListRelativePath.toString());
+				storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
+				
+				
+				// --- If a blueprint ID was set, set it again --------
+				if (blueprintID!=null) {
+					storageSettings.put(EomSetupConfiguration.STORAGE_SETTINGS_KEY_SYSTEM_BLUEPRINT_ID, blueprintID);
+				}
+				
+				
+				// --- Find and set the correct CSV structure file --------------
+				File csvStructureFile = this.getCsvStructureFile(cComponent.getNetworkComponent(), scheduleListFile);
+				if (csvStructureFile!=null && csvStructureFile.exists()) {
+					storageSettings.put(EomDataModelStorageHandler.EOM_SETTING_CSV_SRTUCTURE_FILE, csvStructureFile.getName());
+				}
+				
+				ScheduleList_StorageHandler slsh = new ScheduleList_StorageHandler();
+				slsh.setCsvStructureFile(csvStructureFile);
+				ScheduleList scheduleList = slsh.loadScheduleListFromCSVFile(scheduleListFile, null);
+				cComponent.getNetworkComponent().setDataModel(scheduleList);
 				
 			}
+			
 		}
 	}
+	
 	
 	/**
 	 * Gets the parent technical system group of a .
