@@ -35,7 +35,7 @@
 		<module>de.enflexit.ea.lib.matrixCalculations</module>
 		<module>de.enflexit.ea.ops</module>
 		<module>de.enflexit.ea.prosumer</module>
-		<module>de.enflexit.ea.simbench</module>
+		<module>de.enflexit.ea.topologies</module>
 		<module>de.enflexit.ea.ui</module>
 	</modules>
 </project>
