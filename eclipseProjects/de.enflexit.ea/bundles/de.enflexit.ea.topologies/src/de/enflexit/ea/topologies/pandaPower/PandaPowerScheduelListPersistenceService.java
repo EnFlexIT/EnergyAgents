@@ -148,43 +148,43 @@ public class PandaPowerScheduelListPersistenceService implements PersistenceServ
 	
 	/**
 	 * Provides an individual, SimBench specific load method 
-	 * @param simBenchFileSelected any file out of the SimBench source directory (e.g ExternalNet.csv) 
-	 * @param sbFileSelection the source file name for the element identification (Node.csv or Load.csv) 
-	 * @param sbRowIndexSelection the row index for element identification
+	 * @param ppFileSelected any file out of the SimBench source directory (e.g ExternalNet.csv) 
+	 * @param ppTable the source file name for the element identification (Node.csv or Load.csv) 
+	 * @param ppTableRowIndexSelection the row index for element identification
 	 * @param scheduleTimeRange the {@link ScheduleTimeRange} to apply during the load process 
 	 * @return the ScheduelList as specified
 	 */
-	public ScheduleList loadScheduleList(File simBenchFileSelected, String sbFileSelection, int sbRowIndexSelection, ScheduleTimeRange scheduleTimeRange) {
+	public ScheduleList loadScheduleList(File ppFileSelected, String ppTable, int ppTableRowIndexSelection, ScheduleTimeRange scheduleTimeRange) {
 		
 		// --------------------------------------------------------------------
 		// --- Ensure that the SimBench model will be loaded ------------------
 		// --------------------------------------------------------------------
-		boolean showUserSelectionDialog = (sbFileSelection==null && sbRowIndexSelection==-1);
-		PandaPowerFileStore.getInstance().setSimBenchDirectoryFile(simBenchFileSelected, showUserSelectionDialog);
+		boolean showUserSelectionDialog = (ppTable==null && ppTableRowIndexSelection==-1);
+		PandaPowerFileStore.getInstance().setPandaPowerDirectoryFile(ppFileSelected, showUserSelectionDialog);
 		if (showUserSelectionDialog==true) {
 			// --- ... let the user select ------------------------------------
 			this.setScheduleTimeRange(scheduleTimeRange);
 			this.doUserCsvSelection();
 			if (this.getCsvSelection()==null) return null;
 			
-			sbFileSelection     = this.getCsvSelection().getSelectedFile();
-			sbRowIndexSelection = this.getCsvSelection().getSelectedModelRows()[0];
+			ppTable     = this.getCsvSelection().getSelectedFile();
+			ppTableRowIndexSelection = this.getCsvSelection().getSelectedModelRows()[0];
 			scheduleTimeRange   = this.getScheduleTimeRange();
 		}
-		if (sbFileSelection==null && sbRowIndexSelection==-1) return null;
+		if (ppTable==null && ppTableRowIndexSelection==-1) return null;
 		
 		// --------------------------------------------------------------------
 		// --- Load the ScheduleList from the SimBenchFileStoreReader ---------
 		// --------------------------------------------------------------------
 		ScheduleList scheduleList = null;
 		PandaPowerFileStoreReader fileStoreReader = new PandaPowerFileStoreReader();
-		if (sbFileSelection.equals(PandaPowerFileStore.SIMBENCH_Node)==true) {
-			scheduleList = fileStoreReader.getScheduleListByNode(sbRowIndexSelection, scheduleTimeRange);
-		} else if (sbFileSelection.equals(PandaPowerFileStore.SIMBENCH_Load)==true) {
-			scheduleList = fileStoreReader.getScheduleListByLoad(sbRowIndexSelection, scheduleTimeRange);
+		if (ppTable.equals(PandaPowerFileStore.PANDA_Bus)==true) {
+			scheduleList = fileStoreReader.getScheduleListByNode(ppTableRowIndexSelection, scheduleTimeRange);
+		} else if (ppTable.equals(PandaPowerFileStore.PANDA_Load)==true) {
+			scheduleList = fileStoreReader.getScheduleListByLoad(ppTableRowIndexSelection, scheduleTimeRange);
 		}
 		// --- Set the load description ---------------------------------------
-		if (scheduleList!=null) scheduleList.setDescription(this.getLoadDescription(sbFileSelection, sbRowIndexSelection));
+		if (scheduleList!=null) scheduleList.setDescription(this.getLoadDescription(ppTable, ppTableRowIndexSelection));
 		return scheduleList;
 	}
 	
@@ -251,8 +251,8 @@ public class PandaPowerScheduelListPersistenceService implements PersistenceServ
 						String title = "Missing selection";
 						String message = "";
 						String fileSelected = selection.getSelectedFile();
-						if (message.isEmpty()==true && fileSelected.equals(PandaPowerFileStore.SIMBENCH_Node)==false && fileSelected.equals(PandaPowerFileStore.SIMBENCH_Load)==false) {
-							message = "Please, select the node (" + PandaPowerFileStore.SIMBENCH_Node + ") or the load (" + PandaPowerFileStore.SIMBENCH_Load + ") that is to be imported!"; 
+						if (message.isEmpty()==true && fileSelected.equals(PandaPowerFileStore.PANDA_Bus)==false && fileSelected.equals(PandaPowerFileStore.PANDA_Load)==false) {
+							message = "Please, select the node (" + PandaPowerFileStore.PANDA_Bus + ") or the load (" + PandaPowerFileStore.PANDA_Load + ") that is to be imported!"; 
 						}
 						if (message.isEmpty()==true && (selection.getSelectedModelRows()==null || selection.getSelectedModelRows().length==0 )) {
 							message = "Please, select the node or the load row that is to be imported!"; 
@@ -260,7 +260,7 @@ public class PandaPowerScheduelListPersistenceService implements PersistenceServ
 						if (message.isEmpty()==true && selection.getSelectedModelRows().length>1) {
 							message = "Please, only select a single row that is to be imported!"; 
 						}
-						if (message.isEmpty()==true && fileSelected.equals(PandaPowerFileStore.SIMBENCH_Node)==true && new PandaPowerFileStoreReader().isCableCabinetNodeSelection(selection.getSelectedModelRows()[0])) {
+						if (message.isEmpty()==true && fileSelected.equals(PandaPowerFileStore.PANDA_Bus)==true && new PandaPowerFileStoreReader().isCableCabinetNodeSelection(selection.getSelectedModelRows()[0])) {
 							message = "The row selected describes a cable cabinet and thus provides no further profile information!"; 
 						}
 						
@@ -281,7 +281,7 @@ public class PandaPowerScheduelListPersistenceService implements PersistenceServ
 			preview.validate();
 			
 			// --- Set focus to 'node' file -----------------------------------
-			preview.setTabFocusToFile(PandaPowerFileStore.SIMBENCH_Node);
+			preview.setTabFocusToFile(PandaPowerFileStore.PANDA_Bus);
 			
 			// --- Set the dialog to appear modal -----------------------------
 			preview.setModal(true);

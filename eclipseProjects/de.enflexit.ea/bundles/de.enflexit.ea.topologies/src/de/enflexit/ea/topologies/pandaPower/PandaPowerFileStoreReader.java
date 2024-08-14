@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Vector;
 
 import de.enflexit.common.csv.CsvDataController;
+import de.enflexit.ea.topologies.BundleHelper;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.domain.DefaultDomainModelElectricity.CurrentType;
 import energy.domain.DefaultDomainModelElectricity.Phase;
@@ -61,29 +62,34 @@ public class PandaPowerFileStoreReader {
 	 */
 	public ScheduleList getScheduleListByNode(int rowSelected, ScheduleTimeRange scheduleTimeRange) {
 		
-		String nodeID = this.getNodeID(rowSelected);
+		Integer nodeIndex = this.getNodeIndex(rowSelected);
+		
+		HashMap<String, Object> nodeRowHashMapNodeA = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index), nodeIndex.toString());
+		// --- Get the voltage level ----------------------
+		String netCompName = nodeRowHashMapNodeA.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_Name)).toString();
+		double voltageLevel = BundleHelper.parseDouble(nodeRowHashMapNodeA.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel))) * 1000;
+		boolean isTriPhaseConfig = PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel);
 
 		// --- Get the profile and load factors -----------
-		HashMap<String, String> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_Load, "node", nodeID);
-		String profile = loadRowHashMap.get("profile");
-		double pLoadFactor = this.parseDouble(loadRowHashMap.get("pLoad"));
-		double qLoadFactor = this.parseDouble(loadRowHashMap.get("qLoad"));
+		HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, PandaPowerNamingMap.getColumnName(ColumnName.Load_Bus), nodeIndex);
+		String loadName = loadRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Load_Name)).toString();
+		Double pLoadFactor = BundleHelper.parseDouble(loadRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Load_p_mw)));
+		Double qLoadFactor = BundleHelper.parseDouble(loadRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Load_q_mvar)));
 		
 		// --- Get the profile and load factors for PV ----
-		HashMap<String, String> pvRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_RES, "node", nodeID);
-		String profilePV = pvRowHashMap==null ? null : pvRowHashMap.get("profile");
-		double pLoadFactorPV = pvRowHashMap==null ? 0.0 : this.parseDouble(pvRowHashMap.get("pRES"));
-		double qLoadFactorPV = pvRowHashMap==null ? 0.0 : this.parseDouble(pvRowHashMap.get("qRES"));
+		HashMap<String, Object> pvRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_RES, "node", nodeIndex);
+		String profilePV = pvRowHashMap==null ? null : pvRowHashMap.get("profile").toString();
+		Double pLoadFactorPV = pvRowHashMap==null ? 0.0 : BundleHelper.parseDouble(pvRowHashMap.get("pRES"));
+		Double qLoadFactorPV = pvRowHashMap==null ? 0.0 : BundleHelper.parseDouble(pvRowHashMap.get("qRES"));
 
-		// --- Get the voltage level ----------------------
-		HashMap<String, String> nodeRowHashMapNodeA = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_Node, "id", nodeID);
-		double voltageLevel = this.parseDouble(nodeRowHashMapNodeA.get("vmR")) * 1000;
-		boolean isTriPhaseConfig = PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel);
 				
 		// --- Create ScheduleList ------------------------
-		Schedule schedule = this.getScheduleOfProfile(profile, pLoadFactor, qLoadFactor, profilePV, pLoadFactorPV, qLoadFactorPV, scheduleTimeRange, isTriPhaseConfig);
-		ScheduleList sl = this.createScheduleList("Profile " + profile, nodeID, voltageLevel);
-		sl.getSchedules().add(schedule);
+		ScheduleList sl = this.createScheduleList("Profile " + loadName, netCompName, voltageLevel);
+		Schedule schedule = null;
+		if (pLoadFactor!=null && qLoadFactor!=null) {
+			schedule = this.getScheduleOfProfile(loadName, pLoadFactor, qLoadFactor, profilePV, pLoadFactorPV, qLoadFactorPV, scheduleTimeRange, isTriPhaseConfig);
+			sl.getSchedules().add(schedule);
+		}
 		return sl;
 	}
 	/**
@@ -94,24 +100,24 @@ public class PandaPowerFileStoreReader {
 	 */
 	public ScheduleList getScheduleListByLoad(int rowSelected, ScheduleTimeRange scheduleTimeRange) {
 		
-		String loadID = this.getLoadID(rowSelected);
+		Integer loadIndex = this.getLoadIndex(rowSelected);
 
 		// --- Get the profile and load factors -----------
-		HashMap<String, String> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_Load, "id", loadID);
-		String profile = loadRowHashMap.get("profile");
-		double pLoadFactor = this.parseDouble(loadRowHashMap.get("pLoad"));
-		double qLoadFactor = this.parseDouble(loadRowHashMap.get("qLoad"));
+		HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, "id", loadIndex);
+		String profile = loadRowHashMap.get("profile").toString();
+		double pLoadFactor = BundleHelper.parseDouble(loadRowHashMap.get("pLoad"));
+		double qLoadFactor = BundleHelper.parseDouble(loadRowHashMap.get("qLoad"));
 		
 		// --- Get the profile and load factors for PV ----
-		String nodeID = loadRowHashMap.get("node");
-		HashMap<String, String> pvRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_RES, "node", nodeID);
-		String profilePV = pvRowHashMap==null ? null : pvRowHashMap.get("profile");
-		double pLoadFactorPV = pvRowHashMap==null ? 0.0 : this.parseDouble(pvRowHashMap.get("pRES"));
-		double qLoadFactorPV = pvRowHashMap==null ? 0.0 : this.parseDouble(pvRowHashMap.get("qRES"));
+		Integer nodeID = Integer.parseInt(loadRowHashMap.get("node").toString());
+		HashMap<String, Object> pvRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_RES, "node", nodeID);
+		String profilePV = pvRowHashMap==null ? null : pvRowHashMap.get("profile").toString();
+		double pLoadFactorPV = pvRowHashMap==null ? 0.0 : BundleHelper.parseDouble(pvRowHashMap.get("pRES"));
+		double qLoadFactorPV = pvRowHashMap==null ? 0.0 : BundleHelper.parseDouble(pvRowHashMap.get("qRES"));
 		
 		// --- Get the voltage level ----------------------
-		HashMap<String, String> nodeRowHashMapNodeA = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_Node, "id", nodeID);
-		double voltageLevel = this.parseDouble(nodeRowHashMapNodeA.get("vmR")) * 1000;
+		HashMap<String, Object> nodeRowHashMapNodeA = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, "id", nodeID);
+		double voltageLevel = BundleHelper.parseDouble(nodeRowHashMapNodeA.get("vmR")) * 1000;
 		boolean isTriPhaseConfig = PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel);
 				
 		// --- Create ScheduleList ------------------------
@@ -237,8 +243,10 @@ public class PandaPowerFileStoreReader {
 		// --------------------------------------------------------------------
 		// --- Get time series from load profile ------------------------------
 		CsvDataController loadProfileCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.SIMBENCH_LoadProfile);
-		Vector<Vector<String>> loadProfileDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_LoadProfile);
-
+		Vector<Vector<Object>> loadProfileDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_LoadProfile);
+		if (loadProfileCsvController==null || loadProfileDataVector==null) return null;
+		
+		
 		String colNameTime = "time";
 		String colNamePLoad = profile + "_pload";
 		String colNameQLoad = profile + "_qload";
@@ -250,7 +258,7 @@ public class PandaPowerFileStoreReader {
 		// --------------------------------------------------------------------
 		// --- Get time series from PV profile --------------------------------
 		CsvDataController pvProfileCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.SIMBENCH_RESProfile);
-		Vector<Vector<String>> pvProfileDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_RESProfile);
+		Vector<Vector<Object>> pvProfileDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_RESProfile);
 
 		String colNamePLoadPV = profilePV;
 		String colNameQLoadPV = profilePV;
@@ -277,10 +285,10 @@ public class PandaPowerFileStoreReader {
 		int iMax = loadProfileDataVector.size();
 		rowLoop: for (int i = 0; i < iMax; i++) {
 
-			Vector<String> row = loadProfileDataVector.get(i);
-			String stringTime = row.get(ciTime);
-			String stringPLoad = row.get(ciPLoad);
-			String stringQLoad = row.get(ciQLoad);
+			Vector<Object> row = loadProfileDataVector.get(i);
+			String stringTime = row.get(ciTime).toString();
+			String stringPLoad = row.get(ciPLoad).toString();
+			String stringQLoad = row.get(ciQLoad).toString();
 			
 			try {
 				// --- Get the time stamp -------------------------------------
@@ -321,18 +329,18 @@ public class PandaPowerFileStoreReader {
 				double qPV = 0.0;
 				if (profilePV!=null) {
 					// --- Get the possible PV feed ---------------------------
-					Vector<String> rowPV = this.getPVLoadDataRow(pvProfileDataVector, timeTo, i);
-					String stringPLoadPV = rowPV.get(ciPLoadPV);
-					String stringQLoadPV = rowPV.get(ciQLoadPV);
+					Vector<Object> rowPV = this.getPVLoadDataRow(pvProfileDataVector, timeTo, i);
+					String stringPLoadPV = rowPV.get(ciPLoadPV).toString();
+					String stringQLoadPV = rowPV.get(ciQLoadPV).toString();
 					
-					pPV = - (this.parseDouble(stringPLoadPV) * pLoadFactorPV); 
-					qPV = - (this.parseDouble(stringQLoadPV) * qLoadFactorPV);
+					pPV = - (BundleHelper.parseDouble(stringPLoadPV) * pLoadFactorPV); 
+					qPV = - (BundleHelper.parseDouble(stringQLoadPV) * qLoadFactorPV);
 				}
 				// ------------------------------------------------------------
 				
 				// --- Calculate over all power values ------------------------
-				double pLoadMWAllPhases = (this.parseDouble(stringPLoad) * pLoadFactor) + pPV;
-				double qLoadMWAllPhases = (this.parseDouble(stringQLoad) * qLoadFactor) + qPV;
+				double pLoadMWAllPhases = (BundleHelper.parseDouble(stringPLoad) * pLoadFactor) + pPV;
+				double qLoadMWAllPhases = (BundleHelper.parseDouble(stringQLoad) * qLoadFactor) + qPV;
 				
 				long durationMillis = 0;
 				if (timeStampPrev>0) {
@@ -371,13 +379,13 @@ public class PandaPowerFileStoreReader {
 	 * @param searchStartIndex the search start index
 	 * @return the PV load data row
 	 */
-	private Vector<String> getPVLoadDataRow(Vector<Vector<String>> pvProfileDataVector, long currentTime, int searchStartIndex) {
+	private Vector<Object> getPVLoadDataRow(Vector<Vector<Object>> pvProfileDataVector, long currentTime, int searchStartIndex) {
 		
-		Vector<String> pvRow = null;
+		Vector<Object> pvRow = null;
 		
 		// --- Get the initial data row that corresponds to the current search index ----
-		Vector<String> dataRowPV = pvProfileDataVector.get(searchStartIndex);
-		String stringTime = dataRowPV.get(0);
+		Vector<Object> dataRowPV = pvProfileDataVector.get(searchStartIndex);
+		String stringTime = dataRowPV.get(0).toString();
 		long timeStamp = this.getTimeStampFromString(stringTime);
 		
 		// --- Check if we have a match -------------------------------------------------
@@ -515,33 +523,33 @@ public class PandaPowerFileStoreReader {
 	
 	
 	/**
-	 * Return the node ID for the specified row of table nodes. 
+	 * Return the node index for the specified row of table nodes. 
 	 * @param rowIndex within the model
 	 * @return the nodeID
 	 */
-	private String getNodeID(int rowIndex) {
+	private Integer getNodeIndex(int rowIndex) {
 		
-		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.SIMBENCH_Node);
-		Vector<Vector<String>> nodeDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_Node);
+		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Bus);
+		Vector<Vector<Object>> nodeDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Bus);
 		
-		int ciID = nodeCsvController.getDataModel().findColumn("id");
-		Vector<String> dataRow = nodeDataVector.get(rowIndex);
-		return dataRow.get(ciID);
+		int ciIndex = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index));
+		Vector<Object> dataRow = nodeDataVector.get(rowIndex);
+		return (Integer)dataRow.get(ciIndex);
 	}
 	
 	/**
-	 * Return the load ID for the specified row of table load. 
+	 * Return the load index for the specified row of table load. 
 	 * @param rowIndex within the model
 	 * @return the loadID
 	 */
-	private String getLoadID(int rowIndex) {
+	private Integer getLoadIndex(int rowIndex) {
 		
-		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.SIMBENCH_Load);
-		Vector<Vector<String>> nodeDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.SIMBENCH_Load);
+		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Load);
+		Vector<Vector<Object>> nodeDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Load);
 		
-		int ciID = nodeCsvController.getDataModel().findColumn("id");
-		Vector<String> dataRow = nodeDataVector.get(rowIndex);
-		return dataRow.get(ciID);
+		int ciID = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Load_Index));
+		Vector<Object> dataRow = nodeDataVector.get(rowIndex);
+		return (Integer) dataRow.get(ciID);
 	}
 	
 	/**
@@ -550,7 +558,7 @@ public class PandaPowerFileStoreReader {
 	 * @return true if the node selection is a cable cabinet
 	 */
 	public boolean isCableCabinetNodeSelection(int rowIndex) {
-		HashMap<String, String> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.SIMBENCH_Load, "node", this.getNodeID(rowIndex));
+		HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, "node", this.getNodeIndex(rowIndex));
 		if (loadRowHashMap==null) {
 			return true;
 		}
@@ -569,7 +577,10 @@ public class PandaPowerFileStoreReader {
 		
 		// --- Get start and end time as string each ------ 
 		CsvDataController csvController = getCsvDataControllerOfCsvFile(PandaPowerFileStore.SIMBENCH_LoadProfile);
-		if (csvController==null) return null;
+		if (csvController==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Unknown type for LoadProfiles, not able to evaluate the data time range!");
+			return null;
+		}
 		
 		String timeStringStart = (String) csvController.getDataModel().getValueAt(0, 0);
 		String timeStringEnd = (String) csvController.getDataModel().getValueAt(csvController.getDataModel().getRowCount()-1, 0);
@@ -635,16 +646,27 @@ public class PandaPowerFileStoreReader {
 	/**
 	 * Return a data row as HashMap, where the key is the column name and the value the row value.
 	 *
-	 * @param csvFileName the csv file name
+	 * @param ppTable the PandaPower table
 	 * @param keyColumnName the key column name
 	 * @param keyValue the key value to search for
 	 * @return the data row as HashMap
 	 */
-	private HashMap<String, String> getDataRowHashMap(String csvFileName, String keyColumnName, String keyValue) {
+	private HashMap<String, Object> getDataRowHashMap(String ppTable, String keyColumnName, Integer keyValue) {
+		return this.getDataRowHashMap(ppTable, keyColumnName, keyValue.toString());
+	}
+	/**
+	 * Return a data row as HashMap, where the key is the column name and the value the row value.
+	 *
+	 * @param ppTable the PandaPower table name
+	 * @param keyColumnName the key column name
+	 * @param keyValue the key value to search for
+	 * @return the data row as HashMap
+	 */
+	private HashMap<String, Object> getDataRowHashMap(String ppTable, String keyColumnName, String keyValue) {
 		
-		HashMap<String, String> dataRowHashMap = null;
+		HashMap<String, Object> dataRowHashMap = null;
 		
-		CsvDataController csvController = this.getCsvDataControllerOfCsvFile(csvFileName);
+		CsvDataController csvController = this.getCsvDataControllerOfCsvFile(ppTable);
 		if (csvController!=null) {
 			
 			// --- Find the right row -------------------------------
@@ -653,7 +675,7 @@ public class PandaPowerFileStoreReader {
 				// --- Found key column -----------------------------
 				int dataRowIndex = -1;
 				for (int rowIndex = 0; rowIndex < csvController.getDataModel().getRowCount(); rowIndex++) {
-					String currKeyValue = (String)csvController.getDataModel().getValueAt(rowIndex, idColumnIndex);
+					String currKeyValue = csvController.getDataModel().getValueAt(rowIndex, idColumnIndex).toString();
 					if (currKeyValue.equals(keyValue)==true) {
 						dataRowIndex = rowIndex;
 						break;
@@ -665,7 +687,7 @@ public class PandaPowerFileStoreReader {
 					dataRowHashMap = new HashMap<>();
 					for (int i = 0; i < csvController.getDataModel().getColumnCount(); i++) {
 						String colName = csvController.getDataModel().getColumnName(i);
-						String value = (String) csvController.getDataModel().getValueAt(dataRowIndex, i);
+						Object value = csvController.getDataModel().getValueAt(dataRowIndex, i);
 						dataRowHashMap.put(colName, value);
 					}
 				}
@@ -680,10 +702,10 @@ public class PandaPowerFileStoreReader {
 	 * @return the data vector of csv file
 	 */
 	@SuppressWarnings("unchecked")
-	private Vector<Vector<String>> getDataVectorOfCsvFile(String csvFileName) {
+	private Vector<Vector<Object>> getDataVectorOfCsvFile(String csvFileName) {
 		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(csvFileName);
 		if (nodeCsvController!=null) {
-			return new Vector<Vector<String>>((Collection<? extends Vector<String>>) nodeCsvController.getDataModel().getDataVector());
+			return new Vector<Vector<Object>>((Collection<? extends Vector<Object>>) nodeCsvController.getDataModel().getDataVector());
 		}
 		return null;
 	}
@@ -696,27 +718,5 @@ public class PandaPowerFileStoreReader {
 	private CsvDataController getCsvDataControllerOfCsvFile(String csvFileName) {
 		return PandaPowerFileStore.getInstance().getCsvDataController().get(csvFileName);
 	}
-	/**
-	 * Parses the specified string to a double value .
-	 *
-	 * @param doubleString the double string
-	 * @return the double value or null
-	 */
-	private Double parseDouble(String doubleString) {
-		Double dValue = null;
-		if (doubleString!=null && doubleString.isEmpty()==false) {
-			// --- Replace decimal separator ? ----------------------
-			if (doubleString.contains(",")==true) {
-				doubleString = doubleString.replace(",", ".");
-			}
-			// --- Try to parse the double string -------------------
-			try {
-				dValue = Double.parseDouble(doubleString);
-			} catch (Exception ex) {
-				// --- No exception will be thrown ------------------
-			}
-		}
-		return dValue;
-	}
-
+	
 }

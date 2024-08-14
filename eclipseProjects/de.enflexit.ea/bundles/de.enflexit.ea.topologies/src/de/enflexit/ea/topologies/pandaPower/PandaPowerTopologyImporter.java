@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -13,6 +14,8 @@ import java.util.Vector;
 import javax.swing.filechooser.FileFilter;
 
 import org.awb.env.networkModel.DataModelNetworkElement;
+import org.awb.env.networkModel.GraphEdge;
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
@@ -21,6 +24,7 @@ import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.maps.MapSettings.MapScale;
 import org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
+import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.application.Application;
@@ -32,7 +36,11 @@ import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.common.csv.CsvDataController;
+import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseElectricalNodeAdapter;
+import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseElectricalNodeAdapter;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
+import de.enflexit.ea.core.dataModel.ontology.CableWithBreakerProperties;
+import de.enflexit.ea.core.dataModel.ontology.CircuitBreaker;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
@@ -40,11 +48,14 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.topologies.BundleHelper;
+import de.enflexit.ea.topologies.pandaPower.PandaPowerNamingMap.NamingMap;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
+import edu.uci.ics.jung.graph.Graph;
 import energy.helper.NumberHelper;
 import energy.optionModel.TimeRange;
 import energy.schedule.loading.ScheduleTimeRange;
@@ -62,21 +73,17 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private static final String LAYOUT_GeoCoordinates_WGS84 = "Geo-Coordinates WGS84";
 	private static final String LAYOUT_GeoCoordinates_UTM = "Geo-Coordinates UTM 32U";
 	
-	private static final String SIMBENCH_Coordinates	 = "Coordinates.csv";
+
 	private static final String SIMBENCH_ExternalNet	 = "ExternalNet.csv";
-	private static final String SIMBENCH_Line			 = "Line.csv";
-	private static final String SIMBENCH_LineType		 = "LineType.csv";
-	private static final String SIMBENCH_Load			 = "Load.csv";
+	
 	private static final String SIMBENCH_LoadProfile	 = "LoadProfile.csv";
 	private static final String SIMBENCH_Measurement	 = "Measurement.csv";
-	private static final String SIMBENCH_Node			 = "Node.csv";
 	private static final String SIMBENCH_NodePFResult	 = "NodePFResult.csv";
 	private static final String SIMBENCH_RES			 = "RES.csv";
 	private static final String SIMBENCH_RESProfile		 = "RESProfile.csv";
 	private static final String SIMBENCH_Storage		 = "Storage.csv";
 	private static final String SIMBENCH_StorageProfile  = "StorageProfile.csv";
 	private static final String SIMBENCH_StudyCases		 = "StudyCases.csv";
-	private static final String SIMBENCH_Transformer	 = "Transformer.csv";
 	private static final String SIMBENCH_TransformerType = "TransformerType.csv";
 
 	
@@ -98,6 +105,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 
 	private MapSettings mapSettings;
 	private Vector<Point2D> defaultPositionVector;
+	
+	private boolean isDoAutoLayout;
 	
 	private StorageDestination storageDestination = StorageDestination.PandaPowerService;
 	private PandaPowerScheduelListPersistenceService persistenceService;
@@ -123,21 +132,23 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	protected Vector<String> getListOfRequiredFileNames() {
 		
 		Vector<String> fileNameVector = new Vector<>(); 
-		fileNameVector.add(SIMBENCH_Coordinates);
+		fileNameVector.add(PandaPowerFileStore.PANDA_Bus);
+		fileNameVector.add(PandaPowerFileStore.PANDA_Trafo);
+		fileNameVector.add(PandaPowerFileStore.PANDA_Load);
+		fileNameVector.add(PandaPowerFileStore.PANDA_BusGeodata);
+		fileNameVector.add(PandaPowerFileStore.PANDA_Line);
+		fileNameVector.add(PandaPowerFileStore.PANDA_StdLineType);
+		fileNameVector.add(PandaPowerFileStore.PANDA_Switch);
+		
 		fileNameVector.add(SIMBENCH_ExternalNet);
-		fileNameVector.add(SIMBENCH_Line);
-		fileNameVector.add(SIMBENCH_LineType);
-		fileNameVector.add(SIMBENCH_Load);
 		fileNameVector.add(SIMBENCH_LoadProfile);
 		fileNameVector.add(SIMBENCH_Measurement);
-		fileNameVector.add(SIMBENCH_Node);
 		fileNameVector.add(SIMBENCH_NodePFResult);
 		fileNameVector.add(SIMBENCH_RES);
 		fileNameVector.add(SIMBENCH_RESProfile);
 		fileNameVector.add(SIMBENCH_Storage);
 		fileNameVector.add(SIMBENCH_StorageProfile);
 		fileNameVector.add(SIMBENCH_StudyCases);
-		fileNameVector.add(SIMBENCH_Transformer);
 		fileNameVector.add(SIMBENCH_TransformerType);
 		return fileNameVector;
 	}
@@ -201,6 +212,13 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		return layoutIdGeoCoordinateUTM;
 	}
 	
+	/**
+	 * Sets the panda power naming map.
+	 */
+	protected void setPandaPowerNamingMapToStaticMap() {
+		PandaPowerNamingMap.setPandaPowerNamingMap(NamingMap.PandaPower);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter#cleanupImporter()
 	 */
@@ -220,6 +238,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		this.defaultPositionVector = null;
 		
 		this.persistenceService = null;
+		
+		this.isDoAutoLayout = false;
 	}
 	
 	/* (non-Javadoc)
@@ -234,20 +254,28 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 
 			this.debug = true;
 			
-			// --- Read the csv files -----------------------------------------
-			this.readFileFromJson(directoryFile);
+			// --- Set the current PandaPowerMapping --------------------------
+			this.setPandaPowerNamingMapToStaticMap();
+			
+			// --- Set Importer and current file ------------------------------
+			PandaPowerFileStore.getInstance().setPandaPowerTopologyImporter(this);
+			PandaPowerFileStore.getInstance().setPandaPowerDirectoryFile(directoryFile, true);
 			
 			// --- Show import preview if this.debug is set to true -----------
-			this.showImportPreview();
-		
-			// --- Set working directory of SimBenchFileStore -----------------
-			PandaPowerFileStore.getInstance().setSimBenchDirectoryFile(directoryFile, false);
+			this.showImportPreview(true);
+			
 			// --- Set setup TimeModel ----------------------------------------
 			this.setTimeRangeToSetupTimeModel();
 			
 			// --- The main import work to be done ----------------------------
 			this.createNodes(directoryFile);
 			this.createLines();
+			this.createSwitches();
+			
+			// --- If layout adjustments are required -------------------------
+			if (this.isDoAutoLayout==true) {
+				this.doAutoLayout();
+			}
 			
 			this.showError();
 			
@@ -259,25 +287,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		
 		// --- Return the NetworkModel ----------------------------------------
 		return this.getNetworkModel();
-	}
-
-	/**
-	 * Read files from the specified JSON file.
-	 *
-	 * @param graphFile the graph file to read
-	 * @return true, if successful
-	 */
-	private boolean readFileFromJson(File graphFile) {
-		
-		try {
-			PandaPowerJsonReader ppFileReader = new PandaPowerJsonReader(graphFile);
-			this.getCsvDataController().putAll(ppFileReader.getCsvDataController());
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -320,60 +329,104 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	 */
 	private void createLines() {
 		
-		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(SIMBENCH_Line);
-		Vector<Vector<String>> lineDataVector = this.getDataVectorOfCsvFile(SIMBENCH_Line);
+		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Line);
+		Vector<Vector<Object>> lineDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Line);
 		if (nodeCsvController==null || lineDataVector==null) return;
 		
-		String colNameID = "id";
-		String colNameNodeA = "nodeA";
-		String colNameNodeB = "nodeB";
-		String colNameType = "type";
-		String colNameLength = "length";
+		int ciIndex = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_index));
+		int ciName = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.line_name));
+		int ciNodeFrom = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_from_bus));
+		int ciNodeTo = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_to_bus));
+		int ciStdType = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.line_stdType));
+		int ciLength = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_length_km));
 		
-		int ciID = nodeCsvController.getDataModel().findColumn(colNameID);
-		int ciNodeA = nodeCsvController.getDataModel().findColumn(colNameNodeA);
-		int ciNodeB = nodeCsvController.getDataModel().findColumn(colNameNodeB);
-		int ciType = nodeCsvController.getDataModel().findColumn(colNameType);
-		int ciLength = nodeCsvController.getDataModel().findColumn(colNameLength);
+		int ci_r_ohm_per_Km = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_r_ohm_per_km));
+		int ci_x_ohm_per_km = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_x_ohm_per_km));
+		int ci_c_nf_per_km = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_c_nf_per_km));
+		int ci_MaxI = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Line_max_i_ka));
 		
 		for (int i = 0; i < lineDataVector.size(); i++) {
 			
 			// --- Get line data row ----------------------------------------------------
-			Vector<String> row = lineDataVector.get(i);
-			String lineID  = row.get(ciID);
-			String nodeA = row.get(ciNodeA);
-			String nodeB = row.get(ciNodeB);
-			String lineType = row.get(ciType);
-			String lineLength = row.get(ciLength);
+			Vector<Object> row = lineDataVector.get(i);
+			Integer lineIndex = (Integer) row.get(ciIndex);
+			String lineName  = row.get(ciName).toString();
+			Integer nodeFrom = (Integer) row.get(ciNodeFrom);
+			Integer nodeTo = (Integer) row.get(ciNodeTo);
+			String lineStdTypeID = row.get(ciStdType)!=null ? row.get(ciStdType).toString() : null;
+			Double lineLength = row.get(ciLength)!=null ? (Double) row.get(ciLength) : null;
 
-			Float lengthInKilometer = this.parseFloat(lineLength);
+			Double rOhmKm = (Double) row.get(ci_r_ohm_per_Km);
+			Double xOhmKm = (Double) row.get(ci_x_ohm_per_km);
+			Double cNfKm = (Double) row.get(ci_c_nf_per_km);
+			Double maxI = (Double) row.get(ci_MaxI);
+			
+			Float lengthInKilometer = lineLength!=null ? lineLength.floatValue() : null;
 			Float lengthInMeter = null;
 			if (lengthInKilometer!=null) {
 				lengthInMeter = lengthInKilometer * 1000f;
 			}
 			
+			// --- Get the row HahsMap --------------------------------------------------
+			HashMap<String, Object> lineRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Line, PandaPowerNamingMap.getColumnName(ColumnName.Line_index), lineIndex.toString());
+			
 			// --- Get the voltage level of that line -----------------------------------
 			boolean isTriPhaseNetwork = true;
-			
-			HashMap<String, String> nodeRowHashMapNodeA = this.getDataRowHashMap(SIMBENCH_Node, "id", nodeA);
-			double voltageLevelNodeA = this.parseDouble(nodeRowHashMapNodeA.get("vmR")) * 1000;
-			HashMap<String, String> nodeRowHashMapNodeB = this.getDataRowHashMap(SIMBENCH_Node, "id", nodeB);
-			double voltageLevelNodeB = this.parseDouble(nodeRowHashMapNodeB.get("vmR")) * 1000;
-			if (voltageLevelNodeA!=voltageLevelNodeB) {
-				System.err.println("[" + this.getClass().getName() + "] Different voltage levels were found for line '" + lineID + "' between node '" + nodeA + "' and node '" + nodeB + "'");
+			HashMap<String, Object> nodeFromRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index), nodeFrom.toString());
+			double nodeFromVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(nodeFromRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel))) * 1000, 0);
+			HashMap<String, Object> nodeToRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index), nodeTo.toString());
+			double nodeToVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(nodeToRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel))) * 1000, 0);
+			if (nodeFromVoltageLevel!=nodeToVoltageLevel) {
+				System.err.println("[" + this.getClass().getName() + "] Different voltage levels were found for line "+ lineIndex + " ('" + lineName + "') between node '" + nodeFrom + "' and node '" + nodeTo + "'");
 			} else {
-				isTriPhaseNetwork = PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevelNodeA);
+				isTriPhaseNetwork = PandaPowerFileStore.isTriPhaseVoltageLevel(nodeFromVoltageLevel);
 			}
 			
-			// --- Get resistance and reactance  --------------------------------------------
-			HashMap<String, String> dataRowHashMap = this.getDataRowHashMap(SIMBENCH_LineType, "id", lineType);
-			Float lineResistance = this.parseFloat(dataRowHashMap.get("r"));
-			Float lineReactance = this.parseFloat(dataRowHashMap.get("x"));
-			//Herleitung der Capacitance
-			//double b / 1E-6= 2 * 50 * Math.PI * matGridData.get(i).getdC()*1E-9;
-			//Float linCapacitance = this.parseFloat(dataRowHashMap.get("b")) / (float)(1E6 * 2 * 50 * Math.PI * 1E-9);
-			Float lineCapacitance = this.parseFloat(dataRowHashMap.get("b")) / ((float)(100 * Math.PI * 1E-3));
-			Float maxCurrent = this.parseFloat(dataRowHashMap.get("iMax"));
+			
+			// --- Get resistance, reactance, capacitance and max I ---------------------
+			Float maxCurrent = 0f;
+			Float lineResistance = 0f;
+			Float lineReactance = 0f;
+			Float lineCapacitance = 0f;
+					
+			HashMap<String, Object> stdLineRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_StdLineType, PandaPowerNamingMap.getColumnName(ColumnName.StdLineType_ID), lineStdTypeID);
+			if (maxI!=null) {
+				maxCurrent = maxI.floatValue();
+			} else {
+				if (stdLineRowHashMap!=null) {
+					maxCurrent = BundleHelper.parseFloat(stdLineRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.StdLineType_max_i_ka)));
+				}
+			}
+			
+			if (rOhmKm!=null) {
+				lineResistance = rOhmKm.floatValue();
+			} else {
+				if (stdLineRowHashMap!=null) {
+					lineResistance = BundleHelper.parseFloat(stdLineRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.StdLineType_r_ohm_per_km)));
+				}
+			}
+			
+			if (xOhmKm!=null) {
+				lineReactance = xOhmKm.floatValue();
+			} else {
+				if (stdLineRowHashMap!=null) {
+					lineReactance = BundleHelper.parseFloat(stdLineRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.StdLineType_x_ohm_per_km)));
+				}
+			}
+			
+			if (cNfKm!=null) {
+				lineCapacitance = cNfKm.floatValue();
+			} else {
+				if (stdLineRowHashMap!=null) {
+					lineCapacitance = BundleHelper.parseFloat(stdLineRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.StdLineType_c_nf_per_km)));
+				}
+			}
+			// --- Convert to EA unit ---------------------------------------------------
+			if (lineCapacitance>0) {
+				// double b / 1E-6= 2 * 50 * Math.PI * matGridData.get(i).getdC()*1E-9;
+				// Float linCapacitance = this.parseFloat(dataRowHashMap.get("b")) / (float)(1E6 * 2 * 50 * Math.PI * 1E-9);
+				// => lineCapacitance = lineCapacitance / ((float)(100 * Math.PI * 1E-3));
+			}
 			
 			
 			// --- Prepare new NetworkComponent -----------------------------------------
@@ -398,9 +451,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
 
 			// --- Rename NetworkComponent and GraphNode --------------------------------
-			newCompNM.renameNetworkComponent(newNetComp.getId(), lineID);
-			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeA));
-			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeB));
+			newCompNM.renameNetworkComponent(newNetComp.getId(), lineName);
+			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
+			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
 			
 			
 			// --- Set the parameters for the component ------------------------
@@ -425,27 +478,201 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			dataModel[2] = tsc;
 			newNetComp.setDataModel(dataModel);
 			
+			// --- Call customization method --------------------------------------------
+			try {
+				this.addAdditionalLineProperties(lineRowHashMap, newNetComp);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
 			// --- Merge into the new NetworkModel --------------------------------------
 			this.getNetworkModel().mergeNetworkModel(newCompNM, null, false);
 			
 		} // end for
-		
 	}
+	/**
+	 * Enables to add additional node properties in sub classes.
+	 * Overwrite this method to add additional information to the specified new NetworkComponent.
+	 *
+	 * @param lineRowHashMap the line row hash map
+	 * @param newNC the new NetworkComponent
+	 */
+	protected void addAdditionalLineProperties(HashMap<String, Object> lineRowHashMap, NetworkComponent newNC) { }
+	
+	
+	/**
+	 * Creates the switches.
+	 */
+	private void createSwitches() {
+		
+		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Switch);
+		Vector<Vector<Object>> lineDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Switch);
+		if (nodeCsvController==null || lineDataVector==null) return;
+		
+		int ciIndex = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Index));
+		int ciName = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Name));
+		int ciNodeFrom = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Bus));
+		int ciNodeTo = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Element));
+		
+		int ciIsClosed = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Closed));
+		int ciZOhm = nodeCsvController.getDataModel().findColumn(PandaPowerNamingMap.getColumnName(ColumnName.Switch_Z_Ohm));
+		
+		for (int i = 0; i < lineDataVector.size(); i++) {
+			
+			// --- Get line data row ----------------------------------------------------
+			Vector<Object> row = lineDataVector.get(i);
+			Integer switchIndex = (Integer) row.get(ciIndex);
+			String switchName  = row.get(ciName).toString();
+			Integer nodeFrom = ((Long) row.get(ciNodeFrom)).intValue();
+			Integer nodeTo = ((Long) row.get(ciNodeTo)).intValue();
+			
+			Boolean isClosed = (Boolean) row.get(ciIsClosed);
+			Double rOhmKm = (Double) row.get(ciZOhm);
+
+			// --- Get the row HahsMap --------------------------------------------------
+			HashMap<String, Object> switchRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Switch, PandaPowerNamingMap.getColumnName(ColumnName.Switch_Index), switchIndex.toString());
+			
+			// --- Get node specific information ----------------------------------------
+			HashMap<String, Object> nodeFromRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index), nodeFrom.toString());
+			double nodeFromVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(nodeFromRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel))) * 1000, 0);
+			String nodeFromName = nodeFromRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_Name)).toString();
+			Integer transIndex = this.getTransformerIndex(nodeFrom);
+			if (transIndex!=null) {
+				HashMap<String, Object> trafoFromRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index), transIndex.toString());
+				if (trafoFromRowHashMap!=null) {
+					nodeFromName = trafoFromRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name)).toString();
+				}
+			}
+			
+			HashMap<String, Object> nodeToRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index), nodeTo.toString());
+			double nodeToVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(nodeToRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel))) * 1000, 0);
+
+			boolean isTriPhaseNetwork = true;
+			if (nodeFromVoltageLevel!=nodeToVoltageLevel) {
+				System.err.println("[" + this.getClass().getName() + "] Different voltage levels were found for line "+ switchIndex + " ('" + switchName + "') between node '" + nodeFrom + "' and node '" + nodeTo + "'");
+			} else {
+				isTriPhaseNetwork = PandaPowerFileStore.isTriPhaseVoltageLevel(nodeFromVoltageLevel);
+			}
+			
+			
+			// --- Get resistance, reactance, capacitance and max I ---------------------
+			Float lengthInMeter = 0.0f;
+			Float maxCurrent = 100f;
+			Float lineResistance = rOhmKm==0.0 ? 0.001f : rOhmKm.floatValue(); 	// --- Default value ---
+			Float lineReactance = 0f;
+			Float lineCapacitance = isTriPhaseNetwork ? 0 : 0.001f; 			// --- Default value ---
+			
+			// --- Prepare new NetworkComponent -----------------------------------------
+			NetworkModel newCompNM = null;
+			
+			// --- Create new NetworkComponent by using the NetworkComponentFactory -----
+			if (isTriPhaseNetwork==true) {
+				newCompNM = NetworkComponentFactory.getNetworkModel4NetworkComponent(this.getNetworkModel(), "Breaker");
+			} else {
+				newCompNM = NetworkComponentFactory.getNetworkModel4NetworkComponent(this.getNetworkModel(), "MvBreaker");
+			}
+			
+			// --- Get NetworkComponent and GrahNode for renaming -----------------------
+			NetworkComponent newNetComp = newCompNM.getNetworkComponents().values().iterator().next();
+			Object[] graphNodes = newCompNM.getGraphElementsOfNetworkComponent(newNetComp, new GraphNode()).toArray();
+			GraphNode newGraphNodeFrom = (GraphNode) graphNodes[0];
+			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
+
+			// --- Rename NetworkComponent and GraphNode --------------------------------
+			newCompNM.renameNetworkComponent(newNetComp.getId(), switchName);
+			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
+			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
+			
+			// --- Set the parameters for the component ---------------------------------
+			CableWithBreakerProperties cwbProperties = new CableWithBreakerProperties();
+			cwbProperties.setLength(new UnitValue(lengthInMeter, "m"));
+			cwbProperties.setLinearResistance(new UnitValue(lineResistance, "Ω/km"));
+			cwbProperties.setLinearReactance(new UnitValue(lineReactance, "Ω/km"));
+			cwbProperties.setLinearCapacitance(new UnitValue(lineCapacitance, "nF/km"));
+			cwbProperties.setMaxCurrent(new UnitValue(maxCurrent, "A"));
+			
+			// --- Set CircuitBreaker instance ------------------------------------------
+			CircuitBreaker cBreaker = new CircuitBreaker();
+			cBreaker.setBreakerID(switchName);
+			cBreaker.setAtComponent(nodeFromName);
+			cBreaker.setIsClosed(isClosed);
+			cwbProperties.setBreakerBegin(cBreaker);
+
+			
+			// --- Add an empty time series chart object to match the requirements of the adapter ------
+			TimeSeriesChart tsc = new TimeSeriesChart();
+			tsc.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
+
+			// --- Set the data model --------------
+			Object[] dataModel = new Object[3];
+			dataModel[0] = cwbProperties;
+			if (isTriPhaseNetwork==true) {
+				dataModel[1] = new TriPhaseCableState();
+			} else {
+				dataModel[1] = new UniPhaseCableState();
+			}
+			dataModel[2] = tsc;
+			newNetComp.setDataModel(dataModel);
+			
+			// --- Call customization method --------------------------------------------
+			try {
+				this.addAdditionalSwitchProperties(switchRowHashMap, newNetComp);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
+			// --- Merge into the new NetworkModel --------------------------------------
+			this.getNetworkModel().mergeNetworkModel(newCompNM, null, false);
+			
+		} // end for
+	}
+	/**
+	 * Enables to add additional node properties in sub classes.
+	 * Overwrite this method to add additional information to the specified new NetworkComponent.
+	 *
+	 * @param switchRowHashMap the line row hash map
+	 * @param newNC the new NetworkComponent
+	 */
+	protected void addAdditionalSwitchProperties(HashMap<String, Object> switchRowHashMap, NetworkComponent newNC) { }
+	
+	
 	/**
 	 * Returns the local graph node name by using the already created GraphNodes in the local NetworkModel.
 	 *
-	 * @param edgeNodeName the edge node name (from SimBench)
+	 * @param busIndex the bus index (from PandaPower)
 	 * @return the local graph node name
 	 */
-	private String getLocalGraphNodeName(String edgeNodeName) {
+	private String getLocalGraphNodeName(Integer busIndex) {
 		
+		// --- First, try to directly get GraphNode -----------------
+		GraphElement ge = this.getNetworkModel().getGraphElement(busIndex.toString());
+		if (ge instanceof GraphNode) {
+			return ge.getId();
+		}
+
+		// --- Try searching the Graph itself -----------------------
 		List<GraphNode> nodeList = new ArrayList<>(this.getNetworkModel().getGraph().getVertices());
 		for (int i = 0; i < nodeList.size(); i++) {
 			String localNodeName = nodeList.get(i).getId();
-			if (localNodeName.equals(edgeNodeName)==true) {
+			if (localNodeName.equals(busIndex)==true) {
 				return localNodeName;
-			} else if (this.isLocalGraphNode(edgeNodeName, localNodeName)==true) {
+			} else if (this.isLocalGraphNode(busIndex.toString(), localNodeName)==true) {
 				return localNodeName;
+			}
+		}
+		
+		// --- Last try: check for a transformer --------------------
+		Integer transformerIndex = this.getTransformerIndex(busIndex);
+		if (transformerIndex!=null) {
+			HashMap<String, Object> transformerRow = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index), transformerIndex.toString());
+			Integer nodeLV = (Integer) transformerRow.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_HV_Bus));
+			Integer nodeHV = (Integer) transformerRow.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_LV_Bus));
+			if (nodeLV!=null && nodeHV!=null) {
+				if (busIndex.equals(nodeLV)==true) {
+					return this.getLocalGraphNodeName(nodeHV);
+				} else if (busIndex.equals(nodeHV)==true) {
+					return this.getLocalGraphNodeName(nodeLV);
+				}
 			}
 		}
 		return null;
@@ -473,57 +700,81 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	/**
 	 * Creates the nodes in the NetworkModel.
 	 */
-	private void createNodes(File directoryFile) {
+	private void createNodes(File ppFile) {
 		
 		// --- Check if the directory file is part of the project directory -------------
-		File directory = directoryFile;
-		if (directory.isDirectory()==false) {
-			directory = directory.getParentFile();
-		}
-		String sbPathName = directory.getAbsolutePath();
+		String sbPathName = ppFile.getAbsolutePath();
 		String projectPathName = Application.getProjectFocused().getProjectFolderFullPath();
 		if (sbPathName.startsWith(projectPathName)==true) {
 			sbPathName = sbPathName.substring(projectPathName.length(), sbPathName.length());
 		}
 		
 		// --- Get the base data to create the nodes ------------------------------------
-		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(SIMBENCH_Node);
-		Vector<Vector<String>> nodeDataVector = this.getDataVectorOfCsvFile(SIMBENCH_Node);
+		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Bus);
+		Vector<Vector<Object>> nodeDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Bus);
 		if (nodeDataVector==null) return;
 		
-		String colNameID = "id";
-		String colNameType = "type";
-		String colNameCoord = "coordID";
+		String colNameIndex = PandaPowerNamingMap.getColumnName(ColumnName.Bus_Index);
+		String colNameName = PandaPowerNamingMap.getColumnName(ColumnName.Bus_Name);
+		String colNameType = PandaPowerNamingMap.getColumnName(ColumnName.Bus_Type);
+		String colVoltageLevel = PandaPowerNamingMap.getColumnName(ColumnName.Bus_VoltageLevel);
+		String colNameGeoData = PandaPowerNamingMap.getColumnName(ColumnName.Bus_Geodata);
+		String colNameCoords = PandaPowerNamingMap.getColumnName(ColumnName.Bus_Coordinates);
 		
-		int ciID = nodeCsvController.getDataModel().findColumn(colNameID);
+		int ciIndex = nodeCsvController.getDataModel().findColumn(colNameIndex);
+		int ciName = nodeCsvController.getDataModel().findColumn(colNameName);
 		int ciType = nodeCsvController.getDataModel().findColumn(colNameType);
-		int ciCoordID = nodeCsvController.getDataModel().findColumn(colNameCoord);
+		int ciGeoData = nodeCsvController.getDataModel().findColumn(colNameGeoData);
+		int ciCoords = nodeCsvController.getDataModel().findColumn(colNameCoords);
 		
 		for (int i = 0; i < nodeDataVector.size(); i++) {
 			
 			// --- Get node data row ----------------------------------------------------
-			Vector<String> row = nodeDataVector.get(i);
-			String nodeID  = row.get(ciID);
-			String type = row.get(ciType);
-			String coordID = row.get(ciCoordID);
+			Vector<Object> row = nodeDataVector.get(i);
+			Integer busIndex  = ciIndex!=-1 ? (Integer) row.get(ciIndex) : null;
+			String nodeName  = ciName!=-1 ? row.get(ciName).toString() : null;
+			String type = ciType!=-1 ? row.get(ciType).toString() : null;
+			String geoData = ciGeoData!=-1 ? row.get(ciGeoData).toString() : null;
+			String coords = ciCoords!=-1 ? row.get(ciCoords).toString() : null;
 			
-			if (type.equals("busbar")==false && type.equals("node")==false) continue;
+			// --- Import this node type to the NetworkModel ----------------------------
+			if (PandaPowerNamingMap.getPandaPowerNamingMap().isAddNodeTypeToNetworkModel(type)==false) continue;
 			
 			// --- Get the voltage Level of that node -----------------------------------
-			HashMap<String, String> nodeRowHashMapNodeA = this.getDataRowHashMap(SIMBENCH_Node, "id", nodeID);
-			double voltageLevel = this.parseDouble(nodeRowHashMapNodeA.get("vmR")) * 1000;
+			HashMap<String, Object> busRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Bus, colNameIndex, busIndex.toString());
+			double voltageLevel = NumberHelper.round(BundleHelper.parseDouble(busRowHashMap.get(colVoltageLevel)) * 1000, 0) ;
 			
 			// --- Provide some user information ----------------------------------------
-			Application.setStatusBarMessage(this.getClass().getSimpleName() + ": Import node '" + nodeID  + "' - (" + (i+1) +  "/" + nodeDataVector.size() + ")");
+			Application.setStatusBarMessage(this.getClass().getSimpleName() + ": Import node '" + nodeName  + "' - (" + (i+1) +  "/" + nodeDataVector.size() + ")");
 
 			// --- Get the corresponding data row of the coordinates --------------------
-			HashMap<String, String> dataRowHashMap = this.getDataRowHashMap(SIMBENCH_Coordinates, "id", coordID);
-			String coordXString = dataRowHashMap.get("x");
-			String coordYString = dataRowHashMap.get("y");
-			
+			Double coordX = null;
+			Double coordY = null;
+			if (ciCoords!=-1 || ciGeoData!=-1) {
+				if (geoData!=null && geoData.isBlank()==false) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] ToDo: PandaPower geo data nedds to be integrated!");
+				}
+				if (coords!=null && coords.isBlank()==false) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] ToDo: PandaPower 'coords' nedds to be integrated!");
+				}
+
+			} else {
+				// --- Try getting info from table 'bus_geodata' ------------------------
+				HashMap<String, Object> busGeodataRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_BusGeodata, PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_Index), busIndex.toString());
+				if (busGeodataRowHashMap!=null) {
+					coordX = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_x)).toString());
+					coordY = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_y)).toString());
+				} else {
+					if (this.isDoAutoLayout==false) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] No coordinates are provided for bus elements, try auto layout!");
+						this.isDoAutoLayout = true;
+					}
+				}
+				
+			}
 			// --- Prepare new NetworkComponent -----------------------------------------
 			NetworkModel newCompNM = null;
-			String newNetCompID = nodeID; 
+			String newNetCompID = nodeName; 
 			
 			// --- Create new NetworkComponent by using the NetworkComponentFactory -----
 			Object netCompDataModel = null;
@@ -533,20 +784,21 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			// --- Case separation for NetworkCmponents ---------------------------------
 			// --------------------------------------------------------------------------
 			boolean isCreatingTransformer = false;
-			String transformerID = this.getTransformerID(nodeID);
-			if (transformerID!=null) {
+			Integer transformerIndex = this.getTransformerIndex(busIndex);
+			if (transformerIndex!=null) {
 				// --- Create transformer ? ---------------------------------------------
-				HashMap<String, String> transformerRowHashMap = this.getDataRowHashMap(SIMBENCH_Transformer, "id", transformerID);
-				String nodeLV = transformerRowHashMap.get("nodeLV");
+				HashMap<String, Object> transformerRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index).toString(), transformerIndex.toString());
+				String transfromerName = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name));
+				Integer nodeLV = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_LV_Bus));
 				// --- Only create low voltage node of SimBench model ------------------- 
-				if ((nodeLV.equals(nodeID) || this.isLocalGraphNode(nodeLV, nodeID)) && this.getNetworkModel().getNetworkComponent(transformerID)==null) {
+				if ((nodeLV.equals(busIndex) || this.isLocalGraphNode(nodeLV.toString(), busIndex.toString())) && this.getNetworkModel().getNetworkComponent(transfromerName)==null) {
 					// --- Create transformer from factory ------------------------------
 					if (PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel)==true) {
 						newCompNM = NetworkComponentFactory.getNetworkModel4NetworkComponent(this.getNetworkModel(), "Transformer");
 					} else {
 						newCompNM = NetworkComponentFactory.getNetworkModel4NetworkComponent(this.getNetworkModel(), "MvTransformer");
 					}
-					newNetCompID = transformerID;
+					newNetCompID = transfromerName;
 					isCreatingTransformer = true;
 					// --- Add the storage settings to the component --------------------
 					netCompStorageSettings = this.getTransformerStorageSettings();
@@ -558,7 +810,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				
 			} else {
 				// --- Prosumer or CableCabinet ? ---------------------------------------
-				HashMap<String, String> loadRowHashMap = this.getDataRowHashMap(SIMBENCH_Load, "node", nodeID);
+				HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, PandaPowerNamingMap.getColumnName(ColumnName.Load_Bus), busIndex.toString());
 				if (loadRowHashMap==null) {
 					// --- Create CableCabinet ------------------------------------------
 					if (PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel)==true) {
@@ -578,7 +830,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 					// ------------------------------------------------------------------
 					// --- Create ScheduleList and storage settings and save them -------
 					// ------------------------------------------------------------------
-					netCompDataModel = this.getPersistenceService().loadScheduleList(directoryFile, PandaPowerFileStore.SIMBENCH_Node, i, this.getScheduleTimeRange());
+					netCompDataModel = this.getPersistenceService().loadScheduleList(ppFile, PandaPowerFileStore.PANDA_Bus, i, this.getScheduleTimeRange());
 					// --- Create storage settings --------------------------------------
 					netCompStorageSettings = new TreeMap<>();
 					netCompStorageSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.ScheduleList.toString());
@@ -589,7 +841,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 						
 					case File:
 						// --- Get the file location for the ScheduleList ---------------
-						String profile = loadRowHashMap.get("profile");
+						String profile = (String) loadRowHashMap.get("profile");
 						String fileName = NetworkComponent.class.getSimpleName() + "_Prosumer_SL_" + profile + ".xml";
 						Project project = Application.getProjectFocused();
 						File slFile = EomDataModelStorageHandler.getFileSuggestion(project, fileName);
@@ -611,9 +863,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 						// --- Set to storage settings --------------------------
 						netCompStorageSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.Customized.toString());
 						netCompStorageSettings.put(EomDataModelStorageHandler.EOM_SETTING_CUSTOMIZED_STORAGE_HANDLER, PandaPowerStorageHandler.class.getName()); 
-						netCompStorageSettings.put(PandaPowerStorageHandler.SIM_BENCH_SETTING_PATH_NAME, sbPathName);
-						netCompStorageSettings.put(PandaPowerStorageHandler.SIM_BENCH_SETTING_FILE_NAME, PandaPowerFileStore.SIMBENCH_Node);
-						netCompStorageSettings.put(PandaPowerStorageHandler.SIM_BENCH_SETTING_ROW_INDEX, i + "");
+						netCompStorageSettings.put(PandaPowerStorageHandler.PANDA_POWER_SETTING_PATH_NAME, sbPathName);
+						netCompStorageSettings.put(PandaPowerStorageHandler.PANDA_POWER_SETTING_SOURCE, PandaPowerFileStore.PANDA_Bus);
+						netCompStorageSettings.put(PandaPowerStorageHandler.PANDA_POWER_SETTING_ROW_INDEX, i + "");
 						break;
 					}
 				}
@@ -623,17 +875,19 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			// --- Get the actual NetworkComponent --------------------------------------
 			// --------------------------------------------------------------------------
 			NetworkComponent newComp = newCompNM.getNetworkComponents().values().iterator().next();
-			String nodeName = newComp.getGraphElementIDs().iterator().next();
-			GraphNode graphNode = (GraphNode) newCompNM.getGraphElement(nodeName);
+			String graphNodeName = newComp.getGraphElementIDs().iterator().next();
+			GraphNode graphNode = (GraphNode) newCompNM.getGraphElement(graphNodeName);
 
 			// --- Rename the elements --------------------------------------------------
 			newCompNM.renameNetworkComponent(newComp.getId(), newNetCompID);
-			newCompNM.renameGraphNode(graphNode.getId(), nodeID);
+			newCompNM.renameGraphNode(graphNode.getId(), busIndex.toString());
 			
 			// --- Define the GraphNode positions ---------------------------------------
-			double wgs84Long = this.parseDouble(coordXString);
-			double wgs84Lat  = this.parseDouble(coordYString);
-			this.setGraphNodeCoordinates(graphNode, wgs84Lat, wgs84Long);
+			if (coordX!=null & coordY!=null) {
+				double wgs84Long = BundleHelper.parseDouble(coordX);
+				double wgs84Lat  = BundleHelper.parseDouble(coordY);
+				this.setGraphNodeCoordinates(graphNode, wgs84Lat, wgs84Long);
+			}
 			
 			// --------------------------------------------------------------------------
 			// --- Define first part of the GraphNode's data model ----------------------
@@ -655,20 +909,34 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			
 			// --------------------------------------------------------------------------
 			// --- Set the data model to the GraphNode ----------------------------------
-			Object[] dataModel = new Object[3];
-			dataModel[0] = nodeProps;
-			if (PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel)==true) {
-				dataModel[1] = new TriPhaseElectricalNodeState();
+			if (transformerIndex!=null) {
+				// --- For transformer --------------------
+				graphNode.setDataModel(this.getTransformerGraphNodeModel(transformerIndex));
+				
 			} else {
-				dataModel[1] = new UniPhaseElectricalNodeState();
+				// --- For regular nodes ------------------
+				Object[] dataModel = new Object[3];
+				dataModel[0] = nodeProps;
+				if (PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel)==true) {
+					dataModel[1] = new TriPhaseElectricalNodeState();
+				} else {
+					dataModel[1] = new UniPhaseElectricalNodeState();
+				}
+				dataModel[2] = tsc;
+				graphNode.setDataModel(dataModel);
 			}
-			dataModel[2] = tsc;
-			graphNode.setDataModel(dataModel);
 
 			// --------------------------------------------------------------------------
 			// --- Set the data model to the NetworkComponent ---------------------------
 			newComp.setDataModel(netCompDataModel);
 			newComp.setDataModelStorageSettings(netCompStorageSettings);
+			
+			// --- Call customization method --------------------------------------------
+			try {
+				this.addAdditionalNodeProperties(busRowHashMap, newComp);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			
 			// --- Merge into the new NetworkModel --------------------------------------
 			this.getNetworkModel().mergeNetworkModel(newCompNM, null, false);
@@ -678,41 +946,50 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		// --- Adjust the node positions for the default layout ------------------------- 
 		this.adjustDefaultPositions();
 	}
+	/**
+	 * Enables to add additional node properties in sub classes.
+	 * Overwrite this method to add additional information to the specified new NetworkComponent.
+	 *
+	 * @param busRowHashMap the bus row hash map
+	 * @param newNC the new NetworkComponent
+	 */
+	protected void addAdditionalNodeProperties(HashMap<String, Object> busRowHashMap, NetworkComponent newNC) {	}
+	
 	
 	/**
 	 * Checks if the specified node ID represents a transformer and returns either the 
 	 * ID of the transformer or <code>null</code>:.
 	 *
-	 * @param nodeID the node ID
+	 * @param busIndex the bus index
 	 * @return the transformer ID or <code>null</code>
 	 */
-	private String getTransformerID(String nodeID) {
+	private Integer getTransformerIndex(Integer busIndex) {
 		
-		CsvDataController transformerCsvController = this.getCsvDataControllerOfCsvFile(SIMBENCH_Transformer);
-		Vector<Vector<String>> transformerDataVector = this.getDataVectorOfCsvFile(SIMBENCH_Transformer);
+		CsvDataController transformerCsvController = this.getCsvDataControllerOfCsvFile(PandaPowerFileStore.PANDA_Trafo);
+		Vector<Vector<Object>> transformerDataVector = this.getDataVectorOfCsvFile(PandaPowerFileStore.PANDA_Trafo);
 		
-		String colID = "id";
-		String colNodeHV = "nodeHV";
-		String colNodeLV = "nodeLV";
+		String colIndex = PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index);
+		String colNodeLV = PandaPowerNamingMap.getColumnName(ColumnName.Trafo_LV_Bus);
+		String colNodeHV = PandaPowerNamingMap.getColumnName(ColumnName.Trafo_HV_Bus);
 		
-		int ciID = transformerCsvController.getDataModel().findColumn(colID);
-		int ciNodeHV = transformerCsvController.getDataModel().findColumn(colNodeHV);
+		int ciIndex = transformerCsvController.getDataModel().findColumn(colIndex);
 		int ciNodeLV = transformerCsvController.getDataModel().findColumn(colNodeLV);
+		int ciNodeHV = transformerCsvController.getDataModel().findColumn(colNodeHV);
 		
 		for (int i = 0; i < transformerDataVector.size(); i++) {
 		
-			Vector<String> row = transformerDataVector.get(i);
-			String id = row.get(ciID);
-			String idNodeHV = row.get(ciNodeHV);
-			String idNodeLV = row.get(ciNodeLV);
+			Vector<Object> row = transformerDataVector.get(i);
+			Integer indexTrafo = (Integer) row.get(ciIndex);
+			Integer indexBusNodeHV = (Integer) row.get(ciNodeHV);
+			Integer indexBusNodeLV = (Integer) row.get(ciNodeLV);
 			
-			if (idNodeHV.equals(nodeID) || this.isLocalGraphNode(idNodeHV, nodeID)) {
+			if (indexBusNodeHV.equals(busIndex) || this.isLocalGraphNode(indexBusNodeHV.toString(), busIndex.toString())) {
 				// --- High voltage node ------------------
-				return id;
+				return indexTrafo;
 				
-			} else if (idNodeLV.equals(nodeID) || this.isLocalGraphNode(idNodeLV, nodeID)) {
+			} else if (indexBusNodeLV.equals(busIndex) || this.isLocalGraphNode(indexBusNodeLV.toString(), busIndex.toString())) {
 				// --- Low voltage node -------------------
-				return id;
+				return indexTrafo;
 				
 			}
 		}
@@ -729,7 +1006,116 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, "/eomModels/EomModel_Transformer.xml");
 		return tSettings; 
 	}
+	/**
+	 * Returns the transformer graph node model.
+	 * @return the transformer graph node model
+	 */
+	private TreeMap<String, Object> getTransformerGraphNodeModel(Integer transformerIndex) {
+		
+		TreeMap<String, Object> graphNodeDataModel = new TreeMap<>();
+		
+		HashMap<String, Object> transformerRow = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index), transformerIndex.toString());
+		Double lvVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(transformerRow.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_lv_kv))) * 1000, 0);
+		Double hvVoltageLevel = NumberHelper.round(BundleHelper.parseDouble(transformerRow.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_hv_kv))) * 1000, 0);
+		
+		Object[] lvDataModel = this.createTransformerSiteGraphNodeModel(lvVoltageLevel);
+		Object[] hvDataModel = this.createTransformerSiteGraphNodeModel(hvVoltageLevel);
+		
+		graphNodeDataModel.put(this.guessDomain(lvVoltageLevel), lvDataModel);
+		graphNodeDataModel.put(this.guessDomain(hvVoltageLevel), hvDataModel);
+		
+		return graphNodeDataModel;
+	}
+	/**
+	 * Creates a transformer site (LV/HV) model.
+	 *
+	 * @param voltageLevel the voltage level
+	 * @return the object[]
+	 */
+	private Object[] createTransformerSiteGraphNodeModel(Double voltageLevel) {
+		
+		Object[] siteModel = new Object[3];
+		
+		// --- TransformerNodeProperties --------------------
+		UnitValue uvVoltageLevel = new UnitValue();
+		uvVoltageLevel.setUnit("V");
+		uvVoltageLevel.setValue(voltageLevel.floatValue());
+		
+		TransformerNodeProperties tnp = new TransformerNodeProperties();
+		tnp.setRatedVoltage(uvVoltageLevel);
+		siteModel[0] = tnp;
+		
+		// --- ElectricalNodeState ------------------------
+		if (PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel)==true) {
+			// --- TriPhaseElectricalNodeState ------------
+			TriPhaseElectricalNodeState tpNodeState = new TriPhaseElectricalNodeState();
+			tpNodeState.setL1(new UniPhaseElectricalNodeState());
+			tpNodeState.setL2(new UniPhaseElectricalNodeState());
+			tpNodeState.setL3(new UniPhaseElectricalNodeState());
+			siteModel[1] = tpNodeState;
+		} else {
+			// --- UniPhaseElectricalNodeState ------------
+			UniPhaseElectricalNodeState upNodeState = new UniPhaseElectricalNodeState();
+			siteModel[1] = upNodeState; 
+		}
+		
+		// --- Time Series chart --------------------------
+		siteModel[2] = new TimeSeriesChart();
+		
+		return siteModel;
+	}
 	
+	/**
+	 * Will guess (try to evaluate) the domain for the specified voltage level.
+	 *
+	 * @param voltageLevel the voltage level
+	 * @return the string
+	 */
+	private String guessDomain(Double voltageLevel) {
+		
+		String domainFound = null;
+		boolean isTriPhaseVoltageLevel = PandaPowerFileStore.isTriPhaseVoltageLevel(voltageLevel);
+		
+		GeneralGraphSettings4MAS ggs4MAS = this.getNetworkModel().getGeneralGraphSettings4MAS();
+		
+		List<String> domainListElectricityPhase = new ArrayList<>();
+		List<String> domainList = new ArrayList<>(ggs4MAS.getDomainSettings().keySet());
+		for (String domain : domainList) {
+			
+			DomainSettings ds = ggs4MAS.getDomainSettings().get(domain);
+			boolean isTriPhaseDomain = ds.getAdapterClass()!=null && ds.getAdapterClass().equals(TriPhaseElectricalNodeAdapter.class.getName());
+			boolean isUniPhaseDomain = ds.getAdapterClass()!=null && ds.getAdapterClass().equals(UniPhaseElectricalNodeAdapter.class.getName());
+			
+			if (isTriPhaseVoltageLevel==true && isTriPhaseDomain==true) {
+				domainListElectricityPhase.add(domain);
+			} else if (isTriPhaseVoltageLevel==false && isUniPhaseDomain) {
+				domainListElectricityPhase.add(domain);
+			}
+		}
+		
+		// --- Check the electricity domains found ------------------
+		if (domainListElectricityPhase.size()==0) {
+			// --- Found nothing ------------------------------------
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find Domain for voltage level " + voltageLevel + " V");
+		} else if (domainListElectricityPhase.size()==1) {
+			// --- Found exact one domain ---------------------------
+			domainFound = domainListElectricityPhase.get(0);
+		} else {
+			// --- Found several Domains ----------------------------
+			String searchPhrase = "hv";  
+			if (voltageLevel > 400 && voltageLevel < 50000) {
+				searchPhrase = "mv";
+			}
+			// --- Try to find domain by search phrase --------------
+			for (String domain : domainListElectricityPhase) {
+				if (domain.toLowerCase().contains(searchPhrase)==true) {
+					domainFound = domain;
+					break;
+				}
+			}
+		}
+		return domainFound;
+	}
 	
 	/**
 	 * Sets the GraphNode coordinates.
@@ -742,11 +1128,19 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		
 		// --- Set GraphNode position according to node -------------
 		Point2D pointGeoWGS84 = new Point2D.Double(latNorthSouth, longEastWest);
+
+		// --- Create WGS coordinate ---------------------------------
+		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(pointGeoWGS84.getX(), pointGeoWGS84.getY());
 		
 		// --- Calculate to UTM coordinate --------------------------
-		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(pointGeoWGS84.getX(), pointGeoWGS84.getY());
-		UTMCoordinate coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
-		Point2D pointUTM = new Point2D.Double(coordUTM.getEasting(), coordUTM.getNorthing());
+		Point2D pointUTM = null;
+		try {
+			UTMCoordinate coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
+			pointUTM = new Point2D.Double(coordUTM.getEasting(), coordUTM.getNorthing());
+			
+		} catch (Exception ex) {
+			pointUTM = new Point2D.Double(latNorthSouth, longEastWest);
+		}
 		
 		// --- Set default layout to Default ------------------------
 		Point2D pointDefault = this.getDefaultLayoutPosition(pointGeoWGS84);
@@ -765,8 +1159,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	 * @return the default layout position
 	 */
 	private Point2D getDefaultLayoutPosition(Point2D wgs84Point) {
-		double xPos = NumberHelper.round(wgs84Point.getY() *  100000.0, 1);
-		double yPos = NumberHelper.round(wgs84Point.getX() * -100000.0, 1);
+		double xPos = NumberHelper.round(wgs84Point.getY() * 1.0, 3);
+		double yPos = NumberHelper.round(wgs84Point.getX() * 1.0, 3);
 		return new Point2D.Double(xPos, yPos);
 	}
 	/**
@@ -890,9 +1284,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	 * @param keyValue the key value to search for
 	 * @return the data row as HashMap
 	 */
-	private HashMap<String, String> getDataRowHashMap(String csvFileName, String keyColumnName, String keyValue) {
+	private HashMap<String, Object> getDataRowHashMap(String csvFileName, String keyColumnName, String keyValue) {
 		
-		HashMap<String, String> dataRowHashMap = null;
+		HashMap<String, Object> dataRowHashMap = null;
 		
 		CsvDataController csvController = this.getCsvDataControllerOfCsvFile(csvFileName);
 		if (csvController!=null) {
@@ -903,7 +1297,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				// --- Found key column -----------------------------
 				int dataRowIndex = -1;
 				for (int rowIndex = 0; rowIndex < csvController.getDataModel().getRowCount(); rowIndex++) {
-					String currKeyValue = (String)csvController.getDataModel().getValueAt(rowIndex, idColumnIndex);
+					String currKeyValue = csvController.getDataModel().getValueAt(rowIndex, idColumnIndex).toString();
 					if (currKeyValue.equals(keyValue)==true) {
 						dataRowIndex = rowIndex;
 						break;
@@ -915,8 +1309,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 					dataRowHashMap = new HashMap<>();
 					for (int i = 0; i < csvController.getDataModel().getColumnCount(); i++) {
 						String colName = csvController.getDataModel().getColumnName(i);
-						String value = (String) csvController.getDataModel().getValueAt(dataRowIndex, i);
-						dataRowHashMap.put(colName, value);
+						dataRowHashMap.put(colName, csvController.getDataModel().getValueAt(dataRowIndex, i));
 					}
 				}
 			}
@@ -931,10 +1324,10 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	 * @return the data vector of csv file
 	 */
 	@SuppressWarnings("unchecked")
-	private Vector<Vector<String>> getDataVectorOfCsvFile(String csvFileName) {
+	private Vector<Vector<Object>> getDataVectorOfCsvFile(String csvFileName) {
 		CsvDataController nodeCsvController = this.getCsvDataControllerOfCsvFile(csvFileName);
 		if (nodeCsvController!=null) {
-			return new Vector<Vector<String>>((Collection<? extends Vector<String>>) nodeCsvController.getDataModel().getDataVector());
+			return new Vector<Vector<Object>>((Collection<? extends Vector<Object>>) nodeCsvController.getDataModel().getDataVector());
 		}
 		return null;
 	}
@@ -948,51 +1341,83 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private CsvDataController getCsvDataControllerOfCsvFile(String csvFileName) {
 		return this.getCsvDataController().get(csvFileName);
 	}
+
+	// -----------------------------------------------------------------------
+	// --- From here a auto layout methods -----------------------------------
+	// -----------------------------------------------------------------------	
 	
 	/**
-	 * Parses the specified string to a double value .
-	 *
-	 * @param doubleString the double string
-	 * @return the double value or null
+	 * Do auto layout.
 	 */
-	private Double parseDouble(String doubleString) {
-		Double dValue = null;
-		if (doubleString!=null && doubleString.isEmpty()==false) {
-			// --- Replace decimal separator ? ----------------------
-			if (doubleString.contains(",")==true) {
-				doubleString = doubleString.replace(",", ".");
+	private void doAutoLayout() {
+		
+		boolean isPlaceRandom = true;
+		
+		// --- Get the Graph -------------------------------------------------
+		Graph<GraphNode, GraphEdge> graph = this.getNetworkModel().getGraph();
+		
+		int clusterIndex = 0;
+		TreeMap<String, List<GraphNode>> clusterTreeMap = new TreeMap<>();
+		List<GraphNode> nodesToVisit  = new ArrayList<>(graph.getVertices());
+		List<GraphNode> nodesVisited = new ArrayList<>();
+		
+		if (isPlaceRandom==true) {
+			// --- Set random position ----------------------------------------  
+			for (GraphNode node : nodesToVisit) {
+				double randomX = NumberHelper.getRandomFloat(-90, 90);
+				double randomY = NumberHelper.getRandomFloat(-90, 90);
+				this.setGraphNodeCoordinates(node, randomX, randomY);
 			}
-			// --- Try to parse the double string -------------------
-			try {
-				dValue = Double.parseDouble(doubleString);
-			} catch (Exception ex) {
-				// --- No exception will be thrown ------------------
-			}
+			return;
 		}
-		return dValue;
+		
+		
+		while (nodesToVisit.size()>0) {
+			
+			GraphNode node = this.setNodeVisited(nodesToVisit.get(0), nodesToVisit, nodesVisited);
+			
+			List<GraphNode> nodeCluster = new ArrayList<>(this.getNeighborHashSet(graph, new HashSet<>(), node));
+			for (GraphNode nodeNeighbor : nodeCluster) {
+				this.setNodeVisited(nodeNeighbor, nodesToVisit, nodesVisited);
+			}
+			
+			// --- Save in separate cluster -----------------------------------
+			String clusterName = "Cluster_" + clusterIndex;
+			clusterTreeMap.put(clusterName, nodeCluster);
+			clusterIndex++;
+		}
+		
+		System.out.println("Found " + (clusterIndex + 1) + " Cluster");
+		
 	}
-
+	
 	/**
-	 * Parses the specified string to a double value .
+	 * Sets the node visited.
 	 *
-	 * @param floatString the float string
-	 * @return the float value or null
+	 * @param node the node
+	 * @param nodesToVisit the nodes to visit
+	 * @param nodesVisited the nodes visited
+	 * @return the graph node
 	 */
-	private Float parseFloat(String floatString) {
-		Float fValue = null;
-		if (floatString!=null && floatString.isEmpty()==false) {
-			// --- Replace decimal separator ? ----------------------
-			if (floatString.contains(",")==true) {
-				floatString = floatString.replace(",", ".");
-			}
-			// --- Try to parse the double string -------------------
-			try {
-				fValue = Float.parseFloat(floatString);
-			} catch (Exception ex) {
-				// --- No exception will be thrown ------------------
-			}
+	private GraphNode setNodeVisited(GraphNode node, List<GraphNode> nodesToVisit, List<GraphNode> nodesVisited) {
+		if (node!=null) {
+			nodesToVisit.remove(node);
+			nodesVisited.add(node);
 		}
-		return fValue;
+		return node;
 	}
 
+	private HashSet<GraphNode> getNeighborHashSet(Graph<GraphNode, GraphEdge> graph, HashSet<GraphNode> neighborHashSet, GraphNode sourceNode) {
+		
+		neighborHashSet.add(sourceNode);
+		
+		List<GraphNode> neighborList = new ArrayList<>(graph.getNeighbors(sourceNode)) ;
+		for (GraphNode neighbor : neighborList) {
+			if (neighborHashSet.contains(neighbor)==false) {
+				neighborHashSet.addAll(this.getNeighborHashSet(graph, neighborHashSet, neighbor));
+			}
+		}
+		return neighborHashSet;
+	}
+	
 }

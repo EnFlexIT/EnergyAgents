@@ -25,9 +25,9 @@ import energy.schedule.ScheduleController;
  */
 public class PandaPowerStorageHandler extends AbstractEomStorageHandler {
 
-	public static final String SIM_BENCH_SETTING_PATH_NAME = "SimBenchPath";
-	public static final String SIM_BENCH_SETTING_FILE_NAME = "SimBenchSourceFileName";
-	public static final String SIM_BENCH_SETTING_ROW_INDEX = "SimBenchRowIndex";
+	public static final String PANDA_POWER_SETTING_PATH_NAME = "PandaPowerPath";
+	public static final String PANDA_POWER_SETTING_SOURCE = "PandaPowerSource";
+	public static final String PANDA_POWER_SETTING_ROW_INDEX = "PandaPowerRowIndex";
 
 	
 	/**
@@ -70,7 +70,7 @@ public class PandaPowerStorageHandler extends AbstractEomStorageHandler {
 			ScheduleController sc = (ScheduleController) eomController;
 			
 			// --- Source directory -----------------
-			String sbPathName = storageSettings.get(SIM_BENCH_SETTING_PATH_NAME);
+			String sbPathName = storageSettings.get(PANDA_POWER_SETTING_PATH_NAME);
 			if (sbPathName==null || sbPathName.isEmpty()==true) {
 				this.printToConsole("No source directory was specified for the data of network element.", true);
 				return;
@@ -152,9 +152,9 @@ public class PandaPowerStorageHandler extends AbstractEomStorageHandler {
 			}
 
 			// --- Set to storage settings --------------------------
-			storageSettings.put(SIM_BENCH_SETTING_PATH_NAME, sbPathName);
-			storageSettings.put(SIM_BENCH_SETTING_FILE_NAME, sbFileSelection);
-			storageSettings.put(SIM_BENCH_SETTING_ROW_INDEX, sbRowSelection + "");
+			storageSettings.put(PANDA_POWER_SETTING_PATH_NAME, sbPathName);
+			storageSettings.put(PANDA_POWER_SETTING_SOURCE, sbFileSelection);
+			storageSettings.put(PANDA_POWER_SETTING_ROW_INDEX, sbRowSelection + "");
 			
 		}
 		return false;
@@ -177,9 +177,9 @@ public class PandaPowerStorageHandler extends AbstractEomStorageHandler {
 		TreeMap<String, String> storageSettings = networkElement.getDataModelStorageSettings();
 
 		String modelTypeString = storageSettings.get(EOM_SETTING_EOM_MODEL_TYPE);
-		String sbPathName = PathHandling.getPathName4LocalOS(storageSettings.get(SIM_BENCH_SETTING_PATH_NAME));
-		String sbFileSelection = storageSettings.get(SIM_BENCH_SETTING_FILE_NAME);
-		String sbRowIndexString = storageSettings.get(SIM_BENCH_SETTING_ROW_INDEX);
+		String ppSourceFilePath = PathHandling.getPathName4LocalOS(storageSettings.get(PANDA_POWER_SETTING_PATH_NAME));
+		String ppSourceTable = storageSettings.get(PANDA_POWER_SETTING_SOURCE);
+		String ppRowIndexString = storageSettings.get(PANDA_POWER_SETTING_ROW_INDEX);
 		
 		// --------------------------------------
 		// --- Model type -----------------------
@@ -197,52 +197,47 @@ public class PandaPowerStorageHandler extends AbstractEomStorageHandler {
 		
 		// --------------------------------------
 		// --- Source directory -----------------
-		if (sbPathName==null || sbPathName.isEmpty()==true) {
+		if (ppSourceFilePath==null || ppSourceFilePath.isEmpty()==true) {
 			this.printToConsole("No source directory was specified for the data of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "'.", true);
 			return null;
 		}
-		File sbPath = new File(sbPathName);
-		if (sbPath.exists()==false) {
+		File ppFile = new File(ppSourceFilePath);
+		if (ppFile.exists()==false) {
 			// --- Try project location ---------
 			String projectPathName = this.getProject().getProjectFolderFullPath();
-			String sbPathNameProject = projectPathName + sbPathName;
-			sbPath = new File(sbPathNameProject);
-			if (sbPath.exists()==false) {
-				this.printToConsole("The specified source directory '" + sbPathName + "' for the data of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "' is invalid.", true);
+			String sbPathNameProject = projectPathName + ppSourceFilePath;
+			ppFile = new File(sbPathNameProject);
+			if (ppFile.exists()==false) {
+				this.printToConsole("The specified source directory '" + ppSourceFilePath + "' for the data of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "' is invalid.", true);
 				return null;
 			} else {
-				sbPathName = sbPathNameProject;
+				ppSourceFilePath = sbPathNameProject;
 			}
 		}
 		
 		// --------------------------------------
-		// --- Source file ----------------------
-		if (sbFileSelection==null || sbFileSelection.isEmpty()==true) {
+		// --- Source table ---------------------
+		if (ppSourceTable==null || ppSourceTable.isEmpty()==true) {
 			this.printToConsole("No source file for the component identification was found in the settings of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "'.", true);	
-			return null;
-		}
-		File sourceFile = new File(sbPathName + File.separator + sbFileSelection);
-		if (sourceFile.exists()==false) {
-			this.printToConsole("The specified source file '" + sbFileSelection + "' for the component identification of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "' could not be found.", true);
 			return null;
 		}
 
 		// --------------------------------------
 		// --- Row index ------------------------
 		int sbRowIndex = -1;
-		if (sbRowIndexString==null || sbRowIndexString.isEmpty()==true) {
+		if (ppRowIndexString==null || ppRowIndexString.isEmpty()==true) {
 			this.printToConsole("No row index was specified for the component identification of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "'.", true);
 			return null;
 		}
 		try {
-			sbRowIndex = Integer.parseInt(sbRowIndexString);
+			sbRowIndex = Integer.parseInt(ppRowIndexString);
 		} catch (Exception ex) { }
 
 		if (sbRowIndex==-1) {
 			this.printToConsole("No valid row index was specified for the component identification of network element " + networkElement.getClass().getSimpleName() + " '" + networkElement.getId() + "'.", true);
 			return null;
 		}
-		return this.loadScheduleList(sourceFile, sbFileSelection, sbRowIndex);
+		return this.loadScheduleList(ppFile, ppSourceTable, sbRowIndex);
 	}
 	/**
 	 * Loads and returns the ScheduleList from the the specified SimBench data. 

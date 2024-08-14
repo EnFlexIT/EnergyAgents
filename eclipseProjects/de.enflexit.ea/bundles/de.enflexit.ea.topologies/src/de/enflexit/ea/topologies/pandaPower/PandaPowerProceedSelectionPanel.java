@@ -70,7 +70,7 @@ public class PandaPowerProceedSelectionPanel extends JPanel {
 
 	private JLabel getJLabelExplain() {
 		if (jLabelExplain == null) {
-			jLabelExplain = new JLabel("Please, select the node (" + PandaPowerFileStore.SIMBENCH_Node + ") or the load (" + PandaPowerFileStore.SIMBENCH_Load + ") that is to be imported.");
+			jLabelExplain = new JLabel("Please, select the node (" + PandaPowerFileStore.PANDA_Bus + ") or the load (" + PandaPowerFileStore.PANDA_Load + ") that is to be imported.");
 			jLabelExplain.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelExplain;

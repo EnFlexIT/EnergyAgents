@@ -1,14 +1,10 @@
 package de.enflexit.ea.topologies.pandaPower;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.TreeMap;
 
-import javax.swing.filechooser.FileFilter;
-
-import org.awb.env.networkModel.NetworkModel;
-import org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter;
+import de.enflexit.common.csv.CSV_FilePreview;
+import de.enflexit.common.csv.CsvDataController;
 
 /**
  * The SimBenchFileLoader represents a singleton instance that enables to
@@ -16,7 +12,7 @@ import org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter;
  *  
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class PandaPowerFileStore extends AbstractNetworkModelCsvImporter {
+public class PandaPowerFileStore {
 
 	// ----------------------------------------------------
 	// --- The singleton construction ---------------------
@@ -34,116 +30,124 @@ public class PandaPowerFileStore extends AbstractNetworkModelCsvImporter {
 	// ----------------------------------------------------
 	// --- Instance handling ------------------------------
 	// ----------------------------------------------------
-	public static final String SIMBENCH_Coordinates	 	= "Coordinates.csv";
+	public static final String PANDA_Bus		= "bus";
+	public static final String PANDA_Trafo	 	= "trafo";
+	public static final String PANDA_Load	 	= "load";
+	public static final String PANDA_BusGeodata = "bus_geodata";
+	
+	public static final String PANDA_Line= "line";
+	public static final String PANDA_StdLineType= "std_types.line";
+	
+	public static final String PANDA_Switch     = "switch";
+	
+	
 	public static final String SIMBENCH_ExternalNet	 	= "ExternalNet.csv";
-	public static final String SIMBENCH_Line		 	= "Line.csv";
 	public static final String SIMBENCH_LineType	 	= "LineType.csv";
-	public static final String SIMBENCH_Load		 	= "Load.csv";
 	public static final String SIMBENCH_LoadProfile	 	= "LoadProfile.csv";
 	public static final String SIMBENCH_Measurement	 	= "Measurement.csv";
-	public static final String SIMBENCH_Node		 	= "Node.csv";
 	public static final String SIMBENCH_NodePFResult 	= "NodePFResult.csv";
 	public static final String SIMBENCH_RES			 	= "RES.csv";
 	public static final String SIMBENCH_RESProfile	 	= "RESProfile.csv";
 	public static final String SIMBENCH_Storage		 	= "Storage.csv";
 	public static final String SIMBENCH_StorageProfile  = "StorageProfile.csv";
 	public static final String SIMBENCH_StudyCases		= "StudyCases.csv";
-	public static final String SIMBENCH_Transformer	 	= "Transformer.csv";
 	public static final String SIMBENCH_TransformerType = "TransformerType.csv";
 	
-	private List<FileFilter> fileFilterList;
-	private File simBenchDirecotry;  
+	private File pandanPowerFile;
+	private PandaPowerTopologyImporter ppTopologyImporter;
 
 	
 	// --------------------------------------------------------------------------------------------
 	// --- From here: Methods to set and load the csv files ---------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
-	 * Set the currently selected SimBench file and thus the directory (parent).
+	 * Set the currently selected PandaPower file and thus the directory (parent).
 	 * 
-	 * @param simBenchDirecotryFile the selected SimBench file
-	 * @param isDebug indicator if the current invocation is for debugging and if the import files should be shown
+	 * @param ppFile the selected SimBench file
+	 * @param isDebug indicator to force and reload the specified file
 	 */
-	public synchronized void setSimBenchDirectoryFile(File simBenchDirecotryFile, boolean isDebug) {
-		if (simBenchDirecotryFile!=null && simBenchDirecotryFile.exists()==true) {
-
-			// --- Get the parent directory to find all files -------  
-			File simBenchDirecotry = simBenchDirecotryFile.getParentFile();
-			boolean validDir = simBenchDirecotry!=null && simBenchDirecotry.exists() && simBenchDirecotry.isDirectory(); 
-			if (validDir==false) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid SimBench directory '" + simBenchDirecotry.getAbsolutePath() + "', exit data load process.");
+	public synchronized void setPandaPowerDirectoryFile(File ppFile, boolean isForceReload) {
+		
+		if (ppFile!=null && ppFile.exists()==true) {
+			// --- Check for known file type ------------------------
+			if (ppFile.getName().toLowerCase().endsWith(".json")==false) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Unknown PandaPower file '" + ppFile.getAbsolutePath() + "', exit data load process.");
 				return;
 			}
 			
 			// --- Check if directory has changed -------------------
-			boolean isChangedDir = this.simBenchDirecotry==null || this.simBenchDirecotry.equals(simBenchDirecotry)==false;
-			if (isChangedDir==true) {
+			boolean isChangedDir = this.pandanPowerFile==null || this.pandanPowerFile.equals(ppFile)==false;
+			if (isForceReload==true || isChangedDir==true || this.getCsvDataController().size()==0) {
 				// --- Set to local variables and load files --------
-				this.simBenchDirecotry = simBenchDirecotry;
-				this.readCsvFiles(simBenchDirecotryFile, true);
+				this.pandanPowerFile = ppFile;
+				this.readFileFromJson(ppFile);
 			}
 			
 			// --- Show import preview ? ----------------------------
-			this.debug = isDebug;
 			this.showImportPreview();
 		}
 	}
-
 	/**
-	 * Show the SimBench data.
+	 * Read files from the specified JSON file.
+	 *
+	 * @param graphFile the graph file to read
+	 * @return true, if successful
 	 */
-	public void showSimbenchData() {
-		boolean isDebug = this.isDebug();
-		this.setDebug(true);
-		super.showImportPreview();
-		this.setDebug(isDebug);
+	private boolean readFileFromJson(File graphFile) {
+		
+		try {
+			this.getCsvDataController().clear();
+			PandaPowerJsonReader ppFileReader = new PandaPowerJsonReader(graphFile);
+			this.getCsvDataController().putAll(ppFileReader.getCsvDataController());
+			return true;
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Shows up the PandaPower data.
+	 */
+	public void showImportPreview() {
+		this.getPandaPowerTopologyImporter().showImportPreview(false);
+	}
+	/**
+	 * Returns the CSV file preview dialog.
+	 * @return the CSV file preview dialog
+	 */
+	public CSV_FilePreview getCSVFilePreviewDialog() {
+		return this.getPandaPowerTopologyImporter().getCSVFilePreviewDialog();
 	}
 	
 	// --------------------------------------------------------------------------------------------
-	// --- From here: Some configuration for the super class AbstractNetworkModelCsvImporter ------
+	// --- Following connect to PandaPowerTopologyImporter (an AbstractNetworkModelCsvImporter) ---
 	// --------------------------------------------------------------------------------------------
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelCsvImporter#getListOfRequiredFileNames()
+	/**
+	 * Panda power topology importer.
+	 * @return the panda power topology importer
 	 */
-	@Override
-	protected Vector<String> getListOfRequiredFileNames() {
-		
-		Vector<String> fileNameVector = new Vector<>(); 
-		fileNameVector.add(SIMBENCH_Coordinates);
-		fileNameVector.add(SIMBENCH_ExternalNet);
-		fileNameVector.add(SIMBENCH_Line);
-		fileNameVector.add(SIMBENCH_LineType);
-		fileNameVector.add(SIMBENCH_Load);
-		fileNameVector.add(SIMBENCH_LoadProfile);
-		fileNameVector.add(SIMBENCH_Measurement);
-		fileNameVector.add(SIMBENCH_Node);
-		fileNameVector.add(SIMBENCH_NodePFResult);
-		fileNameVector.add(SIMBENCH_RES);
-		fileNameVector.add(SIMBENCH_RESProfile);
-		fileNameVector.add(SIMBENCH_Storage);
-		fileNameVector.add(SIMBENCH_StorageProfile);
-		fileNameVector.add(SIMBENCH_StudyCases);
-		fileNameVector.add(SIMBENCH_Transformer);
-		fileNameVector.add(SIMBENCH_TransformerType);
-		return fileNameVector;
-	}
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter#getFileFilters()
-	 */
-	@Override
-	public List<FileFilter> getFileFilters() {
-		if (fileFilterList==null) {
-			fileFilterList = new ArrayList<>();
-			fileFilterList.add(this.createFileFilter(".csv", "SimBench Eletrical Network (csv files)"));
+	public PandaPowerTopologyImporter getPandaPowerTopologyImporter() {
+		if (ppTopologyImporter==null) {
+			ppTopologyImporter = new PandaPowerTopologyImporter();
 		}
-		return fileFilterList;
+		return ppTopologyImporter;
 	}
-	/* (non-Javadoc)
-	 * @see org.awb.env.networkModel.persistence.AbstractNetworkModelFileImporter#importNetworkModelFromFile(java.io.File)
+	/**
+	 * Sets the panda power topology importer.
+	 * @param ppTopologyImporter the new panda power topology importer
 	 */
-	@Override
-	public NetworkModel importNetworkModelFromFile(File graphFile) {
-		return null; // --- Nothing to do here ---
+	public void setPandaPowerTopologyImporter(PandaPowerTopologyImporter ppTopologyImporter) {
+		this.ppTopologyImporter = ppTopologyImporter;
+	}
+	
+	/**
+	 * Return the csv data controller.
+	 * @return the csv data controller
+	 */
+	public TreeMap<String, CsvDataController> getCsvDataController() {
+		return this.getPandaPowerTopologyImporter().getCsvDataController();
 	}
 	
 	
