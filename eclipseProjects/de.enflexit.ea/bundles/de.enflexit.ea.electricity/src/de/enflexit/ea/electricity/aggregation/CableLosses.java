@@ -129,4 +129,12 @@ public class CableLosses {
 		}
 		return lossesQ;
 	}
+	/**
+	 * Multiply losses by 3.
+	 */
+	public void multiplyLossesBy3ForUniPhase() {
+		this.getLossesP().setValue(this.getLossesP().getValue()*3.f);
+		this.getLossesQ().setValue(this.getLossesQ().getValue()*3.f);
+	}
+	
 }

@@ -18,6 +18,7 @@ import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
+import de.enflexit.common.performance.PerformanceMeasurements;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.behaviour.ControlBehaviourRT;
 import de.enflexit.ea.core.behaviour.DefaultMessageReceiveBehaviour;
@@ -35,6 +36,7 @@ import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.deployment.StartArgument;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.opsOntology.OpsOntology;
+import de.enflexit.ea.core.eomStateStream.EomModelLoader;
 import de.enflexit.ea.core.monitoring.MonitoringBehaviourRT;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging;
 import de.enflexit.ea.core.monitoring.MonitoringListenerForLogging.LoggingDestination;
@@ -48,6 +50,8 @@ import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationInitiator;
 import de.enflexit.jade.phonebook.behaviours.PhoneBookRegistrationResponder;
 import energy.FixedVariableList;
+import energy.helper.TechnicalSystemGroupHelper;
+import energy.helper.TechnicalSystemHelper;
 import energy.optionModel.FixedVariable;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.TechnicalSystem;
@@ -76,6 +80,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	
 	private boolean isStartTestTickerBehaviour = false;
 	private String testTickerLocalName = "n0";
+	
+	private boolean isDoPerformanceMeasurements = false;
+	private String performanceMeasuringAgent;
+	
 	private TestTickerBehaviour testTickerBehaviour;
 	
 	
@@ -131,6 +139,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			// --- Initialize network model and component -------------------------------
 			EnvironmentModel environmentModel = Application.getProjectFocused().getEnvironmentController().getEnvironmentModel();
 			if (environmentModel!=null) {
+				// --- Set project and setup properties ---------------------------------
+				this.getInternalDataModel().setProjectProperties(environmentModel.getProjectProperties());
+				this.getInternalDataModel().setSetupProperties(environmentModel.getSetupProperties());
+				
 				// --- Set the time model type according to the environment model -------
 				HyGridAbstractEnvironmentModel abstractEnvironmentModel = (HyGridAbstractEnvironmentModel) environmentModel.getAbstractEnvironment();
 				abstractEnvironmentModel.setTimeModelType(environmentModel.getTimeModel());
@@ -174,7 +186,7 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 			this.onEnvironmentModelSet();
 		}
 		
-		// --- Start test ticker behaviour? -------------------------
+		// --- Start test ticker behaviour? ---------------------------------------------
 		if (this.isStartTestTickerBehaviour==true && (this.testTickerLocalName==null || this.testTickerLocalName.isBlank()==true || this.getLocalName().equals(this.testTickerLocalName) )) {
 			this.testTickerBehaviour = new TestTickerBehaviour(this, 10 * 1000);
 			this.addBehaviour(this.testTickerBehaviour);
@@ -231,11 +243,14 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	@Override
 	protected final void takeDown() {
 		
-		// --- Stop test ticker behaviour? --------------------------
+		// --- Stop test ticker behaviour? ------------------------------------
 		if (this.testTickerBehaviour!=null) {
 			this.removeBehaviour(this.testTickerBehaviour);
 			this.testTickerBehaviour = null;
 		}
+		
+		// --- Close UI -------------------------------------------------------
+		this.getUIConnector().closeUI();
 		
 		// --- Stop the log writer --------------------------------------------
 		this.stopSystemStateLogWriter();
@@ -338,7 +353,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 				SetupExtension setEx = this.getInternalDataModel().getHyGridAbstractEnvironmentModel().getSetupExtension();
 				if (setEx!=null) {
 					AgentDeploymentInformation agentInfo = setEx.getDeploymentGroupsHelper().getAgentDeploymentInformation(this.getLocalName());
-					operatingMode = agentInfo.getAgentOperatingMode();
+					if (agentInfo!=null) {
+						operatingMode = agentInfo.getAgentOperatingMode();
+					}
 				}
 			}
 			// --- Use 'real' as backup solution ----------------------------------------
@@ -769,6 +786,15 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					// --------------------------------------------------------
 					// --- Check the data model of the network component ------
 					Object dm = netComp.getDataModel();
+
+					// --------------------------------------------------------
+					// --- Load EOM model from file settings? -----------------
+					if (dm==null) {
+						dm = EomModelLoader.loadEomModel(netComp);
+					}
+					
+					// --------------------------------------------------------
+					// --- Case Separation EOM model type ---------------------
 					if (dm instanceof ScheduleList) {
 						// ----------------------------------------------------
 						// --- ScheduleList -----------------------------------
@@ -777,8 +803,10 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					} else if (dm instanceof TechnicalSystem){
 						// ----------------------------------------------------
 						// --- TechnicalSystems -------------------------------
+						TechnicalSystem ts = (TechnicalSystem) dm;
+						TechnicalSystemHelper.adjustEvaluationStartTime(ts, this.getEnergyAgentIO().getTime());
 						if (this.getInternalDataModel().getBundleModelForTechnicalSystem()==null) {
-							this.getInternalDataModel().getOptionModelController().setTechnicalSystem((TechnicalSystem) dm);
+							this.getInternalDataModel().getOptionModelController().setTechnicalSystem(ts);
 							if (this.getInternalDataModel().getOptionModelController().getEvaluationStrategyRT()!=null) {
 								
 								// --- Add a real time control, if configured ---------
@@ -794,7 +822,9 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 					} else if (dm instanceof TechnicalSystemGroup){
 						// ----------------------------------------------------
 						// --- TechnicalSystemGroup ---------------------------
-						this.getInternalDataModel().getGroupController().setTechnicalSystemGroup((TechnicalSystemGroup) dm);
+						TechnicalSystemGroup tsg = (TechnicalSystemGroup) dm;
+						TechnicalSystemGroupHelper.adjustEvaluationStartTime(tsg, this.getEnergyAgentIO().getTime());
+						this.getInternalDataModel().getGroupController().setTechnicalSystemGroup(tsg);
 						if (this.getInternalDataModel().getGroupController().getGroupOptionModelController().getEvaluationStrategyRT()!=null) {
 							// --- Add a real time control, if configured -----
 							// --- => For testbed agents, this is to early ! -- 
@@ -1035,6 +1065,133 @@ public abstract class AbstractEnergyAgent extends Agent implements Observer {
 	 */
 	public PlanningInformation getPlanningInformation() {
 		return new PlanningInformation(this);
+	}
+
+	
+	// --------------------------------------------------------------
+	// --- From here methods for performance measurements -----------
+	// --------------------------------------------------------------	
+	/**
+	 * Checks if this energy agent does performance measurements.
+	 * @return true, if performance measurements are to be done
+	 */
+	public boolean isDoPerformanceMeasurements() {
+		return (this.isDoPerformanceMeasurements==true && this.performanceMeasuringAgent!=null && this.getLocalName().equals(this.performanceMeasuringAgent)==true);
+	}
+	/**
+	 * Sets to do (or not) performance measurements for the specified agent.
+	 *
+	 * @param doIt the indicator to do performance measurements or not.
+	 * @param eaLocalName the Energy Agents local name
+	 */
+	public void setDoPerformanceMeasurements(boolean doIt, String eaLocalName) {
+		this.setDoPerformanceMeasurements(doIt, eaLocalName, null, null);
+	}
+	/**
+	 * Sets to do (or not) performance measurements for the specified agent.
+	 *
+	 * @param doIt the indicator to do performance measurements or not.
+	 * @param eaLocalName the Energy Agents local name
+	 * @param noOfMeasurementsForAverage the optional number of measurements to build an average value; <code>null</code> is allowed
+	 * @param individualMeasurementTaskNames the optional string array of individual measurement task names; <code>null</code> is allowed
+	 */
+	public void setDoPerformanceMeasurements(boolean doIt, String eaLocalName, Integer noOfMeasurementsForAverage, String[] individualMeasurementTaskNames) {
+		this.isDoPerformanceMeasurements = doIt;
+		this.performanceMeasuringAgent = eaLocalName;
+		if (this.isDoPerformanceMeasurements==true) {
+			this.registerPerformanceMeasurements(noOfMeasurementsForAverage, individualMeasurementTaskNames);
+		}
+	}
+	/**
+	 * Registers the performance measurements of the simulation manager if the
+	 * local variable {@link #isDoPerformanceMeasurements} is set to true.
+	 *
+	 * @param noOfMeasurementsForAverage the optional number of measurements to build an average value; <code>null</code> is allowed
+	 * @param individualMeasurementTaskNames the optional string array of individual measurement task names; <code>null</code> is allowed
+	 */
+	private void registerPerformanceMeasurements(Integer noOfMeasurementsForAverage, String[] individualMeasurementTaskNames) {
+		
+		if (this.isDoPerformanceMeasurements()==false) return;
+			
+		// --- Analyze individual tasks -----------------------------
+		int noOfIndiTasks = 0;
+		if (individualMeasurementTaskNames!=null && individualMeasurementTaskNames.length>0) {
+			noOfIndiTasks = individualMeasurementTaskNames.length;
+		}
+		
+		// --- Define a PerformanceGroup ----------------------------
+		String[] pGroup = new String[5 + noOfIndiTasks];
+
+		// --- Default tasks ----------------------------------------
+		pGroup[0] = EnergyAgentPerformanceMeasurements.EA_PM_CONTROL_BEHAVIOUR_RT;
+		pGroup[1] = EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_STRATEGY_EXECUTION;
+		
+		pGroup[2] = EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS;
+		pGroup[3] = EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION;
+		pGroup[4] = EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION; 
+		
+		// --- Add individual tasks ---------------------------------
+		if (noOfIndiTasks>0) {
+			int destinIndex = 5;
+			for (String task : individualMeasurementTaskNames) {
+				pGroup[destinIndex] = task;
+				destinIndex++;
+			}
+		}
+		
+		// --- Add as PerformanceGroup ------------------------------
+		PerformanceMeasurements pm = PerformanceMeasurements.getInstance();
+		pm.addPerformanceGroup("EnergyAgent Processes (" + this.getLocalName() + ")", pGroup, true);
+		
+		// --- Set number of steps to calculate an average ----------
+		if (noOfMeasurementsForAverage!=null && noOfMeasurementsForAverage>0) {
+			for (String task : pGroup) {
+				pm.addPerformanceMeasurement(task, noOfMeasurementsForAverage);
+			}
+		}
+	}
+	/**
+	 * Returns the singleton instance of the PerformanceMeasurements.
+	 * @return the performance measurements
+	 */
+	public PerformanceMeasurements getPerformanceMeasurements() {
+		if (this.isDoPerformanceMeasurements()==true) {
+			return PerformanceMeasurements.getInstance();
+		}
+		return null;
+	}
+	/**
+	 * Sets the specified measurement started.
+	 * @param taskDescriptor the task descriptor
+	 */
+	public void setPerformanceMeasurementStarted(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementStarted(taskDescriptor);
+	}
+	/**
+	 * Sets the specified measurement finalized (applies regular and for loops).
+	 * @param taskDescriptor the new measurement finalized
+	 */
+	public void setPerformanceMeasurementFinalized(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setMeasurementFinalized(taskDescriptor);
+	}
+	
+	/**
+	 * Sets the loop performance measurement started / looped.
+	 * @param taskDescriptor the new loop performance measurement started
+	 */
+	public void setLoopPerformanceMeasurementStarted(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setLoopMeasurementStarted(taskDescriptor);
+	}
+	/**
+	 * Sets the specified loop measurement finalized (applies regular and for loops).
+	 * @param taskDescriptor the new measurement finalized
+	 */
+	public void setLoopPerformanceMeasurementFinalized(String taskDescriptor) {
+		if (this.getPerformanceMeasurements()==null) return;
+		this.getPerformanceMeasurements().setLoopMeasurementFinalized(taskDescriptor);
 	}
 	
 }

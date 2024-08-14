@@ -12,7 +12,10 @@ import energy.optionModel.SystemVariableDefinitionDouble;
  * The Class TransformerDataModel represents the Serializable type to configure a transformer .
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
+ * @deprecated the TransformerDataModel class to use was moved to the core electricity bundle.
+ * This class is only used to handle persisted legacy models and convert them into the new class type.   
  */
+@Deprecated
 public class TransformerDataModel implements Serializable {
 
 	private static final long serialVersionUID = 2852720060911906256L;

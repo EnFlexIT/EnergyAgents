@@ -16,4 +16,16 @@ public interface EnergyAgentUiService {
 	 */
 	public void openOrFocusUI(AbstractEnergyAgent energyAgent);
 	
+	/**
+	 * Has to update the UI for the specified energy agent.
+	 * @param energyAgent the energy agent
+	 */
+	public void updateUI(AbstractEnergyAgent energyAgent);
+	
+	/**
+	 * Has to close the UI of the specified energy agent.
+	 * @param energyAgent the energy agent
+	 */
+	public void closeUI(AbstractEnergyAgent energyAgent);
+	
 }

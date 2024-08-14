@@ -16,6 +16,7 @@ import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
+import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.aggregation.trafficLight.TrafficLightStateMessage;
 import de.enflexit.ea.core.aggregation.trafficLight.TrafficLightStatePanel;
 import de.enflexit.ea.core.aggregation.trafficLight.TrafficLight.TrafficLightColor;
@@ -51,6 +52,11 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 	
 	private AbstractElectricalNetworkCalculationStrategy netClacStrategy;
 	
+	
+	/**
+	 * Has to return the responsible layout service.
+	 * @return the layout service
+	 */
 	protected abstract GraphElementLayoutService getLayoutService();
 	
 	/* (non-Javadoc)
@@ -58,7 +64,7 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 	 */
 	@Override
 	protected String getSubNetwork() {
-		return this.getLayoutService().getDomain();
+		return this.getSubAggregationConfiguration().getDomain();
 	}
 
 	/* (non-Javadoc)
@@ -103,8 +109,6 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 			System.err.println("[" + this.getClass().getSimpleName() + "] No data model found for node " + graphNodeID);
 		}
 		
-		this.getLayoutService().getDomain();
-
 		// --- Create the chart and set the data model --------------
 		TimeSeriesChart tsc = this.createTimeSeriesChart(graphNodeID, "Power & Voltage", "Power / Voltage");
 		Object[] dataModelArray = new Object[3];
@@ -385,9 +389,13 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 	 * @return the traffic light color
 	 */
 	private TrafficLightColor getTrafficLightColorVoltage(float voltage) {
-		ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForNodes();
-		Integer colorIndex = colorSettings.getColorIndexForValue(voltage);
-		return this.getTrafficLightColorFromVoltageColorIndex(colorIndex);
+		HyGridGraphElementLayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings!=null) {
+			ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForNodes();
+			Integer colorIndex = colorSettings.getColorIndexForValue(voltage);
+			return this.getTrafficLightColorFromVoltageColorIndex(colorIndex);
+		}
+		return TrafficLightColor.Green;
 	}
 	
 	/**
@@ -396,11 +404,13 @@ public abstract class AbstractElectricalNetworkDisplayUpdater extends AbstractNe
 	 * @return the traffic light color
 	 */
 	private TrafficLightColor getTrafficLightColorUtilization(float utilization) {
-		ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForEdges();
-		
-		// --- Get the distinct ordered index -----------------------
-		Integer colorIndex = colorSettings.getColorIndexForValue(utilization);
-		return this.getTrafficLightColorFromUtilizationColorIndex(colorIndex);
+		HyGridGraphElementLayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings!=null) {
+			ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForEdges();
+			Integer colorIndex = colorSettings.getColorIndexForValue(utilization);
+			return this.getTrafficLightColorFromUtilizationColorIndex(colorIndex);
+		}
+		return TrafficLightColor.Green;
 	}
 
 }

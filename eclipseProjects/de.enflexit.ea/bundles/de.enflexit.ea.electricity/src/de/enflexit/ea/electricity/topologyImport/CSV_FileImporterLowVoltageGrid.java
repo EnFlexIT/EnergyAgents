@@ -22,6 +22,7 @@ import org.awb.env.networkModel.persistence.NetworkModelImportService;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
 import de.enflexit.common.csv.CsvDataController;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.CableWithBreakerProperties;
@@ -472,7 +473,7 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 			tsc.setTimeSeriesVisualisationSettings(new TimeSeriesChartSettings());
 			
 			TriPhaseElectricalNodeState nodeState;
-			if (newComp.getType().equals("Transformer")) {
+			if (TransformerHelper.isTransformer(newComp)==true) {
 				nodeState = new TriPhaseElectricalTransformerState();
 			} else {
 				nodeState = new TriPhaseElectricalNodeState();

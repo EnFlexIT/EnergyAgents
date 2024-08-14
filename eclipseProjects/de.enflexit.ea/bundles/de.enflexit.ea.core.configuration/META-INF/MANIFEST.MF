@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Bundle-Name: Energy Agent - Large Setup Configuration
+Bundle-SymbolicName: de.enflexit.ea.core.configuration
+Automatic-Module-Name: de.enflexit.ea.core.configuration
+Bundle-Vendor: EnFlex.IT
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: de.enflexit.eom.awb.adapter,
+ org.eclipse.core.runtime.preferences,
+ org.osgi.framework,
+ org.osgi.service.prefs
+Require-Bundle: de.enflexit.common,
+ de.enflexit.ea.core.aggregation,
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.eom.core,
+ org.agentgui.lib.jade,
+ org.awb.env.networkModel,
+ org.agentgui.core
+Export-Package: de.enflexit.ea.core.configuration,
+ de.enflexit.ea.core.configuration.model,
+ de.enflexit.ea.core.configuration.model.components,
+ de.enflexit.ea.core.configuration.plugin,
+ de.enflexit.ea.core.configuration.ui

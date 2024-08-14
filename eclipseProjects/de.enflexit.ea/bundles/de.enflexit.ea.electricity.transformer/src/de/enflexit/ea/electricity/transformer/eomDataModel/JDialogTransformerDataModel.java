@@ -3,10 +3,10 @@ package de.enflexit.ea.electricity.transformer.eomDataModel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
 import energy.optionModel.gui.sysVariables.AbstractStaticModel;
 import energy.optionModel.gui.sysVariables.AbstractStaticModelDialog;
 
@@ -49,7 +49,7 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 	 * @param owner the owner
 	 * @param staticModel the static model
 	 */
-	public JDialogTransformerDataModel(Frame owner, AbstractStaticModel staticModel) {
+	public JDialogTransformerDataModel(Window owner, AbstractStaticModel staticModel) {
 		super(owner, staticModel);
 		this.setTransformerDataModel((TransformerDataModel) staticModel.getStaticDataModel());
 		this.initialize();
@@ -81,7 +81,7 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 		gbc_jPanelButtons.gridy = 1;
 		this.getContentPane().add(this.getJPanelButtons(), gbc_jPanelButtons);
 		
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
 	
@@ -92,7 +92,6 @@ public class JDialogTransformerDataModel extends AbstractStaticModelDialog imple
 	private JTabbedPane getJTabbedPaneStaticModel() {
 		if (jTabbedPaneStaticModel == null) {
 			jTabbedPaneStaticModel = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPaneStaticModel.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneStaticModel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jTabbedPaneStaticModel.addTab("Base Settings", null, getJPanelTransformerBaseSettings(), null);
 			jTabbedPaneStaticModel.addTab("Control Settings", null, getJPanelTransformerControlSettings(), null);

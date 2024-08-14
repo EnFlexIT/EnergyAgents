@@ -60,6 +60,21 @@ public class Planner extends EomPlanner {
 	}
 
 	/**
+	 * Sets the local energy agent.
+	 * @param energyAgent the new energy agent
+	 */
+	public void setEnergyAgent(AbstractEnergyAgent energyAgent) {
+		this.energyAgent = energyAgent;
+	}
+	/**
+	 * Return the local energy agent.
+	 * @return the energy agent
+	 */
+	public AbstractEnergyAgent getEnergyAgent() {
+		return energyAgent;
+	}
+	
+	/**
 	 * Returns the currents planner name.
 	 * @return the planner name
 	 */

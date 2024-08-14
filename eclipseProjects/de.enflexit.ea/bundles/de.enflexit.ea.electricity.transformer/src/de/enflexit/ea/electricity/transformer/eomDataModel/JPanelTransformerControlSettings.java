@@ -51,8 +51,10 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
-import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 import de.enflexit.ea.electricity.transformer.TransformerBundleHelper;
+import de.enflexit.ea.electricity.transformer.TransformerCharacteristicsHandler;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
 import energy.GlobalInfo;
 import energy.helper.NumberHelper;
 
@@ -748,7 +750,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 			
 			// --- Check for the right domain ---------------------------------
 			String domain = networkModel.getDomain(netComp);
-			boolean isElectricity = domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_10KV) || domain.equals(GlobalHyGridConstants.HYGRID_DOMAIN_ELECTRICITY_400V);
+			boolean isElectricity = ElectricityDomainIdentification.isElectricityDomain(domain);
 			if (isElectricity==false) continue;
 			
 			// --- Check for single GraühNode ---------------------------------

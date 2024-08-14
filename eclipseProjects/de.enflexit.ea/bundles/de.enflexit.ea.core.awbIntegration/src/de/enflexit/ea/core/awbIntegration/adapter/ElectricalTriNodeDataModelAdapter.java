@@ -8,6 +8,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.ontology.AgentGUI_BaseOntology;
 import agentgui.ontology.TimeSeriesChart;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeProperties;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;
 import de.enflexit.ea.core.dataModel.ontology.TransformerNodeProperties;
@@ -70,7 +71,7 @@ public class ElectricalTriNodeDataModelAdapter extends NetworkComponentAdapter4O
 	 * @return true, if is transformer node
 	 */
 	private boolean isTransformerNode() {
-		return NetworkComponentHelper.isTransformer(this.getGraphNode(), this.graphController.getNetworkModel());
+		return TransformerHelper.isTransformer(this.getGraphNode(), this.graphController.getNetworkModel());
 	}
 	
 }

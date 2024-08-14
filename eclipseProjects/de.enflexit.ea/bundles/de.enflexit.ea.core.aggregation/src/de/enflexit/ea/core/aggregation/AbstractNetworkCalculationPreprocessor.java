@@ -53,14 +53,14 @@ public abstract class AbstractNetworkCalculationPreprocessor {
 	 * Returns the GroupController of the aggregation.
 	 * @return the group controller
 	 */
-	protected GroupController getGroupController() {
+	public GroupController getGroupController() {
 		return this.getSubAggregationConfiguration().getSubAggregationBuilder().getGroupController();
 	}
 	/**
 	 * Returns the current overall network model.
 	 * @return the network model
 	 */
-	protected NetworkModel getNetworkModel() {
+	public NetworkModel getNetworkModel() {
 		return this.getAggregationHandler().getNetworkModel();
 	}
 	

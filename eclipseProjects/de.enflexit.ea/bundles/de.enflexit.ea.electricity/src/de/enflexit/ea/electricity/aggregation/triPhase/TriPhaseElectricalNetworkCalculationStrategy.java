@@ -14,9 +14,6 @@ import org.awb.env.networkModel.visualisation.notifications.DisplayAgentNotifica
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
@@ -24,6 +21,9 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.BranchDescription;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
@@ -42,7 +42,8 @@ import energygroup.calculation.FlowsMeasuredGroupMember;
 /**
  * Network calculation strategy implementation for low voltage distribution grids.
  * 
- * @author mehlich
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectricalNetworkCalculationStrategy {
 	
@@ -197,19 +198,19 @@ public class TriPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 		double transformerPowerImagL3 = 0;
 
 		if (pfcL1 != null) {
-			if(pfcL1.getPowerOfTransformer().size()>0){
+			if (pfcL1.getPowerOfTransformer().size()>0){
 				transformerPowerRealL1 = pfcL1.getPowerOfTransformer().get(0);
 				transformerPowerImagL1 = pfcL1.getPowerOfTransformer().get(1);
 			}
 		}
 		if (pfcL2 != null) {
-			if(pfcL2.getPowerOfTransformer().size()>0){
+			if (pfcL2.getPowerOfTransformer().size()>0){
 				transformerPowerRealL2 = pfcL2.getPowerOfTransformer().get(0);
 				transformerPowerImagL2 = pfcL2.getPowerOfTransformer().get(1);
 			}
 		}
 		if (pfcL3 != null) {
-			if(pfcL3.getPowerOfTransformer().size()>0){
+			if (pfcL3.getPowerOfTransformer().size()>0){
 				transformerPowerRealL3 = pfcL3.getPowerOfTransformer().get(0);
 				transformerPowerImagL3 = pfcL3.getPowerOfTransformer().get(1);
 			}

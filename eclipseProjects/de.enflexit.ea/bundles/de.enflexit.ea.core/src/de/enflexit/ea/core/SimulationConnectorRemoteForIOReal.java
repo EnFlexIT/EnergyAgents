@@ -69,6 +69,9 @@ public class SimulationConnectorRemoteForIOReal extends SimulationConnectorRemot
 	@Override
 	public void setEnvironmentModel(EnvironmentModel envModel, boolean aSynchron) {
 		
+		this.internalDataModel.setProjectProperties(envModel.getProjectProperties());
+		this.internalDataModel.setSetupProperties(envModel.getSetupProperties());
+		
 		NetworkModel networkModel = (NetworkModel) this.environmentModel.getDisplayEnvironment();
 		this.internalDataModel.setNetworkModel(networkModel, false);
 		NetworkComponent networkComponent = networkModel.getNetworkComponent(this.myAgent.getLocalName()).getCopy();

@@ -29,6 +29,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 			return this.calculatePF();
 
 		} catch (Exception ex) {
+			System.err.println("[" + Thread.currentThread().getName() + "." + this.getClass().getSimpleName() + "] Error while executing power flow calculation: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return false;
@@ -233,9 +234,9 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 		this.calculation_ik();
 		this.calculation_sK();
 		// --- Workaround --------
-		if(this.getEstimatedBranchCurrents()!=null&&this.getEstimatedBranchCurrents().size()>0) {
-			this.calculateBranchCurrents(this.getEstimatedBranchCurrents());}
-		else {
+		if (this.getEstimatedBranchCurrents()!=null && this.getEstimatedBranchCurrents().size()>0) {
+			this.calculateBranchCurrents(this.getEstimatedBranchCurrents());
+		} else {
 			this.calculation_iN();
 		}
 		//_________
@@ -775,15 +776,13 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 	 */
 	// ik= AC-BD +j(BC+AD)
 	private void calculation_ik() {
-		double tempReal = 0;
-		double tempImag = 0;
+		
 		Vector<Double> nodalCurrentReal = new Vector<Double>();
 		Vector<Double> nodalCurrentImag = new Vector<Double>();
-		double A;
-		double B;
-		double C;
-		double D;
+		double A, B, C, D;
 		for (int a = 0; a < this.getnNumNodes(); a++) {
+			double tempReal = 0;
+			double tempImag = 0;
 			for (int b = 0; b < this.getnNumNodes(); b++) {
 				A = this.getPowerFlowParameter().getYkkReal().get(a).get(b);
 				B = this.getPowerFlowParameter().getYkkImag().get(a).get(b);
@@ -794,10 +793,7 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 			}
 			nodalCurrentReal.add(tempReal);
 			nodalCurrentImag.add(tempImag);
-			tempReal = 0;
-			tempImag = 0;
 		}
-		
 		this.setNodalCurrentReal(nodalCurrentReal);
 		this.setNodalCurrentImag(nodalCurrentImag);
 	}
@@ -806,15 +802,16 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 	 * Calculation_s k.
 	 */
 	private void calculation_sK() {
+
 		Vector<Double> sK_real = new Vector<Double>();
 		Vector<Double> sK_imag = new Vector<Double>();
-		double temp_real = 0;
-		double temp_imag = 0;
 		double[][] A = new double[this.getnNumNodes()][this.getnNumNodes()];
 		double[][] B = new double[this.getnNumNodes()][this.getnNumNodes()];
 		double C = 0;
 		double D = 0;
 		for (int a = 0; a < this.getnNumNodes(); a++) {
+			double temp_real = 0;
+			double temp_imag = 0;
 			for (int b = 0; b < this.getnNumNodes(); b++) {
 				A[a][a] = this.getNodalVoltageReal().get(a);
 				B[a][a] = this.getNodalVoltageImag().get(a);
@@ -825,8 +822,6 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 			}
 			sK_real.add(temp_real); // pK
 			sK_imag.add(temp_imag); // qK
-			temp_real = 0;
-			temp_imag = 0;
 		}
 	}
 
@@ -866,13 +861,9 @@ public class PowerFlowCalculation extends AbstractPowerFlowCalculation {
 						
 					if(dIn_real[a][b]>0) {
 						dIn_abs[a][b] = Math.sqrt(dIn_real[a][b] * dIn_real[a][b] + dIn_imag[a][b] * dIn_imag[a][b]);
-					}
-					else {
+					} else {
 						dIn_abs[a][b] =-1* Math.sqrt(dIn_real[a][b] * dIn_real[a][b] + dIn_imag[a][b] * dIn_imag[a][b]);
 					}
-					
-					
-				
 				}
 			}
 		}

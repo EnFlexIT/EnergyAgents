@@ -151,26 +151,41 @@ public abstract class AbstractSubAggregationBuilder {
 	 * Creates the EOM aggregation in a dedicated thread.
 	 */
 	protected void createEomAggregationInThread() {
+		this.createEomAggregationInThread(true);
+	}
+	/**
+	 * Creates the EOM aggregation in a dedicated thread.
+	 * @param showVisualization the indicator to directly show the aggregations visualization
+	 */
+	protected void createEomAggregationInThread(boolean showVisualization) {
 		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// --- Create aggregation ---------------------------
-				AbstractSubAggregationBuilder.this.createEomAggregation();
+				AbstractSubAggregationBuilder.this.createEomAggregation(showVisualization);
 			}
 		}, "EOM-Aggregation-Build_" + this.getSubAggregationConfiguration().getID()).start();
 	}
+	
 	/**
-	 * Will be invoked to create the aggregation.
+	 * Will be invoked to create the EOM - aggregation.
 	 */
 	protected void createEomAggregation() {
+		this.createEomAggregation(true);
+	}
+	/**
+	 * Will be invoked to create the EOM - aggregation.
+	 * @param showVisualization the show visualization
+	 */
+	protected void createEomAggregation(boolean showVisualization) {
 	
 		// --- Create / fill the aggregation model ----------------------------
 		this.createAggregationAsTechnicalSystemGroup();
 		this.addSubsystemsToAggregation();
 
 		// --- Show visualization of the aggregation ? ------------------------
-		if (this.isHeadlessOperation()==false && this.hasSubSystems()==true) {
+		if (showVisualization==true && this.isHeadlessOperation()==false && this.hasSubSystems()==true) {
 			this.showVisualization();
 		}
 		
@@ -552,39 +567,105 @@ public abstract class AbstractSubAggregationBuilder {
 		}
 	}
 	
+	
+	/**
+	 * Registers the current subsystem build for a concurrent sub system construction.
+	 *
+	 * @param netCompID the NetworkComponent ID
+	 * @return true, if the calling method should create the subsystem; false otherwise
+	 */
+	private boolean registerForConcurrentSubSystemConstruction(String netCompID) {
+		
+		boolean doBuild = false;
+		boolean doWait = false;
+		Object synchObject = null;
+		
+		// --- Try getting the synchronization object and further proceeding ------------
+		synchronized (this.getAggregationHandler().getSubSystemConstructionHashMap()) {
+			synchObject = this.getAggregationHandler().getSubSystemConstructionHashMap().get(netCompID);
+			if (synchObject==null) {
+				doBuild = true;
+				doWait = false;
+				this.getAggregationHandler().getSubSystemConstructionHashMap().put(netCompID, new Object());
+			} else {
+				doBuild = false;
+				doWait = true;
+			}
+		}
+
+		if (doWait==true) {
+			synchronized (synchObject) {
+				try {
+					synchObject.wait(100);
+				} catch (InterruptedException intEx) {
+					intEx.printStackTrace();
+				}
+			} 
+		}
+		return doBuild;
+	}
+	/**
+	 * Unregisters the current subsystem build for the concurrent sub system construction.
+	 * 
+	 * @param netCompID the NetworkComponent ID
+	 */
+	private void unregisterForConcurrentSubSystemConstruction(String netCompID) {
+		
+		// --- Try getting the synchronization object and further proceeding ------------
+		synchronized (this.getAggregationHandler().getSubSystemConstructionHashMap()) {
+			Object synchObject = this.getAggregationHandler().getSubSystemConstructionHashMap().remove(netCompID);
+			if (synchObject!=null) {
+				synchronized (synchObject) {
+					synchObject.notifyAll();
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Adds a single sub system to the aggregation.
 	 * @param subSystemComponent the sub system's {@link NetworkComponent}
 	 */
 	protected void addSubSystemToAggregation(NetworkComponent subSystemComponent) {
+		
 		ScheduleController scheduleController = this.getNetworkComponentsScheduleController().get(subSystemComponent.getId());
 		if (scheduleController==null) {
-			// --- Create a new ScheduleList --------------------------
-			ScheduleList sl = new ScheduleList();
-			sl.setNetworkID(subSystemComponent.getId());
-			sl.setSystemID(subSystemComponent.getType());
-			sl.getInterfaceSettings().addAll(this.getInterfaceSettings(subSystemComponent.getDataModel()));
-			
-			// --- Add as a new GroupMember ---------------------------
-			GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
-			
-			// --- Remind the ScheduleController ----------------------
-			GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
-			this.getNetworkComponentsScheduleController().put(subSystemComponent.getId(), gtno.getGroupMemberScheduleController());
-			this.setContainsSubSystems(true);
+			// --- Check if the system is 'under construction' ------
+			boolean doBuild = this.registerForConcurrentSubSystemConstruction(subSystemComponent.getId());
+			if (doBuild==true) {
+				// --- Create a new ScheduleList --------------------
+				ScheduleList sl = new ScheduleList();
+				sl.setNetworkID(subSystemComponent.getId());
+				sl.setSystemID(subSystemComponent.getType());
+				sl.getInterfaceSettings().addAll(this.getInterfaceSettings(subSystemComponent.getDataModel()));
+				
+				// --- Add as a new GroupMember ---------------------
+				GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
+				GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
+				
+				// --- Remind the ScheduleController ----------------
+				this.getNetworkComponentsScheduleController().put(subSystemComponent.getId(), gtno.getGroupMemberScheduleController());
+				
+				// --- Unregister for construction check ------------ 
+				this.unregisterForConcurrentSubSystemConstruction(subSystemComponent.getId());
+				
+			} else {
+				// --- System is available now. Just recall method --
+				this.addSubSystemToAggregation(subSystemComponent);
+			}
 			
 		} else {
-			
-			// --- Use existing ScheduleList & ScheduleController -----
+			// --- Use existing ScheduleList & ScheduleController ---
 			ScheduleList sl = scheduleController.getScheduleList();
+			
+			// --- Add as a new GroupMember -------------------------
 			GroupMember groupMember = this.getGroupController().addScheduleList(sl, null);
 			GroupTreeNodeObject gtno = this.getGroupController().getGroupTreeModel().getGroupTreeNodeObject(groupMember);
 			gtno.setGroupMemberScheduleController(scheduleController);
 			
-			// --- Remind the ScheduleController ----------------------
-			this.getNetworkComponentsScheduleController().put(subSystemComponent.getId(), gtno.getGroupMemberScheduleController());
-			this.setContainsSubSystems(true);
 		}
+		// --- Set indicator for available sub systems --------------
+		this.setContainsSubSystems(true);
 	}
 	
 	/**

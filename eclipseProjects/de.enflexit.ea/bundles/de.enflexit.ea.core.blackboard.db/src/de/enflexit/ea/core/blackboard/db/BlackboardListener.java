@@ -2,6 +2,8 @@ package de.enflexit.ea.core.blackboard.db;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -19,16 +21,18 @@ import de.enflexit.ea.core.blackboard.db.dataModel.EdgeResult;
 import de.enflexit.ea.core.blackboard.db.dataModel.NetworkState;
 import de.enflexit.ea.core.blackboard.db.dataModel.NodeResult;
 import de.enflexit.ea.core.blackboard.db.dataModel.TrafoResult;
+import de.enflexit.ea.core.dataModel.TransformerHelper;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
-import de.enflexit.ea.electricity.aggregation.triPhase.SubNetworkConfigurationElectricalDistributionGrids;
+import de.enflexit.ea.electricity.ElectricityDomainIdentification;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.HighVoltageUniPhase;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.HighVoltageUniPhase;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.helper.UnitConverter;
 import energy.optionModel.EnergyFlowInWatt;
@@ -54,6 +58,8 @@ public class BlackboardListener implements BlackboardListenerService {
 	private final double voltageBoundaryHigh = voltageBase + voltageBoundaryStep;
 	private final double voltageBoundaryLow  = voltageBase - voltageBoundaryStep;
 	
+	
+	private List<SubBlackboardModelElectricity> subBlackboardModelListElectricity;
 	
 	private Integer idExecution;
 
@@ -125,42 +131,99 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		// --- Get the sub blackboard model -------------------------
 		AbstractAggregationHandler aggregationHandler = blackboard.getAggregationHandler();
-		SubBlackboardModelElectricity subBlackboardModel = this.getSubBlackboardModelElectricity(aggregationHandler);
-		if (subBlackboardModel!=null) {
-			// --- Get a quick copy of the relevant states ----------
-			HashMap<String, ElectricalNodeState> nodeStates = new HashMap<>(subBlackboardModel.getNodeStates());
-			HashMap<String, CableState> cableStates = new HashMap<>(subBlackboardModel.getCableStates());
-			HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs = this.getLastTransformerStatesFromBlackboardAggregation(aggregationHandler);
-			
-			// --- Create lists to save to database -----------------
-			NetworkState networkState = new NetworkState();
-			networkState.setStateTime(stateTime);
-			networkState.setNodeResultList(this.getNodeResults(nodeStates, stateTime));
-			networkState.setEdgeResultList(this.getEdgeResults(cableStates, stateTime));
-			networkState.setTrafoResultList(this.getTrafoResults(nodeStates, transformerTSSEs, stateTime));
-			
-			// --- Save to database ---------------------------------
-			this.getDatabaseHandler().addNetworkStateToSave(networkState);
-			
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No SubBlackboardModel found for " + SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
-		}
+
+		// --- Write electricity data to DB -------------------------
+		this.writeElectricityStatesToDatabase(stateTime, aggregationHandler);
+		
+		// --- Space for further improvements ;-) -------------------
+		
 	}
 	
 	/**
-	 * Gets the sub blackboard model electricity.
+	 * Write electricity states to database.
+	 *
+	 * @param stateTime the state time
 	 * @param aggregationHandler the aggregation handler
-	 * @return the sub blackboard model electricity
 	 */
-	private SubBlackboardModelElectricity getSubBlackboardModelElectricity(AbstractAggregationHandler aggregationHandler) {
+	private void writeElectricityStatesToDatabase(Calendar stateTime, AbstractAggregationHandler aggregationHandler) {
+		
+		List<SubBlackboardModelElectricity> subBlackboardModelListElectricity = this.getSubBlackboardModelElectricity(aggregationHandler);
+		if (subBlackboardModelListElectricity.size()==0) return;
+		
+		// --- Define state HashMaps --------------------------------
+		NodeStateCollector nodeStates = new NodeStateCollector();
+		HashMap<String, CableState> cableStates = new HashMap<>();
+		HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs = this.getLastTransformerStatesFromBlackboardAggregation(aggregationHandler);
 
-		// TODO what if there are several aggregations of the same kind?
-		List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(SubNetworkConfigurationElectricalDistributionGrids.SUBNET_DESCRIPTION_ELECTRICAL_DISTRIBUTION_GRIDS);
-		if (subNetworkConfogurations.size()>0) {
-			return (SubBlackboardModelElectricity) subNetworkConfogurations.get(0).getSubBlackboardModel();
-		} else {
-			return null;
+		// --- Get a quick copy of the relevant states --------------
+		for (SubBlackboardModelElectricity subBlackboardModel : subBlackboardModelListElectricity) {
+			nodeStates.putAll((AbstractElectricalNetworkConfiguration) subBlackboardModel.getSubAggregationConfiguration(), subBlackboardModel.getNodeStates());
+			cableStates.putAll(subBlackboardModel.getCableStates());
 		}
+		
+		// --- Prepare and put to database --------------------------
+		this.prepareAndPutElectricityStatesToDatabaseInThread(stateTime, nodeStates, cableStates, transformerTSSEs);
+	}
+	/**
+	 * Prepares and puts the specified electricity state data to the database by using a dedicated thread.
+	 *
+	 * @param stateTime the state time
+	 * @param nodeStates the node states
+	 * @param cableStates the cable states
+	 * @param transformerTSSEs the transformer TSS es
+	 */
+	private void prepareAndPutElectricityStatesToDatabaseInThread(final Calendar stateTime, final NodeStateCollector nodeStates, final HashMap<String, CableState> cableStates, final HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs) {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				BlackboardListener.this.prepareAndPutElectricityStatesToDatabase(stateTime, nodeStates, cableStates, transformerTSSEs);
+			}
+		}, "DB-Preparation-" + stateTime.getTimeInMillis()).start();
+	}
+	/**
+	 * Prepares and puts the specified electricity state data to the database.
+	 *
+	 * @param stateTime the state time
+	 * @param nodeStates the node states
+	 * @param cableStates the cable states
+	 * @param transformerTSSEs the transformer TSS es
+	 */
+	private void prepareAndPutElectricityStatesToDatabase(Calendar stateTime, NodeStateCollector nodeStates, HashMap<String, CableState> cableStates, HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs) {
+		
+		// --- Create lists to save to database ---------------------
+		NetworkState networkState = new NetworkState();
+		networkState.setStateTime(stateTime);
+		networkState.setNodeResultList(this.getNodeResults(nodeStates, stateTime));
+		networkState.setEdgeResultList(this.getEdgeResults(cableStates, stateTime));
+		networkState.setTrafoResultList(this.getTrafoResults(nodeStates, transformerTSSEs, stateTime));
+		
+		// --- Save to database -------------------------------------
+		this.getDatabaseHandler().addNetworkStateToSave(networkState);
+	}
+	
+	
+	/**
+	 * Returns all sub blackboard model for the type electricity.
+	 * @param aggregationHandler the aggregation handler
+	 * @return the list of sub blackboard model electricity
+	 */
+	private List<SubBlackboardModelElectricity> getSubBlackboardModelElectricity(AbstractAggregationHandler aggregationHandler) {
+		if (subBlackboardModelListElectricity==null) {
+			subBlackboardModelListElectricity = new ArrayList<>();
+
+			List<String> domainList = ElectricityDomainIdentification.getDomainList();
+			for (String domain : domainList) {
+				// --- Get all sub configurations that are of type electricity ----------
+				List<AbstractSubNetworkConfiguration> subNetworkConfogurations = aggregationHandler.getSubNetworkConfiguration(domain);
+				for (AbstractSubNetworkConfiguration subNetworkConfoguration : subNetworkConfogurations) {
+					subBlackboardModelListElectricity.add((SubBlackboardModelElectricity)subNetworkConfoguration.getSubBlackboardModel());
+					subNetworkConfoguration.getSubBlackboardModel();
+				}
+			}
+		}
+		return subBlackboardModelListElectricity;
+		
 	}
 	/**
 	 * Returns the last transformer states from blackboard aggregation.
@@ -191,7 +254,7 @@ public class BlackboardListener implements BlackboardListenerService {
 	 * @param calendar the calendar
 	 * @return the trafo results
 	 */
-	private List<TrafoResult> getTrafoResults(HashMap<String, ElectricalNodeState> nodeStates, HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs, Calendar calendar) {
+	private List<TrafoResult> getTrafoResults(NodeStateCollector nodeStates, HashMap<String, TechnicalSystemStateEvaluation> transformerTSSEs, Calendar calendar) {
 		
 		List<TrafoResult> trafoResultList = new ArrayList<>();
 		
@@ -199,33 +262,31 @@ public class BlackboardListener implements BlackboardListenerService {
 		for (int i = 0; i < trafoElementList.size(); i++) {
 			
 			String trafoID = trafoElementList.get(i);
-			String graphNodeID = this.getGraphNodeID(trafoID);
+			String graphNodeID = this.getGraphNodeIDFromNetworkComponentID(trafoID);
 			
-			ElectricalNodeState elNodeState = nodeStates.get(graphNodeID);
 			TechnicalSystemStateEvaluation tsse = transformerTSSEs.get(trafoID);
-
-			// --- Values from electrical node state ----------------
-			UniPhaseElectricalNodeState upensL1 = null;
-			UniPhaseElectricalNodeState upensL2 = null;
-			UniPhaseElectricalNodeState upensL3 = null;
 			
-			double voltageReal = 0;
-			double voltageComplex = 0;
-			int voltageViolation = 0;
-
-			if (elNodeState instanceof TriPhaseElectricalNodeState) {
-				
-				TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
-				upensL1 = tens.getL1();
-				upensL2 = tens.getL2();
-				upensL3 = tens.getL3();
-				
-				voltageReal = this.getVoltageReal(upensL1);
-				voltageComplex = this.getVoltageComplex(upensL1);
-				voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
-			}
+			// --- Get electrical node states of transformer --------
+			HashMap<AbstractElectricalNetworkConfiguration, ElectricalNodeState> elNodeStateHashMap = nodeStates.get(graphNodeID);
+			// --- Get list of electrical network configurations ----
+			List<AbstractElectricalNetworkConfiguration> elNetworkConfigList = new ArrayList<>(elNodeStateHashMap.keySet());
+			// --- Sort by voltage level ----------------------------
+			Collections.sort(elNetworkConfigList, new Comparator<AbstractElectricalNetworkConfiguration>() {
+				@Override
+				public int compare(AbstractElectricalNetworkConfiguration elConfig1, AbstractElectricalNetworkConfiguration elConfig2) {
+					Double voltageLeve1 = elConfig1.getConfiguredRatedVoltageFromNetwork();
+					Double voltageLeve2 = elConfig2.getConfiguredRatedVoltageFromNetwork();
+					return voltageLeve1.compareTo(voltageLeve2);
+				}
+			});
+			// --- Get high and low voltage node state --------------			
+			ElectricalNodeState elNodeStateLV = elNetworkConfigList.size()>=1 ? elNodeStateHashMap.get(elNetworkConfigList.get(0)) : null;
+			ElectricalNodeState elNodeStateHV = elNetworkConfigList.size()>=2 ? elNodeStateHashMap.get(elNetworkConfigList.get(1)) : null;
 			
+			
+			// ------------------------------------------------------
 			// --- Values from system state -------------------------
+			// ------------------------------------------------------
 			double residualLoadP = 0.0;
 			double residualLoadQ = 0.0;
 			double trafoUtilization = 0.0;
@@ -234,7 +295,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			Integer tapPosition = null; 
 
 			if (tsse!=null) {
-				// System.out.println(TechnicalSystemStateHelper.toString(tsse, true));
+				
 				UsageOfInterfaceEnergy uoiHV_P = (UsageOfInterfaceEnergy) TechnicalSystemStateHelper.getUsageOfInterfaces(tsse.getUsageOfInterfaces(), HighVoltageUniPhase.HV_P.getInterfaceID());
 				UsageOfInterfaceEnergy uoiHV_Q = (UsageOfInterfaceEnergy) TechnicalSystemStateHelper.getUsageOfInterfaces(tsse.getUsageOfInterfaces(), HighVoltageUniPhase.HV_Q.getInterfaceID());
 				EnergyFlowInWatt efiwHV_P = UnitConverter.convertEnergyFlowInWatt(uoiHV_P.getEnergyFlow(), EnergyUnitFactorPrefixSI.NONE_0);
@@ -253,45 +314,137 @@ public class BlackboardListener implements BlackboardListenerService {
 				tapPosition = fiTapPosition==null ? null : fiTapPosition.getValue();
 			}
 			
+			
+			// ------------------------------------------------------
 			// --- Create TrafoResult -------------------------------
+			// ------------------------------------------------------
 			TrafoResult trafoResult = new TrafoResult();
 			trafoResult.setIdExecution(this.getIDExecution());
 			trafoResult.setIdTrafo(trafoID);
 			trafoResult.setTimestamp(calendar);
 
-			
-			trafoResult.setLvVoltageL1Real(upensL1==null ? 0 : upensL1.getVoltageRealNotNull().getValue());
-			trafoResult.setLvVoltageL1Imag(upensL1==null ? 0 : upensL1.getVoltageImagNotNull().getValue());
-			trafoResult.setLvVoltageL1Abs( upensL1==null ? 0 : upensL1.getVoltageAbsNotNull().getValue());
-			
-			trafoResult.setLvVoltageL2Real(upensL2==null ? 0 : upensL2.getVoltageRealNotNull().getValue());
-			trafoResult.setLvVoltageL2Imag(upensL2==null ? 0 : upensL2.getVoltageImagNotNull().getValue());
-			trafoResult.setLvVoltageL2Abs( upensL2==null ? 0 : upensL2.getVoltageAbsNotNull().getValue());
-			
-			trafoResult.setLvVoltageL3Real(upensL3==null ? 0 : upensL3.getVoltageRealNotNull().getValue());
-			trafoResult.setLvVoltageL3Imag(upensL3==null ? 0 : upensL3.getVoltageImagNotNull().getValue());
-			trafoResult.setLvVoltageL3Abs( upensL3==null ? 0 : upensL3.getVoltageAbsNotNull().getValue());
-			
-			trafoResult.setLvCurrentL1(upensL1==null ? 0 : upensL1.getCurrentNotNull().getValue());
-			trafoResult.setLvCurrentL2(upensL2==null ? 0 : upensL2.getCurrentNotNull().getValue());
-			trafoResult.setLvCurrentL3(upensL3==null ? 0 : upensL3.getCurrentNotNull().getValue());
-			
-			trafoResult.setLvCosPhiL1(upensL1==null ? 0 : upensL1.getCosPhi());
-			trafoResult.setLvCosPhiL2(upensL2==null ? 0 : upensL2.getCosPhi());
-			trafoResult.setLvCosPhiL3(upensL3==null ? 0 : upensL3.getCosPhi());
-			
-			trafoResult.setLvPowerP1(upensL1==null ? 0 : upensL1.getPNotNull().getValue());
-			trafoResult.setLvPowerQ1(upensL1==null ? 0 : upensL1.getQNotNull().getValue());
-			trafoResult.setLvPowerP2(upensL2==null ? 0 : upensL2.getPNotNull().getValue());
-			trafoResult.setLvPowerQ2(upensL2==null ? 0 : upensL2.getQNotNull().getValue());
-			trafoResult.setLvPowerP3(upensL3==null ? 0 : upensL3.getPNotNull().getValue());
-			trafoResult.setLvPowerQ3(upensL3==null ? 0 : upensL3.getQNotNull().getValue());
+			// ------------------------------------------------------
+			// --- Work on the high voltage node state --------------
+			// ------------------------------------------------------
+			if (elNodeStateHV instanceof UniPhaseElectricalNodeState) {
+				
+				UniPhaseElectricalNodeState hvUpens = (UniPhaseElectricalNodeState) elNodeStateHV;
+				
+				trafoResult.setHvVoltageAllReal(hvUpens.getVoltageRealNotNull().getValue());
+				trafoResult.setHvVoltageAllImag(hvUpens.getVoltageImagNotNull().getValue());
+				trafoResult.setHvVoltageAllAbs(hvUpens.getVoltageAbsNotNull().getValue());
+				trafoResult.setHvCurrentAll(hvUpens.getCurrentNotNull().getValue());
+				
+				trafoResult.setHvCosPhiAll(hvUpens.getCosPhi());
+				trafoResult.setHvPowerPAll(hvUpens.getPNotNull().getValue());
+				trafoResult.setHvPowerQAll(hvUpens.getQNotNull().getValue());
 
+			} else if (elNodeStateHV instanceof TriPhaseElectricalNodeState) {
+				
+				TriPhaseElectricalNodeState hvTpens = (TriPhaseElectricalNodeState) elNodeStateHV;
+				UniPhaseElectricalNodeState hvUpensL1 = hvTpens.getL1();
+				UniPhaseElectricalNodeState hvUpensL2 = hvTpens.getL2();
+				UniPhaseElectricalNodeState hvUpensL3 = hvTpens.getL3();
+				
+				trafoResult.setHvVoltageL1Real(hvUpensL1==null ? 0 : hvUpensL1.getVoltageRealNotNull().getValue());
+				trafoResult.setHvVoltageL1Imag(hvUpensL1==null ? 0 : hvUpensL1.getVoltageImagNotNull().getValue());
+				trafoResult.setHvVoltageL1Abs( hvUpensL1==null ? 0 : hvUpensL1.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setHvVoltageL2Real(hvUpensL2==null ? 0 : hvUpensL2.getVoltageRealNotNull().getValue());
+				trafoResult.setHvVoltageL2Imag(hvUpensL2==null ? 0 : hvUpensL2.getVoltageImagNotNull().getValue());
+				trafoResult.setHvVoltageL2Abs( hvUpensL2==null ? 0 : hvUpensL2.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setHvVoltageL3Real(hvUpensL3==null ? 0 : hvUpensL3.getVoltageRealNotNull().getValue());
+				trafoResult.setHvVoltageL3Imag(hvUpensL3==null ? 0 : hvUpensL3.getVoltageImagNotNull().getValue());
+				trafoResult.setHvVoltageL3Abs( hvUpensL3==null ? 0 : hvUpensL3.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setHvCurrentL1(hvUpensL1==null ? 0 : hvUpensL1.getCurrentNotNull().getValue());
+				trafoResult.setHvCurrentL2(hvUpensL2==null ? 0 : hvUpensL2.getCurrentNotNull().getValue());
+				trafoResult.setHvCurrentL3(hvUpensL3==null ? 0 : hvUpensL3.getCurrentNotNull().getValue());
+				
+				trafoResult.setHvCosPhiL1(hvUpensL1==null ? 0 : hvUpensL1.getCosPhi());
+				trafoResult.setHvCosPhiL2(hvUpensL2==null ? 0 : hvUpensL2.getCosPhi());
+				trafoResult.setHvCosPhiL3(hvUpensL3==null ? 0 : hvUpensL3.getCosPhi());
+				
+				trafoResult.setHvPowerP1(hvUpensL1==null ? 0 : hvUpensL1.getPNotNull().getValue());
+				trafoResult.setHvPowerQ1(hvUpensL1==null ? 0 : hvUpensL1.getQNotNull().getValue());
+				trafoResult.setHvPowerP2(hvUpensL2==null ? 0 : hvUpensL2.getPNotNull().getValue());
+				trafoResult.setHvPowerQ2(hvUpensL2==null ? 0 : hvUpensL2.getQNotNull().getValue());
+				trafoResult.setHvPowerP3(hvUpensL3==null ? 0 : hvUpensL3.getPNotNull().getValue());
+				trafoResult.setHvPowerQ3(hvUpensL3==null ? 0 : hvUpensL3.getQNotNull().getValue());
+				
+			}
 			
+			// ------------------------------------------------------
+			// --- Work on the low voltage node state ---------------
+			// ------------------------------------------------------
+			double voltageRealAllPhases = 0;
+			double voltageComplexAllPhases = 0;
+			int voltageViolation = 0;
 			
-			trafoResult.setVoltageReal(voltageReal);
-			trafoResult.setVoltageImag(voltageComplex);
+			if (elNodeStateLV instanceof UniPhaseElectricalNodeState) {
+				
+				UniPhaseElectricalNodeState lvUpens = (UniPhaseElectricalNodeState) elNodeStateLV;
+				trafoResult.setLvVoltageAllReal(lvUpens.getVoltageRealNotNull().getValue());
+				trafoResult.setLvVoltageAllImag(lvUpens.getVoltageImagNotNull().getValue());
+				trafoResult.setLvVoltageAllAbs(lvUpens.getVoltageAbsNotNull().getValue());
+				trafoResult.setLvCurrentAll(lvUpens.getCurrentNotNull().getValue());
+				
+				trafoResult.setLvCosPhiAll(lvUpens.getCosPhi());
+				trafoResult.setLvPowerPAll(lvUpens.getPNotNull().getValue());
+				trafoResult.setLvPowerQAll(lvUpens.getQNotNull().getValue());
+				
+				
+				voltageRealAllPhases = lvUpens.getVoltageRealNotNull().getValue();
+				voltageComplexAllPhases = lvUpens.getVoltageRealNotNull().getValue();
+				voltageViolation = this.getVoltageViolation(voltageRealAllPhases, voltageComplexAllPhases);
+				
+			} else if (elNodeStateLV instanceof TriPhaseElectricalNodeState) {
+				
+				TriPhaseElectricalNodeState lvTpens = (TriPhaseElectricalNodeState) elNodeStateLV;
+				
+				// --- Values from electrical LV node state -------------
+				UniPhaseElectricalNodeState lvUpensL1 = lvTpens.getL1();
+				UniPhaseElectricalNodeState lvUpensL2 = lvTpens.getL2();
+				UniPhaseElectricalNodeState lvUpensL3 = lvTpens.getL3();
+					
+				trafoResult.setLvVoltageL1Real(lvUpensL1==null ? 0 : lvUpensL1.getVoltageRealNotNull().getValue());
+				trafoResult.setLvVoltageL1Imag(lvUpensL1==null ? 0 : lvUpensL1.getVoltageImagNotNull().getValue());
+				trafoResult.setLvVoltageL1Abs( lvUpensL1==null ? 0 : lvUpensL1.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setLvVoltageL2Real(lvUpensL2==null ? 0 : lvUpensL2.getVoltageRealNotNull().getValue());
+				trafoResult.setLvVoltageL2Imag(lvUpensL2==null ? 0 : lvUpensL2.getVoltageImagNotNull().getValue());
+				trafoResult.setLvVoltageL2Abs( lvUpensL2==null ? 0 : lvUpensL2.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setLvVoltageL3Real(lvUpensL3==null ? 0 : lvUpensL3.getVoltageRealNotNull().getValue());
+				trafoResult.setLvVoltageL3Imag(lvUpensL3==null ? 0 : lvUpensL3.getVoltageImagNotNull().getValue());
+				trafoResult.setLvVoltageL3Abs( lvUpensL3==null ? 0 : lvUpensL3.getVoltageAbsNotNull().getValue());
+				
+				trafoResult.setLvCurrentL1(lvUpensL1==null ? 0 : lvUpensL1.getCurrentNotNull().getValue());
+				trafoResult.setLvCurrentL2(lvUpensL2==null ? 0 : lvUpensL2.getCurrentNotNull().getValue());
+				trafoResult.setLvCurrentL3(lvUpensL3==null ? 0 : lvUpensL3.getCurrentNotNull().getValue());
+				
+				trafoResult.setLvCosPhiL1(lvUpensL1==null ? 0 : lvUpensL1.getCosPhi());
+				trafoResult.setLvCosPhiL2(lvUpensL2==null ? 0 : lvUpensL2.getCosPhi());
+				trafoResult.setLvCosPhiL3(lvUpensL3==null ? 0 : lvUpensL3.getCosPhi());
+				
+				trafoResult.setLvPowerP1(lvUpensL1==null ? 0 : lvUpensL1.getPNotNull().getValue());
+				trafoResult.setLvPowerQ1(lvUpensL1==null ? 0 : lvUpensL1.getQNotNull().getValue());
+				trafoResult.setLvPowerP2(lvUpensL2==null ? 0 : lvUpensL2.getPNotNull().getValue());
+				trafoResult.setLvPowerQ2(lvUpensL2==null ? 0 : lvUpensL2.getQNotNull().getValue());
+				trafoResult.setLvPowerP3(lvUpensL3==null ? 0 : lvUpensL3.getPNotNull().getValue());
+				trafoResult.setLvPowerQ3(lvUpensL3==null ? 0 : lvUpensL3.getQNotNull().getValue());
+
+				
+				voltageRealAllPhases = this.getVoltageRealAllPhases(lvUpensL1);
+				voltageComplexAllPhases = this.getVoltageComplexAllPhases(lvUpensL1);
+				voltageViolation = this.getVoltageViolation(voltageRealAllPhases, voltageComplexAllPhases);
+			}
+			
+			trafoResult.setVoltageReal(voltageRealAllPhases);
+			trafoResult.setVoltageImag(voltageComplexAllPhases);
 			trafoResult.setVoltageViolations(voltageViolation);
+			
 			
 			trafoResult.setResidualLoadP(residualLoadP);
 			trafoResult.setResidualLoadQ(residualLoadQ);
@@ -299,7 +452,7 @@ public class BlackboardListener implements BlackboardListenerService {
 			trafoResult.setTrafoLossesP(trafoLossesP);
 			trafoResult.setTrafoLossesQ(trafoLossesQ);
 			
-			trafoResult.setTapPos(tapPosition);
+			trafoResult.setTapPos(tapPosition==null ? -9999 : tapPosition);
 			
 			// --- Add to list ------------------------
 			trafoResultList.add(trafoResult);
@@ -310,11 +463,11 @@ public class BlackboardListener implements BlackboardListenerService {
 	/**
 	 * Return the GraphNode ID from the specified NetworkCompont ID.
 	 *
-	 * @param transformerID the transformer ID
+	 * @param netCompID the network component ID
 	 * @return the node state ID
 	 */
-	private String getGraphNodeID(String transformerID) {
-		NetworkComponent netComp = this.getNetworkModel().getNetworkComponent(transformerID);
+	private String getGraphNodeIDFromNetworkComponentID(String netCompID) {
+		NetworkComponent netComp = this.getNetworkModel().getNetworkComponent(netCompID);
 		GraphNode graphNode = this.getNetworkModel().getGraphNodeFromDistributionNode(netComp);
 		if (graphNode!=null) {
 			return graphNode.getId();
@@ -427,7 +580,7 @@ public class BlackboardListener implements BlackboardListenerService {
 	 * @param calendar the calendar
 	 * @return the node results
 	 */
-	private List<NodeResult> getNodeResults(HashMap<String, ElectricalNodeState> graphNodeStates, Calendar calendar) {
+	private List<NodeResult> getNodeResults(NodeStateCollector graphNodeStates, Calendar calendar) {
 		
 		List<NodeResult> nodeResultList = new ArrayList<>();
 		
@@ -436,91 +589,102 @@ public class BlackboardListener implements BlackboardListenerService {
 
 			// --- Get the ID reminded ---------------------------------------- 
 			String remindedID = nodeElementList.get(i); // --- may be a NetworkComponent ID ---
-			ElectricalNodeState elNodeState = graphNodeStates.get(remindedID);
-			if (elNodeState==null) {
-				String graphNodeID = this.getGraphNodeID(remindedID);
+			HashMap<AbstractElectricalNetworkConfiguration, ElectricalNodeState> elNodeStateHashMap = graphNodeStates.get(remindedID);
+			if (elNodeStateHashMap==null || elNodeStateHashMap.size()==0) {
+				String graphNodeID = this.getGraphNodeIDFromNetworkComponentID(remindedID);
 				if (graphNodeID!=null) {
-					elNodeState = graphNodeStates.get(graphNodeID);
+					elNodeStateHashMap = graphNodeStates.get(graphNodeID);
 				}
 			}
 			
-			if (elNodeState!=null) {
-				// --- Create NodeResult --------------------------------------
-				NodeResult nodeResult = new NodeResult();
-				nodeResult.setIdExecution(this.getIDExecution());
-				nodeResult.setIdNode(remindedID);
-				nodeResult.setTimestamp(calendar);
+			for (AbstractElectricalNetworkConfiguration elNetworkConfig : elNodeStateHashMap.keySet()) {
 				
-				// --- Get the electrical node state --------------------------
-				if (elNodeState instanceof UniPhaseElectricalNodeState) {
-					// --- => UniPhaseElectricalNodeState ---------------------
-					UniPhaseElectricalNodeState upens = (UniPhaseElectricalNodeState) elNodeState;
+				// --- Get the ElectricalNodeState for this 
+				ElectricalNodeState elNodeState = elNodeStateHashMap.get(elNetworkConfig);
+				if (elNodeState!=null) {
+					String idNode = remindedID;
+					if (elNodeStateHashMap.size()>1) {
+						idNode += "-" + elNetworkConfig.getConfiguredRatedVoltageFromNetwork();
+					}
 					
-					nodeResult.setVoltageReal(upens.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageImag(upens.getVoltageImagNotNull().getValue());
-					nodeResult.setVoltageAbs(upens.getVoltageAbsNotNull().getValue());
+					// --- Create NodeResult ----------------------------------
+					NodeResult nodeResult = new NodeResult();
+					nodeResult.setIdExecution(this.getIDExecution());
+					nodeResult.setIdNode(idNode);
+					nodeResult.setTimestamp(calendar);
 					
-					nodeResult.setCurrent(upens.getCurrent().getValue());
-					nodeResult.setCosPhi(upens.getCosPhi());
-					
-					nodeResult.setPowerP(upens.getPCalculated());
-					nodeResult.setPowerQ(upens.getQCalculated());
-					
-					int voltageViolation = this.getVoltageViolation(nodeResult.getVoltageReal(), nodeResult.getVoltageImag());
-					nodeResult.setVoltageViolations(voltageViolation);
-					
-					
-				} else if (elNodeState instanceof TriPhaseElectricalNodeState) {
-					// --- => TriPhaseElectricalNodeState ---------------------
-					TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
-					UniPhaseElectricalNodeState upensL1 = tens.getL1();
-					UniPhaseElectricalNodeState upensL2 = tens.getL2();
-					UniPhaseElectricalNodeState upensL3 = tens.getL3();
-					
-					double voltageReal = this.getVoltageReal(upensL1);
-					double voltageComplex = this.getVoltageComplex(upensL1);
-					
-					nodeResult.setVoltageL1Real(upensL1.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL1Imag(upensL1.getVoltageImagNotNull().getValue());
-					nodeResult.setVoltageL1Abs(upensL1.getVoltageAbsNotNull().getValue());
-					
-					nodeResult.setVoltageL2Real(upensL2.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL2Imag(upensL2.getVoltageImagNotNull().getValue());
-					nodeResult.setVoltageL2Abs(upensL2.getVoltageAbsNotNull().getValue());
-					
-					nodeResult.setVoltageL3Real(upensL3.getVoltageRealNotNull().getValue());
-					nodeResult.setVoltageL3Imag(upensL3.getVoltageImagNotNull().getValue());
-					nodeResult.setVoltageL3Abs(upensL3.getVoltageAbsNotNull().getValue());
-					
-					nodeResult.setVoltageReal(voltageReal);
-					nodeResult.setVoltageImag(voltageComplex);
-					
-					nodeResult.setCurrentL1(upensL1.getCurrent().getValue());
-					nodeResult.setCurrentL2(upensL2.getCurrent().getValue());
-					nodeResult.setCurrentL3(upensL3.getCurrent().getValue());
-					
-					nodeResult.setCosPhiL1(upensL1.getCosPhi());
-					nodeResult.setCosPhiL2(upensL2.getCosPhi());
-					nodeResult.setCosPhiL3(upensL3.getCosPhi());
-					
-					nodeResult.setPowerP1(upensL1.getPCalculated());
-					nodeResult.setPowerP2(upensL2.getPCalculated());
-					nodeResult.setPowerP3(upensL3.getPCalculated());
-
-					nodeResult.setPowerQ1(upensL1.getQCalculated());
-					nodeResult.setPowerQ2(upensL2.getQCalculated());
-					nodeResult.setPowerQ3(upensL3.getQCalculated());
-					
-					nodeResult.setPowerP(upensL1.getPCalculated() + upensL2.getPCalculated() + upensL3.getPCalculated());
-					nodeResult.setPowerQ(upensL1.getQCalculated() + upensL2.getQCalculated() + upensL3.getQCalculated());
-					
-					
-					int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
-					nodeResult.setVoltageViolations(voltageViolation);
+					// --- Get the electrical node state ----------------------
+					if (elNodeState instanceof UniPhaseElectricalNodeState) {
+						// --- => UniPhaseElectricalNodeState -----------------
+						UniPhaseElectricalNodeState upens = (UniPhaseElectricalNodeState) elNodeState;
+						
+						nodeResult.setVoltageReal(upens.getVoltageRealNotNull().getValue());
+						nodeResult.setVoltageImag(upens.getVoltageImagNotNull().getValue());
+						nodeResult.setVoltageAbs(upens.getVoltageAbsNotNull().getValue());
+						
+						nodeResult.setCurrent(upens.getCurrent().getValue());
+						nodeResult.setCosPhi(upens.getCosPhi());
+						
+						nodeResult.setPowerP(upens.getPCalculated());
+						nodeResult.setPowerQ(upens.getQCalculated());
+						
+						int voltageViolation = this.getVoltageViolation(nodeResult.getVoltageReal(), nodeResult.getVoltageImag());
+						nodeResult.setVoltageViolations(voltageViolation);
+						
+						
+					} else if (elNodeState instanceof TriPhaseElectricalNodeState) {
+						// --- => TriPhaseElectricalNodeState -----------------
+						TriPhaseElectricalNodeState tens = (TriPhaseElectricalNodeState) elNodeState;
+						UniPhaseElectricalNodeState upensL1 = tens.getL1();
+						UniPhaseElectricalNodeState upensL2 = tens.getL2();
+						UniPhaseElectricalNodeState upensL3 = tens.getL3();
+						
+						double voltageReal = this.getVoltageRealAllPhases(upensL1);
+						double voltageComplex = this.getVoltageComplexAllPhases(upensL1);
+						
+						nodeResult.setVoltageL1Real(upensL1.getVoltageRealNotNull().getValue());
+						nodeResult.setVoltageL1Imag(upensL1.getVoltageImagNotNull().getValue());
+						nodeResult.setVoltageL1Abs(upensL1.getVoltageAbsNotNull().getValue());
+						
+						nodeResult.setVoltageL2Real(upensL2.getVoltageRealNotNull().getValue());
+						nodeResult.setVoltageL2Imag(upensL2.getVoltageImagNotNull().getValue());
+						nodeResult.setVoltageL2Abs(upensL2.getVoltageAbsNotNull().getValue());
+						
+						nodeResult.setVoltageL3Real(upensL3.getVoltageRealNotNull().getValue());
+						nodeResult.setVoltageL3Imag(upensL3.getVoltageImagNotNull().getValue());
+						nodeResult.setVoltageL3Abs(upensL3.getVoltageAbsNotNull().getValue());
+						
+						nodeResult.setVoltageReal(voltageReal);
+						nodeResult.setVoltageImag(voltageComplex);
+						
+						nodeResult.setCurrentL1(upensL1.getCurrent().getValue());
+						nodeResult.setCurrentL2(upensL2.getCurrent().getValue());
+						nodeResult.setCurrentL3(upensL3.getCurrent().getValue());
+						
+						nodeResult.setCosPhiL1(upensL1.getCosPhi());
+						nodeResult.setCosPhiL2(upensL2.getCosPhi());
+						nodeResult.setCosPhiL3(upensL3.getCosPhi());
+						
+						nodeResult.setPowerP1(upensL1.getPCalculated());
+						nodeResult.setPowerP2(upensL2.getPCalculated());
+						nodeResult.setPowerP3(upensL3.getPCalculated());
+						
+						nodeResult.setPowerQ1(upensL1.getQCalculated());
+						nodeResult.setPowerQ2(upensL2.getQCalculated());
+						nodeResult.setPowerQ3(upensL3.getQCalculated());
+						
+						nodeResult.setPowerP(upensL1.getPCalculated() + upensL2.getPCalculated() + upensL3.getPCalculated());
+						nodeResult.setPowerQ(upensL1.getQCalculated() + upensL2.getQCalculated() + upensL3.getQCalculated());
+						
+						
+						int voltageViolation = this.getVoltageViolation(voltageReal, voltageComplex);
+						nodeResult.setVoltageViolations(voltageViolation);
+					}
+					// --- Add to list ----------------------------------------
+					nodeResultList.add(nodeResult);
 				}
-				// --- Add to list --------------------------------------------
-				nodeResultList.add(nodeResult);
-			}
+				
+			} // end for sub aggregation 
 			
 		} // --- end for ---
 		return nodeResultList;
@@ -533,7 +697,7 @@ public class BlackboardListener implements BlackboardListenerService {
 	 * @param upens the UniPhaseElectricalNodeState
 	 * @return the voltage real
 	 */
-	private double getVoltageReal(UniPhaseElectricalNodeState upens) {
+	private double getVoltageRealAllPhases(UniPhaseElectricalNodeState upens) {
 		return ((double)upens.getVoltageReal().getValue()) * this.sqrtRootThree;
 	}
 	/**
@@ -542,7 +706,7 @@ public class BlackboardListener implements BlackboardListenerService {
 	 * @param upens the UniPhaseElectricalNodeState
 	 * @return the complex voltage 
 	 */
-	private double getVoltageComplex(UniPhaseElectricalNodeState upens) {
+	private double getVoltageComplexAllPhases(UniPhaseElectricalNodeState upens) {
 		return ((double)upens.getVoltageImag().getValue()) * this.sqrtRootThree;
 	}
 	
@@ -598,24 +762,38 @@ public class BlackboardListener implements BlackboardListenerService {
 		
 		if (this.nodeElementList==null || this.nodeElementList==null || this.transformerList==null) {
 		
+			// --- Define the NetworkComponets if interest here -----
+			HashMap<String, List<String>> compTypeToElementListHashMap = new HashMap<>();
+			compTypeToElementListHashMap.put("Prosumer".toLowerCase(), this.getNodeElementList());
+			compTypeToElementListHashMap.put("CableCabinet".toLowerCase(), this.getNodeElementList());
+			
+			compTypeToElementListHashMap.put("Cable".toLowerCase(), this.getEdgeElementList());
+			compTypeToElementListHashMap.put("Sensor".toLowerCase(), this.getEdgeElementList());
+			compTypeToElementListHashMap.put("Breaker".toLowerCase(), this.getEdgeElementList());
+			
+			// --- Extract a list of search Phrases -----------------
+			List<String> searchPhrases = new ArrayList<>(compTypeToElementListHashMap.keySet());
+
+			
+			// --- Check all NetworkComponets -----------------------
 			Vector<NetworkComponent> netCompVector = this.getNetworkModel().getNetworkComponentVectorSorted();
 			for (int i = 0; i < netCompVector.size(); i++) {
 
 				NetworkComponent netComp = netCompVector.get(i);
-				switch (netComp.getType()) {
-				case "Prosumer":
-				case "CableCabinet":
-					this.getNodeElementList().add(netComp.getId());
-					break;
-				case "Cable":
-				case "Sensor":
-				case "Breaker":
-					this.getEdgeElementList().add(netComp.getId());
-					break;
-				case "Transformer":
+				if (TransformerHelper.isTransformer(netComp.getType())==true) {
+					// --- For Transformer ----------------
 					this.getTransformerList().add(netComp.getId());
-					this.getNodeElementList().add(this.getGraphNodeID(netComp.getId()));
-					break;
+					this.getNodeElementList().add(this.getGraphNodeIDFromNetworkComponentID(netComp.getId()));
+					
+				} else {
+					// --- Check for search phrases -------
+					String netCompType = netComp.getType().toLowerCase();
+					for (String searchPhrase : searchPhrases) {
+						if (netCompType.contains(searchPhrase)==true) {
+							compTypeToElementListHashMap.get(searchPhrase).add(netComp.getId());
+							break;
+						}
+					}
 				}
 			} // end for
 		}
@@ -632,4 +810,58 @@ public class BlackboardListener implements BlackboardListenerService {
 		}
 		return dbHandler;
 	}
+	
+	/**
+	 * The Class NodeStateCollector.
+	 *
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	private class NodeStateCollector {
+		
+		private HashMap<AbstractElectricalNetworkConfiguration, HashMap<String, ElectricalNodeState>> subAggregationToNodeStateHash;
+		
+		/**
+		 * Returns the sub aggregation to node state hash.
+		 * @return the sub aggregation to node state hash
+		 */
+		private HashMap<AbstractElectricalNetworkConfiguration, HashMap<String, ElectricalNodeState>> getSubAggregationToNodeStateHash() {
+			if (subAggregationToNodeStateHash==null) {
+				subAggregationToNodeStateHash = new HashMap<>();
+			}
+			return subAggregationToNodeStateHash;
+		}
+		
+		/**
+		 * Puts all node states of the specified sub aggregation into the NodeStateCollector.
+		 *
+		 * @param elNetWorkConfig the el net work config
+		 * @param nodeStates the node states
+		 */
+		public void putAll(AbstractElectricalNetworkConfiguration elNetWorkConfig, HashMap<String, ElectricalNodeState> nodeStates) {
+			this.getSubAggregationToNodeStateHash().put(elNetWorkConfig, nodeStates);
+		}
+		/**
+		 * Returns the {@link ElectricalNodeState}s for the specified node ID as HashMap.
+		 *
+		 * @param nodeID the node ID
+		 * @return the list
+		 */
+		public HashMap<AbstractElectricalNetworkConfiguration, ElectricalNodeState> get(String nodeID) {
+			
+			HashMap<AbstractElectricalNetworkConfiguration, ElectricalNodeState> graphNodeStateHashMap = new HashMap<>();
+			for (AbstractElectricalNetworkConfiguration elNetWorkConfig : this.getSubAggregationToNodeStateHash().keySet()) {
+				// --- Get state HashMap for sub aggregation --------
+				HashMap<String, ElectricalNodeState> subNodeStateHashMap = this.getSubAggregationToNodeStateHash().get(elNetWorkConfig);
+				if (subNodeStateHashMap!=null) {
+					ElectricalNodeState nodeState = subNodeStateHashMap.get(nodeID);
+					if (nodeState!=null) {
+						graphNodeStateHashMap.put(elNetWorkConfig, nodeState);
+					}
+				}
+			}
+			return graphNodeStateHashMap;
+		}
+		
+	} // end sub class
+	
 }

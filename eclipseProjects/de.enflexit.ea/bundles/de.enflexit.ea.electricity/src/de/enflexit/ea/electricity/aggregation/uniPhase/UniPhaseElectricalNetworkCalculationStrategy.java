@@ -13,9 +13,6 @@ import org.awb.env.networkModel.NetworkComponent;
 
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.BranchDescription;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.core.dataModel.ontology.CableProperties;
 import de.enflexit.ea.core.dataModel.ontology.SensorProperties;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
@@ -23,6 +20,9 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableWithBreaker;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseSensorState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.BranchDescription;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper.SlackNodeDescription;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkCalculationStrategy;
 import de.enflexit.ea.electricity.aggregation.CableLosses;
 import de.enflexit.ea.electricity.blackboard.TransformerPowerAnswer;
@@ -285,27 +285,17 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	 */
 	private void setCableStates(AbstractPowerFlowCalculation pfc, NetworkModelToCsvMapper netModel2CsvMapper) {
 		
-		Vector<Vector<Double>> iNabs = null;
-		Vector<Vector<Double>> iNreal = null;
-		Vector<Vector<Double>> iNimag = null;
-		Vector<Double> branchCosPhi = null;
-		Vector<Double> utili = null;
-		Vector<Vector<Double>> p = null;
-		Vector<Vector<Double>> q = null;
-		Vector<Double> uKReal = null;
-		Vector<Double> uKImag = null;
+		if (pfc==null) return;
 		
-		if (pfc != null) {
-			iNabs = pfc.getBranchCurrentAbs();
-			iNreal = pfc.getBranchCurrentReal();
-			iNimag = pfc.getBranchCurrentImag();
-			branchCosPhi = pfc.getBranchCosPhi();
-			utili = pfc.getBranchUtilization();
-			p = pfc.getBranchPowerReal();
-			q = pfc.getBranchPowerImag();
-			uKReal = pfc.getNodalVoltageReal();
-			uKImag = pfc.getNodalVoltageImag();
-		}
+		Vector<Vector<Double>> iNabs  = pfc.getBranchCurrentAbs();
+		Vector<Vector<Double>> iNreal = pfc.getBranchCurrentReal();
+		Vector<Vector<Double>> iNimag = pfc.getBranchCurrentImag();
+		Vector<Double> branchCosPhi = pfc.getBranchCosPhi();
+		Vector<Double> utili = pfc.getBranchUtilization();
+		Vector<Vector<Double>> p = pfc.getBranchPowerReal();
+		Vector<Vector<Double>> q = pfc.getBranchPowerImag();
+		Vector<Double> uKReal = pfc.getNodalVoltageReal();
+		Vector<Double> uKImag = pfc.getNodalVoltageImag();
 
 		// --- Get the reminded BranchDescription's ---------------------------
 		Vector<BranchDescription> branchDescriptionVector = netModel2CsvMapper.getBranchDescription(); 
@@ -318,7 +308,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			int nodeIndexTo = bd.getNodeNumberTo()-1;
 
 			Object[] dataModel = null;
-			UniPhaseCableState cableState = null;//TODO Change to UniPhaseElectricalEdgeState as soon as the NetworkComponentStates are switched to the new ontology
+			UniPhaseCableState cableState = null;
 			CableProperties cableProperties = null;
 			// --- Get the current data model of the branch element -----------
 			if (netComp.getDataModel() == null) {
@@ -339,28 +329,48 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				}
 			}
 			
-			p.get(nodeIndexFrom).set(nodeIndexTo, p.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
-			q.get(nodeIndexFrom).set(nodeIndexTo, q.get(nodeIndexFrom).get(nodeIndexTo) * 3); //Adjustment due to uni-phase powerflow calculation
+			// ----------------------------------------------------------------
+			// --- Do required calculations -----------------------------------
+			// ----------------------------------------------------------------
+			float cosPhi = branchCosPhi.get(i).floatValue();
 			
-			cableState.setCurrent(new UnitValue(iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setCurrentReal(new UnitValue(iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setCurrentImag(new UnitValue(iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "A"));
-			cableState.setCosPhi(branchCosPhi.get(i).floatValue());
-			cableState.setUtilization(utili.get(i).floatValue());
-			cableState.setP(new UnitValue(p.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "W")); 
-			cableState.setQ(new UnitValue(q.get(nodeIndexFrom).get(nodeIndexTo).floatValue(), "var"));
+			float pUniPhase = (float) p.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+			float qUniPhase = (float) q.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+
+			
+			float currentAbs = iNabs.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+			float currentReal = currentAbs * cosPhi;
+			float currentImag = (float) (Math.sqrt(Math.pow(currentAbs, 2) - Math.pow(currentReal, 2)) * (iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue()>0 ? 1 : -1));
 			
 			// --- Calculate cable losses -------------------------------------
+			double iNrealPFC = iNreal.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
+			double iNimagPFC = iNimag.get(nodeIndexFrom).get(nodeIndexTo).floatValue();
 			double ukRealNode1 = uKReal.get(nodeIndexFrom);
 			double ukImagNode1 = uKImag.get(nodeIndexFrom);
 			double ukRealNode2 = uKReal.get(nodeIndexTo);
 			double ukImagNode2 = uKImag.get(nodeIndexTo);
-			CableLosses cableLossesL1 = new CableLosses(cableState.getCurrentReal().getValue(), cableState.getCurrentImag().getValue(), ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2, cableProperties);
-			cableState.setLossesP(cableLossesL1.getLossesP());
-			cableState.setLossesQ(cableLossesL1.getLossesQ());
+			CableLosses cableLosses = new CableLosses(iNrealPFC, iNimagPFC, ukRealNode1, ukImagNode1, ukRealNode2, ukImagNode2, cableProperties);
+			cableLosses.multiplyLossesBy3ForUniPhase();
 			
+			// ----------------------------------------------------------------
+			// --- Set to CableState ------------------------------------------
+			// ----------------------------------------------------------------
+			cableState.setCurrent(new UnitValue(currentAbs, "A"));		//Show aggregated current of all phases.
+			cableState.setCurrentReal(new UnitValue(currentReal, "A"));	//Show aggregated current of all phases.
+			cableState.setCurrentImag(new UnitValue(currentImag, "A"));	//Show aggregated current of all phases.
 			
+			cableState.setCosPhi(cosPhi);
+			
+			cableState.setUtilization(utili.get(i).floatValue());
+			cableState.setP(new UnitValue(pUniPhase, "W")); 
+			cableState.setQ(new UnitValue(qUniPhase, "var"));
+			
+			cableState.setLossesP(cableLosses.getLossesP());
+			cableState.setLossesQ(cableLosses.getLossesQ());
+			
+			// ----------------------------------------------------------------
 			// --- Set voltage to sensors -------------------------------------
+			// ----------------------------------------------------------------
 			if (cableState instanceof UniPhaseSensorState) {
 
 				SensorProperties sensorProperties = (SensorProperties) dataModel[0];
@@ -387,6 +397,7 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 			// --- Finally, set new data model --------------------------------
 			dataModel[1] = cableState;
 			netComp.setDataModel(dataModel);
+			
 			// --- Remind this result -----------------------------------------
 			this.getCableStates().put(netComp.getId(), cableState);
 		}
@@ -402,21 +413,14 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 	@SuppressWarnings("unchecked")
 	private void setNodeStates(AbstractPowerFlowCalculation pfc, NetworkModelToCsvMapper netModel2CsvMapper) {
 
-		Vector<Double> uKabs = null;
-		Vector<Double> uKReal = null;
-		Vector<Double> uKImag = null;
-		Vector<Double> cosPhi = null;
-		Vector<Double> nodalPowerReal= null;
-		Vector<Double> nodalPowerImag= null;
+		if (pfc == null) return;
 		
-		if (pfc != null) {
-			uKabs = pfc.getNodalVoltageAbs();
-			cosPhi = pfc.getNodalCosPhi();
-			nodalPowerReal= pfc.getNodalPowerReal();
-			nodalPowerImag= pfc.getNodalPowerImag();
-			uKReal=pfc.getNodalVoltageReal();
-			uKImag=pfc.getNodalVoltageImag();
-		}
+		Vector<Double> uKabs  = pfc.getNodalVoltageAbs();
+		Vector<Double> uKIreal = pfc.getNodalVoltageReal();
+		Vector<Double> uKImag = pfc.getNodalVoltageImag();
+		Vector<Double> cosPhi = pfc.getNodalCosPhi();
+		Vector<Double> nodalPowerReal = pfc.getNodalPowerReal();
+		Vector<Double> nodalPowerImag = pfc.getNodalPowerImag();
 
 		// --- Check all calculation results ----------------------------------
 		String domain = this.getSubNetworkConfiguration().getDomain();
@@ -459,7 +463,6 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 					dataModelArray = (Object[]) graphNode.getDataModel();
 					upNodeState = (UniPhaseElectricalNodeState) dataModelArray[1];	
 				}
-				
 			}
 			
 			// --- In case that no element was set yet ------------------------
@@ -467,23 +470,42 @@ public class UniPhaseElectricalNetworkCalculationStrategy extends AbstractElectr
 				upNodeState = new UniPhaseElectricalNodeState();
 			}
 			if (uKabs != null) {
-				nodalPowerReal.set(i, nodalPowerReal.get(i) * 3); //Adjustment due to uni-phase powerflow calculation
-				nodalPowerImag.set(i, nodalPowerImag.get(i) * 3); //Adjustment due to uni-phase powerflow calculation
 				
+				// ------------------------------------------------------------
+				// --- Do required calculations -------------------------------
+				// ------------------------------------------------------------
+				float cosPhiUniPhase = cosPhi.get(i).floatValue();
+				
+				float uKabsUniPhase = uKabs.get(i).floatValue();
+				float uKabsRealUniPhase = uKIreal.get(i).floatValue();
+				float uKabsImagUniPhase = uKImag.get(i).floatValue();
+				
+				float nodalPowerRealUniPhase = (float) nodalPowerReal.get(i).floatValue();
+				float nodalPowerImagUniPhase = (float) nodalPowerImag.get(i).floatValue();
+
+				// --- In the following legacy code of previous approach --------- 
+				//float uKabsRealUniPhase = (float) (uKabsUniPhase * cosPhiUniPhase);
+				//float uKabsImagUniPhase = (float) Math.sqrt(Math.pow(uKabsUniPhase, 2) - Math.pow(uKabsRealUniPhase, 2)) * (uKImag.get(i)>0 ? 1 : -1);
+				
+				// ----------------------------------------------------------------
+				// --- Set to UniPhaseElectricalNodeState -------------------------
+				// ----------------------------------------------------------------
 				upNodeState = new UniPhaseElectricalNodeState();
-				upNodeState.setVoltageAbs(new UnitValue(uKabs.get(i).floatValue(), "V"));
-				upNodeState.setCosPhi(cosPhi.get(i).floatValue());
-				upNodeState.setP(new UnitValue(nodalPowerReal.get(i).floatValue(), "W"));
-				upNodeState.setQ(new UnitValue(nodalPowerImag.get(i).floatValue(), "var"));
-				upNodeState.setVoltageReal(new UnitValue(uKReal.get(i).floatValue(), "V"));
-				upNodeState.setVoltageImag(new UnitValue(uKImag.get(i).floatValue(), "V"));
-				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerReal.get(i), nodalPowerImag.get(i), uKabs.get(i)) / 3.0), "A")); //Adjusted to show only the current of a single phase.
-				upNodeState.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerReal.get(i), nodalPowerImag.get(i))), "VA"));
+				upNodeState.setVoltageAbs(new UnitValue(uKabsUniPhase, "V")); 
+				upNodeState.setVoltageReal(new UnitValue(uKabsRealUniPhase, "V")); 
+				upNodeState.setVoltageImag(new UnitValue(uKabsImagUniPhase, "V"));
+				
+				upNodeState.setCurrent(new UnitValue((float)(this.getNodeStateCurrent(nodalPowerRealUniPhase, nodalPowerImagUniPhase, uKabsUniPhase)), "A")); //Show aggregated current of all phases.
+				
+				upNodeState.setCosPhi(cosPhiUniPhase);
+
+				upNodeState.setP(new UnitValue(nodalPowerRealUniPhase, "W"));
+				upNodeState.setQ(new UnitValue(nodalPowerImagUniPhase, "var"));
+				upNodeState.setS(new UnitValue((float)(this.getNodeStateS(nodalPowerRealUniPhase, nodalPowerImagUniPhase)), "VA"));
 
 			}
 
 			// --- Finally, set new data model --------------------------------
-			//TODO properties required?
 			dataModelArray[1] = upNodeState;
 			
 			// --- Remind this result -----------------------------------------

@@ -17,6 +17,7 @@ import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractInternalDataModel;
 import de.enflexit.ea.core.AbstractInternalDataModel.ControlledSystemType;
 import de.enflexit.ea.core.EnergyAgentIO;
+import de.enflexit.ea.core.EnergyAgentPerformanceMeasurements;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.SnapshotDecisionLocation;
@@ -422,9 +423,16 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 	private void sendDiscreteSimulationsStepToSimulationManager() {
 		
 		if (this.isSimulation()==false || this.getTimeModelType()==TimeModelType.TimeModelContinuous) return;
+
+		// --------------------------------------------------------------------------------------------------
+		// --- In case that no individual DiscreteIteratorInterface was implemented in a RT-strategy, the ---
+		// --- DiscreteSimulationStep will be send by the AbstractIOSimulated within a simulation step    ---
+		// --- already (with a state DiscreteSystemStateType.Final).                                      ---
+		// --- Thus, the DiscreteSimulationStep needs not to be sent again and this method can be skipped!--- 
+		// --------------------------------------------------------------------------------------------------
 		
 		AbstractIOSimulated ioSimulated = this.getAbstractIOSimulated();
-		if (ioSimulated!=null) {
+		if ( (ioSimulated!=null && ioSimulated.requiresEnvironmentModelInformation()==true) || this.getDiscreteSystemStateType()!=null) {
 			ioSimulated.sendManagerNotification(this.getDiscreteSimulationStep());
 		}
 	}
@@ -478,18 +486,24 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// ------------------------------------------------------
 			// --- Decentral decision process -----------------------
 			// ------------------------------------------------------
-			// --- Use an individual discrete system state type? --------
+			// --- Use an individual discrete system state type? ----
 			DiscreteSystemStateType dsTypeIndividual = this.getDiscreteSystemStateType();
 			if (dsTypeIndividual==null) {
 				dsTypeIndividual = DiscreteSystemStateType.Final;
 			}
+			// --- Reduce to states that belongs to time step -------
+			long simStepBegin = this.getTimeModelDiscrete().getTime() - this.getTimeModelDiscrete().getStep();
+			tsse = TechnicalSystemStateHelper.copyTechnicalSystemstateEvaluationWithLimitedParents(tsse, simStepBegin);
+			// --- Prepare return value -----------------------------
 			dsStep = new DiscreteSimulationStep(tsse, dsTypeIndividual);
 		}
 		return dsStep;
 	}
 	/**
-	 * Returns the DiscreteSystemStateType as returned by the current evaluation strategy.
-	 * @return the discrete system state type
+	 * Returns the DiscreteSystemStateType as returned by the current real-time evaluation strategy 
+	 * or <code>null</code>, if no {@link DiscreteIteratorInterface} is implemented.
+	 * 
+	 * @return the individual DiscreteSystemStateType or <code>null</code>
 	 */
 	private DiscreteSystemStateType getDiscreteSystemStateType() {
 		
@@ -558,6 +572,8 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			// --- Set marker that new measurements arrived -----------------------------
 			this.receivedNewMeasurements = true;
 			
+			this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CONTROL_BEHAVIOUR_RT);
+			
 			// --- Are we in discrete simulations ? -------------------------------------
 			switch (this.getTimeModelType()) {
 			case TimeModelContinuous:
@@ -576,6 +592,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				this.action();
 				break;
 			}
+			this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CONTROL_BEHAVIOUR_RT);
 		}
 	}
 	/* (non-Javadoc)
@@ -591,6 +608,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 			this.currentTime = this.agentIOBehaviour.getTime();
 			try {
 				// --- Case separation for single or multiple systems ---------
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_STRATEGY_EXECUTION);
 				if (this.typeOfControlledSystem!=null) {
 					this.debugPrint("executing real time strategy ...", false);
 					switch (this.typeOfControlledSystem) {
@@ -610,6 +628,7 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 				ex.printStackTrace();
 				
 			} finally {
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_STRATEGY_EXECUTION);
 				this.receivedNewMeasurements = false;
 			}
 		}
@@ -665,9 +684,18 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					}
 					
 					// --- Things to do for TechnicalSystems ------------------
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
 					this.rtEvaluationStrategy.setMeasurementsFromSystem(measurements);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
+					
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
 					this.rtEvaluationStrategy.runEvaluationUntil(evalEndTime);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
+					
+					this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
 					this.rtEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
+					this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
+					
 					tsseLocal = this.rtEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				}
 					
@@ -807,10 +835,20 @@ public class ControlBehaviourRT extends CyclicBehaviour implements Observer {
 					ds.setEomPlannerResultForDecisions(eomPR);	
 				}
 				
+				
 				// --- Things to do for TechnicalSystemGroupss ----------------
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
 				this.rtGroupEvaluationStrategy.setMeasurementsFromSystem(measurements);
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_SET_MEASUREMENTS);
+				
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
 				this.rtGroupEvaluationStrategy.runEvaluationUntil(evalEndTime); 
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_EXECUTE_EVALUATION);
+				
+				this.energyAgent.setPerformanceMeasurementStarted(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
 				this.rtGroupEvaluationStrategy.applyScheduleLengthRestriction(evalEndTime);
+				this.energyAgent.setPerformanceMeasurementFinalized(EnergyAgentPerformanceMeasurements.EA_PM_CB_RT_APPLY_SCHEDULE_LENGTH_RESTRICTION);
+				
 				tsseLocal = this.rtGroupEvaluationStrategy.getTechnicalSystemStateEvaluation();
 				
 			} catch (Exception ex) {

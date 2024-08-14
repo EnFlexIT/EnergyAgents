@@ -20,7 +20,7 @@ import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.electricity.blackboard.CurrentLevelAnswer;
 import de.enflexit.ea.electricity.blackboard.ElectricityRequestObjective;
 import de.enflexit.ea.electricity.blackboard.VoltageLevelAnswer;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.FixedVariableList;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.FixedDouble;
@@ -45,7 +45,6 @@ public class IOSimulated extends AbstractIOSimulated {
 		super(agent);
 		this.setTechnicalSystemStateFromRealTimeControlBehaviourToEnvironmentModel(false);
 	}
-	
 	
 	/**
 	 * Processes single blackboard answers.
@@ -72,8 +71,8 @@ public class IOSimulated extends AbstractIOSimulated {
 				// --- Three phase flow ---------------------------------------
 				TriPhaseElectricalNodeState tpNodeState = (TriPhaseElectricalNodeState) vla.getElectricalNodeState(); 
 				if (tpNodeState.getL1()!=null) {
-					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);;
-					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);;
+					uReal = tpNodeState.getL1().getVoltageRealNotNull().getValue() * Math.sqrt(3.0);
+					uImag = tpNodeState.getL1().getVoltageImagNotNull().getValue() * Math.sqrt(3.0);
 				}
 				
 			} else if (vla.getElectricalNodeState() instanceof UniPhaseElectricalNodeState) {
@@ -207,26 +206,28 @@ public class IOSimulated extends AbstractIOSimulated {
 		
 		// ----------------------------------------------------------
 		// --- Check for neighbor components ------------------------
-		Vector<NetworkComponent> lvNeighbours = intDM.getConnectedNetworkComponentsOfElectricalDomain(InternalDataModel.DOMAIN_ELECTRICITY_400V);
+		String domain = networkModel.getDomain(intDM.getNetworkComponent());
+		Vector<NetworkComponent> lvNeighbours = intDM.getConnectedNetworkComponentsOfElectricalDomain(domain);
 		if (lvNeighbours!=null && lvNeighbours.size()>0) {
 			// --- Define allowed types of NetworkComponents -------- 
-			List<String> allowedTypes = new ArrayList<String>();
-			allowedTypes.add("Cable");
-			allowedTypes.add("Sensor");
+			List<String> allowedTypeKeyWords = new ArrayList<String>();
+			allowedTypeKeyWords.add("Cable".toLowerCase());
+			allowedTypeKeyWords.add("Sensor".toLowerCase());
 			// --- Filter for cables and sensors --------------------
-			for (int i = 0; i < lvNeighbours.size(); i++) {
-				NetworkComponent lvNetComp = lvNeighbours.get(i);
-				if (allowedTypes.contains(lvNetComp.getType())==true) {
-					// --- Prepare BlackboardRequest ----------------
-					SingleRequestSpecifier spec = new SingleRequestSpecifier(ElectricityRequestObjective.CurrentLevels, lvNetComp.getId());
-					requestSpecifierVector.add(spec);
+			for (NetworkComponent lvNetComp : lvNeighbours) {
+				for (String allowedTypeKeyWord : allowedTypeKeyWords) {
+					if (lvNetComp.getType().toLowerCase().contains(allowedTypeKeyWord)) {
+						// --- Prepare BlackboardRequest ----------------
+						requestSpecifierVector.add(new SingleRequestSpecifier(ElectricityRequestObjective.CurrentLevels, lvNetComp.getId()));
+						break;
+					}
 				}
 			}
 		}
 
 		// ----------------------------------------------------------
 		// --- Check if a voltage level request is required ---------
-		if (intDM.getTransformerDataModel().isControlBasedOnNodeVoltage()==true) {
+		if (intDM.getTransformerDataModel()!=null && intDM.getTransformerDataModel().isControlBasedOnNodeVoltage()==true) {
 			String controlNodeID = intDM.getTransformerDataModel().getControlNodeID();
 			if (controlNodeID!=null && controlNodeID.isEmpty()==false) {
 				SingleRequestSpecifier voltageLevelRequest = new SingleRequestSpecifier(ElectricityRequestObjective.VoltageLevels, intDM.getTransformerDataModel().getControlNodeID());

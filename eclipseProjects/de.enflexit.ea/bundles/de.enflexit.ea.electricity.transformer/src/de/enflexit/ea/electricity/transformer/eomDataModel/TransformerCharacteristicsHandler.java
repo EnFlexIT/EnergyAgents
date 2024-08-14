@@ -7,9 +7,13 @@ import energy.helper.NumberHelper;
 
 /**
  * The Class TransformerCharacteristicsHandler.
- *
+ * 
+ * @deprecated the TransformerDataModel class to use was moved to the core electricity bundle.
+ * This class is only used to handle persisted legacy models and convert them into the new class type.
+ *    
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
+ @Deprecated
 public class TransformerCharacteristicsHandler {
 
 	private TransformerDataModel transformerDataModel;

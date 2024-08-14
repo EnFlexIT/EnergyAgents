@@ -14,9 +14,11 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractNetworkModelDisplayUpdater;
+import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.domain.DomainSettings;
@@ -39,7 +41,9 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 
 	private static final String ACTIVE_POWER = "Active Power";
 	private static final String REACTIVE_POWER = "Reactive Power";
-	private static final String VOLTAGE = "Voltage";
+	private static final String NODE_VOLTAGE_ABS = "Voltage (abs)";
+	private static final String NODE_VOLTAGE_REAL = "Voltage (real)";
+	private static final String NODE_VOLTAGE_IMAG = "Voltage (imag)";
 	private static final String CURRENT = "Current";
 	private static final String UTILIZATION = "Utilization";
 	
@@ -69,6 +73,9 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		// --- Get all affected elements from the changed elements: -----------------
 		HashMap<String, TechnicalSystemStateEvaluation> sysStateChanges = this.getStateUpdates();  
 	
+		// --- Get the configured rated voltage -------------------------------------
+		double confRatedVoltage = ((AbstractElectricalNetworkConfiguration)this.getSubAggregationConfiguration()).getConfiguredRatedVoltageFromNetwork();
+		
 		// --------------------------------------------------------------------------
 		// --- Work on the changes of the GraphNode ---------------------------------
 		// --------------------------------------------------------------------------
@@ -99,9 +106,15 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			Vector<Float> floatVectorVoltage = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 			int tsIndex = -1;
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), uniNodeState.getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, uniNodeState.getVoltageImag().getValue());
 			
 			// --- Add a layout notification, if configured so ----------------------
 			this.addGraphElementLayoutForNodes(tsSettings, uniNodeState);
@@ -125,9 +138,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 					ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(netComp.getId());
 					InterfaceSetting intSet = ScheduleController.getInterfaceSetting(sc.getScheduleList().getInterfaceSettings(), interfaceID);
 					
-//					if (intSet.getDomain().equals(this.getDomain())) {
-					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==10000) {
-						
+					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==confRatedVoltage) {
 						
 						UsageOfInterfaceEnergy uoi = (UsageOfInterfaceEnergy) abstractUOI;
 						EnergyCarrier ec = DomainSettings.getEnergyCarrier(intSet.getDomain());
@@ -254,7 +265,11 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 	 */
 	private void addGraphElementLayoutForNodes(TimeSeriesSettings tsSettings, UniPhaseElectricalNodeState triPhaseNodeState) {
 		
-		ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForNodes();
+		HyGridGraphElementLayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings==null) return;
+		if (layoutSettings.getColorSettingsForNodes()==null) return;
+		
+		ColorSettingsCollection colorSettings = layoutSettings.getColorSettingsForNodes();
 		if (colorSettings.isEnabled()==false) return;
 		if (colorSettings.getColorSettingsVector().size()==0) return;
 		if (tsSettings==null) return;
@@ -263,7 +278,7 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		
 		// --- Get the GraphElementLayout for this node ---------------
 		GraphNode node = tsSettings.getGraphNode(); 
-		GraphElementLayout layout = this.getLayoutService().getGraphElementLayout(node, this.getNetworkModel(), this.getLayoutSettings());
+		GraphElementLayout layout = this.getLayoutService().getGraphElementLayout(node, this.getNetworkModel(), layoutSettings);
 		
 		if (layout!=null) {
 			this.addGraphElementLayout(layout);
@@ -302,7 +317,9 @@ public class UniPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		timeSeriesForNodes.add(this.createTimeSeries(ACTIVE_POWER, powerUnit));
 		timeSeriesForNodes.add(this.createTimeSeries(REACTIVE_POWER, powerUnit));
 		// --- Voltage ----------------------------------------------
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG, "V"));
 		return timeSeriesForNodes;
 	}
 

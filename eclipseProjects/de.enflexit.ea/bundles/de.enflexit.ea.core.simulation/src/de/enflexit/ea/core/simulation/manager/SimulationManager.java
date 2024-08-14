@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.simulation.manager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import org.awb.env.networkModel.visualisation.notifications.EnvironmentModelUpda
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.ontology.Simple_Boolean;
+import agentgui.ontology.Simple_String;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.agents.SimulationManagerAgent;
@@ -48,6 +51,8 @@ import de.enflexit.ea.core.dataModel.simulation.ControlBehaviourRTStateUpdate;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteIteratorRegistration;
 import de.enflexit.ea.core.dataModel.simulation.DiscreteSimulationStep;
 import de.enflexit.ea.core.dataModel.simulation.RTControlRegistration;
+import de.enflexit.ea.core.simulation.manager.SimulationManagerMonitor.MonitorAction;
+import de.enflexit.eom.awb.adapter.AbstractEomStorageHandler;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.TechnicalSystemStateDeltaEvaluation;
 import energy.helper.DisplayHelper;
@@ -84,18 +89,25 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	private HyGridAbstractEnvironmentModel hygridSettings;
 
 	private boolean isHeadlessOperation;
+	private boolean removeEomModelsAfterAggregationBuild;
+	private boolean hideNetworkModelInSimulationStep;
 	private boolean showDashboard;
 	private boolean isPaused;
 
 	private Integer numberOfExecutedDeviceAgents;
+	private List<String> additionalSimAgentClasses;
+
 	private Integer averageOfAgentAnswersExpected;
+	private HashSet<String> agentsKnown;
 	private HashSet<String> agentsInitialized;
 	private HashSet<String> agentsSuccessfulStarted;
 
 	private Vector<EnvironmentNotification> agentsNotifications;
 	
 	private long endTimeNextSimulationStep;
+	private boolean isUpdatedDiscreteSimulationStep;
 	
+	private SimulationManagerMonitor monitor;
 	private AggregationHandler aggregationHandler;
 	private Blackboard blackboard;
 	
@@ -123,41 +135,85 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.debug = false;
 		this.isDoPerformanceMeasurements = false;
 		
+		// --- Start SimulationManagerMonitor ---------------------------------
+		this.getSimulationManagerMonitor();
+		
 		// --- Start the BlackBoardAgent --------------------------------------
 		this.startBlackBoardAgent();
 		
 		// --- work on the start arguments for the simulation manager ---------
 		Object[] args = this.getArguments();
 		if (args!=null) {
+			
 			// --- SimpleBoolean for headless operation -----------------------
-			Simple_Boolean sBool = (Simple_Boolean) args[0];
-			this.setHeadlessOperation(sBool.getBooleanValue());
+			int argIndex = 0;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				Simple_Boolean sBool = (Simple_Boolean) args[argIndex];
+				this.setHeadlessOperation(sBool.getBooleanValue());
+			}
+			
+			// --- Boolean for remove EOM-Models After Aggregation Build ------
+			argIndex++;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setRemoveEomModelsAfterAggregationBuild(((Simple_Boolean)args[argIndex]).getBooleanValue());
+			}
+			
+			// --- Boolean for hiding the NetworkModel in a simulation step ---
+			argIndex++;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setHideNetworkModelInSimulationStep(((Simple_Boolean)args[argIndex]).getBooleanValue());
+			}
 			
 			// --- SimpleBoolean for dashboard configuration ------------------
-			if (args.length>1 && args[1] instanceof Simple_Boolean) {
-				this.setShowDashboard(((Simple_Boolean)args[1]).getBooleanValue());
+			argIndex++;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_Boolean) {
+				this.setShowDashboard(((Simple_Boolean)args[argIndex]).getBooleanValue());
+			}
+
+			// --- Check if additional simulation agent classes have been configured
+			argIndex++;
+			if (args.length>argIndex && args[argIndex] instanceof Simple_String) {
+				String simAgentsArgument = ((Simple_String)args[argIndex]).getStringValue();
+				if (simAgentsArgument!=null) {
+					String[] simAgentClassNames = simAgentsArgument.split(";");
+					if (simAgentClassNames.length>0) {
+						this.additionalSimAgentClasses = Arrays.asList(simAgentClassNames);
+					}
+				}
 			}
 		}
 		
 		// --- super.setup() will get the copy of current EnvironmentModel ----
 		super.setup();
-		// --- Ensure to reset the time model (applies to the discrete) -------
-		this.resetTimeModel();
-		// --- Get the current NetworkModel -----------------------------------
-		this.getBlackboard().setNetworkModel((NetworkModel) this.getDisplayEnvironment());
+		
+		// --- Get current NetworkModel ---------------------------------------
+		NetworkModel networkModel = (NetworkModel) this.getDisplayEnvironment();
+		// --- Ensure to setup the AggregationHandler -------------------------
+		this.getAggregationHandler();
+		
 		// --- Get settings for Display- and Energy- notifications ------------ 
 		this.hygridSettings = (HyGridAbstractEnvironmentModel) this.getAbstractEnvironment();
 		this.hygridSettings.setTimeModelType(this.getTimeModel());
-
+		// --- Ensure to reset the time model (applies to the discrete) -------
+		this.resetTimeModel();
+		
 		// --- Create 'No-System' - ScheduleList's ----------------------------
 		if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelDiscrete) {
-			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelDiscrete());	
+			new NoSystemScheduleListCreator(networkModel, this.getTimeModelDiscrete());	
 		} else if (this.hygridSettings.getTimeModelType()==TimeModelType.TimeModelContinuous) {
-			new NoSystemScheduleListCreator(this.getBlackboard().getNetworkModel(), this.getTimeModelContinuous());
+			new NoSystemScheduleListCreator(networkModel, this.getTimeModelContinuous());
 		}
 		
+		// --- Remove EOM model from NetworkComponents ------------------------
+		if (this.isRemoveEomModelsAfterAggregationBuild()==true) {
+			this.removeEomModelsFromNetworkComponents(networkModel);
+		}
+		
+		// --- Get the current NetworkModel -----------------------------------
+		this.getBlackboard().setNetworkModel(networkModel);
 		// --- Prepare the aggregation handler --------------------------------
 		this.getBlackboard().setAggregationHandler(this.getAggregationHandler());
+
 		// --- If measurements are activated, configure aggregation handler ---
 		this.registerPerformanceMeasurements();
 		// --- Add the managers internal cyclic simulation behaviour ----------
@@ -166,6 +222,18 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- Start the dashboard responder if configured --------------------
 		if (this.showDashboard==true) {
 			this.addBehaviour(this.getDashboardSubscriptionResponder());
+		}
+	}
+	/**
+	 * Removes the EOM models from the NetworkComponents within the environment model.
+	 * @param networkModel the network model to work on
+	 */
+	private void removeEomModelsFromNetworkComponents(NetworkModel networkModel) {
+		Vector<NetworkComponent> netComps = ((NetworkModel) this.getDisplayEnvironment()).getNetworkComponentVectorSorted();
+		for (NetworkComponent netComp : netComps) {
+			if (AbstractEomStorageHandler.getEomModelType(netComp)!=null) {
+				netComp.setDataModel(null);
+			}
 		}
 	}
 
@@ -179,6 +247,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getAggregationHandler().terminate();
 		this.getBlackboard().stopBlackboardListenerServiceThread();
 		this.removeSimulationBehaviour();
+		this.getSimulationManagerMonitor().setDoTerminate(true);
 	}
 	
 	
@@ -371,6 +440,36 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	}
 
 	/**
+	 * Checks if is removes the EOM models after aggregation build.
+	 * @return true, if is removes the EOM models after aggregation build
+	 */
+	public boolean isRemoveEomModelsAfterAggregationBuild() {
+		return removeEomModelsAfterAggregationBuild;
+	}
+	/**
+	 * Sets to remove EOM-models after aggregation build.
+	 * @param removeEomModelsAfterAggregationBuild the new removes the eom models after aggregation build
+	 */
+	public void setRemoveEomModelsAfterAggregationBuild(boolean removeEomModelsAfterAggregationBuild) {
+		this.removeEomModelsAfterAggregationBuild = removeEomModelsAfterAggregationBuild;
+	}
+	
+	/**
+	 * Checks if is hide network model in simulation step.
+	 * @return true, if is hide network model in simulation step
+	 */
+	public boolean isHideNetworkModelInSimulationStep() {
+		return hideNetworkModelInSimulationStep;
+	}
+	/**
+	 * Sets the hide network model in simulation step.
+	 * @param hideNetworkModelInSimulationStep the new hide network model in simulation step
+	 */
+	public void setHideNetworkModelInSimulationStep(boolean isHideNetworkModelInSimulationStep) {
+		this.hideNetworkModelInSimulationStep = isHideNetworkModelInSimulationStep;
+	}
+	
+	/**
 	 * Checks if is show dashboard.
 	 * @return true, if is show dashboard
 	 */
@@ -500,12 +599,35 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					} else {
 						break;
 					}
-					
 				} catch (InterruptedException ie) {
 					//ie.printStackTrace();
 				}
 			}	
 		}
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// --- SimulationManagerMonitor handling ------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * Returns the SimulationManager monitor thread.
+	 * @return the simulation manager monitor
+	 */
+	public SimulationManagerMonitor getSimulationManagerMonitor() {
+		if (monitor==null) {
+			monitor = new SimulationManagerMonitor(this, 10 * 1000l);
+			monitor.start();
+		}
+		return monitor;
+	}
+	/**
+	 * Sets the current monitor action.
+	 *
+	 * @param action the action
+	 * @param maxWaitTime the max wait time
+	 */
+	public void setMonitorAction(MonitorAction action, long maxWaitTime) {
+		this.getSimulationManagerMonitor().setMonitorAction(action, maxWaitTime);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -583,6 +705,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		this.getBlackboard().waitForBlackboardWorkingThread(null);
 	}
 	
+	
 	/**
 	 * Returns the dashboard subscription responder.
 	 * @return the dashboard subscription responder
@@ -656,8 +779,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				// --- Initially distribute EnvironmentModel --------------------------------------
 				// --------------------------------------------------------------------------------
 				simState.setState(STATE.A_DistributeEnvironmentModel);
-				this.print("Initially distribute Environment Model!", false);
+				this.print("Initially distribute Environment Model to " + this.getNumberOfExpectedDeviceAgents() + " agents!", false);
 				this.distributeEnvironmentModel(false);
+				this.setMonitorAction(MonitorAction.DistributeEnvironmentModel, 60 * 1000);
 				
 			} else if (simState.getState()==STATE.A_DistributeEnvironmentModel) {
 				// --------------------------------------------------------------------------------
@@ -673,9 +797,10 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					case TimeModelDiscrete: // ---------------------------------------------------
 						this.getControlBehaviourRTStateUpdateAnswered().clear();
 						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.setMonitorAction(MonitorAction.DiscreteSimulation_ExecuteSimulation, 60 * 1000);
 						this.statSimulationStepsDiscrete++;
 						this.setEndTimeNextSimulationStep();
-						// --- Disable NetworkModel updates within GUI ----------------------------
+						// --- Disable NetworkModel updates of DisplayAgent -----------------------
 						this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(false));
 						break;
 
@@ -683,6 +808,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 						this.getNetworkCalculationExecuter();
 						this.getTimeModelContinuous().setExecuted(true);
 						this.distributeEnvironmentModel(true);
+						this.setMonitorAction(null, 60 * 1000);
 						break;
 					}
 				}
@@ -695,16 +821,17 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					
 					switch (this.hygridSettings.getTimeModelType()) {
 					case TimeModelDiscrete:
-						// --- Check if discrete simulation step is done --------------------------
-						this.discreteSimulationCheckEndOfSimulationStep(false);
+						// --- Check if current discrete simulation step is completed -------------
+						this.discreteSimulationCheckEndOfSimulationStep();
 						break;
 						
 					case TimeModelContinuous:
 						simState.setState(STATE.C_StopSimulation);
 						this.statSimulationEndTime = System.currentTimeMillis();
 						this.print("Finalize Simulation!", false);
+						this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 						this.getTimeModelContinuous().setExecuted(false);
-						this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+						this.stepSimulation();
 						break;
 					}
 				}
@@ -727,7 +854,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 *
 	 * @param isUpdatedDiscreteSimulationStep the indicator if a new or updated discrete simulation step was delivered
 	 */
-	private void discreteSimulationCheckEndOfSimulationStep(boolean isUpdatedDiscreteSimulationStep) {
+	private void discreteSimulationCheckEndOfSimulationStep() {
 		
 		// --- To avoid reaction in continuous time simulations -------------------------
 		if (this.hygridSettings.getTimeModelType()!=TimeModelType.TimeModelDiscrete) return;
@@ -756,11 +883,28 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		boolean isPendingControlBehaviourRTStateUpdate = this.isPendingControlBehaviourRTStateUpdate();
 		
 		isDoNextSimulationStep = isPendingSystemInPartSequence==false && isPendingSysteminSimulationStep==false && isPendingControlBehaviourRTStateUpdate==false; 
+
+		// --- Set the monitoring state ---------------------------------------------
+		if (isPendingSystemInPartSequence==true) {
+			this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingAnswerOfIteratingSystem, 10 * 1000);
+		} else {
+			if (isPendingSysteminSimulationStep==true) {
+				this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingFinalAnswerOfIteratingSystem, 10 * 1000);
+			} else {
+				if (isPendingControlBehaviourRTStateUpdate==true) {
+					this.setMonitorAction(MonitorAction.DiscreteSimulation_AwaitingControlBehaviourRTStateUpdate, 10 * 1000);
+				}
+			}
+		}
+		
 		
 		// --------------------------------------------------------------------------
 		// --- In case of any discrete iterating system -----------------------------
 		// --------------------------------------------------------------------------
-		if (isUpdatedDiscreteSimulationStep==true && (agh.isIteratingSystem()==true || agh.isCentralSnapshotSimulation()==true)) {
+		if (this.isUpdatedDiscreteSimulationStep==true && (agh.isIteratingSystem()==true || agh.isCentralSnapshotSimulation()==true)) {
+			
+			// --- Reset update indicator -------------------------------------------
+			this.isUpdatedDiscreteSimulationStep = false;
 			
 			// --- Do we expect further discrete simulation part steps --------------
 			if (isPendingSystemInPartSequence==true) return;
@@ -802,34 +946,64 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			
 			// --- Prepare next simulation step -----------------------------------------
 			TimeModelDiscrete tmd = this.getTimeModelDiscrete();
-			if (tmd.getTime()<tmd.getTimeStop()) {
+			if (tmd.getTime() < tmd.getTimeStop()) {
 				tmd.step();
 				if (this.isDebugDiscreteSimulationSchedule==true) {
 					System.out.println("");
 					DisplayHelper.systemOutPrintlnGlobalTime(tmd.getTime(), "=> [" + this.getClass().getSimpleName() + "]", "Execute next simulation step ...");
 				}
+				
 			} else {
 				this.hygridSettings.getSimulationStatus().setState(STATE.C_StopSimulation);
 				this.statSimulationEndTime = System.currentTimeMillis();
 				this.print("Finalize Simulation!", false);
+				this.setMonitorAction(MonitorAction.StopSimulation, 10 * 1000);
 				this.sendDisplayAgentNotification(new EnableNetworkModelUpdateNotification(true));
 			}
 			
-			// --- Clear simulation step logs -------------------------------------------
+			// --- Clear discrete simulation step logs ----------------------------------
 			this.getAggregationHandler().clearDiscreteIteratingSystemsStateTypeLog();
 			this.getControlBehaviourRTStateUpdateAnswered().clear();
 
 			// --- Start next simulation step -------------------------------------------
-			this.stepSimulation(this.getNumberOfExpectedDeviceAgents());
+			this.stepSimulation();
 			this.statSimulationStepsDiscrete++;
 			this.setEndTimeNextSimulationStep();
-		
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Will step the simulation according to the specified start arguments.
+	 */
+	private void stepSimulation() {
+		
+		try {
+			
+			// --- Reset previous agent answers steps ---------------
+			this.resetEnvironmentInstanceNextParts();
+			
+			// --- Prepare the next environment model to send -------
+			EnvironmentModel envModel = this.getEnvironmentModel();
+			if (this.isHideNetworkModelInSimulationStep()==true) {
+				envModel = new EnvironmentModel();
+				envModel.setTimeModel(this.getEnvironmentModel().getTimeModel());
+				envModel.setAbstractEnvironment(this.getEnvironmentModel().getAbstractEnvironment());
+				envModel.setDisplayEnvironment(null);
+				envModel.setProjectProperties(this.getEnvironmentModel().getProjectProperties());
+				envModel.setSetupProperties(this.getEnvironmentModel().getSetupProperties());
+			}
+			this.stepSimulation(envModel, this.getNumberOfExpectedDeviceAgents());
+			if (this.hygridSettings.getSimulationStatus().getState()!=STATE.C_StopSimulation) {
+				this.setMonitorAction(MonitorAction.DiscreteSimulation_StepSimulation, 60 * 1000);
+			}
+			
+		} catch (ServiceException ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see agentgui.simulationService.agents.SimulationManagerAgent#proceedAgentAnswers(java.util.Hashtable)
@@ -843,7 +1017,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		// --- should have send a kind of 'OK'-message or a new system state --
 		// --------------------------------------------------------------------
 		if (agentAnswers!=null && agentAnswers.size()>0) {
-			
+
 			try {
 				// --- Get current time ---------------------------------------
 				long currTime = this.getTime();
@@ -855,9 +1029,13 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					String displayTextNumbers = "(Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!";
 					this.debugPrintLine(currTime, "proceedAgentAnswers: Received " + agentAnswers.size() + " system states " + displayTextNumbers + ".");
 					// --- Error during simulation? ---------------------------
-					if (agentAnswers.size()!=this.getAverageOfAgentAnswersExpected()) {
+					if (agentAnswers.size()!=this.getNumberOfExpectedDeviceAgents() && agentAnswers.size()!=this.getAverageOfAgentAnswersExpected()) {
 						this.print("Received " + agentAnswers.size() + " instead of " + this.getAverageOfAgentAnswersExpected() + " expected answers from agents in simulation.", true);
 					}
+					if (this.isDebugDiscreteSimulationSchedule==true) {
+						DisplayHelper.systemOutPrintlnGlobalTime(currTime, "=> [" + this.getClass().getSimpleName() + "]", "Proceed " + agentAnswers.size() + " Agent Answers ...");
+					}
+					this.getAggregationHandler().setDebugStateAppending(this.isDebugDiscreteSimulationSchedule, currTime);
 					this.getAggregationHandler().setAgentAnswers(agentAnswers);
 				}
 				
@@ -866,9 +1044,6 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				case TimeModelDiscrete:
 					// --- (Re)Execute the network calculation ----------------
 					if (simState==STATE.B_ExecuteSimuation) {
-						if (this.isDebugDiscreteSimulationSchedule==true) {
-							DisplayHelper.systemOutPrintlnGlobalTime(currTime, "=> [" + this.getClass().getSimpleName() + "]", "Proceed Agent Answers ...");
-						}
 						this.setPerformanceMeasurementStarted(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
 						this.getAggregationHandler().runEvaluationUntil(currTime, false, this.isDebugDiscreteSimulationSchedule);
 						this.setPerformanceMeasurementFinalized(SIMA_MEASUREMENT_NETWORK_CALCULATIONS);
@@ -922,7 +1097,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			// ----------------------------------------------------------------
 			GeneralGraphSettings4MAS ggMAS = this.getBlackboard().getNetworkModel().getGeneralGraphSettings4MAS();
 			Vector<NetworkComponent> netComps = this.getBlackboard().getNetworkModel().getNetworkComponentVectorSorted();
-			HashMap<String, Boolean> energyAgentClasses = new HashMap<String, Boolean>();
+			HashMap<String, Boolean> simulationAgentClasses = new HashMap<String, Boolean>();
 			Class<?> energyAgentClass = AbstractEnergyAgent.class;
 			for (int i = 0; i < netComps.size(); i++) {
 				
@@ -935,16 +1110,23 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				if (className!=null) {
 
 					// --- Check the HashMap first ----------------------------
-					Boolean subclassOfEnergyAgent = energyAgentClasses.get(className);
-					if (subclassOfEnergyAgent==null) {
+					Boolean simulationAgentClass = simulationAgentClasses.get(className);
+					if (simulationAgentClass==null) {
 						// --- If no entry found, examine the class -----------
 						try {
 							// --- Check if class extends AbstractEnergyAgent -
 							Class<?> clazz = ClassLoadServiceUtility.forName(className);
-							subclassOfEnergyAgent = energyAgentClass.isAssignableFrom(clazz);
-							
+							if (energyAgentClass.isAssignableFrom(clazz)) {
+								simulationAgentClass = true;
+							} else if (this.getAdditionalSimAgentClasses().contains(className)) {
+								// --- Check if the class was specified in the start arguments ----
+								simulationAgentClass = true;
+							} else {
+								simulationAgentClass = false;
+							}
 							// --- Remember the result ------------------------
-							energyAgentClasses.put(className, subclassOfEnergyAgent);
+							simulationAgentClasses.put(className, simulationAgentClass);
+							
 							
 						} catch (NoClassDefFoundError e) {
 							e.printStackTrace();
@@ -954,8 +1136,9 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					}
 					
 					// --- Agent available? -----------------------------------
-					if (subclassOfEnergyAgent==true) {
+					if (simulationAgentClass==true) {
 						this.numberOfExecutedDeviceAgents++;
+						this.getAgentsKnown().add(netComp.getId());
 					}
 				}
 			}
@@ -963,6 +1146,19 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 		}
 		return this.numberOfExecutedDeviceAgents;
 	}
+	/**
+	 * Gets the additional simulation agent classes, i.e. classes of agents that the SimulationManager 
+	 * will expect an answer from in addition to the EnergyAgent subclasses.
+	 * @return the additional simulation agent classes
+	 */
+	private List<String> getAdditionalSimAgentClasses() {
+		if (additionalSimAgentClasses==null) {
+			// --- If not configured, provide an empty list to avoid null pointers.
+			additionalSimAgentClasses = new ArrayList<>();
+		}
+		return additionalSimAgentClasses;
+	}
+
 	/**
 	 * Returns the average of agent answers expected.
 	 * @return the average of agent answers expected
@@ -978,10 +1174,20 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	// --- Handling / counting of involved agents during start ------------------------------------
 	// --------------------------------------------------------------------------------------------
 	/**
+	 * Returns the agent known.
+	 * @return the agent known
+	 */
+	public HashSet<String> getAgentsKnown() {
+		if (agentsKnown==null) {
+			agentsKnown = new HashSet<>();
+		}
+		return agentsKnown;
+	}
+	/**
 	 * Returns the agents that were initialized for the simulation.
 	 * @return the agents initialized
 	 */
-	private HashSet<String> getAgentsInitialized() {
+	public HashSet<String> getAgentsInitialized() {
 		if (agentsInitialized==null) {
 			agentsInitialized = new HashSet<String>();
 		}
@@ -991,7 +1197,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Return the agents that were successfully started for the simulation.
 	 * @return the agents successful started
 	 */
-	private HashSet<String> getAgentsSuccessfulStarted() {
+	public HashSet<String> getAgentsSuccessfulStarted() {
 		if (agentsSuccessfulStarted==null) {
 			agentsSuccessfulStarted = new HashSet<String>();
 		}
@@ -1007,7 +1213,7 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 	 * Returns the agents that registered for this simulation.
 	 * @return the agents registered
 	 */
-	private Vector<EnvironmentNotification> getAgentNotifications() {
+	public Vector<EnvironmentNotification> getAgentNotifications() {
 		if (agentsNotifications==null) {
 			agentsNotifications = new Vector<EnvironmentNotification>();
 		}
@@ -1072,21 +1278,21 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 					
 			} else if (noteContent instanceof STATE_CONFIRMATION) {
 				// --- Check state confirmation type ----------------------------------------------
-				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION from agent " + agentName);
 				STATE_CONFIRMATION stateConformation = (STATE_CONFIRMATION) noteContent;
+				this.debugPrintLine(this.getTime(), "Received STATE_CONFIRMATION " + stateConformation.toString() + " from agent " + agentName);
 				switch (stateConformation) {
 				case Initialized:
 					this.getAgentsInitialized().add(agentName);
 					break;
 
 				case Done:
+					this.getAgentsInitialized().add(agentName);
 					this.getAgentsSuccessfulStarted().add(agentName);
 					// ----------------------------------------------------------------------------
 					// --- In distribute environments some agents may be slower in response !!----- 
 					// --- => At least have 95 % of expected agents started ----------------------- 
 					// ----------------------------------------------------------------------------
-					int minStarted = (int)Math.round(((double)this.getNumberOfExpectedDeviceAgents()) * 0.95);
-					if (this.getAgentsSuccessfulStarted().size()>=minStarted &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
+					if (this.getAgentsSuccessfulStarted().size()>=this.getNumberOfExpectedDeviceAgents() &&  this.getAgentsSuccessfulStarted().size()==this.getAgentsInitialized().size()) {
 						this.print("Initialization of agents completed (Expected: " + this.getNumberOfExpectedDeviceAgents() + ", Initialized: " + this.getAgentsInitialized().size() + ", Started: " + this.getAgentsSuccessfulStarted().size() + ")!", false);
 						this.resetAgentNotifications();
 						this.doNextSimulationStep();	
@@ -1122,14 +1328,20 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 			} else if (envNote.getNotification() instanceof DiscreteSimulationStep) {
 				// --- Got a new DiscreteSimulationStep from a system ------------------------------
 				this.getAggregationHandler().setAgentAnswer(envNote);
-				this.discreteSimulationCheckEndOfSimulationStep(true);
+				if (this.isDiscreteSimulationStepForCurrentTimeStep((DiscreteSimulationStep) envNote.getNotification())==true) {
+					this.isUpdatedDiscreteSimulationStep = true;
+					this.doNextSimulationStep();
+				}
 				return;
 				
 			} else if (envNote.getNotification() instanceof ControlBehaviourRTStateUpdate) {
 				// --- Got a ControlBehaviourRTStateUpdate from a system --------------------------
 				this.getControlBehaviourRTStateUpdateAnswered().add(envNote.getSender().getLocalName());
 				this.getAggregationHandler().setAgentAnswer(envNote);
-				this.discreteSimulationCheckEndOfSimulationStep(false);
+				if (this.isDiscreteSimulationStepForCurrentTimeStep((DiscreteSimulationStep) envNote.getNotification())==true) {
+					this.isUpdatedDiscreteSimulationStep = false;
+					this.doNextSimulationStep();
+				}
 				return;
 			}
 			
@@ -1165,10 +1377,22 @@ public class SimulationManager extends SimulationManagerAgent implements Aggrega
 				this.print("Finalisation of simulation completed!", false);
 				this.printRuntimeStatistics();
 				this.resetAgentNotifications();
+				this.setMonitorAction(null, 30 * 1000);
 				this.doNextSimulationStep();
 			}
 		}
 	}
+	/**
+	 * Checks if the specified DiscreteSimulationStep is for the current time step.
+	 *
+	 * @param dss the DiscreteSimulationStep to check
+	 * @return true, if is discrete simulation step for current time step
+	 */
+	private boolean isDiscreteSimulationStepForCurrentTimeStep(DiscreteSimulationStep dss) {
+		if (dss==null || dss.getSystemState()==null) return false;
+		return dss.getSystemState().getGlobalTime()==this.getTime();
+	}
+	
 	
 	/**
 	 * Prints the simulation statistics.

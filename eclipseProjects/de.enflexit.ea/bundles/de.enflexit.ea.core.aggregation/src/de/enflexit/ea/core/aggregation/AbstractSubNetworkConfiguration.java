@@ -9,6 +9,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.helper.DomainCluster;
 
+import de.enflexit.common.classLoadService.BaseClassLoadService;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.ea.core.dataModel.ontology.NetworkStateInformation;
 import energy.OptionModelController;
@@ -26,7 +27,10 @@ import energygroup.calculation.GroupCalculation;
 import jade.core.AID;
 
 /**
- * The Class AggregationHandlerConfiguration.
+ * The abstract class AbstractSubNetworkConfiguration serves as a description for the {@link AbstractAggregationHandler}.
+ * It enables extended classes to provided information, which classes actually are to be used for specific use-cases.
+ * E.g., how to constitute/build an EOM-aggregation (in fact, a {@link TechnicalSystemGroup}), which network calculation 
+ * needs to be used and executed or how to translate results into visualization updates.   
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
@@ -113,14 +117,29 @@ public abstract class AbstractSubNetworkConfiguration {
 	 * Has to return a description for the subnetwork that describes the here defined aggregation handling.
 	 * @return the subnetwork ID
 	 */
-	public abstract String getSubNetworkDescription();
-
+	public String getSubNetworkDescription() {
+		return null;
+	}
+	/**
+	 * Returns the sub network description internal.
+	 * @return the sub network description internal
+	 */
+	protected final String getSubNetworkDescriptionInternal() {
+		
+		String description = this.getSubNetworkDescription();
+		if (description==null) {
+			description = this.getDomain();
+		}
+		return description;
+	}
+	
+	
 	/**
 	 * Returns the combination of ID and description for the current configuration.
 	 * @return the sub network description ID
 	 */
 	public String getSubNetworkDescriptionID() {
-		String description = this.getSubNetworkDescription();
+		String description = this.getSubNetworkDescriptionInternal();
 		if (description==null || description.isEmpty()) {
 			description = "Undescribed Sub-Network Description of class " + this.getClass().getSimpleName(); 
 		}
@@ -343,6 +362,8 @@ public abstract class AbstractSubNetworkConfiguration {
 	public void setAggregationVisualizationParentContainer(Container aggregationVisualizationParentContainer) {
 		this.aggregationVisualizationParentContainer = aggregationVisualizationParentContainer;
 	}
+	
+	
 	// ------------------------------------------------------------------------
 	// --- Handling of the NetworkCalculationPreprocessor ---------------------
 	// ------------------------------------------------------------------------
@@ -414,7 +435,7 @@ public abstract class AbstractSubNetworkConfiguration {
 					netCalcStrategy = (AbstractNetworkCalculationStrategy) gc.getGroupOptionModelController().createEvaluationStrategy(netCalcStratClass.getName());
 					if (netCalcStrategy!=null) {
 						groupCalc.setGroupEvaluationStrategy(netCalcStrategy);
-						// --- Set further instance -------------------------------------
+						// --- Set further instances ------------------------------------
 						netCalcStrategy.setAggregationHandler(this.getAggregationHandler());
 						netCalcStrategy.setSubNetworkConfiguration(this);
 						// --- Activate the performance measurements? -------------------
@@ -564,6 +585,23 @@ public abstract class AbstractSubNetworkConfiguration {
 		return userClassInstances;
 	}
 
+	/**
+	 * Determines a class instance from the specified name by using the {@link BaseClassLoadService}.
+	 *
+	 * @param className the class name
+	 * @return the class
+	 */
+	protected Class<?> classForName(String className) {
+		
+		Class<?> classFound = null;
+		try {
+			classFound = BaseClassLoadServiceUtility.forName(className);
+		} catch (ClassNotFoundException | NoClassDefFoundError ex) {
+			ex.printStackTrace();
+		}
+		return classFound;
+	}
+	
 	/**
 	 * Returns a new instance of the specified class.
 	 *

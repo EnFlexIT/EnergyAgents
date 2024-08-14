@@ -22,8 +22,8 @@ import java.util.Date;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import energy.helper.UnitConverter;
 import energy.optionModel.gui.components.DateTimeWidget;
 import energy.optionModel.gui.components.TimeUnitComboBox;
@@ -130,7 +130,7 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 		getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 		
 		this.pack();
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setTitle("Load Profile Import Settings");
 		this.setModal(true);

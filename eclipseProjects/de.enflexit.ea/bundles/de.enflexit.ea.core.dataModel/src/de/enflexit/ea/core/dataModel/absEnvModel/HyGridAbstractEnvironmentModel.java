@@ -17,6 +17,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import agentgui.core.application.Application;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.project.Project;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModel;
@@ -93,6 +94,7 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		SensorData
 	}
 	
+	@XmlTransient private Project project;
 	@XmlTransient private SimulationStatus simulationStatus;
 	@XmlTransient private TimeModelType timeModelType;
 	
@@ -124,7 +126,6 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	
 	@XmlTransient
 	private TreeMap<String, AbstractGraphElementLayoutSettings> graphElementLayoutSettings;
-	
 	private ArrayList<GraphElementLayoutSettingsPersistenceTreeMap> graphElementLayoutSettingsPersisted;
 	
 	private ScheduleLengthRestriction scheduleLengthRestriction;
@@ -140,6 +141,21 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	// --------------------------------------------------------------
 	// --- From here, NON-PERSISTED runtime information -------------
 	// --------------------------------------------------------------
+	/**
+	 * Sets the current project.
+	 * @param project the new project
+	 */
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	/**
+	 * Returns the project.
+	 * @return the project
+	 */
+	public Project getProject() {
+		return project;
+	}
+	
 	/**
 	 * Sets the new simulation status.
 	 * @param simulationStatus the new simulation status
@@ -463,15 +479,16 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 	public TreeMap<String, AbstractGraphElementLayoutSettings> getGraphElementLayoutSettings() {
 		if (graphElementLayoutSettings==null) {
 			graphElementLayoutSettings = new TreeMap<>();
-			
 			List<GraphElementLayoutService> layoutServices = ServiceFinder.findServices(GraphElementLayoutService.class);
 			for (int i = 0; i < layoutServices.size(); i++) {
 				GraphElementLayoutService layoutService = layoutServices.get(i);
-				GraphElementLayoutSettingsPersistenceTreeMap settingsTreeMap = this.getGraphElementSettingsForDomain(layoutService.getDomain());
-				if (settingsTreeMap!=null) {
-					AbstractGraphElementLayoutSettings layoutSettings = layoutService.convertTreeMapToInstance(settingsTreeMap);
-					if (layoutSettings!=null) {
-						this.getGraphElementLayoutSettings().put(layoutService.getDomain(), layoutSettings);
+				for (String domain : layoutService.getDomainList(this.getProject())) {
+					GraphElementLayoutSettingsPersistenceTreeMap settingsTreeMap = this.getGraphElementSettingsForDomain(domain);
+					if (settingsTreeMap!=null) {
+						AbstractGraphElementLayoutSettings layoutSettings = layoutService.convertTreeMapToInstance(settingsTreeMap);
+						if (layoutSettings!=null) {
+							graphElementLayoutSettings.put(domain, layoutSettings);
+						}
 					}
 				}
 			}
@@ -618,8 +635,13 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		
 		// --- Visualization settings ---------------------
 		copy.setDisplayUpdateConfiguration(this.getDisplayUpdateConfiguration().getCopy());
-		copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
 		copy.setGraphElementLayoutSettingsPersisted((ArrayList<GraphElementLayoutSettingsPersistenceTreeMap>) this.getGraphElementLayoutSettingsPersisted().clone());
+		// ------------------------------------------------
+		// ------------------------------------------------
+		// ==> Most probably not required, since the getter produces everything 
+		//copy.setGraphElementLayoutSettings(this.getGraphElementLayoutSettings()); 
+		// ------------------------------------------------
+		// ------------------------------------------------
 		
 		// --- Deployment settings ------------------------
 		copy.setDeploymentSettings(this.getDeploymentSettings().getCopy());

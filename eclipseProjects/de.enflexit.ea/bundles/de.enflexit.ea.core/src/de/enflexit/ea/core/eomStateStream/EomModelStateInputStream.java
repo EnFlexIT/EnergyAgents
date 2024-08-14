@@ -22,6 +22,9 @@ import energy.OptionModelController;
 import energy.evaluation.AbstractEvaluationStrategy;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.EvaluationProcess;
+import energy.helper.TechnicalSystemGroupHelper;
+import energy.helper.TechnicalSystemHelper;
+import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.Schedule;
 import energy.optionModel.ScheduleList;
 import energy.optionModel.SystemVariableDefinition;
@@ -143,6 +146,15 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		NetworkComponent netComp = this.getIoSimulated().getNetworkComponent();
 		Object dataModelOfNetworkComponent = netComp.getDataModel();
 
+		// --- Get the start time of simulation -------------------------------
+		Long startTime = this.getIoSimulated().getTime();
+		
+		// --- First check for data model -------------------------------------
+		if (dataModelOfNetworkComponent==null) {
+			// --- Try to load from storage settings --------------------------
+			dataModelOfNetworkComponent = EomModelLoader.loadEomModel(netComp);
+		}
+		
 		// --- Check data model and prepare -----------------------------------
 		if (dataModelOfNetworkComponent==null) {
 			// --- No data model specified for NetworkComponent ---------------
@@ -193,6 +205,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					// --- TechnicalSystem ------------------------------------
 					// --------------------------------------------------------
 					TechnicalSystem technicalSystem = (TechnicalSystem) dataModelOfNetworkComponent;
+					TechnicalSystemHelper.adjustEvaluationStartTime(technicalSystem, startTime);
 					OptionModelController omc = new OptionModelController();
 					omc.setTechnicalSystem(technicalSystem);
 					omc.setControllingAgent(this.getIoSimulated().getEnergyAgent());
@@ -228,6 +241,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 					// --- TechnicalSystemGroup -------------------------------
 					// --------------------------------------------------------
 					TechnicalSystemGroup systemGroup = (TechnicalSystemGroup) dataModelOfNetworkComponent;
+					TechnicalSystemGroupHelper.adjustEvaluationStartTime(systemGroup, startTime);
 					GroupController gc = new GroupController();
 					gc.setTechnicalSystemGroup(systemGroup);
 					OptionModelController omc = gc.getGroupOptionModelController();
@@ -551,93 +565,97 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		this.stopTimeTriggerForSystemInput();
 	}
 	
+	
 	// ----------------------------------------------------------------------------------
 	// --- From here, methods for the simulation runtime can be found ------------------- 
 	// ----------------------------------------------------------------------------------
 	/* (non-Javadoc)
-	 * @see de.enflexit.energyAgent.core.eomStateStream.AbstractStateInputStream#getSystemState(long)
+	 * @see de.enflexit.ea.core.AbstractStateInputStream#getSystemState(long)
 	 */
 	@Override
-	public TechnicalSystemStateEvaluation getSystemState(long simTime) {
+	public TechnicalSystemStateEvaluation getSystemStateForTimeModelContinuous(long simTime) {
 		
 		TechnicalSystemStateEvaluation tsseAnswer = null;
-		
 		AbstractIOSimulated ioSimulated = this.getIoSimulated();
-		switch (ioSimulated.getTimeModelType()) {
-		case TimeModelDiscrete:
-			if (this.getRealTimeStrategy()!=null) {
-				// --------------------------------------------------------
-				// --- Work on the real time strategy for this system ----- 
-				// --------------------------------------------------------
-				TechnicalSystemStateEvaluation tsseLocal = this.getTechnicalSystemStateEvaluationFromRealTimeStrategy(simTime);
-				if (tsseLocal!=null) {
-					// --- Adjust system state regarding parent and time --
-					tsseAnswer = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseLocal);
-					if (tsseLocal.getParent()!=null) {
-						tsseAnswer.setStateTime(ioSimulated.getTimeModelDiscrete().getStep());
-					}
-				}
-				
+		
+		if (this.getRealTimeStrategy()!=null) {
+			// --------------------------------------------------------
+			// --- Work on the real time strategy for this system ----- 
+			// --------------------------------------------------------
+			TechnicalSystemStateEvaluation tsseLocal = this.getTechnicalSystemStateEvaluationFromRealTimeStrategy(simTime);
+			if (tsseLocal!=null) {
+				// --- Adjust system state regarding parent and time --
+				tsseAnswer = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseLocal);
+			}
+			
+		} else {
+			// --------------------------------------------------------
+			// --- Work on the static schedule for this system --------
+			// --------------------------------------------------------
+			tsseAnswer = this.getTechnicalSystemStateEvaluation4Time(simTime, true);	
+		}
+		
+		// --- Start the process according to the simulated time ------  
+		if (this.getRealTimeStrategy()!=null) {
+			// --------------------------------------------------------
+			// --- Work with the real time strategy for this system --- 
+			// --------------------------------------------------------
+			if (tsseAnswer!=null) {
+				this.startTimeTriggerForSystemInputRT(tsseAnswer.getGlobalTime());
 			} else {
-				// --------------------------------------------------------
-				// --- Work on the static schedule for this system --------
-				// --------------------------------------------------------
-				if (this.tsseAnswerNext!=null && this.tsseAnswerNext.getGlobalTime()==simTime) {
-					tsseAnswer = this.tsseAnswerNext;
-				} else {
-					tsseAnswer = this.getTechnicalSystemStateEvaluation4Time(simTime, false);
-				}
+				// --- Send that this IO will not send further information --
+				ioSimulated.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
+			}
+			
+		} else {
+			// --------------------------------------------------------
+			// --- Work on the static schedule for this system --------
+			// --------------------------------------------------------
+			this.startTimeTriggerForSystemInput();
+		}
+		return tsseAnswer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.ea.core.AbstractStateInputStream#getSystemState(long, long)
+	 */
+	@Override
+	public TechnicalSystemStateEvaluation getSystemStatesForTimeModelDiscrete(long simTime, long timeStep) {
+		
+		TechnicalSystemStateEvaluation tsseAnswer = null;
+		AbstractIOSimulated ioSimulated = this.getIoSimulated();
+		long simStepBegin = simTime - timeStep;
+		if (this.getRealTimeStrategy()!=null) {
+			// --------------------------------------------------------
+			// --- Work on the real time strategy for this system ----- 
+			// --------------------------------------------------------
+			TechnicalSystemStateEvaluation tsseLocal = this.getTechnicalSystemStateEvaluationFromRealTimeStrategy(simTime);
+			if (tsseLocal!=null) {
+				tsseAnswer = TechnicalSystemStateHelper.copyTechnicalSystemstateEvaluationWithLimitedParents(tsseLocal, simStepBegin);
+			}
+			
+		} else {
+			// --------------------------------------------------------
+			// --- Work on the static schedule for this system --------
+			// --------------------------------------------------------
+			if (this.tsseAnswerNext!=null && this.tsseAnswerNext.getGlobalTime()==simTime) {
+				tsseAnswer = this.tsseAnswerNext;
+			} else {
+				TechnicalSystemStateEvaluation scheduleStateForTime = this.getTechnicalSystemStateEvaluation4Time(simTime, false, false);
+				tsseAnswer = TechnicalSystemStateHelper.copyTechnicalSystemstateEvaluationWithLimitedParents(scheduleStateForTime, simStepBegin);
 			}
 			
 			// ------------------------------------------------------------
 			// --- Get the system state for the next time step ------------
 			// ------------------------------------------------------------
 			long simTimeNext = simTime + ioSimulated.getTimeModelDiscrete().getStep();
-			this.tsseAnswerNext = this.getTechnicalSystemStateEvaluation4Time(simTimeNext, false);
+			TechnicalSystemStateEvaluation scheduleStateForNextTime = this.getTechnicalSystemStateEvaluation4Time(simTimeNext - timeStep, false, false);
+			tsseAnswer = TechnicalSystemStateHelper.copyTechnicalSystemstateEvaluationWithLimitedParents(scheduleStateForNextTime, simStepBegin);
 			// ------------------------------------------------------------
-			break;
-
-		case TimeModelContinuous:
-			if (this.getRealTimeStrategy()!=null) {
-				// --------------------------------------------------------
-				// --- Work on the real time strategy for this system ----- 
-				// --------------------------------------------------------
-				TechnicalSystemStateEvaluation tsseLocal = this.getTechnicalSystemStateEvaluationFromRealTimeStrategy(simTime);
-				if (tsseLocal!=null) {
-					// --- Adjust system state regarding parent and time --
-					tsseAnswer = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseLocal);
-				}
-				
-			} else {
-				// --------------------------------------------------------
-				// --- Work on the static schedule for this system --------
-				// --------------------------------------------------------
-				tsseAnswer = this.getTechnicalSystemStateEvaluation4Time(simTime, true);	
-			}
-			
-			// --- Start the process according to the simulated time ------  
-			if (this.getRealTimeStrategy()!=null) {
-				// --------------------------------------------------------
-				// --- Work with the real time strategy for this system --- 
-				// --------------------------------------------------------
-				if (tsseAnswer!=null) {
-					this.startTimeTriggerForSystemInputRT(tsseAnswer.getGlobalTime());
-				} else {
-					// --- Send that this IO will not send further information --
-					ioSimulated.getSimulationConnector().sendManagerNotification(STATE_CONFIRMATION.Done);
-				}
-				
-			} else {
-				// --------------------------------------------------------
-				// --- Work on the static schedule for this system --------
-				// --------------------------------------------------------
-				this.startTimeTriggerForSystemInput();
-			}
-			break;
 		}
 		return tsseAnswer;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.energyAgent.core.eomStateStream.AbstractStateInputStream#getIOSettings(long, energy.optionModel.TechnicalSystemStateEvaluation)
 	 */
@@ -645,7 +663,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	public FixedVariableList getIOSettings(long simTime, TechnicalSystemStateEvaluation tsseAnswer) {
 
 		FixedVariableList ioSettings = null;
-		
+
 		if (tsseAnswer!=null) {
 
 			if (this.getIoSimulated().getTimeModelType()==TimeModelType.TimeModelContinuous) {
@@ -702,35 +720,50 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 		return tsseLocal;	
 	}
 	
+	/**
+	 * Gets the technical system state evaluation 4 time. Returns a clone without history.
+	 *
+	 * @param simulationTime the simulation time
+	 * @param isGetNextState the is get next state
+	 * @return the technical system state evaluation 4 time
+	 */
+	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4Time(long simulationTime, boolean isGetNextState) {
+		return this.getTechnicalSystemStateEvaluation4Time(simulationTime, isGetNextState, true);
+	}
+	
 	
 	/**
 	 * Returns the TechnicalSystemStateEvaluation for the specified time.
 	 *
 	 * @param simulationTime the simulation time
 	 * @param isGetNextState set true, if you want to get the next system state
+	 * @param createClone specifies if the method should return a clone without history (true), or the original TSSE (false)
 	 * @return the technical system state evaluation
 	 */
-	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4Time(long simulationTime, boolean isGetNextState) {
+	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4Time(long simulationTime, boolean isGetNextState, boolean createClone) {
 		
 		Schedule schedule = this.getScheduleEnergyTransmission();
 		if (schedule==null) return null;
 		
 		TechnicalSystemStateEvaluation tsse4Time = null;
 		if (schedule.getTechnicalSystemStateEvaluation()!=null & schedule.getTechnicalSystemStateList().size()==0) {
-			tsse4Time = this.getTechnicalSystemStateEvaluation4TimeTreeSchedule(schedule, simulationTime, isGetNextState);
+			tsse4Time = this.getTechnicalSystemStateEvaluation4TimeTreeSchedule(schedule, simulationTime, isGetNextState, createClone);
 		} else if (schedule.getTechnicalSystemStateList().size()!=0) {
-			tsse4Time = this.getTechnicalSystemStateEvaluation4TimeListSchedule(schedule, simulationTime, isGetNextState);
+			tsse4Time = this.getTechnicalSystemStateEvaluation4TimeListSchedule(schedule, simulationTime, isGetNextState, createClone);
 		}
 		return tsse4Time;
 	}
+	
 	/**
 	 * Returns the TechnicalSystemStateEvaluation for the specified time from a list organized Schedule.
 	 *
+	 * @param schedule the schedule
 	 * @param simulationTime the simulation time
 	 * @param isGetNextState set true, if you want to get the next system state
+	 * @param createClone the create clone
 	 * @return the technical system state evaluation
 	 */
-	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4TimeListSchedule(Schedule schedule, long simulationTime, boolean isGetNextState) {
+	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4TimeListSchedule(Schedule schedule, long simulationTime, boolean isGetNextState, boolean createClone) {
 		
 		if (schedule==null) return null;
 		
@@ -786,7 +819,11 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 
 		// --- Something found ? ----------------------------------------------
 		if (tsseWork!=null) {
-			tsse4Time = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseWork);
+			if (createClone==true) {
+				tsse4Time = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseWork);
+			} else {
+				tsse4Time = tsseWork;
+			}
 		}
 		return tsse4Time;
 	}
@@ -798,7 +835,7 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 	 * @param isGetNextState set true, if you want to get the next system state
 	 * @return the technical system state evaluation
 	 */
-	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4TimeTreeSchedule(Schedule schedule, long simulationTime, boolean isGetNextState) {
+	private TechnicalSystemStateEvaluation getTechnicalSystemStateEvaluation4TimeTreeSchedule(Schedule schedule, long simulationTime, boolean isGetNextState, boolean createClone) {
 	
 		if (schedule==null) return null;
 		
@@ -830,7 +867,11 @@ public class EomModelStateInputStream extends AbstractStateInputStream {
 			}
 			// --- Something found ? ------------------------------------------
 			if (tsseWork!=null) {
-				tsse4Time = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseWork);
+				if (createClone==true) {
+					tsse4Time = this.getTechnicalSystemStateEvaluationCloneWithoutParent(tsseWork);
+				} else {
+					tsse4Time = tsseWork;
+				}
 			}
 		}
 		return tsse4Time;

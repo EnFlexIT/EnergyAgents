@@ -33,7 +33,7 @@ import energy.optionModel.TechnicalSystemStateEvaluation;
  * to be prepared first. Thereafter, the collected display updates should be send to the registered {@link AggregationListener}
  * by using the corresponding method {@link #sendDisplayAgentNotification(DisplayAgentNotification)}.
  * 
- * The extend class should prepare display update for the current state of the {@link NetworkModel}. 
+ * The extend class should prepare display updates for the current state of the {@link NetworkModel}. 
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */

@@ -15,10 +15,12 @@ import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowCalculationPV;
 import de.enflexit.ea.lib.powerFlowCalculation.PowerFlowParameter;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.Complex;
 import de.enflexit.ea.lib.powerFlowCalculation.parameter.PowerPerNode;
+import de.enflexit.ea.lib.powerFlowEstimation.AbstractEstimation;
+import de.enflexit.ea.lib.powerFlowEstimation.DistrictModel;
 import energy.domain.DefaultDomainModelElectricity.Phase;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
-public class GridStateEstimation extends AbstractGridStateEstimation {
+public class GridStateEstimation extends AbstractEstimation {
 
 	protected final static String REFPV = "REF PV";
 	protected final static String VOLTAGE_L1 = "Voltage L1";

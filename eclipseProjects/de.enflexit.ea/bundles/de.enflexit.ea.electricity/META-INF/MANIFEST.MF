@@ -2,16 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Electricity Base Bundle
 Bundle-SymbolicName: de.enflexit.ea.electricity
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.elictricity
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Export-Package: de.enflexit.ea.electricity.aggregation,
+Export-Package: de.enflexit.ea.electricity,
+ de.enflexit.ea.electricity.aggregation,
+ de.enflexit.ea.electricity.aggregation.taskThreading,
  de.enflexit.ea.electricity.aggregation.triPhase,
  de.enflexit.ea.electricity.aggregation.uniPhase,
  de.enflexit.ea.electricity.blackboard,
  de.enflexit.ea.electricity.classLoadService,
+ de.enflexit.ea.electricity.estimation,
  de.enflexit.ea.electricity.scheduleImport,
- de.enflexit.ea.electricity.topologyImport
+ de.enflexit.ea.electricity.topologyImport,
+ de.enflexit.ea.electricity.transformer,
+ de.enflexit.ea.electricity.validation
 Require-Bundle: de.enflexit.common,
  de.enflexit.geography,
  de.enflexit.eom.core,
@@ -19,13 +24,15 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.electricity.powerFlowCalculation,
- de.enflexit.ea.electricity.powerFlowEstimation,
  org.agentgui.core,
  org.agentgui.lib.jade,
+ org.agentgui.lib.jung,
  org.awb.env.networkModel,
- de.enflexit.eom.awbAdapter
+ de.enflexit.eom.awbAdapter,
+ wrapped.org.jfree.jfreechart
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/electricityValidationService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/TriPhaseElectricalNetworkScheduleImportService.xml,
@@ -37,3 +44,4 @@ Service-Component:
  OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
+Import-Package: de.enflexit.ea.core.validation

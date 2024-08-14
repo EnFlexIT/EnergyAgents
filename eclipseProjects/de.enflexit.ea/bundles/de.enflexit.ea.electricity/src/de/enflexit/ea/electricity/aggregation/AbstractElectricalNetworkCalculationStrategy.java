@@ -12,10 +12,10 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.helper.DomainCluster;
 
 import de.enflexit.ea.core.aggregation.AbstractNetworkCalculationStrategy;
-import de.enflexit.ea.core.dataModel.csv.NetworkModelToCsvMapper;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.EdgeComponentState;
 import de.enflexit.ea.core.dataModel.ontology.ElectricalNodeState;
+import de.enflexit.ea.electricity.NetworkModelToCsvMapper;
 import de.enflexit.ea.electricity.blackboard.SubBlackboardModelElectricity;
 import energy.OptionModelController;
 import energy.domain.DefaultDomainModelElectricity.Phase;
@@ -90,6 +90,7 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	}
 	/**
 	 * Returns the transformer states and represents one result of this network calculation.
+	 * The HashMap joins the NetworkComponents ID and a TechnicalSystemState with energy flows (P & Q phasewise).
 	 * @return the transformer states
 	 */
 	public HashMap<String, TechnicalSystemState> getTransformerStates() {
@@ -156,9 +157,7 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	public void terminateRelatedStrategyInstances() {
 		// --- Stop the local PowerFlowCalculationThread ------------
 		ArrayList<PowerFlowCalculationThread> pfcThreads = new ArrayList<>(this.getPowerFlowCalculationThreads().values());
-		for (int i = 0; i < pfcThreads.size(); i++) {
-			pfcThreads.get(i).terminate();
-		}
+		pfcThreads.forEach(pfCalc -> pfCalc.terminate());
 		synchronized (this.getCalculationTrigger()) {
 			this.getCalculationTrigger().notifyAll();
 		}
@@ -189,7 +188,6 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	 * @return the power flow calculations finalized
 	 */
 	protected Vector<Phase> getPowerFlowCalculationsFinalized() {
-		//TODO check if necessary for uni phase, move to distribution grid strategy if not
 		if (powerFlowCalculationsFinalized==null) {
 			powerFlowCalculationsFinalized = new Vector<>();
 		}
@@ -333,7 +331,7 @@ public abstract class AbstractElectricalNetworkCalculationStrategy extends Abstr
 	}
 
 	// ------------------------------------------------------------------------
-	// --- From here some general calculation classes -------------------------
+	// --- From here some general calculation methods -------------------------
 	// ------------------------------------------------------------------------	
 	/**
 	 * Calculates the node state current.

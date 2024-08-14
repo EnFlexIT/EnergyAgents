@@ -7,30 +7,19 @@ import jade.core.*;
 /**
 * Protege name: FlexibilityOffer
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class FlexibilityOffer extends GridStateControl{ 
 
    /**
-* Protege name: possiblePowerReal
+* Protege name: priority
    */
-   private float possiblePowerReal;
-   public void setPossiblePowerReal(float value) { 
-    this.possiblePowerReal=value;
+   private int priority;
+   public void setPriority(int value) { 
+    this.priority=value;
    }
-   public float getPossiblePowerReal() {
-     return this.possiblePowerReal;
-   }
-
-   /**
-* Protege name: possibleCurrentAdjustment
-   */
-   private float possibleCurrentAdjustment;
-   public void setPossibleCurrentAdjustment(float value) { 
-    this.possibleCurrentAdjustment=value;
-   }
-   public float getPossibleCurrentAdjustment() {
-     return this.possibleCurrentAdjustment;
+   public int getPriority() {
+     return this.priority;
    }
 
    /**
@@ -45,14 +34,14 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: possibleVoltageAdjustment
+* Protege name: possibleCurrentAdjustment
    */
-   private float possibleVoltageAdjustment;
-   public void setPossibleVoltageAdjustment(float value) { 
-    this.possibleVoltageAdjustment=value;
+   private float possibleCurrentAdjustment;
+   public void setPossibleCurrentAdjustment(float value) { 
+    this.possibleCurrentAdjustment=value;
    }
-   public float getPossibleVoltageAdjustment() {
-     return this.possibleVoltageAdjustment;
+   public float getPossibleCurrentAdjustment() {
+     return this.possibleCurrentAdjustment;
    }
 
    /**
@@ -67,14 +56,25 @@ public class FlexibilityOffer extends GridStateControl{
    }
 
    /**
-* Protege name: priority
+* Protege name: possiblePowerReal
    */
-   private int priority;
-   public void setPriority(int value) { 
-    this.priority=value;
+   private float possiblePowerReal;
+   public void setPossiblePowerReal(float value) { 
+    this.possiblePowerReal=value;
    }
-   public int getPriority() {
-     return this.priority;
+   public float getPossiblePowerReal() {
+     return this.possiblePowerReal;
+   }
+
+   /**
+* Protege name: possibleVoltageAdjustment
+   */
+   private float possibleVoltageAdjustment;
+   public void setPossibleVoltageAdjustment(float value) { 
+    this.possibleVoltageAdjustment=value;
+   }
+   public float getPossibleVoltageAdjustment() {
+     return this.possibleVoltageAdjustment;
    }
 
 }

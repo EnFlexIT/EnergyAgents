@@ -155,13 +155,8 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private void addAbstractEnvironmentModel2Project() {
 
 		Object userRuntimeObject = this.project.getUserRuntimeObject();
-		if (userRuntimeObject==null) {
+		if (userRuntimeObject==null || !(userRuntimeObject instanceof HyGridAbstractEnvironmentModel)) {
 			this.project.setUserRuntimeObject(new HyGridAbstractEnvironmentModel());
-		} else {
-			// --- Make sure that the user object is the right type ----
-			if (!(userRuntimeObject instanceof HyGridAbstractEnvironmentModel)) {
-				this.project.setUserRuntimeObject(new HyGridAbstractEnvironmentModel());
-			}
 		}
 	}
 	
@@ -175,12 +170,14 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		HyGridAbstractEnvironmentModel abstractEnvModel = null;
 		try {
 			abstractEnvModel = (HyGridAbstractEnvironmentModel) this.project.getUserRuntimeObject();
+			abstractEnvModel.setProject(this.project);
 			// --- Make sure that just a copy of the current instance is used -
 			abstractEnvModel = abstractEnvModel.getCopy();
 
 		} catch (Exception ex) {
 			System.err.println("Error while trying to get the abstract environment model - using a default model now!");
 			abstractEnvModel = new HyGridAbstractEnvironmentModel();
+			abstractEnvModel.setProject(this.project);
 		}
 
 		// --- Set the abstract model to the environment for the simulation ---
@@ -251,7 +248,6 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	 * Adds additional buttons to the toolbar's of the graph environment visualization component.
 	 */
 	private void addHyGridButtons() {
-		this.getGraphController().addCustomToolbarComponentDescription(new CustomToolbarComponentDescription(ToolBarType.ViewControl, ToolBarSurrounding.RuntimeOnly, JButtonExportSimulationData4Time.class, null, true));
 		if (this.isShowConstructionSiteButton==true) {
 			this.getGraphController().addCustomToolbarComponentDescription(new CustomToolbarComponentDescription(ToolBarType.EditControl, ToolBarSurrounding.ConfigurationOnly, JButtonConstructionSite.class, null, true));
 		}

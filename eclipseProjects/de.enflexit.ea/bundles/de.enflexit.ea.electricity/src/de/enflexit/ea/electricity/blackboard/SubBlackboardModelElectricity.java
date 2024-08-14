@@ -1,10 +1,15 @@
 package de.enflexit.ea.electricity.blackboard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
+import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphElement;
+import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;
@@ -24,6 +29,8 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	private HashMap<String, ElectricalNodeState> nodeStates;
 	private HashMap<String, CableState> cableStates;
 	private HashMap<String, TechnicalSystemState> transformerStates;
+	
+	private HashMap<String, Boolean> isPartOfSubAggregationHashMap;
 	
 	/**
 	 * Gets the graph node states as HashMap.
@@ -56,6 +63,7 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		return transformerStates;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel#getBlackboardRequestAnswer(de.enflexit.ea.core.dataModel.blackboard.SingleRequestSpecifier)
 	 */
@@ -65,25 +73,38 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		AbstractBlackboardAnswer answer = null;
 
 		// --- Check if it is an electricity-related request ------------------
-		if (this.isResponsibleForRequest(requestSpecifier)) {
+		if (this.isResponsibleForRequest(requestSpecifier)==true) {
+			
 			ElectricityRequestObjective requestObjective = (ElectricityRequestObjective) requestSpecifier.getRequestObjective();
-		
 			switch (requestObjective) {
-				case PowerFlowCalculationResults:
-					answer = new PowerFlowCalculationResultAnswer(this.getNodeStates(), this.getCableStates());
-					break;
-				case TransformerPower:
-					answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
-					break;
-				case VoltageLevels:
-					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), this.getNodeStates().get(requestSpecifier.getIdentifier()));
-					break;
-				case CurrentLevels:
-					answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getCableStates().get(requestSpecifier.getIdentifier()));
-					break;
+			case PowerFlowCalculationResults:
+				answer = new PowerFlowCalculationResultAnswer(this.getNodeStates(), this.getCableStates());
+				break;
+			case TransformerPower:
+				answer = new TransformerPowerAnswer(requestSpecifier.getIdentifier(), this.getTransformerStates().get(requestSpecifier.getIdentifier()));
+				break;
+			case VoltageLevels:
+				String identifier = requestSpecifier.getIdentifier();
+				// --- Case identifier is GraphNodeID -------------------------
+				ElectricalNodeState elNodeState = this.getNodeStates().get(identifier);
+				if (elNodeState==null) {
+					// --- Check if identifier is NetworkComponent ID ---------
+					NetworkModel grossNetworkModel = this.getAggregationHandler().getNetworkModel();
+					NetworkComponent netComp = grossNetworkModel.getNetworkComponent(identifier);
+					if (netComp!=null && grossNetworkModel.isDistributionNode(netComp)==true) {
+						String graphNodeID = netComp.getGraphElementIDs().iterator().next();
+						elNodeState = this.getNodeStates().get(graphNodeID);
+					}
+				}
+				if (elNodeState!=null) {
+					answer = new VoltageLevelAnswer(requestSpecifier.getIdentifier(), elNodeState);
+				}
+				break;
+			case CurrentLevels:
+				answer = new CurrentLevelAnswer(requestSpecifier.getIdentifier(), this.getCableStates().get(requestSpecifier.getIdentifier()));
+				break;
 			}
 		}
-		
 		return answer;
 	}
 	
@@ -96,7 +117,7 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 		if (requestSpecifier.getRequestObjective() instanceof ElectricityRequestObjective) {
 			if (requestSpecifier.getIdentifier()!=null) {
 				// --- Check if the requested element is part of this aggregation
-				return this.checkIdentifier(requestSpecifier.getIdentifier());
+				return this.isPartOfSubAggregation(requestSpecifier.getIdentifier());
 			} else {
 				// --- Identifier not set -> general electricity request -> responsible
 				return true;
@@ -106,28 +127,86 @@ public class SubBlackboardModelElectricity extends AbstractSubBlackboardModel {
 	}
 	
 	/**
-	 * Check if the given identifier belongs to a network component or graph element of this aggregation.
-	 * @param identifier the identifier
+	 * Local Reminder for checks if an identifier will be handled by the local blackboard.
+	 * @return the reminder hash map
+	 */
+	private HashMap<String, Boolean> isPartOfSubAggregationHashMap() {
+		if (isPartOfSubAggregationHashMap==null) {
+			isPartOfSubAggregationHashMap = new HashMap<>();
+		}
+		return isPartOfSubAggregationHashMap;
+	}
+	/**
+	 * Check if the given identifier belongs to a network component or graph element of the current sub aggregation.
+	 * @param identifier the {@link NetworkComponent}- or {@link GraphElement}- identifier
 	 * @return true, if successful
 	 */
-	private boolean checkIdentifier(String identifier) {
-		Vector<NetworkComponent> networkComponents = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
-		for (int i=0; i<networkComponents.size(); i++) {
-			// --- Check the network component itself ---------------
-			NetworkComponent networkComponent = networkComponents.get(i);
-			if (networkComponent.getId().equals(identifier)) {
-				return true;
-			} else {
-				// --- Check the component's graph elements ---------
-				Vector<GraphElement> graphElements = this.getSubAggregationConfiguration().getSubNetworkModel().getGraphElementsFromNetworkComponent(networkComponent);
-				for (int j=0; j<graphElements.size(); j++) {
-					if (graphElements.get(j).getId().equals(identifier)) {
-						return true;
+	private boolean isPartOfSubAggregation(String identifier) {
+		
+		// --------------------------------------------------------------------
+		// --- Is that a NetworkComponent- or a GraphNode-ID? -----------------
+		// --------------------------------------------------------------------
+		
+		if (identifier==null || identifier.isBlank()==true) return false;
+		
+		// --------------------------------------------------------------------
+		// --- Check reminder first -------------------------------------------
+		Boolean isPartOf = this.isPartOfSubAggregationHashMap().get(identifier);
+		if (isPartOf!=null) {
+			return isPartOf;
+		} else {
+			isPartOf = false; // -- set method default -- 
+		}
+		
+		// --------------------------------------------------------------------		
+		// --- Define list of relevant NetworkComponents ----------------------
+		List<NetworkComponent> netCompListClusterCheck = new ArrayList<>();
+		
+		// --- Try getting NeworkComponent list, related to the identifier ----
+		NetworkModel grossNetworkModel = this.getAggregationHandler().getNetworkModel();
+		NetworkComponent netCompFound = grossNetworkModel.getNetworkComponent(identifier);
+		if (netCompFound!=null) {
+			netCompListClusterCheck.add(netCompFound);
+			
+		} else  {
+			// --- Alternatively, check graphElements ------------------------- 
+			GraphElement graphElement = grossNetworkModel.getGraphElement(identifier);
+			if (graphElement!=null) {
+				// --- GraphNode or GraphEdge ---------------------------------
+				if (graphElement instanceof GraphEdge) {
+					netCompFound = grossNetworkModel.getNetworkComponent((GraphEdge)graphElement);
+					netCompListClusterCheck.add(netCompFound);
+					
+				} else if (graphElement instanceof GraphNode) {
+					List<NetworkComponent> netCompFoundList = grossNetworkModel.getNetworkComponents((GraphNode)graphElement);
+					if (netCompFoundList!=null && netCompFoundList.size()>0) {
+						netCompListClusterCheck.addAll(netCompFoundList);
 					}
 				}
 			}
 		}
-		return false;
+		
+		
+		// --- Found NetworkComponents related to the identifier -------------- 
+		if (netCompListClusterCheck.size()>0) {
+			// --- Get NetowkrComponents of sub aggregation -------------------
+			Vector<NetworkComponent> subAggNetComps = this.getSubAggregationConfiguration().getDomainCluster().getNetworkComponents();
+			// --- Check the cluster NetworkCompoents for the IDs found -------
+			ClusterCheck: for (NetworkComponent netCompCheck : netCompListClusterCheck) {
+				for (NetworkComponent netComp : subAggNetComps) {
+					if (netComp.getId().equals(netCompCheck.getId())==true) {
+						isPartOf = true;
+						break ClusterCheck;
+					}
+				}
+			}
+		}
+		
+		// --------------------------------------------------------------------
+		// --- Remind this answer ---------------------------------------------
+		this.isPartOfSubAggregationHashMap().put(identifier, isPartOf);
+		
+		return isPartOf;
 	}
 
 }

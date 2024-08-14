@@ -15,9 +15,11 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
 import agentgui.ontology.TimeSeries;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
+import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
+import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkConfiguration;
 import de.enflexit.ea.electricity.aggregation.AbstractElectricalNetworkDisplayUpdater;
 import energy.domain.DefaultDomainModelElectricity;
 import energy.domain.DomainSettings;
@@ -49,9 +51,17 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 	private static final String REACTIVE_POWER_L2 = "Reactive Power L2";
 	private static final String REACTIVE_POWER_L3 = "Reactive Power L3";
 
-	private static final String VOLTAGE_L1 = "Voltage L1";
-	private static final String VOLTAGE_L2 = "Voltage L2";
-	private static final String VOLTAGE_L3 = "Voltage L3";
+	private static final String NODE_VOLTAGE_ABS_L1 = "Voltage L1 (abs)";
+	private static final String NODE_VOLTAGE_ABS_L2 = "Voltage L2 (abs)";
+	private static final String NODE_VOLTAGE_ABS_L3 = "Voltage L3 (abs)";
+	
+	private static final String NODE_VOLTAGE_REAL_L1 = "Voltage L1 (real)";
+	private static final String NODE_VOLTAGE_REAL_L2 = "Voltage L2 (real)";
+	private static final String NODE_VOLTAGE_REAL_L3 = "Voltage L3 (real)";
+	
+	private static final String NODE_VOLTAGE_IMAG_L1 = "Voltage L1 (imag)";
+	private static final String NODE_VOLTAGE_IMAG_L2 = "Voltage L2 (imag)";
+	private static final String NODE_VOLTAGE_IMAG_L3 = "Voltage L3 (imag)";
 	
 	private static final String CURRENT_L1 = "Current L1";
 	private static final String CURRENT_L2 = "Current L2";
@@ -91,6 +101,9 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		// --- Get all affected elements from the changed elements: -----------------
 		HashMap<String, TechnicalSystemStateEvaluation> sysStateChanges = this.getStateUpdates();  
 	
+		// --- Get the configured rated voltage -------------------------------------
+		double confRatedVoltage = ((AbstractElectricalNetworkConfiguration)this.getSubAggregationConfiguration()).getConfiguredRatedVoltageFromNetwork();
+
 		// --------------------------------------------------------------------------
 		// --- Work on the changes of the GraphNode ---------------------------------
 		// --------------------------------------------------------------------------
@@ -121,18 +134,36 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			Vector<Float> floatVectorVoltage = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 			int tsIndex = -1;
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L1);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L1);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L1);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L1);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL1().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL1().getVoltageImag().getValue());
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L2);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L2);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageAbs().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L2);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L2);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL2().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL2().getVoltageImag().getValue());
 			
-			tsIndex = tsSettings.getTimeSeriesIndexHash().get(VOLTAGE_L3);
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_ABS_L3);
 			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageAbs().getValue());
 			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageAbs().getValue());
-
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_REAL_L3);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageReal().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageReal().getValue());
+			tsIndex = tsSettings.getTimeSeriesIndexHash().get(NODE_VOLTAGE_IMAG_L3);
+			tsSettings.getTimeSeriesChartRealTimeWrapper().addValuePair(tsIndex, this.getDisplayTime(), triNodeState.getL3().getVoltageImag().getValue());
+			floatVectorVoltage.set(tsIndex, triNodeState.getL3().getVoltageImag().getValue());
+			
 			// --- Add a layout notification, if configured so ----------------------
 			this.addGraphElementLayoutForNodes(tsSettings, triNodeState);
 
@@ -142,7 +173,7 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 			UpdateTimeSeries udtsEnergyFlowStateEnd = null;
 			
 			// --- Update minimum and maximum voltages ------------------------
-			float nodeMinimumVoltage = Math.min(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL2().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
+			float nodeMinimumVoltage = Math.min(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL3().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
 			float nodeMaximumVoltage = Math.max(triNodeState.getL1().getVoltageAbs().getValue(), Math.max(triNodeState.getL2().getVoltageAbs().getValue(), triNodeState.getL3().getVoltageAbs().getValue()));
 			this.updateNetworkMinimumNodeVoltage(nodeMinimumVoltage);
 			this.updateNetworkMaximumNodeVoltage(nodeMaximumVoltage);
@@ -155,11 +186,12 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 				Vector<Float> floatVectorEnergyFlows = this.createFloatVector(tsSettings.getTimeSeriesIndexHash().size());
 				// --- Walk through the energy flows of the interfaces -------------- 
 				for (AbstractUsageOfInterface abstractUOI : tsse.getUsageOfInterfaces()) {
+					
 					String interfaceID = abstractUOI.getInterfaceID();
 					ScheduleController sc = this.getAggregationHandler().getNetworkComponentsScheduleController().get(netComp.getId());
 					InterfaceSetting intSet = ScheduleController.getInterfaceSetting(sc.getScheduleList().getInterfaceSettings(), interfaceID);
 					
-					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==230) {
+					if (intSet.getDomainModel() instanceof DefaultDomainModelElectricity && ((DefaultDomainModelElectricity)intSet.getDomainModel()).getRatedVoltage()==confRatedVoltage) {
 						
 						UsageOfInterfaceEnergy uoi = (UsageOfInterfaceEnergy) abstractUOI;
 						EnergyCarrier ec = DomainSettings.getEnergyCarrier(intSet.getDomain());
@@ -314,7 +346,11 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 	 */
 	private void addGraphElementLayoutForNodes(TimeSeriesSettings tsSettings, TriPhaseElectricalNodeState triPhaseNodeState) {
 		
-		ColorSettingsCollection colorSettings = this.getLayoutSettings().getColorSettingsForNodes();
+		HyGridGraphElementLayoutSettings layoutSettings = this.getLayoutSettings();
+		if (layoutSettings==null) return;
+		if (layoutSettings.getColorSettingsForNodes()==null) return;
+		
+		ColorSettingsCollection colorSettings = layoutSettings.getColorSettingsForNodes();
 		if (colorSettings.isEnabled()==false) return;
 		if (colorSettings.getColorSettingsVector().size()==0) return;
 		if (tsSettings==null) return;
@@ -322,7 +358,7 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		
 		GraphNode graphNode = tsSettings.getGraphNode();
 		
-		GraphElementLayout graphElementLayout = this.getLayoutService().getGraphElementLayout(graphNode, this.getNetworkModel(), this.getLayoutSettings());
+		GraphElementLayout graphElementLayout = this.getLayoutService().getGraphElementLayout(graphNode, this.getNetworkModel(), layoutSettings);
 		if (graphElementLayout!=null) {
 			this.addGraphElementLayout(graphElementLayout);
 		}
@@ -365,9 +401,15 @@ public class TriPhaseElectricalNetworkDisplayUpdater extends AbstractElectricalN
 		timeSeriesForNodes.add(this.createTimeSeries(ACTIVE_POWER_L3, powerUnit));
 		timeSeriesForNodes.add(this.createTimeSeries(REACTIVE_POWER_L3, powerUnit));
 		// --- Voltage ----------------------------------------------
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L1, "V"));
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L2, "V"));
-		timeSeriesForNodes.add(this.createTimeSeries(VOLTAGE_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_ABS_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_REAL_L3, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L1, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L2, "V"));
+		timeSeriesForNodes.add(this.createTimeSeries(NODE_VOLTAGE_IMAG_L3, "V"));
 		
 		return timeSeriesForNodes;
 	}

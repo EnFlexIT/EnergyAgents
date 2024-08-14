@@ -48,9 +48,8 @@ import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescrip
 import agentgui.core.project.Project;
 import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -58,8 +57,8 @@ import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
-import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
+import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
 
 /**
  * AgentDeploymentDialog represents a Dialog that is used to enter necessary informations for the 
@@ -183,7 +182,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 		});
 
 		this.setSize(900, 800);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setModal(true);
 	}
 	
@@ -304,7 +303,6 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane==null) {
 			tabbedPane = new JTabbedPane();
-			tabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			tabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			
 			tabbedPane.addTab("Deployed Agents", this.getDeployedAgentsTablePanel());

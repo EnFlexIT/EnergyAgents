@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.ea.core.ops.OpsControllerEvent;
 import de.enflexit.ea.core.ops.OpsControllerListener;
@@ -88,7 +87,6 @@ public class JFrameOpsControl extends JFrame implements OpsControllerListener {
 	public JTabbedPane getjTabbedPaneOpsContent() {
 		if (jTabbedPaneOpsContent==null) {
 			jTabbedPaneOpsContent = new JTabbedPane();
-			jTabbedPaneOpsContent.setUI(new AwbBasicTabbedPaneUI());
 		}
 		return jTabbedPaneOpsContent;
 	}

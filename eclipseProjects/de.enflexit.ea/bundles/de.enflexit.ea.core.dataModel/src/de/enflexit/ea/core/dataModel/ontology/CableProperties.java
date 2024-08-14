@@ -7,32 +7,9 @@ import jade.core.*;
 /**
 * Protege name: CableProperties
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class CableProperties extends EdgeComponentProperties{ 
-
-   /**
-   * The linear capacitance of this medium voltage cable.
-* Protege name: linearCapacitance
-   */
-   private UnitValue linearCapacitance;
-   public void setLinearCapacitance(UnitValue value) { 
-    this.linearCapacitance=value;
-   }
-   public UnitValue getLinearCapacitance() {
-     return this.linearCapacitance;
-   }
-
-   /**
-* Protege name: din
-   */
-   private String din;
-   public void setDin(String value) { 
-    this.din=value;
-   }
-   public String getDin() {
-     return this.din;
-   }
 
    /**
    * The linear conductance of this medium voltage cable.
@@ -58,6 +35,18 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
+   * The linear capacitance of this medium voltage cable.
+* Protege name: linearCapacitance
+   */
+   private UnitValue linearCapacitance;
+   public void setLinearCapacitance(UnitValue value) { 
+    this.linearCapacitance=value;
+   }
+   public UnitValue getLinearCapacitance() {
+     return this.linearCapacitance;
+   }
+
+   /**
 * Protege name: linearReactance
    */
    private UnitValue linearReactance;
@@ -69,17 +58,6 @@ public class CableProperties extends EdgeComponentProperties{
    }
 
    /**
-* Protege name: linearResistance
-   */
-   private UnitValue linearResistance;
-   public void setLinearResistance(UnitValue value) { 
-    this.linearResistance=value;
-   }
-   public UnitValue getLinearResistance() {
-     return this.linearResistance;
-   }
-
-   /**
 * Protege name: length
    */
    private UnitValue length;
@@ -88,6 +66,28 @@ public class CableProperties extends EdgeComponentProperties{
    }
    public UnitValue getLength() {
      return this.length;
+   }
+
+   /**
+* Protege name: din
+   */
+   private String din;
+   public void setDin(String value) { 
+    this.din=value;
+   }
+   public String getDin() {
+     return this.din;
+   }
+
+   /**
+* Protege name: linearResistance
+   */
+   private UnitValue linearResistance;
+   public void setLinearResistance(UnitValue value) { 
+    this.linearResistance=value;
+   }
+   public UnitValue getLinearResistance() {
+     return this.linearResistance;
    }
 
    /**

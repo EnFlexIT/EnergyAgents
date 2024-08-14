@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerChecker;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
 import energy.DomainInterfaceFlows;
 import energy.OptionModelController;
 import energy.calculations.AbstractOptionModelCalculation;
@@ -176,7 +176,7 @@ public class TransformerPowerCalculation extends AbstractOptionModelCalculation 
 	public AbstractInterfaceFlow getEnergyOrGoodFlow(TechnicalSystemStateEvaluation tsse, TechnicalInterface ti, boolean isManualConfiguration) {
 		
 		// --- Execute the calculation ----------------------------------------
-		if (tsse!=this.currentTsse) {
+		if (tsse!=this.currentTsse || isManualConfiguration==true) {
 			this.getEvaluationCalculation().calculate(tsse);
 			this.currentTsse = tsse;
 		}

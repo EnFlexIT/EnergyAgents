@@ -211,6 +211,8 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 		
 		SingleConfigurationEntity configEntityToCheck = SingleConfigurationEntity.EomModels;
 		
+		if (this.getGraphController()==null || this.getGraphController().getNetworkModel()==null) return;
+		
 		NetworkModel networkModel = this.getGraphController().getNetworkModel();
 		Vector<NetworkComponent> netCompList = networkModel.getNetworkComponentVectorSorted();
 		for (int i = 0; i < netCompList.size(); i++) {
@@ -333,11 +335,16 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 					break;
 					
 				case NetworkModel:
-					message = validator.validateNetworkModel(this.getGraphController().getNetworkModel());
+					if (this.getGraphController()!=null) {
+						message = validator.validateNetworkModel(this.getGraphController().getNetworkModel());
+					}
 					break;
 					
 				case HyGridAbstractEnvironmentModel:
-					message = validator.validateHyGridAbstractEnvironmentModel(this.getHyGridAbstractEnvironmentModel());
+					HyGridAbstractEnvironmentModel hyGridAbsModel = this.getHyGridAbstractEnvironmentModel();
+					if (hyGridAbsModel!=null) {
+						message = validator.validateHyGridAbstractEnvironmentModel(hyGridAbsModel);
+					}
 					break;
 					
 				default:
@@ -591,7 +598,7 @@ public class HyGridValidationProcess implements ApplicationListener, Observer {
 	private HyGridAbstractEnvironmentModel getHyGridAbstractEnvironmentModel() {
 		
 		HyGridAbstractEnvironmentModel hygAbsEnvModel = null;
-		if (this.getProject().getUserRuntimeObject() instanceof HyGridAbstractEnvironmentModel) {
+		if (this.getProject()!=null && this.getProject().getUserRuntimeObject() instanceof HyGridAbstractEnvironmentModel) {
 			// --- Get HyGrid model from project --------------------
 			hygAbsEnvModel = (HyGridAbstractEnvironmentModel) this.getProject().getUserRuntimeObject(); 
 			

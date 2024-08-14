@@ -11,6 +11,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
 import de.enflexit.common.Observable;
+import de.enflexit.common.properties.Properties;
 import de.enflexit.ea.core.behaviour.PlatformUpdateBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.DirectoryHelper;
@@ -77,6 +78,9 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	
 	protected transient AbstractEnergyAgent energyAgent;
 
+	private Properties projectProperties;
+	private Properties setupProperties;
+	
 	private HyGridAbstractEnvironmentModel hyGridAbstractEnvironmentModel;
 	private NetworkModel networkModel;
 	private NetworkComponent networkComponent;
@@ -114,6 +118,37 @@ public abstract class AbstractInternalDataModel<GenericPhoneBookEntry extends En
 	protected void setChangedAndNotify(Object reason) {
 		this.setChanged();
 		this.notifyObservers(reason);		
+	}
+	
+	
+	/**
+	 * Returns the project properties.
+	 * @return the project properties
+	 */
+	public Properties getProjectProperties() {
+		return projectProperties;
+	}
+	/**
+	 * Sets the project properties.
+	 * @param projectProperties the new project properties
+	 */
+	public void setProjectProperties(Properties projectProperties) {
+		this.projectProperties = projectProperties;
+	}
+	
+	/**
+	 * Returns the setup properties.
+	 * @return the setup properties
+	 */
+	public Properties getSetupProperties() {
+		return setupProperties;
+	}
+	/**
+	 * Sets the setup properties.
+	 * @param setupProperties the new setup properties
+	 */
+	public void setSetupProperties(Properties setupProperties) {
+		this.setupProperties = setupProperties;
 	}
 	
 	

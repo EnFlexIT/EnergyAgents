@@ -4,10 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
 import de.enflexit.ea.electricity.transformer.TransformerPowerEvaluationCalculation;
-import de.enflexit.ea.electricity.transformer.eomDataModel.TransformerDataModel.TransformerSystemVariable;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
+import energy.OptionModelNotification;
+import energy.OptionModelNotification.Reason;
+import energy.domain.DefaultDomainModelElectricity;
+import energy.domain.DefaultDomainModelElectricity.Phase;
+import energy.helper.NumberHelper;
 import energy.optionModel.AbstractInputMeasurement;
 import energy.optionModel.Duration;
+import energy.optionModel.EnergyCarrier;
+import energy.optionModel.EnergyInterface;
 import energy.optionModel.FixedInteger;
 import energy.optionModel.InputMeasurement;
 import energy.optionModel.InputMeasurementCalculatedByState;
@@ -18,6 +26,7 @@ import energy.optionModel.SystemVariableDefinitionDouble;
 import energy.optionModel.SystemVariableDefinitionInteger;
 import energy.optionModel.SystemVariableDefinitionOntology;
 import energy.optionModel.SystemVariableDefinitionStaticModel;
+import energy.optionModel.TechnicalInterface;
 import energy.optionModel.TechnicalInterfaceConfiguration;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemState;
@@ -84,7 +93,7 @@ public class TransformerChecker extends AbstractTechnicalSystemChecker {
 		// --- Checks according to the settings in the static data model ------
 		this.setIOTapPosition();
 		this.setIOMeasurements();
-		
+		this.setTechnicalInterfaces();
 	}
 
 	/**
@@ -417,6 +426,49 @@ public class TransformerChecker extends AbstractTechnicalSystemChecker {
 			ex.printStackTrace();
 		}
 		return svd;
+	}
+	
+	/**
+	 * Sets the voltage level for the technical interfaces.
+	 */
+	private void setTechnicalInterfaces() {
+		
+		double upperVLAllP = this.getTransformerDataModel().getUpperVoltage_vmHV() * 1000.0;
+		double upperVL3P = NumberHelper.round(upperVLAllP / Math.sqrt(3.0), 0);
+		double lowerVLAllP = this.getTransformerDataModel().getLowerVoltage_vmLV() * 1000.0;
+		double lowerVL3P = lowerVLAllP==400.0 ? 230.0 : NumberHelper.round(lowerVLAllP / Math.sqrt(3.0), 0); 
+		
+		// --- Check each TechnicalInterfaceConfiguration -
+		List<TechnicalInterfaceConfiguration> ticList = this.getOptionModelController().getTechnicalSystem().getInterfaceConfigurations();
+		for (TechnicalInterfaceConfiguration tic : ticList) {
+			// --- Get the TechnicalInterface list -------- 
+			List<TechnicalInterface> tiList = tic.getTechnicalInterfaces();
+			for (TechnicalInterface ti : tiList) {
+				// --- Skip irrelevant interfaces ---------
+				if (! (ti instanceof EnergyInterface) || ti.getDomain().equals(EnergyCarrier.ELECTRICITY.value())==false) continue;
+
+				// --- Set voltage level ------------------ 
+				EnergyInterface ei = (EnergyInterface) ti;
+				DefaultDomainModelElectricity elDomainModel = (DefaultDomainModelElectricity) ei.getDomainModel();
+				
+				if (ei.getInterfaceID().toLowerCase().contains("hv")==true) {
+					if (elDomainModel.getPhase()==Phase.AllPhases) {
+						elDomainModel.setRatedVoltage(upperVLAllP);
+					} else {
+						elDomainModel.setRatedVoltage(upperVL3P);
+					}
+					
+				} else if (ei.getInterfaceID().toLowerCase().contains("lv")==true) {
+					if (elDomainModel.getPhase()==Phase.AllPhases) {
+						elDomainModel.setRatedVoltage(lowerVLAllP);
+					} else {
+						elDomainModel.setRatedVoltage(lowerVL3P);
+					}
+				}
+			}
+		}
+		// --- Update technical interface list in frame ---
+		this.getOptionModelController().setChangedAndNotifyObservers(new OptionModelNotification(Reason.TechnicalInterfaceAdded, null));
 	}
 	
 	

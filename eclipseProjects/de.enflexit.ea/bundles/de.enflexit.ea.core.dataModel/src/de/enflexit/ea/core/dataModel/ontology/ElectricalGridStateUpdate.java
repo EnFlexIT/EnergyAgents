@@ -8,9 +8,20 @@ import jade.core.*;
    * Electrical Node State
 * Protege name: ElectricalGridStateUpdate
 * @author ontology bean generator
-* @version 2023/07/13, 21:15:48
+* @version 2023/10/6, 19:38:39
 */
 public class ElectricalGridStateUpdate extends GridStateAgentManagement{ 
+
+   /**
+* Protege name: TimeStampGridState
+   */
+   private String timeStampGridState;
+   public void setTimeStampGridState(String value) { 
+    this.timeStampGridState=value;
+   }
+   public String getTimeStampGridState() {
+     return this.timeStampGridState;
+   }
 
    /**
 * Protege name: GridState
@@ -32,16 +43,5 @@ public class ElectricalGridStateUpdate extends GridStateAgentManagement{
    public Iterator getAllGridState() {return gridState.iterator(); }
    public List getGridState() {return gridState; }
    public void setGridState(List l) {gridState = l; }
-
-   /**
-* Protege name: TimeStampGridState
-   */
-   private String timeStampGridState;
-   public void setTimeStampGridState(String value) { 
-    this.timeStampGridState=value;
-   }
-   public String getTimeStampGridState() {
-     return this.timeStampGridState;
-   }
 
 }

@@ -16,8 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import energy.optionModel.gui.components.DateTimeWidget;
 
 /**
@@ -81,7 +81,7 @@ public class SimulationDataExportConfigurationDialog extends JDialog implements 
 		this.setTitle("Data Export - single step");
 		this.setModal(true);
 		this.pack();
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 		this.setVisible(true);
 	}

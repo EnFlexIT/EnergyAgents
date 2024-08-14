@@ -14,7 +14,33 @@
 	        </key-property>
 		</composite-id>
 		
+		<!-- For a HV UniPhaseElectricalNodeState -->
+		<property name="hvVoltageAllReal" type="java.lang.Double">
+            <column name="hvVoltageAllReal" />
+        </property>
+        <property name="hvVoltageAllImag" type="java.lang.Double">
+            <column name="hvVoltageAllImag" />
+        </property>
+        <property name="hvVoltageAllAbs" type="java.lang.Double">
+            <column name="hvVoltageAllAbs" />
+        </property>
 		
+		<property name="hvCurrentAll" type="java.lang.Double">
+            <column name="hvCurrentAll" />
+        </property>
+
+		<property name="hvCosPhiAll" type="java.lang.Double">
+            <column name="hvCosPhiAll" />
+        </property>
+        <property name="hvPowerPAll" type="java.lang.Double">
+            <column name="hvPowerPAll" />
+        </property>
+        <property name="hvPowerQAll" type="java.lang.Double">
+            <column name="hvPowerQAll" />
+        </property>
+        
+        
+		<!-- For a HV TriPhaseElectricalNodeState -->
 		<property name="hvVoltageL1Real" type="java.lang.Double">
             <column name="hvVoltageL1Real" />
         </property>
@@ -84,8 +110,34 @@
             <column name="hvPowerQ3" />
         </property>
         
+        
+        <!-- For a LV UniPhaseElectricalNodeState -->
+		<property name="lvVoltageAllReal" type="java.lang.Double">
+            <column name="lvVoltageAllReal" />
+        </property>
+        <property name="lvVoltageAllImag" type="java.lang.Double">
+            <column name="lvVoltageAllImag" />
+        </property>
+        <property name="lvVoltageAllAbs" type="java.lang.Double">
+            <column name="lvVoltageAllAbs" />
+        </property>
 		
+		<property name="lvCurrentAll" type="java.lang.Double">
+            <column name="lvCurrentAll" />
+        </property>
+
+		<property name="lvCosPhiAll" type="java.lang.Double">
+            <column name="lvCosPhiAll" />
+        </property>
+        <property name="lvPowerPAll" type="java.lang.Double">
+            <column name="lvPowerPAll" />
+        </property>
+        <property name="lvPowerQAll" type="java.lang.Double">
+            <column name="lvPowerQAll" />
+        </property>
+        
 		
+		<!-- For a LV TriPhaseElectricalNodeState -->
 		<property name="lvVoltageL1Real" type="java.lang.Double">
             <column name="lvVoltageL1Real" />
         </property>

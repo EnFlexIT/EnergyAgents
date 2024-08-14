@@ -1,10 +1,12 @@
 package de.enflexit.ea.core.aggregation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -20,6 +22,7 @@ import agentgui.simulationService.environment.EnvironmentModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import agentgui.simulationService.transaction.DisplayAgentNotification;
 import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.performance.PerformanceMeasurement;
 import de.enflexit.common.performance.PerformanceMeasurements;
@@ -79,14 +82,16 @@ public abstract class AbstractAggregationHandler {
 	private ArrayList<AbstractSubNetworkConfiguration> subNetworkConfigurations;
 	
 	private Vector<AbstractSubAggregationBuilder> executedBuilds;
+	private ConcurrentHashMap<String, Object> subSystemConstructionHashMap;
 	
 	private HashMap<String, ScheduleController> networkComponentsScheduleController;
 	private HashMap<String, TechnicalSystemStateEvaluation> lastNetworkComponentUpdates;
 
-	private HashMap<AbstractSubNetworkConfiguration, NetworkAggregationTaskThread> networkAggregationTaskThreadHashMap;
-	private Object networkAggregationTaskTrigger;
-	private List<NetworkAggregationTaskThread> networkAggregationTaskDoneList;
+	private List<AbstractTaskThreadCoordinator> taskThreadCoordinators;
+	private Object taskThreadCoordinatorTrigger;
+	private List<AbstractTaskThreadCoordinator> taskThreadCoordinatorsReady;
 	private Object localThreadTrigger;
+	
 	
 	private Vector<AggregationListener> aggregationListenerListeners;
 	
@@ -270,12 +275,29 @@ public abstract class AbstractAggregationHandler {
 		List<AbstractSubNetworkConfiguration> configurationsFound = new ArrayList<>();
 		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
 			AbstractSubNetworkConfiguration checkConfig = this.getSubNetworkConfigurations().get(i); 
-			if (checkConfig.getSubNetworkDescription().equals(subnetworkDescription)) {
+			if (checkConfig.getSubNetworkDescriptionInternal().equals(subnetworkDescription)) {
 				configurationsFound.add(checkConfig);
 			}
 		}
 		return configurationsFound;
 	}
+	/**
+	 * Returns the sub network configuration for the specified subnetwork ID.
+	 *
+	 * @param id the id
+	 * @return the list of sub network configurations that were found with the description
+	 */
+	public AbstractSubNetworkConfiguration getSubNetworkConfiguration(int id) {
+		
+		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
+			AbstractSubNetworkConfiguration checkSubNetConfig = this.getSubNetworkConfigurations().get(i); 
+			if (checkSubNetConfig.getID()==id) {
+				return checkSubNetConfig;
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Initializes the aggregation handler.
@@ -293,7 +315,7 @@ public abstract class AbstractAggregationHandler {
 				fbNetConfig = (FallbackSubNetworkConfiguration) subConfig;
 			} else {
 				this.getExecutedBuilds().add(subEomBuilder);
-				subEomBuilder.createEomAggregationInThread();
+				subEomBuilder.createEomAggregationInThread(false);
 			}
 		}
 		
@@ -306,9 +328,17 @@ public abstract class AbstractAggregationHandler {
 			}
 		}
 		
+		// --- Sequentially show the aggregations that were build ---
+		for (AbstractSubNetworkConfiguration subConfig : this.getSubNetworkConfigurations()) {
+			AbstractSubAggregationBuilder subEomBuilder = subConfig.getSubAggregationBuilder();
+			if (this.isHeadlessOperation()==false && subEomBuilder.hasSubSystems()==true) {
+				subEomBuilder.showVisualization();
+			}
+		}
+		
 		// --- Finally create Fallback Aggregation ? ----------------
 		if (fbNetConfig!=null) {
-			fbNetConfig.getSubAggregationBuilder().createEomAggregation();
+			fbNetConfig.getSubAggregationBuilder().createEomAggregation(true);
 			// --- Destroy fallback part ? ----------------------
 			if (fbNetConfig.getSubAggregationBuilder().hasSubSystems()==false) {
 				this.getSubNetworkConfigurations().remove(fbNetConfig);
@@ -318,6 +348,10 @@ public abstract class AbstractAggregationHandler {
 		
 		// --- Reset executed builds Vector -------------------------
 		this.executedBuilds = null;
+		this.subSystemConstructionHashMap = null;
+		
+		// --- Create task thread coordinator, if any ---------------
+		this.getTaskThreadCoordinators();
 	}
 	/**
 	 * Returns the list running build processes.
@@ -329,7 +363,16 @@ public abstract class AbstractAggregationHandler {
 		}
 		return executedBuilds;
 	}
-	
+	/**
+	 * Returns the sub system construction hash map.
+	 * @return the sub system construction hash map
+	 */
+	public ConcurrentHashMap<String, Object> getSubSystemConstructionHashMap() {
+		if (subSystemConstructionHashMap==null) {
+			subSystemConstructionHashMap = new ConcurrentHashMap<>();
+		}
+		return subSystemConstructionHashMap;
+	}
 	
 	/**
 	 * Terminates the current aggregation handler. 
@@ -341,12 +384,9 @@ public abstract class AbstractAggregationHandler {
 		
 		// --- Terminate NetworkCalculationThreads ----------------------------
 		try {
-			List<NetworkAggregationTaskThread> netCalcThreadList = new ArrayList<>(this.getNetworkAggregationTaskThreadHashMap().values());
-			for (int i = 0; i < netCalcThreadList.size(); i++) {
-				netCalcThreadList.get(i).setDoTerminate(true);
-			}
-			synchronized (this.getNetworkAggregationTaskTrigger()) {
-				this.getNetworkAggregationTaskTrigger().notifyAll();
+			this.getTaskThreadCoordinators().forEach(ttc -> ttc.terminate());
+			synchronized (this.getTaskThreadCoordinatorTrigger()) {
+				this.getTaskThreadCoordinatorTrigger().notifyAll();
 			}
 			
 		} catch (Exception ex) {
@@ -354,12 +394,7 @@ public abstract class AbstractAggregationHandler {
 		}
 		
 		// --- Terminate sub aggregation handler for each configuration -------
-		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
-			AbstractSubNetworkConfiguration subConfig = this.getSubNetworkConfigurations().get(i);
-			AbstractSubAggregationBuilder subEomBuilder = subConfig.getSubAggregationBuilder();
-			subEomBuilder.terminateEomAggregation();
-		}
-		
+		this.getSubNetworkConfigurations().forEach(subConfig -> subConfig.getSubAggregationBuilder().terminateEomAggregation());
 	}
 	
 	/**
@@ -771,7 +806,7 @@ public abstract class AbstractAggregationHandler {
 		boolean isDebugStateIntegration = false;
 		if (isDebugStateIntegration==true) {
 			// --- Debug the current system? ------------------------ 
-			String debugNetCompID = "MV1.101-LV1.101-Trafo 1";
+			String debugNetCompID = "MV-Transformer-1";
 			if (debugNetCompID!=null && debugNetCompID.isEmpty()==false) {
 				if (sl.getNetworkID()!=null && sl.getNetworkID().equals(debugNetCompID)==false) {
 					isDebugStateIntegration = false;
@@ -846,6 +881,9 @@ public abstract class AbstractAggregationHandler {
 			this.getLastNetworkComponentUpdates().put(networkComponentID, tsseNew);
 		}
 		
+		// --- Apply ScheduleLengthRestriction ----------------------
+		schedule.applyScheduleLengthRestriction();
+		
 		// --- Do controller and visualization update ---------------
 		this.notifyScheduleListObserver(sc, ScheduleNotification.Reason.ScheduleUpdated, schedule);
 	}
@@ -864,8 +902,7 @@ public abstract class AbstractAggregationHandler {
 		HashMap<String, TechnicalSystemStateEvaluation> latestTSSEs = new HashMap<>(); 
 		
 		List<String> netCompIDs = new ArrayList<>(this.getNetworkComponentsScheduleController().keySet()); 
-		for (int i = 0; i < netCompIDs.size(); i++) {
-			String netCompID = netCompIDs.get(i);
+		for (String netCompID : netCompIDs) {
 			TechnicalSystemStateEvaluation tsseFound = this.getLastTechnicalSystemStateFromScheduleController(netCompID);
 			if (tsseFound!=null) {
 				latestTSSEs.put(netCompID, tsseFound);
@@ -881,19 +918,34 @@ public abstract class AbstractAggregationHandler {
 	 * @return the last technical system state from schedule controller
 	 */
 	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID) {
+		return this.getLastTechnicalSystemStateFromScheduleController(netCompID, 0, true);
+	}
+	/**
+	 * Returns the last {@link TechnicalSystemStateEvaluation} from the specified NetworkComponent's ScheduleController
+	 * (defined by it's network component ID).
+	 *
+	 * @param netCompID the ID of the NetworkComponent
+	 * @param scheduleIndex the index of the Schedule to use
+	 * @param isGetCopy the indicator to get a copy of the last system state or not
+	 * @return the last technical system state from schedule controller
+	 */
+	public TechnicalSystemStateEvaluation getLastTechnicalSystemStateFromScheduleController(String netCompID, int scheduleIndex, boolean isGetCopy) {
 
-		TechnicalSystemStateEvaluation tsse = null;
 		ScheduleController sc = this.getNetworkComponentsScheduleController().get(netCompID);
-		if (sc!=null && sc.getScheduleList().getSchedules().size()>0) {
-			Schedule schedule = sc.getScheduleList().getSchedules().get(0);
+		if (sc!=null && sc.getScheduleList().getSchedules().size()>=(scheduleIndex+1)) {
+			Schedule schedule = sc.getScheduleList().getSchedules().get(scheduleIndex);
 			if (schedule!=null) {
 				TechnicalSystemStateEvaluation tsseSchedule = schedule.getTechnicalSystemStateEvaluation();
 				if (tsseSchedule!=null) {
-					tsse = TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsseSchedule);
+					if (isGetCopy==true) {
+						return TechnicalSystemStateHelper.copyTechnicalSystemStateEvaluationWithoutParent(tsseSchedule);
+					} else {
+						return tsseSchedule;
+					}
 				}
 			}
 		}
-		return tsse;
+		return null;
 	}
 	
 	/**
@@ -1225,21 +1277,11 @@ public abstract class AbstractAggregationHandler {
 			DisplayHelper.systemOutPrintlnGlobalTime(timeUntil, "=> [" + this.getClass().getSimpleName() + "]", "Execute Network Calculation");
 		}
 		
-		// --- Assign actual job to task threads --------------------
-		for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
-			// --- Get corresponding NetworkCalculationStrategy -----
-			AbstractSubNetworkConfiguration subNetConfig = getSubNetworkConfigurations().get(i);
-			NetworkAggregationTaskThread taskThread = this.getOrCreateNetworkAggregationTaskThread(subNetConfig); 
-			AbstractNetworkCalculationStrategy networkCalculationStrategy = subNetConfig.getNetworkCalculationStrategy();
-			if (networkCalculationStrategy!=null) {
-				taskThread.runEvaluationUntil(timeUntil, rebuildDecisionGraph);
-			} else {
-				taskThread.setDoNothing();
-			}
-		}
-
+		// --- Assign actual job to the coordinators ----------------
+		this.getTaskThreadCoordinators().forEach(ttc -> ttc.runEvaluationUntil(timeUntil, rebuildDecisionGraph));
+		
 		// --- Start and wait for task threads ---------------------- 
-		this.startAndWaitForNetworkAggregationTaskThreads();
+		this.startAndWaitForTaskThreadCoordinators();
 		
 		// --- Notify listeners that calculation is done ------------
 		this.notifyListenerAboutNetworkCalculationDone();
@@ -1250,80 +1292,54 @@ public abstract class AbstractAggregationHandler {
 	}
 	
 	/**
-	 * Returns the network aggregation task thread hash map.
-	 * @return the network aggregation task thread hash map
-	 */
-	private HashMap<AbstractSubNetworkConfiguration, NetworkAggregationTaskThread> getNetworkAggregationTaskThreadHashMap() {
-		if (networkAggregationTaskThreadHashMap==null) {
-			networkAggregationTaskThreadHashMap = new HashMap<>();
-		}
-		return networkAggregationTaskThreadHashMap;
-	}
-	/**
-	 * Returns (or creates) a {@link NetworkAggregationTaskThread} for the specified SubNetworkConfiguration.
-	 *
-	 * @param subNetConfig the extended {@link AbstractSubNetworkConfiguration}
-	 * @return the or create network calculation thread
-	 */
-	private NetworkAggregationTaskThread getOrCreateNetworkAggregationTaskThread(AbstractSubNetworkConfiguration subNetConfig) {
-		
-		NetworkAggregationTaskThread netAggTaskThread = this.getNetworkAggregationTaskThreadHashMap().get(subNetConfig);
-		if (netAggTaskThread==null) {
-			netAggTaskThread = new NetworkAggregationTaskThread(this, subNetConfig, Thread.currentThread().getName());
-			this.getNetworkAggregationTaskThreadHashMap().put(subNetConfig, netAggTaskThread);
-			netAggTaskThread.start();
-		}
-		return netAggTaskThread;
-	}
-	/**
 	 * Returns the network aggregation task trigger.
 	 * @return the calculation trigger
 	 */
-	protected Object getNetworkAggregationTaskTrigger() {
-		if (networkAggregationTaskTrigger==null) {
-			networkAggregationTaskTrigger = new Object();
+	protected Object getTaskThreadCoordinatorTrigger() {
+		if (taskThreadCoordinatorTrigger==null) {
+			taskThreadCoordinatorTrigger = new Object();
 		}
-		return networkAggregationTaskTrigger;
+		return taskThreadCoordinatorTrigger;
 	}
 
 	/**
-	 * Starts and waits for network aggregation task threads.
+	 * Starts and waits of the job end of the task thread coordinators.
 	 */
-	private void startAndWaitForNetworkAggregationTaskThreads() {
+	private void startAndWaitForTaskThreadCoordinators() {
 		// --- Start task threads ----------------------------------- 
-		this.startNetworkAggregationTaskThreads();
+		this.startTaskThreadCoordinators();
 		// --- Again wait for the end of the jobs -------------------
-		this.waitForNetworkAggregationTasksDone();
+		this.waitTaskThreadCoordinatorsReady();
 	}
 	/**
-	 * (Re-)Start network aggregation task threads.
+	 * (Re-)Starts the task thread coordinators.
 	 */
-	private void startNetworkAggregationTaskThreads() {
+	private void startTaskThreadCoordinators() {
 		// --- Clear done-list --------------------------------------
-		this.getNetworkAggregationTaskDoneList().clear();
-		// --- Notify all waiting task threads ----------------------
-		synchronized (this.getNetworkAggregationTaskTrigger()) {
-			this.getNetworkAggregationTaskTrigger().notifyAll();
+		this.getTaskThreadCoordinatorsReady().clear();
+		// --- Notify all coordinators ------------------------------
+		synchronized (this.getTaskThreadCoordinatorTrigger()) {
+			this.getTaskThreadCoordinatorTrigger().notifyAll();
 		}
 	}
 	
 	/**
-	 * Returns the list of NetworkAggregationTaskThread's that have done their job so far.
-	 * @return the network aggregation task done list
+	 * Returns the task thread coordinators that are ready with their tasks.
+	 * @return the task thread coordinators ready
 	 */
-	protected List<NetworkAggregationTaskThread> getNetworkAggregationTaskDoneList() {
-		if (networkAggregationTaskDoneList==null) {
-			networkAggregationTaskDoneList = new ArrayList<>();
+	protected List<AbstractTaskThreadCoordinator> getTaskThreadCoordinatorsReady() {
+		if (taskThreadCoordinatorsReady==null) {
+			taskThreadCoordinatorsReady = new ArrayList<>();
 		}
-		return networkAggregationTaskDoneList;
+		return taskThreadCoordinatorsReady;
 	}
 	/**
 	 * Sets the specified NetworkAggregationTaskThread done. If complete, the local thread will be reactivated.
 	 * @param taskFinalized the NetworkAggregationTaskThread that was finalized
 	 */
-	protected synchronized void setNetworkAggregationTaskThreadDone(NetworkAggregationTaskThread taskFinalized) {
-		this.getNetworkAggregationTaskDoneList().add(taskFinalized);
-		if (this.isDoneNetworkAggregationTasks()==true) {
+	protected synchronized void setTaskThreadCoordinatorsReady(AbstractTaskThreadCoordinator coordinatorReady) {
+		this.getTaskThreadCoordinatorsReady().add(coordinatorReady);
+		if (this.isTaskThreadCoordinatorsReady()==true) {
 			synchronized (this.getLocalThreadTrigger()) {
 				this.getLocalThreadTrigger().notify();
 			}
@@ -1333,8 +1349,8 @@ public abstract class AbstractAggregationHandler {
 	 * Checks if is the NetworkAggregationTasksthreads are done.
 	 * @return true, if is done network aggregation tasks
 	 */
-	protected boolean isDoneNetworkAggregationTasks() {
-		return this.getNetworkAggregationTaskDoneList().size()==this.getNetworkAggregationTaskThreadHashMap().size();
+	protected boolean isTaskThreadCoordinatorsReady() {
+		return this.getTaskThreadCoordinatorsReady().size()==this.getTaskThreadCoordinators().size();
 	}
 	
 	/**
@@ -1348,11 +1364,11 @@ public abstract class AbstractAggregationHandler {
 		return localThreadTrigger;
 	}
 	/**
-	 * Waits until the network aggregation tasks are done.
+	 * Waits until the task thread coordinators are ready in the current step.
 	 */
-	private void waitForNetworkAggregationTasksDone() {
+	private void waitTaskThreadCoordinatorsReady() {
 		synchronized (this.getLocalThreadTrigger()) {
-			if (this.doTerminate==false && this.isDoneNetworkAggregationTasks()==false) {
+			if (this.doTerminate==false && this.isTaskThreadCoordinatorsReady()==false) {
 				try {
 					this.getLocalThreadTrigger().wait();
 				} catch (InterruptedException iEx) {
@@ -1362,7 +1378,91 @@ public abstract class AbstractAggregationHandler {
 		}
 	}
 	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, handling of task thread coordinators ----------------------------------------
+	// --------------------------------------------------------------------------------------------	
+	/**
+	 * Returns the list of (possibly service registered) task thread coordinators.
+	 * @return the task thread coordinators
+	 * @see {@link SubNetworkConfigurationService#getTaskThreadCoordinator()}
+	 */
+	public List<AbstractTaskThreadCoordinator> getTaskThreadCoordinators() {
+		if (taskThreadCoordinators==null) {
+			taskThreadCoordinators = this.createTaskThreadCoordinatorList();
+			// ----------------------------------------------------------------
+			// --- Create DefaultCoordinator for remaining configurations -----
+			// ----------------------------------------------------------------
+			DefaultTaskThreadCoordinator ttcDefault = new DefaultTaskThreadCoordinator();
+			ttcDefault.setAggregationHandler(this);
+			if (ttcDefault.getSubNetworkConfigurationsUnderControl().size()>0) {
+				taskThreadCoordinators.add(ttcDefault);
+			}
+			// --- Call initialize method for each coordinator ----------------
+			taskThreadCoordinators.forEach(ttc -> ttc.getNetworkAggregationTaskTrigger());
+			taskThreadCoordinators.forEach(ttc -> ttc.initialize());
+			taskThreadCoordinators.forEach(ttc -> ttc.start());
+		}
+		return taskThreadCoordinators;
+	}
+	/**
+	 * Based on all registered {@link SubNetworkConfigurationService}s, creates the list of unique 
+	 * task thread coordinators (here, one class will only be initiated once).
+	 * @return the list
+	 */
+	private List<AbstractTaskThreadCoordinator> createTaskThreadCoordinatorList() {
+		
+		// --- Create temporary reminder HashMap --------------------
+		HashMap<String, AbstractTaskThreadCoordinator> ttcHashMap = new HashMap<>();
+		
+		// --- Search SubNetworkConfigurationServices ---------------
+		List<SubNetworkConfigurationService> services = ServiceFinder.findServices(SubNetworkConfigurationService.class);
+		for (int i=0; i<services.size(); i++) {
+			
+			Class <? extends AbstractTaskThreadCoordinator> coordinatorClass = services.get(i).getTaskThreadCoordinator();
+			
+			if (coordinatorClass!=null) {
+				List<String> domainList = services.get(i).getDomainIdList();
+				
+				AbstractTaskThreadCoordinator ttc = ttcHashMap.get(coordinatorClass.getName());
+				if (ttc==null) {
+					// --- Create instance of task thread coordinator ---
+					try {
+						// --- Initiate and remind coordinator ----------
+						ttc = coordinatorClass.getDeclaredConstructor().newInstance();
+						ttc.setAggregationHandler(this);
+						ttcHashMap.put(coordinatorClass.getName(), ttc);
+						
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+						ex.printStackTrace();
+					}
+				}
+				
+				// --- Register domains --------------------------------- 
+				if (ttc!=null) ttc.registerDomains(domainList);
+			}
+		}
+		
+		// --- Return values of HashMap -----------------------------
+		return new ArrayList<>(ttcHashMap.values());
+	}
 	
+	/**
+	 * Returns the sub network configurations that are under control of different task thread coordinators.
+	 * @return the task thread coordinators sub network configurations
+	 */
+	public List<AbstractSubNetworkConfiguration> getTaskThreadCoordinatorsSubNetworkConfigurations() {
+		
+		List<AbstractSubNetworkConfiguration> subNetConfigList = new ArrayList<>();
+		for (AbstractTaskThreadCoordinator ttc : this.getTaskThreadCoordinators()) {
+			subNetConfigList.addAll(ttc.getSubNetworkConfigurationsUnderControl());
+		}
+		return subNetConfigList;
+	}
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, managing display updates ------------------------------------------  
+	// ----------------------------------------------------------------------------------	
 	/**
 	 * Returns the HashMap with the last network component updates.
 	 * @return the last network component updates
@@ -1375,6 +1475,7 @@ public abstract class AbstractAggregationHandler {
 	}
 	/**
 	 * Forwards the last system states updates to the display updater.
+	 * @param displayTime the display time
 	 */
 	private void forwardLastUpdatesToDisplayUpdater(long displayTime) {
 		
@@ -1387,20 +1488,13 @@ public abstract class AbstractAggregationHandler {
 		
 		// --- Call the display update mechanism? -----------------------------
 		if (this.getAggregationListeners().size()>0 && lastStateUpdates!=null && lastStateUpdates.size()>0) {
-			// --- Assign actual job to task threads --------------------------
-			for (int i = 0; i < this.getSubNetworkConfigurations().size(); i++) {
-				// --- Get corresponding DisplayUpdater -----------------------
-				AbstractSubNetworkConfiguration subNetConfig = getSubNetworkConfigurations().get(i);
-				NetworkAggregationTaskThread taskThread = this.getOrCreateNetworkAggregationTaskThread(subNetConfig); 
-				AbstractNetworkModelDisplayUpdater displayUpdater = subNetConfig.getNetworkDisplayUpdater();
-				if (displayUpdater!=null) {
-					taskThread.updateNetworkModelDisplay(lastStateUpdates, displayTime);
-				} else {
-					taskThread.setDoNothing();
-				}
-			}
+			
+			// --- Assign actual job to the coordinators ----------------------
+			final HashMap<String, TechnicalSystemStateEvaluation> lastStateUpdatesFinal = lastStateUpdates;
+			this.getTaskThreadCoordinators().forEach(ttc -> ttc.updateNetworkModelDisplay(lastStateUpdatesFinal, displayTime));
+			
 			// --- Start and wait for task threads ----------------------------
-			this.startAndWaitForNetworkAggregationTaskThreads();
+			this.startAndWaitForTaskThreadCoordinators();
 		}
 		
 	}

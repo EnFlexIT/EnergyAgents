@@ -2,43 +2,38 @@ package de.enflexit.ea.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import de.enflexit.common.properties.PropertiesPanel;
+import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
+import de.enflexit.ea.ui.SwingUiModel.UiDataCollection;
 
 /**
  * The Class JPanelGeneralInformation.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelGeneralInformation extends JPanel {
+public class JPanelGeneralInformation extends JPanel implements PropertyChangeListener {
 
 	private static final long serialVersionUID = -1052414258048129787L;
 
+	private SwingUiModelInterface swingUiModelInterface;
 	private PropertiesPanel propertiesPanel;
 	
 	/**
 	 * Instantiates a new j panel general information.
-	 * @param jDialogEnergyAgent the JDialog of the energy agent
+	 *
+	 * @param swingUiModelInterface the swing ui model interface
 	 */
-	public JPanelGeneralInformation(JDialogEnergyAgent jDialogEnergyAgent) {
+	public JPanelGeneralInformation(SwingUiModelInterface swingUiModelInterface) {
+		this.swingUiModelInterface = swingUiModelInterface;
+		this.swingUiModelInterface.addPropertyListener(this);
 		this.initialize();
-		this.setDisplayInformation(jDialogEnergyAgent);
+		this.setDisplayInformation();
 	}
-	/**
-	 * Sets the display information.
-	 */
-	private void setDisplayInformation(final JDialogEnergyAgent jDialogEnergyAgent) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JPanelGeneralInformation.this.getJPanelProperties().setProperties(jDialogEnergyAgent.getEnergyAgent().getGeneralInformation());
-			}
-		});
-	}
-	
 	/**
 	 * Initialize.
 	 */
@@ -66,5 +61,32 @@ public class JPanelGeneralInformation extends JPanel {
 			propertiesPanel = new PropertiesPanel(null, "Energy Agent State", true);
 		}
 		return propertiesPanel;
+	}
+	
+	
+	/**
+	 * Sets the display information.
+	 */
+	private void setDisplayInformation() {
+		JPanelGeneralInformation.this.getJPanelProperties().setProperties(JPanelGeneralInformation.this.swingUiModelInterface.getEnergyAgent().getGeneralInformation());
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		if (evt.getNewValue() instanceof UiDataCollection) return;
+		
+		PropertyEvent pe = (PropertyEvent) evt.getNewValue(); 
+		switch (pe) {
+		case UpdateView:
+			this.setDisplayInformation();
+			break;
+
+		default:
+			break;
+		}
 	}
 }
