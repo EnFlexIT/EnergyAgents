@@ -382,7 +382,7 @@ public class IOSetPointStrategyTechnicalSystemGroupRT extends AbstractGroupEvalu
 	 */
 	@Override
 	public Schedule decideForScheduleToBeUsed(DefaultMutableTreeNode currentNode, GroupTreeNodeObject gtno, ScheduleList scheduleList) {
-		return null;
+		return scheduleList.getSchedules().get(0);
 	}
 	
 	/* (non-Javadoc)
