@@ -29,4 +29,5 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/SimBenchNetworkModelImportService.xml,
  OSGI-INF/SimBenchScheduleListPersistenceService.xml
 Import-Package: de.enflexit.ea.core.awbIntegration.adapter.triPhase,
- de.enflexit.ea.core.awbIntegration.adapter.uniPhase
+ de.enflexit.ea.core.awbIntegration.adapter.uniPhase,
+ de.enflexit.ea.electricity.transformer

@@ -48,6 +48,9 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import de.enflexit.ea.topologies.BundleHelper;
 import de.enflexit.ea.topologies.pandaPower.PandaPowerNamingMap.NamingMap;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
@@ -56,11 +59,21 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
+import energy.OptionModelController;
 import energy.helper.NumberHelper;
+import energy.helper.TechnicalSystemStateHelper;
+import energy.optionModel.FixedInteger;
+import energy.optionModel.FixedVariable;
+import energy.optionModel.SystemVariableDefinition;
+import energy.optionModel.SystemVariableDefinitionStaticModel;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TimeRange;
+import energy.optionModel.gui.sysVariables.AbstractStaticModel;
 import energy.schedule.loading.ScheduleTimeRange;
 import energy.schedule.loading.ScheduleTimeRange.RangeType;
 import energy.schedule.loading.ScheduleTimeRangeController;
+import energy.validation.AbstractTechnicalSystemChecker;
 
 /**
  * The Class SimBench_CsvTopologyImporter.
@@ -800,7 +813,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 					}
 					newNetCompID = transfromerName;
 					isCreatingTransformer = true;
-					// --- Add the storage settings to the component --------------------
+					// --- Get data model and the storage settings for transformer ------
+					netCompDataModel = this.getTransformerDataModel(transformerIndex);
 					netCompStorageSettings = this.getTransformerStorageSettings();
 					
 				} else {
@@ -995,11 +1009,138 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the transformer data model.
+	 *
+	 * @param transformerIndex the transformer index
+	 * @return the transformer data model
+	 */
+	private TechnicalSystem getTransformerDataModel(Integer transformerIndex) {
+		
+		HashMap<String, Object> transformerRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index), transformerIndex.toString());
+		
+		// --- Load the base transformer model to the OptionModelController -------------
+		OptionModelController omc = new OptionModelController();
+		omc.loadTechnicalSystemFromBundle("de.enflexit.ea.electricity.transformer", "EOM-INF/TransformerBaseModel.xml", null, true);
+		
+		// --- Get SystemVariableDefinition of 'StaticParameters' -----------------------
+		SystemVariableDefinition sysVarDef = omc.getSystemVariableDefinition("StaticParameters");
+		if (sysVarDef!=null && sysVarDef instanceof SystemVariableDefinitionStaticModel) {
+			
+			//String transformerID = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name));
+			
+			Double sn_mva = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_sn_mva)); 	// e.g. 5 MVA
+			
+			Double vn_hv_kv = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_hv_kv)); // e.g. 20 kV
+			Double vn_lv_kv = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_lv_kv)); // e.g. 0.4 kV
+			Boolean vn_hv_kvTriPhase = PandaPowerFileStore.isTriPhaseVoltageLevel(vn_hv_kv * 1000);
+			Boolean vn_lv_kvTriPhase = PandaPowerFileStore.isTriPhaseVoltageLevel(vn_lv_kv * 1000);
+			
+			Double vk_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vk_percent));
+			Double vkr_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vkr_percent));
+			Double pfe_kw = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_pfe_kw));
+			Double i0_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_i0_percent));
+			Double shift_degree = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_shift_degree));
+			
+			String tapSite = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_side));
+			Integer tap_neutral = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_neutral));
+			Integer tap_min = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_min));
+			Integer tap_max = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_max));
+			Integer tap_pos = BundleHelper.parseInteger(transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_pos)));
+			
+			Double tap_step_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_step_percent));
+			Double tap_step_degree = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_step_degree));
+
+			
+			// --- Get the TransformerDataModel for configuration -----------------------
+			SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) sysVarDef;
+			TransformerDataModel tdm = (TransformerDataModel) omc.getStaticModelInstance(sysVarDefStaticModel);
+			
+			// --- Base configuration ---------------------------------------------------
+			tdm.setRatedPower_sR(sn_mva);
+			tdm.setUpperVoltage_vmHV(vn_hv_kv);
+			tdm.setUpperVoltage_ThriPhase(vn_hv_kvTriPhase);
+			tdm.setLowerVoltage_vmLV(vn_lv_kv);
+			tdm.setLowerVoltage_ThriPhase(vn_lv_kvTriPhase);
+			
+			tdm.setSlackNodeVoltageLevel(vn_lv_kv * 1000);
+			
+			// --- From PandaPower-Site:  vkr_percent = P_cu / S_trafo * 100 ------------
+			double pCu = vkr_percent / 100 * sn_mva;
+			
+			tdm.setPhaseShift_va0(shift_degree);
+			tdm.setShortCircuitImpedance_vmImp(vk_percent);
+			tdm.setCopperLosses_pCu(pCu); 
+			tdm.setIronLosses_pFe(pfe_kw);
+			tdm.setIdleImpedance_iNoLoad(i0_percent);
+			
+			// --- Tap settings ---------------------------------------------------------
+			if (tapSite==null) {
+				tdm.setTapable(false);
+				tdm.setTapSide(TapSide.HighVoltageSide);
+				tdm.setTapMinimum(0);
+				tdm.setTapMaximum(0);
+				tdm.setTapNeutral(0);
+				tdm.setVoltageDeltaPerTap_dVm(0);
+				tdm.setPhaseShiftPerTap_dVa(0);
+				
+			} else {
+				
+				tdm.setTapable(true);
+				switch (tapSite) {
+				case "hv":
+					tdm.setTapSide(TapSide.HighVoltageSide);
+					break;
+				case "lv":
+					tdm.setTapSide(TapSide.LowVoltageSide);
+					break;
+				}
+				
+				tdm.setTapMinimum(tap_min);
+				tdm.setTapMaximum(tap_max);
+				tdm.setTapNeutral(tap_neutral);
+				
+				tdm.setVoltageDeltaPerTap_dVm(tap_step_percent);
+				tdm.setPhaseShiftPerTap_dVa(tap_step_degree);
+				
+			}
+			
+			// --- Save the model settings to TechnicalSystem ---------------------------
+			omc.setStaticModelInstance(sysVarDefStaticModel, tdm);
+			
+			// --- Execute TechnicalSystemChecker for IO-List adjustments ---------------
+			AbstractTechnicalSystemChecker transformerChecker = omc.getIndividualTechnicalSystemChecker();
+			if (transformerChecker!=null) {
+				transformerChecker.setOptionModelController(omc);
+				AbstractStaticModel asm = omc.getAbstractStaticModel(sysVarDefStaticModel);
+				transformerChecker.afterStaticModelUpdate(sysVarDefStaticModel, asm);
+			}
+			
+			// --- Further model adjustments --------------------------------------------
+			if (tapSite!=null) {
+				// --- Set initial tap position -----------------------------------------				
+				if (omc.getEvaluationStateList().size()>0 && omc.getEvaluationStateList().get(0) instanceof TechnicalSystemState) {
+					TechnicalSystemState tss = (TechnicalSystemState) omc.getEvaluationStateList().get(0);
+					FixedVariable fv = TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.tapPos.name());
+					if (fv!=null && fv instanceof FixedInteger) {
+						FixedInteger fvTapPos = (FixedInteger) fv;
+						fvTapPos.setValue(tap_pos);
+					}
+				}
+			}
+			
+		}
+		return omc.getTechnicalSystem();
+	}
 	/**
 	 * Returns the transformer storage settings.
 	 * @return the transformer storage settings
 	 */
 	private TreeMap<String, String> getTransformerStorageSettings() {
+		
+		// TODO: adjust file to setup folder
+		
 		TreeMap<String, String> tSettings = new TreeMap<>();
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.TechnicalSystem.toString());
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());

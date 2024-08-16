@@ -39,8 +39,22 @@ public class PandaPowerNamingMap extends TreeMap<ColumnName, String>{
 		this.put(ColumnName.Trafo_Name, "name");
 		this.put(ColumnName.Trafo_LV_Bus, "lv_bus");
 		this.put(ColumnName.Trafo_HV_Bus, "hv_bus");
+		this.put(ColumnName.Trafo_sn_mva, "sn_mva");
 		this.put(ColumnName.Trafo_vn_hv_kv, "vn_hv_kv");
 		this.put(ColumnName.Trafo_vn_lv_kv, "vn_lv_kv");
+		this.put(ColumnName.Trafo_vk_percent, "vk_percent");
+		this.put(ColumnName.Trafo_vkr_percent, "vkr_percent");
+		this.put(ColumnName.Trafo_pfe_kw, "pfe_kw");
+		this.put(ColumnName.Trafo_i0_percent, "i0_percent");
+		this.put(ColumnName.Trafo_shift_degree, "shift_degree");
+		this.put(ColumnName.Trafo_tap_side, "tap_side");
+		this.put(ColumnName.Trafo_tap_neutral, "tap_neutral");
+		this.put(ColumnName.Trafo_tap_min, "tap_min");
+		this.put(ColumnName.Trafo_tap_max, "tap_max");
+		this.put(ColumnName.Trafo_tap_step_percent, "tap_step_percent");
+		this.put(ColumnName.Trafo_tap_step_degree, "tap_step_degree");
+		this.put(ColumnName.Trafo_tap_pos, "tap_pos");
+		this.put(ColumnName.Trafo_tap_phase_shifter, "tap_phase_shifter");
 		
 		this.put(ColumnName.Load_Index, "index");
 		this.put(ColumnName.Load_Name, "name");
