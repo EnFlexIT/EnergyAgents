@@ -3,6 +3,7 @@ package de.enflexit.ea.topologies.pandaPower;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -799,7 +800,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			boolean isCreatingTransformer = false;
 			Integer transformerIndex = this.getTransformerIndex(busIndex);
 			if (transformerIndex!=null) {
+				// ----------------------------------------------------------------------
 				// --- Create transformer ? ---------------------------------------------
+				// ----------------------------------------------------------------------
 				HashMap<String, Object> transformerRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index).toString(), transformerIndex.toString());
 				String transfromerName = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name));
 				Integer nodeLV = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_LV_Bus));
@@ -814,8 +817,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 					newNetCompID = transfromerName;
 					isCreatingTransformer = true;
 					// --- Get data model and the storage settings for transformer ------
-					netCompDataModel = this.getTransformerDataModel(transformerIndex);
-					netCompStorageSettings = this.getTransformerStorageSettings();
+					netCompDataModel = this.getTransformerDataModel(transformerRowHashMap);
+					netCompStorageSettings = this.getTransformerStorageSettings(transfromerName);
 					
 				} else {
 					// --- Do not create this component again ---------------------------
@@ -823,7 +826,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				}
 				
 			} else {
+				// ----------------------------------------------------------------------
 				// --- Prosumer or CableCabinet ? ---------------------------------------
+				// ----------------------------------------------------------------------
 				HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, PandaPowerNamingMap.getColumnName(ColumnName.Load_Bus), busIndex.toString());
 				if (loadRowHashMap==null) {
 					// --- Create CableCabinet ------------------------------------------
@@ -1013,12 +1018,10 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	/**
 	 * Returns the transformer data model.
 	 *
-	 * @param transformerIndex the transformer index
+	 * @param transformerRowHashMap the transformer row HashMap from the PP-Table
 	 * @return the transformer data model
 	 */
-	private TechnicalSystem getTransformerDataModel(Integer transformerIndex) {
-		
-		HashMap<String, Object> transformerRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index), transformerIndex.toString());
+	private TechnicalSystem getTransformerDataModel(HashMap<String, Object> transformerRowHashMap) {
 		
 		// --- Load the base transformer model to the OptionModelController -------------
 		OptionModelController omc = new OptionModelController();
@@ -1027,8 +1030,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		// --- Get SystemVariableDefinition of 'StaticParameters' -----------------------
 		SystemVariableDefinition sysVarDef = omc.getSystemVariableDefinition("StaticParameters");
 		if (sysVarDef!=null && sysVarDef instanceof SystemVariableDefinitionStaticModel) {
-			
-			//String transformerID = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name));
 			
 			Double sn_mva = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_sn_mva)); 	// e.g. 5 MVA
 			
@@ -1133,18 +1134,29 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		}
 		return omc.getTechnicalSystem();
 	}
+	
 	/**
 	 * Returns the transformer storage settings.
+	 *
+	 * @param transformerName the transformer name
 	 * @return the transformer storage settings
 	 */
-	private TreeMap<String, String> getTransformerStorageSettings() {
+	private TreeMap<String, String> getTransformerStorageSettings(String transformerName) {
 		
-		// TODO: adjust file to setup folder
+		String emvPath = Application.getProjectFocused().getEnvironmentController().getEnvFolderPath();
+		String setupName = Application.getProjectFocused().getSimulationSetupCurrent();
+		String fileName = "EomModel_" + transformerName.replace(" ", "_") + ".xml";
+		String projectPath = Application.getProjectFocused().getProjectFolderFullPath();
+		
+		Path eomFilePath = new File(emvPath).toPath().resolve(setupName).resolve(fileName);
+		eomFilePath = new File(projectPath).toPath().relativize(eomFilePath);
+		
+		String relativePath = "/" + eomFilePath.toString().replace(File.separator, "/");
 		
 		TreeMap<String, String> tSettings = new TreeMap<>();
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.TechnicalSystem.toString());
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
-		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, "/eomModels/EomModel_Transformer.xml");
+		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, relativePath);
 		return tSettings; 
 	}
 	/**
