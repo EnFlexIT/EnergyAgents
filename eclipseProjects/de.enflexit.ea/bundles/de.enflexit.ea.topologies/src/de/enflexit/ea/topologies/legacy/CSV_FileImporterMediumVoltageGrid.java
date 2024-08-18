@@ -1,4 +1,4 @@
-package de.enflexit.ea.electricity.topologyImport;
+package de.enflexit.ea.topologies.legacy;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -1614,8 +1614,8 @@ public class CSV_FileImporterMediumVoltageGrid extends AbstractNetworkModelCsvIm
 	public List<FileFilter> getFileFilters() {
 		if (fileFilters==null) {
 			fileFilters = new ArrayList<FileFilter>();
-			fileFilters.add(this.createFileFilter(".zip", "Lemgo Medium Voltage Network exported GIS Data (zip File)"));
-			fileFilters.add(this.createFileFilter(".csv", "Lemgo Medium Voltage Network exported GIS Data (csv File)"));
+			fileFilters.add(this.createFileFilter(".zip", "Medium Voltage Network (exported GIS Data) (zip File)"));
+			fileFilters.add(this.createFileFilter(".csv", "Medium Voltage Network (exported GIS Data) (csv Files)"));
 		}
 		return fileFilters;
 	}
