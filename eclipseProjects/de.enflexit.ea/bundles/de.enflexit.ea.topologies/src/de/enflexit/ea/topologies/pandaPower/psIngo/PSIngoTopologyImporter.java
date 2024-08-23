@@ -12,7 +12,6 @@ import de.enflexit.ea.topologies.pandaPower.PandaPowerNamingMap;
 import de.enflexit.ea.topologies.pandaPower.PandaPowerNamingMap.NamingMap;
 import de.enflexit.ea.topologies.pandaPower.PandaPowerTopologyImporter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PSIngoTopologyImporter.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen

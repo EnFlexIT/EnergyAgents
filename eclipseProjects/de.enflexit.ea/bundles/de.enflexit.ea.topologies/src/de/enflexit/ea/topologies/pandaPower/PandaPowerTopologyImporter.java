@@ -465,6 +465,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
 
 			// --- Rename NetworkComponent and GraphNode --------------------------------
+			lineName = this.getUniqueNetworkComponentID(lineName, lineIndex);
 			newCompNM.renameNetworkComponent(newNetComp.getId(), lineName);
 			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
 			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
@@ -593,6 +594,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
 
 			// --- Rename NetworkComponent and GraphNode --------------------------------
+			switchName = this.getUniqueNetworkComponentID(switchName, switchIndex);
 			newCompNM.renameNetworkComponent(newNetComp.getId(), switchName);
 			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
 			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
@@ -898,6 +900,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode graphNode = (GraphNode) newCompNM.getGraphElement(graphNodeName);
 
 			// --- Rename the elements --------------------------------------------------
+			newNetCompID = this.getUniqueNetworkComponentID(newNetCompID, busIndex);
 			newCompNM.renameNetworkComponent(newComp.getId(), newNetCompID);
 			newCompNM.renameGraphNode(graphNode.getId(), busIndex.toString());
 			
@@ -1216,6 +1219,23 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		siteModel[2] = new TimeSeriesChart();
 		
 		return siteModel;
+	}
+	
+	/**
+	 * Checks if a target NetworkComponent ID is already used. If, the ID will be combined with the index number.
+	 *
+	 * @param targetID the target ID
+	 * @param indexNo the index no
+	 * @return the unique network component ID
+	 */
+	private String getUniqueNetworkComponentID(String targetID, int indexNo) {
+		
+		// --- Check if ID is already used ----------------
+		NetworkComponent netComp = this.getNetworkModel().getNetworkComponent(targetID);
+		if (netComp!=null) {
+			return targetID + "_" + indexNo;
+		}
+		return targetID;
 	}
 	
 	/**
