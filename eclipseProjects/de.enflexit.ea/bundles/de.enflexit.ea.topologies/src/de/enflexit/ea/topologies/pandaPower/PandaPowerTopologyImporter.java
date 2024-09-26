@@ -1,7 +1,6 @@
 package de.enflexit.ea.topologies.pandaPower;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -118,8 +117,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private String layoutIdGeoCoordinateUTM;
 
 	private MapSettings mapSettings;
-	private Vector<Point2D> defaultPositionVector;
-	
 	private boolean isDoAutoLayout;
 	
 	private StorageDestination storageDestination = StorageDestination.PandaPowerService;
@@ -248,9 +245,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		this.layoutIdGeoCoordinateUTM = null;
 		
 		this.mapSettings = null;
-		
-		this.defaultPositionVector = null;
-		
 		this.persistenceService = null;
 		
 		this.isDoAutoLayout = false;
@@ -764,8 +758,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			Application.setStatusBarMessage(this.getClass().getSimpleName() + ": Import node '" + nodeName  + "' - (" + (i+1) +  "/" + nodeDataVector.size() + ")");
 
 			// --- Get the corresponding data row of the coordinates --------------------
-			Double coordX = null;
-			Double coordY = null;
+			Double coordX_Lati = null;
+			Double coordY_Long = null;
 			if (ciCoords!=-1 || ciGeoData!=-1) {
 				if (geoData!=null && geoData.isBlank()==false) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] ToDo: PandaPower geo data nedds to be integrated!");
@@ -778,8 +772,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				// --- Try getting info from table 'bus_geodata' ------------------------
 				HashMap<String, Object> busGeodataRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_BusGeodata, PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_Index), busIndex.toString());
 				if (busGeodataRowHashMap!=null) {
-					coordX = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_x)).toString());
-					coordY = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_y)).toString());
+					coordX_Lati = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_x)).toString());
+					coordY_Long = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_y)).toString());
 				} else {
 					if (this.isDoAutoLayout==false) {
 						System.err.println("[" + this.getClass().getSimpleName() + "] No coordinates are provided for bus elements, try auto layout!");
@@ -905,10 +899,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			newCompNM.renameGraphNode(graphNode.getId(), busIndex.toString());
 			
 			// --- Define the GraphNode positions ---------------------------------------
-			if (coordX!=null & coordY!=null) {
-				double wgs84Long = BundleHelper.parseDouble(coordX);
-				double wgs84Lat  = BundleHelper.parseDouble(coordY);
-				this.setGraphNodeCoordinates(graphNode, wgs84Lat, wgs84Long);
+			if (coordX_Lati!=null & coordY_Long!=null) {
+				this.setGraphNodeCoordinates(graphNode, coordX_Lati, coordY_Long);
 			}
 			
 			// --------------------------------------------------------------------------
@@ -965,8 +957,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			
 		} // end for
 		
-		// --- Adjust the node positions for the default layout ------------------------- 
-		this.adjustDefaultPositions();
 	}
 	/**
 	 * Enables to add additional node properties in sub classes.
@@ -1300,88 +1290,25 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private void setGraphNodeCoordinates(GraphNode graphNode, double latNorthSouth, double longEastWest) {
 		
 		// --- Set GraphNode position according to node -------------
-		Point2D pointGeoWGS84 = new Point2D.Double(latNorthSouth, longEastWest);
+		Point2D coordDefaultLayout = new Point2D.Double(latNorthSouth, longEastWest);
 
 		// --- Create WGS coordinate ---------------------------------
-		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(pointGeoWGS84.getX(), pointGeoWGS84.getY());
+		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(latNorthSouth, longEastWest);
 		
 		// --- Calculate to UTM coordinate --------------------------
-		Point2D pointUTM = null;
+		UTMCoordinate coordUTM = null;
 		try {
-			UTMCoordinate coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
-			pointUTM = new Point2D.Double(coordUTM.getEasting(), coordUTM.getNorthing());
-			
+			coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
 		} catch (Exception ex) {
-			pointUTM = new Point2D.Double(latNorthSouth, longEastWest);
 		}
 		
 		// --- Set default layout to Default ------------------------
-		Point2D pointDefault = this.getDefaultLayoutPosition(pointGeoWGS84);
-		graphNode.setPosition(pointDefault);
-		this.getDefaultPositionVector().add(pointDefault);
+		graphNode.setPosition(coordDefaultLayout);
 		
-		// --- Set positions to alternative layouts -----------------
-		graphNode.getPositionTreeMap().put(this.getLayoutIdDefault(), pointDefault);
-		graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateWGS84(), pointGeoWGS84);
-		graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateUTM(), pointUTM);
-	}
-	/**
-	 * Return the default layout position, derived from the WGS84 coordinates.
-	 *
-	 * @param wgs84Point the WGS84 point
-	 * @return the default layout position
-	 */
-	private Point2D getDefaultLayoutPosition(Point2D wgs84Point) {
-		double xPos = NumberHelper.round(wgs84Point.getY() * 1.0, 3);
-		double yPos = NumberHelper.round(wgs84Point.getX() * 1.0, 3);
-		return new Point2D.Double(xPos, yPos);
-	}
-	/**
-	 * Reminder for the default positions and a later correction.
-	 * @return the default position vector
-	 */
-	private Vector<Point2D> getDefaultPositionVector() {
-		if (defaultPositionVector==null) {
-			defaultPositionVector = new Vector<>();
-		}
-		return defaultPositionVector;
-	}
-	/**
-	 * Adjusts the default node positions.
-	 */
-	private void adjustDefaultPositions() {
-
-		if (this.getDefaultPositionVector().size()==0) return;
-		
-		// --- Get the spreading rectangle of the default positions -----------
-		Point2D initialPoint = this.getDefaultPositionVector().get(0);
-		Rectangle2D spreadRectangle = new Rectangle2D.Double(initialPoint.getX(), initialPoint.getY(), 0, 0);
-		for (int i = 0; i < this.getDefaultPositionVector().size(); i++) {
-			Point2D singlePos = this.getDefaultPositionVector().get(i);
-			spreadRectangle.add(singlePos);
-		}
-		
-		// --- Calculate movement ---------------------------------------------
-		double moveX = 0;
-		double moveY = 0;
-		
-		if (spreadRectangle.getX()>=0) {
-			moveX = -spreadRectangle.getX(); 
-		} else {
-			moveX = spreadRectangle.getX();
-		}
-		
-		if (spreadRectangle.getY()>=0) {
-			moveY = spreadRectangle.getY();
-		} else {
-			moveY = -spreadRectangle.getY();
-		}
-
-		// --- Move the default positions -------------------------------------
-		for (int i = 0; i < this.getDefaultPositionVector().size(); i++) {
-			Point2D singlePos = this.getDefaultPositionVector().get(i);
-			singlePos.setLocation(singlePos.getX() + moveX, singlePos.getY() + moveY);
-		}
+		// --- Set positions to position tree map -------------------
+		graphNode.getPositionTreeMap().put(this.getLayoutIdDefault(), coordDefaultLayout);
+		if (coordWGS84!=null) graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateWGS84(), coordWGS84);
+		if (coordUTM!=null)   graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateUTM(), coordUTM);
 		
 	}
 	
