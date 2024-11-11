@@ -14,6 +14,8 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
+import agentgui.core.application.Application;
+import agentgui.core.project.Project;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.ElectricityNetworkType;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;
@@ -28,6 +30,10 @@ import energy.domain.DefaultDomainModelElectricity.Phase;
  * The Class TransformerTotalCurrentCalculation.
  */
 public class TransformerTotalCurrentCalculation {
+	
+	public static final String [] DEFAULT_NEIGHBOUR_COMPOENNT_TYPES = {"Breaker", "Cable", "Sensor"};
+	public static final String NEIGHBOUR_COMPONENT_TYPES_PROPERTY_KEY = "transformer.neighbourComponentTypes";
+	
 
 	private SubNetworkGraphNode subNetworkGraphNode;
 	
@@ -84,12 +90,10 @@ public class TransformerTotalCurrentCalculation {
 		Vector<NetworkComponent> lvNeighbours = this.getConnectedNetworkComponentsOfElectricalDomain(networkModel, netComp, domain);
 		if (lvNeighbours!=null && lvNeighbours.size()>0) {
 			// --- Define allowed types of NetworkComponents -------- 
-			List<String> allowedTypeKeyWords = new ArrayList<String>();
-			allowedTypeKeyWords.add("Cable".toLowerCase());
-			allowedTypeKeyWords.add("Sensor".toLowerCase());
+			List<String> typesToConsider = getNeighbourComponentTypes();
 			// --- Filter for cables and sensors --------------------
 			for (NetworkComponent lvNetComp : lvNeighbours) {
-				for (String allowedTypeKeyWord : allowedTypeKeyWords) {
+				for (String allowedTypeKeyWord : typesToConsider) {
 					if (lvNetComp.getType().toLowerCase().contains(allowedTypeKeyWord)) {
 						// --- Remind this component ----------------
 						this.getTransformerLvCable().add(lvNetComp.getId());
@@ -312,6 +316,35 @@ public class TransformerTotalCurrentCalculation {
 			this.getTotalCurrentImag().put(Phase.L3, totalCurrentImag_L3);
 		}
 		return this;
+	}
+	
+	/**
+	 * Gets the component types that should be considered as possible neighbor components of transformers.
+	 * @return the neighbor component types
+	 */
+	public static ArrayList<String> getNeighbourComponentTypes(){
+		String[] componentTypes = null;
+		
+		// ---  Get the component types from the project properties -----------
+		Project project = Application.getProjectFocused();
+		if (project!=null) {
+			String propertiesEntry = project.getProperties().getStringValue(NEIGHBOUR_COMPONENT_TYPES_PROPERTY_KEY);
+			if (propertiesEntry!=null && propertiesEntry.isBlank()==false) {
+				componentTypes = propertiesEntry.split(",");
+			}
+		}
+		
+		// --- If not successful, use the defaults  ---------------------------
+		if (componentTypes==null) {
+			componentTypes = DEFAULT_NEIGHBOUR_COMPOENNT_TYPES;
+		}
+		
+		// --- Convert to a list of lower case strings ------------------------
+		ArrayList<String> neighbourComponentTypes = new ArrayList<>();
+		for (String componentType : componentTypes) {
+			neighbourComponentTypes.add(componentType.toLowerCase());
+		}
+		return neighbourComponentTypes;
 	}
 	
 }

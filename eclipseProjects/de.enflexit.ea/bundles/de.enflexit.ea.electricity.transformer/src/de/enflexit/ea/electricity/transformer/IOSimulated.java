@@ -1,6 +1,5 @@
 package de.enflexit.ea.electricity.transformer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -210,14 +209,12 @@ public class IOSimulated extends AbstractIOSimulated {
 		Vector<NetworkComponent> lvNeighbours = intDM.getConnectedNetworkComponentsOfElectricalDomain(domain);
 		if (lvNeighbours!=null && lvNeighbours.size()>0) {
 			// --- Define allowed types of NetworkComponents -------- 
-			List<String> allowedTypeKeyWords = new ArrayList<String>();
-			allowedTypeKeyWords.add("Cable".toLowerCase());
-			allowedTypeKeyWords.add("Sensor".toLowerCase());
-			// --- Filter for cables and sensors --------------------
+			List<String> allowedTypeKeyWords = TransformerTotalCurrentCalculation.getNeighbourComponentTypes();
+			// --- Filter for relevant neighbor components ----------
 			for (NetworkComponent lvNetComp : lvNeighbours) {
 				for (String allowedTypeKeyWord : allowedTypeKeyWords) {
 					if (lvNetComp.getType().toLowerCase().contains(allowedTypeKeyWord)) {
-						// --- Prepare BlackboardRequest ----------------
+						// --- Prepare BlackboardRequest ------------
 						requestSpecifierVector.add(new SingleRequestSpecifier(ElectricityRequestObjective.CurrentLevels, lvNetComp.getId()));
 						break;
 					}
