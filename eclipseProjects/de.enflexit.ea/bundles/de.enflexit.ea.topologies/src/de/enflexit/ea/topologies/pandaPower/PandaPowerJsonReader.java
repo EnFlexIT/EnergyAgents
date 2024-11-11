@@ -22,6 +22,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 
 import de.enflexit.common.csv.CsvDataController;
+import energy.helper.NumberHelper;
 
 /**
  * The Class PandaPowerJsonReader.
@@ -414,7 +415,7 @@ public class PandaPowerJsonReader {
 				} else if (colClass == Long.class) {
 					cellValue = jsCellValue.getAsLong();
 				} else if (colClass == Double.class) {
-					cellValue = jsCellValue.getAsDouble();
+					cellValue = NumberHelper.round(jsCellValue.getAsDouble(), 6);
 				}
 			}
 			

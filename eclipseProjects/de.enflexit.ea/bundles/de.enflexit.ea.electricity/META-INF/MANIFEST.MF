@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Energy Agent - Electricity Base Bundle
 Bundle-SymbolicName: de.enflexit.ea.electricity
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.1.qualifier
 Automatic-Module-Name: net.agenthygrid.elictricity
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.ea.electricity,
@@ -14,7 +14,6 @@ Export-Package: de.enflexit.ea.electricity,
  de.enflexit.ea.electricity.classLoadService,
  de.enflexit.ea.electricity.estimation,
  de.enflexit.ea.electricity.scheduleImport,
- de.enflexit.ea.electricity.topologyImport,
  de.enflexit.ea.electricity.transformer,
  de.enflexit.ea.electricity.validation
 Require-Bundle: de.enflexit.common,
@@ -36,11 +35,9 @@ Service-Component:
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/TriPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/TriPhaseElectricalNetworkScheduleImportService.xml,
- OSGI-INF/TriPhaseElectricalNetworkTopologyImportService.xml,
  OSGI-INF/TriPhaseElectricalSubNetworkConfigurationService.xml,
  OSGI-INF/UniPhaseElectricalNetworkGraphElementLayoutService.xml,
  OSGI-INF/UniPhaseElectricalNetworkScheduleImportService.xml,
- OSGI-INF/UniPhaseElectricalNetworkTopologyImportService.xml,
  OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT

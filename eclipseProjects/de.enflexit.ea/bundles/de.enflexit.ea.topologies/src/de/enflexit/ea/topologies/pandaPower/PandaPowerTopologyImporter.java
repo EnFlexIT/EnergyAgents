@@ -1,8 +1,8 @@
 package de.enflexit.ea.topologies.pandaPower;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,6 +48,9 @@ import de.enflexit.ea.core.dataModel.ontology.TriPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseCableState;
 import de.enflexit.ea.core.dataModel.ontology.UniPhaseElectricalNodeState;
 import de.enflexit.ea.core.dataModel.ontology.UnitValue;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TapSide;
+import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import de.enflexit.ea.topologies.BundleHelper;
 import de.enflexit.ea.topologies.pandaPower.PandaPowerNamingMap.NamingMap;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
@@ -56,11 +59,21 @@ import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
+import energy.OptionModelController;
 import energy.helper.NumberHelper;
+import energy.helper.TechnicalSystemStateHelper;
+import energy.optionModel.FixedInteger;
+import energy.optionModel.FixedVariable;
+import energy.optionModel.SystemVariableDefinition;
+import energy.optionModel.SystemVariableDefinitionStaticModel;
+import energy.optionModel.TechnicalSystem;
+import energy.optionModel.TechnicalSystemState;
 import energy.optionModel.TimeRange;
+import energy.optionModel.gui.sysVariables.AbstractStaticModel;
 import energy.schedule.loading.ScheduleTimeRange;
 import energy.schedule.loading.ScheduleTimeRange.RangeType;
 import energy.schedule.loading.ScheduleTimeRangeController;
+import energy.validation.AbstractTechnicalSystemChecker;
 
 /**
  * The Class SimBench_CsvTopologyImporter.
@@ -104,8 +117,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private String layoutIdGeoCoordinateUTM;
 
 	private MapSettings mapSettings;
-	private Vector<Point2D> defaultPositionVector;
-	
 	private boolean isDoAutoLayout;
 	
 	private StorageDestination storageDestination = StorageDestination.PandaPowerService;
@@ -234,9 +245,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		this.layoutIdGeoCoordinateUTM = null;
 		
 		this.mapSettings = null;
-		
-		this.defaultPositionVector = null;
-		
 		this.persistenceService = null;
 		
 		this.isDoAutoLayout = false;
@@ -451,6 +459,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
 
 			// --- Rename NetworkComponent and GraphNode --------------------------------
+			lineName = this.getUniqueNetworkComponentID(lineName, lineIndex);
 			newCompNM.renameNetworkComponent(newNetComp.getId(), lineName);
 			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
 			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
@@ -579,6 +588,7 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode newGraphNodeTo = (GraphNode) graphNodes[1];
 
 			// --- Rename NetworkComponent and GraphNode --------------------------------
+			switchName = this.getUniqueNetworkComponentID(switchName, switchIndex);
 			newCompNM.renameNetworkComponent(newNetComp.getId(), switchName);
 			newCompNM.renameGraphNode(newGraphNodeFrom.getId(), this.getLocalGraphNodeName(nodeFrom));
 			newCompNM.renameGraphNode(newGraphNodeTo.getId(), this.getLocalGraphNodeName(nodeTo));
@@ -748,8 +758,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			Application.setStatusBarMessage(this.getClass().getSimpleName() + ": Import node '" + nodeName  + "' - (" + (i+1) +  "/" + nodeDataVector.size() + ")");
 
 			// --- Get the corresponding data row of the coordinates --------------------
-			Double coordX = null;
-			Double coordY = null;
+			Double coordX_Lati = null;
+			Double coordY_Long = null;
 			if (ciCoords!=-1 || ciGeoData!=-1) {
 				if (geoData!=null && geoData.isBlank()==false) {
 					System.err.println("[" + this.getClass().getSimpleName() + "] ToDo: PandaPower geo data nedds to be integrated!");
@@ -762,8 +772,8 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				// --- Try getting info from table 'bus_geodata' ------------------------
 				HashMap<String, Object> busGeodataRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_BusGeodata, PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_Index), busIndex.toString());
 				if (busGeodataRowHashMap!=null) {
-					coordX = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_x)).toString());
-					coordY = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_y)).toString());
+					coordX_Lati = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_x)).toString());
+					coordY_Long = BundleHelper.parseDouble(busGeodataRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.BusGeoData_y)).toString());
 				} else {
 					if (this.isDoAutoLayout==false) {
 						System.err.println("[" + this.getClass().getSimpleName() + "] No coordinates are provided for bus elements, try auto layout!");
@@ -786,7 +796,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			boolean isCreatingTransformer = false;
 			Integer transformerIndex = this.getTransformerIndex(busIndex);
 			if (transformerIndex!=null) {
+				// ----------------------------------------------------------------------
 				// --- Create transformer ? ---------------------------------------------
+				// ----------------------------------------------------------------------
 				HashMap<String, Object> transformerRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Trafo, PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Index).toString(), transformerIndex.toString());
 				String transfromerName = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_Name));
 				Integer nodeLV = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_LV_Bus));
@@ -800,8 +812,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 					}
 					newNetCompID = transfromerName;
 					isCreatingTransformer = true;
-					// --- Add the storage settings to the component --------------------
-					netCompStorageSettings = this.getTransformerStorageSettings();
+					// --- Get data model and the storage settings for transformer ------
+					netCompDataModel = this.getTransformerDataModel(transformerRowHashMap);
+					netCompStorageSettings = this.getTransformerStorageSettings(transfromerName);
 					
 				} else {
 					// --- Do not create this component again ---------------------------
@@ -809,7 +822,9 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 				}
 				
 			} else {
+				// ----------------------------------------------------------------------
 				// --- Prosumer or CableCabinet ? ---------------------------------------
+				// ----------------------------------------------------------------------
 				HashMap<String, Object> loadRowHashMap = this.getDataRowHashMap(PandaPowerFileStore.PANDA_Load, PandaPowerNamingMap.getColumnName(ColumnName.Load_Bus), busIndex.toString());
 				if (loadRowHashMap==null) {
 					// --- Create CableCabinet ------------------------------------------
@@ -879,14 +894,13 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			GraphNode graphNode = (GraphNode) newCompNM.getGraphElement(graphNodeName);
 
 			// --- Rename the elements --------------------------------------------------
+			newNetCompID = this.getUniqueNetworkComponentID(newNetCompID, busIndex);
 			newCompNM.renameNetworkComponent(newComp.getId(), newNetCompID);
 			newCompNM.renameGraphNode(graphNode.getId(), busIndex.toString());
 			
 			// --- Define the GraphNode positions ---------------------------------------
-			if (coordX!=null & coordY!=null) {
-				double wgs84Long = BundleHelper.parseDouble(coordX);
-				double wgs84Lat  = BundleHelper.parseDouble(coordY);
-				this.setGraphNodeCoordinates(graphNode, wgs84Lat, wgs84Long);
+			if (coordX_Lati!=null & coordY_Long!=null) {
+				this.setGraphNodeCoordinates(graphNode, coordX_Lati, coordY_Long);
 			}
 			
 			// --------------------------------------------------------------------------
@@ -943,8 +957,6 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 			
 		} // end for
 		
-		// --- Adjust the node positions for the default layout ------------------------- 
-		this.adjustDefaultPositions();
 	}
 	/**
 	 * Enables to add additional node properties in sub classes.
@@ -995,15 +1007,149 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the transformer data model.
+	 *
+	 * @param transformerRowHashMap the transformer row HashMap from the PP-Table
+	 * @return the transformer data model
+	 */
+	private TechnicalSystem getTransformerDataModel(HashMap<String, Object> transformerRowHashMap) {
+		
+		// --- Load the base transformer model to the OptionModelController -------------
+		OptionModelController omc = new OptionModelController();
+		omc.loadTechnicalSystemFromBundle("de.enflexit.ea.electricity.transformer", "EOM-INF/TransformerBaseModel.xml", null, true);
+		
+		// --- Get SystemVariableDefinition of 'StaticParameters' -----------------------
+		SystemVariableDefinition sysVarDef = omc.getSystemVariableDefinition("StaticParameters");
+		if (sysVarDef!=null && sysVarDef instanceof SystemVariableDefinitionStaticModel) {
+			
+			Double sn_mva = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_sn_mva)); 	// e.g. 5 MVA
+			
+			Double vn_hv_kv = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_hv_kv)); // e.g. 20 kV
+			Double vn_lv_kv = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vn_lv_kv)); // e.g. 0.4 kV
+			Boolean vn_hv_kvTriPhase = PandaPowerFileStore.isTriPhaseVoltageLevel(vn_hv_kv * 1000);
+			Boolean vn_lv_kvTriPhase = PandaPowerFileStore.isTriPhaseVoltageLevel(vn_lv_kv * 1000);
+			
+			Double vk_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vk_percent));
+			Double vkr_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_vkr_percent));
+			Double pfe_kw = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_pfe_kw));
+			Double i0_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_i0_percent));
+			Double shift_degree = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_shift_degree));
+			
+			String tapSite = (String) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_side));
+			Integer tap_neutral = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_neutral));
+			Integer tap_min = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_min));
+			Integer tap_max = (Integer) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_max));
+			Integer tap_pos = BundleHelper.parseInteger(transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_pos)));
+			
+			Double tap_step_percent = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_step_percent));
+			Double tap_step_degree = (Double) transformerRowHashMap.get(PandaPowerNamingMap.getColumnName(ColumnName.Trafo_tap_step_degree));
+
+			
+			// --- Get the TransformerDataModel for configuration -----------------------
+			SystemVariableDefinitionStaticModel sysVarDefStaticModel = (SystemVariableDefinitionStaticModel) sysVarDef;
+			TransformerDataModel tdm = (TransformerDataModel) omc.getStaticModelInstance(sysVarDefStaticModel);
+			
+			// --- Base configuration ---------------------------------------------------
+			tdm.setRatedPower_sR(sn_mva);
+			tdm.setUpperVoltage_vmHV(vn_hv_kv);
+			tdm.setUpperVoltage_ThriPhase(vn_hv_kvTriPhase);
+			tdm.setLowerVoltage_vmLV(vn_lv_kv);
+			tdm.setLowerVoltage_ThriPhase(vn_lv_kvTriPhase);
+			
+			tdm.setSlackNodeVoltageLevel(vn_lv_kv * 1000);
+			
+			// --- From PandaPower-Site:  vkr_percent = P_cu / S_trafo * 100 ------------
+			double pCu = vkr_percent / 100 * sn_mva;
+			
+			tdm.setPhaseShift_va0(shift_degree);
+			tdm.setShortCircuitImpedance_vmImp(vk_percent);
+			tdm.setCopperLosses_pCu(pCu); 
+			tdm.setIronLosses_pFe(pfe_kw);
+			tdm.setIdleImpedance_iNoLoad(i0_percent);
+			
+			// --- Tap settings ---------------------------------------------------------
+			if (tapSite==null) {
+				tdm.setTapable(false);
+				tdm.setTapSide(TapSide.HighVoltageSide);
+				tdm.setTapMinimum(0);
+				tdm.setTapMaximum(0);
+				tdm.setTapNeutral(0);
+				tdm.setVoltageDeltaPerTap_dVm(0);
+				tdm.setPhaseShiftPerTap_dVa(0);
+				
+			} else {
+				
+				tdm.setTapable(true);
+				switch (tapSite) {
+				case "hv":
+					tdm.setTapSide(TapSide.HighVoltageSide);
+					break;
+				case "lv":
+					tdm.setTapSide(TapSide.LowVoltageSide);
+					break;
+				}
+				
+				tdm.setTapMinimum(tap_min);
+				tdm.setTapMaximum(tap_max);
+				tdm.setTapNeutral(tap_neutral);
+				
+				tdm.setVoltageDeltaPerTap_dVm(tap_step_percent);
+				tdm.setPhaseShiftPerTap_dVa(tap_step_degree);
+				
+			}
+			
+			// --- Save the model settings to TechnicalSystem ---------------------------
+			omc.setStaticModelInstance(sysVarDefStaticModel, tdm);
+			
+			// --- Execute TechnicalSystemChecker for IO-List adjustments ---------------
+			AbstractTechnicalSystemChecker transformerChecker = omc.getIndividualTechnicalSystemChecker();
+			if (transformerChecker!=null) {
+				transformerChecker.setOptionModelController(omc);
+				AbstractStaticModel asm = omc.getAbstractStaticModel(sysVarDefStaticModel);
+				transformerChecker.afterStaticModelUpdate(sysVarDefStaticModel, asm);
+			}
+			
+			// --- Further model adjustments --------------------------------------------
+			if (tapSite!=null) {
+				// --- Set initial tap position -----------------------------------------				
+				if (omc.getEvaluationStateList().size()>0 && omc.getEvaluationStateList().get(0) instanceof TechnicalSystemState) {
+					TechnicalSystemState tss = (TechnicalSystemState) omc.getEvaluationStateList().get(0);
+					FixedVariable fv = TechnicalSystemStateHelper.getFixedVariable(tss.getIOlist(), TransformerSystemVariable.tapPos.name());
+					if (fv!=null && fv instanceof FixedInteger) {
+						FixedInteger fvTapPos = (FixedInteger) fv;
+						fvTapPos.setValue(tap_pos);
+					}
+				}
+			}
+			
+		}
+		return omc.getTechnicalSystem();
+	}
+	
 	/**
 	 * Returns the transformer storage settings.
+	 *
+	 * @param transformerName the transformer name
 	 * @return the transformer storage settings
 	 */
-	private TreeMap<String, String> getTransformerStorageSettings() {
+	private TreeMap<String, String> getTransformerStorageSettings(String transformerName) {
+		
+		String emvPath = Application.getProjectFocused().getEnvironmentController().getEnvFolderPath();
+		String setupName = Application.getProjectFocused().getSimulationSetupCurrent();
+		String fileName = "EomModel_" + transformerName.replace(" ", "_") + ".xml";
+		String projectPath = Application.getProjectFocused().getProjectFolderFullPath();
+		
+		Path eomFilePath = new File(emvPath).toPath().resolve(setupName).resolve(fileName);
+		eomFilePath = new File(projectPath).toPath().relativize(eomFilePath);
+		
+		String relativePath = "/" + eomFilePath.toString().replace(File.separator, "/");
+		
 		TreeMap<String, String> tSettings = new TreeMap<>();
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_MODEL_TYPE, EomModelType.TechnicalSystem.toString());
 		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_STORAGE_LOCATION, EomStorageLocation.File.toString());
-		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, "/eomModels/EomModel_Transformer.xml");
+		tSettings.put(EomDataModelStorageHandler.EOM_SETTING_EOM_FILE_LOCATION, relativePath);
 		return tSettings; 
 	}
 	/**
@@ -1063,6 +1209,23 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 		siteModel[2] = new TimeSeriesChart();
 		
 		return siteModel;
+	}
+	
+	/**
+	 * Checks if a target NetworkComponent ID is already used. If, the ID will be combined with the index number.
+	 *
+	 * @param targetID the target ID
+	 * @param indexNo the index no
+	 * @return the unique network component ID
+	 */
+	private String getUniqueNetworkComponentID(String targetID, int indexNo) {
+		
+		// --- Check if ID is already used ----------------
+		NetworkComponent netComp = this.getNetworkModel().getNetworkComponent(targetID);
+		if (netComp!=null) {
+			return targetID + "_" + indexNo;
+		}
+		return targetID;
 	}
 	
 	/**
@@ -1127,88 +1290,25 @@ public class PandaPowerTopologyImporter extends AbstractNetworkModelCsvImporter 
 	private void setGraphNodeCoordinates(GraphNode graphNode, double latNorthSouth, double longEastWest) {
 		
 		// --- Set GraphNode position according to node -------------
-		Point2D pointGeoWGS84 = new Point2D.Double(latNorthSouth, longEastWest);
+		Point2D coordDefaultLayout = new Point2D.Double(latNorthSouth, longEastWest);
 
 		// --- Create WGS coordinate ---------------------------------
-		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(pointGeoWGS84.getX(), pointGeoWGS84.getY());
+		WGS84LatLngCoordinate coordWGS84 = new WGS84LatLngCoordinate(latNorthSouth, longEastWest);
 		
 		// --- Calculate to UTM coordinate --------------------------
-		Point2D pointUTM = null;
+		UTMCoordinate coordUTM = null;
 		try {
-			UTMCoordinate coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
-			pointUTM = new Point2D.Double(coordUTM.getEasting(), coordUTM.getNorthing());
-			
+			coordUTM = coordWGS84.getUTMCoordinate(this.getMapSettings().getUTMLongitudeZone(), this.getMapSettings().getUTMLatitudeZone());
 		} catch (Exception ex) {
-			pointUTM = new Point2D.Double(latNorthSouth, longEastWest);
 		}
 		
 		// --- Set default layout to Default ------------------------
-		Point2D pointDefault = this.getDefaultLayoutPosition(pointGeoWGS84);
-		graphNode.setPosition(pointDefault);
-		this.getDefaultPositionVector().add(pointDefault);
+		graphNode.setPosition(coordDefaultLayout);
 		
-		// --- Set positions to alternative layouts -----------------
-		graphNode.getPositionTreeMap().put(this.getLayoutIdDefault(), pointDefault);
-		graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateWGS84(), pointGeoWGS84);
-		graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateUTM(), pointUTM);
-	}
-	/**
-	 * Return the default layout position, derived from the WGS84 coordinates.
-	 *
-	 * @param wgs84Point the WGS84 point
-	 * @return the default layout position
-	 */
-	private Point2D getDefaultLayoutPosition(Point2D wgs84Point) {
-		double xPos = NumberHelper.round(wgs84Point.getY() * 1.0, 3);
-		double yPos = NumberHelper.round(wgs84Point.getX() * 1.0, 3);
-		return new Point2D.Double(xPos, yPos);
-	}
-	/**
-	 * Reminder for the default positions and a later correction.
-	 * @return the default position vector
-	 */
-	private Vector<Point2D> getDefaultPositionVector() {
-		if (defaultPositionVector==null) {
-			defaultPositionVector = new Vector<>();
-		}
-		return defaultPositionVector;
-	}
-	/**
-	 * Adjusts the default node positions.
-	 */
-	private void adjustDefaultPositions() {
-
-		if (this.getDefaultPositionVector().size()==0) return;
-		
-		// --- Get the spreading rectangle of the default positions -----------
-		Point2D initialPoint = this.getDefaultPositionVector().get(0);
-		Rectangle2D spreadRectangle = new Rectangle2D.Double(initialPoint.getX(), initialPoint.getY(), 0, 0);
-		for (int i = 0; i < this.getDefaultPositionVector().size(); i++) {
-			Point2D singlePos = this.getDefaultPositionVector().get(i);
-			spreadRectangle.add(singlePos);
-		}
-		
-		// --- Calculate movement ---------------------------------------------
-		double moveX = 0;
-		double moveY = 0;
-		
-		if (spreadRectangle.getX()>=0) {
-			moveX = -spreadRectangle.getX(); 
-		} else {
-			moveX = spreadRectangle.getX();
-		}
-		
-		if (spreadRectangle.getY()>=0) {
-			moveY = spreadRectangle.getY();
-		} else {
-			moveY = -spreadRectangle.getY();
-		}
-
-		// --- Move the default positions -------------------------------------
-		for (int i = 0; i < this.getDefaultPositionVector().size(); i++) {
-			Point2D singlePos = this.getDefaultPositionVector().get(i);
-			singlePos.setLocation(singlePos.getX() + moveX, singlePos.getY() + moveY);
-		}
+		// --- Set positions to position tree map -------------------
+		graphNode.getPositionTreeMap().put(this.getLayoutIdDefault(), coordDefaultLayout);
+		if (coordWGS84!=null) graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateWGS84(), coordWGS84);
+		if (coordUTM!=null)   graphNode.getPositionTreeMap().put(this.getLayoutIdGeoCoordinateUTM(), coordUTM);
 		
 	}
 	

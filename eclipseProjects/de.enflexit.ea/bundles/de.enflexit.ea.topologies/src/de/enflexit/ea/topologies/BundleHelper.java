@@ -2,6 +2,8 @@ package de.enflexit.ea.topologies;
 
 import javax.swing.ImageIcon;
 
+import energy.helper.NumberHelper;
+
 
 /**
  * The Class BundleHelper provides some static help methods to be used within the bundle.
@@ -38,6 +40,47 @@ public class BundleHelper {
 	}
 	
 	
+	/**
+	 * Parses the specified string to a Integer value .
+	 *
+	 * @param integerObject the double object
+	 * @return the double value or null
+	 */
+	public static Integer parseInteger(Object integerObject) {
+		if (integerObject==null) {
+			return null;
+		} else if (integerObject instanceof Integer) {
+			return (Integer) integerObject;
+		} else if (integerObject instanceof Double) {
+			return ((Double) integerObject).intValue();
+		} else if (integerObject instanceof String) {
+			return BundleHelper.parseInteger((String) integerObject);
+		}
+		return null;
+	}
+	/**
+	 * Parses the specified string to a Integer value .
+	 *
+	 * @param integerString the integer string
+	 * @return the float value or null
+	 */
+	public static Integer parseInteger(String integerString) {
+		Integer fValue = null;
+		if (integerString!=null && integerString.isEmpty()==false) {
+			// --- Replace decimal separator ? ----------------------
+			if (integerString.contains(",")==true) {
+				integerString = integerString.replace(",", ".");
+			}
+			// --- Try to parse the double string -------------------
+			try {
+				fValue = Integer.parseInt(integerString);
+			} catch (Exception ex) {
+				// --- No exception will be thrown ------------------
+			}
+		}
+		return fValue;
+	}
+
 	
 	/**
 	 * Parses the specified string to a double value .
@@ -68,9 +111,18 @@ public class BundleHelper {
 			if (doubleString.contains(",")==true) {
 				doubleString = doubleString.replace(",", ".");
 			}
+			// --- Determine round precision ------------------------
+			Integer roundPrecision = null;
+			if (doubleString.contains(".")==true) {
+				roundPrecision = doubleString.length() - doubleString.indexOf("."); 
+			}
+			
 			// --- Try to parse the double string -------------------
 			try {
 				dValue = Double.parseDouble(doubleString);
+				if (roundPrecision!=null) {
+					dValue = NumberHelper.round(dValue, roundPrecision);	
+				}
 			} catch (Exception ex) {
 				// --- No exception will be thrown ------------------
 			}
@@ -108,9 +160,17 @@ public class BundleHelper {
 			if (floatString.contains(",")==true) {
 				floatString = floatString.replace(",", ".");
 			}
+			// --- Determine round precision ------------------------
+			Integer roundPrecision = null;
+			if (floatString.contains(".")==true) {
+				roundPrecision = floatString.length() - floatString.indexOf("."); 
+			}
 			// --- Try to parse the double string -------------------
 			try {
 				fValue = Float.parseFloat(floatString);
+				if (roundPrecision!=null) {
+					fValue = (float) NumberHelper.round(fValue, roundPrecision);	
+				}
 			} catch (Exception ex) {
 				// --- No exception will be thrown ------------------
 			}

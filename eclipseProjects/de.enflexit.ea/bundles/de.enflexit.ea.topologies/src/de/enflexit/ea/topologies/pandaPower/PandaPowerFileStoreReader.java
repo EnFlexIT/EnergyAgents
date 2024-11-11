@@ -88,7 +88,7 @@ public class PandaPowerFileStoreReader {
 		Schedule schedule = null;
 		if (pLoadFactor!=null && qLoadFactor!=null) {
 			schedule = this.getScheduleOfProfile(loadName, pLoadFactor, qLoadFactor, profilePV, pLoadFactorPV, qLoadFactorPV, scheduleTimeRange, isTriPhaseConfig);
-			sl.getSchedules().add(schedule);
+			if (schedule!=null) sl.getSchedules().add(schedule);
 		}
 		return sl;
 	}
@@ -123,7 +123,7 @@ public class PandaPowerFileStoreReader {
 		// --- Create ScheduleList ------------------------
 		Schedule schedule = this.getScheduleOfProfile(profile, pLoadFactor, qLoadFactor, profilePV, pLoadFactorPV, qLoadFactorPV, scheduleTimeRange, isTriPhaseConfig);
 		ScheduleList sl = this.createScheduleList("Profile " + profile, null, voltageLevel);
-		sl.getSchedules().add(schedule);
+		if (schedule!=null) sl.getSchedules().add(schedule);
 		return sl;
 	}
 

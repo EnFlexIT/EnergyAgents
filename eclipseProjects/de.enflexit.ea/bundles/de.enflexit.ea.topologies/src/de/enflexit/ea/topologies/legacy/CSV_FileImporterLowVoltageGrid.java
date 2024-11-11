@@ -1,4 +1,4 @@
-package de.enflexit.ea.electricity.topologyImport;
+package de.enflexit.ea.topologies.legacy;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -524,8 +524,8 @@ public class CSV_FileImporterLowVoltageGrid extends AbstractNetworkModelCsvImpor
 	public List<FileFilter> getFileFilters() {
 		if (fileFilters==null) {
 			fileFilters = new ArrayList<FileFilter>();
-			fileFilters.add(this.createFileFilter(".zip", "SAG Electrical Network (zip File)"));
-			fileFilters.add(this.createFileFilter(".csv", "SAG Electrical Network (csv File)"));
+			fileFilters.add(this.createFileFilter(".zip", "Low Voltage Network (zip File)"));
+			fileFilters.add(this.createFileFilter(".csv", "Low Voltage Network (csv Files)"));
 		}
 		return fileFilters;
 	}
