@@ -42,7 +42,6 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.NetworkComponentTablePanel;
 
-import agentgui.core.application.Language;
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.project.Project;
@@ -59,6 +58,7 @@ import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
+import de.enflexit.language.Language;
 
 /**
  * AgentDeploymentDialog represents a Dialog that is used to enter necessary informations for the 

@@ -12,6 +12,7 @@ Export-Package: de.enflexit.ea.electricity.transformer,
  de.enflexit.ea.electricity.transformer.eomDataModel,
  de.enflexit.ea.electricity.transformer.strategies,
  de.enflexit.ea.electricity.transformer.validation
+Import-Package: de.enflexit.language
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.jade.tools,

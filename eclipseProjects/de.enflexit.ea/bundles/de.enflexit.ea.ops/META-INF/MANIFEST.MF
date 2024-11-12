@@ -10,8 +10,7 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/opsValidationService.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: de.enflexit.api,
- de.enflexit.common,
+Require-Bundle: de.enflexit.common,
  org.agentgui.core,
  org.agentgui.lib.jade,
  de.enflexit.eom.core,
@@ -35,3 +34,4 @@ Export-Package: de.enflexit.ea.core.ops,
  de.enflexit.ea.core.ops.liveMonitoring,
  de.enflexit.ea.core.ops.plugin,
  de.enflexit.ea.core.ops.validation
+Import-Package: de.enflexit.language

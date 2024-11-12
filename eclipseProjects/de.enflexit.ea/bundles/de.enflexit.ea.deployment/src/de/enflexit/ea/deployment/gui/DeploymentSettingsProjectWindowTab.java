@@ -14,11 +14,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Language;
 import agentgui.core.project.Project;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
+import de.enflexit.language.Language;
 
 /**
  * This panel contains the GUI components for configuring the default deployment settings. 

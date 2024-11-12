@@ -14,9 +14,9 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.visualisation.ACLMessageForwardingListener;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
-import agentgui.core.application.Language;
 import de.enflexit.ea.core.awbIntegration.ImageHelper;
 import de.enflexit.eom.awb.adapter.EomAdapter;
+import de.enflexit.language.Language;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;

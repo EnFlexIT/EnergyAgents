@@ -1,22 +1,11 @@
 package de.enflexit.ea.core.ops.fieldDataRequest.gui;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
-import agentgui.core.application.Language;
-import de.enflexit.common.swing.WindowSizeAndPostionController;
-import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
-import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
-import de.enflexit.eom.database.gui.ScheduleListSelectionRangePanel;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +13,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
+import de.enflexit.eom.database.gui.ScheduleListSelectionRangePanel;
+import de.enflexit.language.Language;
 
 /**
  * A dialog for the configuration of field data requests to deployed agents.

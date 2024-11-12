@@ -18,7 +18,6 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.ProjectExportSettings;
@@ -28,6 +27,7 @@ import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
 import de.enflexit.ea.deployment.gui.AgentDeploymentDialog;
+import de.enflexit.language.Language;
 
 /**
  * This class is responsible for managing the deployment of energy agents, i.e. collecting 

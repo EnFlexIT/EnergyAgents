@@ -29,7 +29,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
@@ -54,6 +53,7 @@ import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.StateTransmission;
 import de.enflexit.ea.core.dataModel.graphLayout.AbstractGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.graphLayout.GraphElementLayoutService;
+import de.enflexit.language.Language;
 import energy.optionModel.ScheduleLengthRestriction;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration;
 import energy.schedule.ScheduleTransformerKeyValueConfiguration.DeltaMechanism;

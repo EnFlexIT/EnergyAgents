@@ -30,7 +30,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.config.DeviceAgentDescription;
@@ -59,6 +58,7 @@ import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;
+import de.enflexit.language.Language;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
 
 /**

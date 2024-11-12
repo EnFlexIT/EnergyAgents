@@ -10,9 +10,9 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import agentgui.core.application.Language;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
+import de.enflexit.language.Language;
 
 /**
  * A {@link JComboBox}-based {@link TableCellEditor} for selecting an {@link AgentOperatingMode}

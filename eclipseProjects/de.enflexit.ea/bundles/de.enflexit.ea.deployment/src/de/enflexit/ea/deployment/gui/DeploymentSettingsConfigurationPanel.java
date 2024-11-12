@@ -1,38 +1,37 @@
 package de.enflexit.ea.deployment.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.event.DocumentListener;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-
-import java.awt.GridBagLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Vector;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
 
-import agentgui.core.application.Language;
-import agentgui.core.config.InstallationPackageFinder;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.event.DocumentListener;
+
 import agentgui.core.config.GlobalInfo.MtpProtocol;
+import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
-
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
+import de.enflexit.language.Language;
 
 /**
  * This panel can be used to configure the target jade platform settings

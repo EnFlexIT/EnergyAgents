@@ -11,8 +11,7 @@ Export-Package: de.enflexit.ea.deployment,
  de.enflexit.ea.deployment.plugin,
  de.enflexit.ea.deployment.plugin.gui,
  de.enflexit.ea.deployment.validation
-Require-Bundle: de.enflexit.api,
- de.enflexit.common,
+Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.db.hibernate,
  org.agentgui.core,
@@ -23,7 +22,8 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.equinox.preferences,
  de.enflexit.ea.core.validation,
  de.enflexit.ea.core.awbIntegration
-Import-Package: org.eclipse.core.runtime
+Import-Package: de.enflexit.language,
+ org.eclipse.core.runtime
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/deploymentValidationService.xml
