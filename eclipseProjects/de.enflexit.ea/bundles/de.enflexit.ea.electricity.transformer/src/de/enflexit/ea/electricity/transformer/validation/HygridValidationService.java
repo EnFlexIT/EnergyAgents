@@ -19,6 +19,7 @@ public class HygridValidationService implements HyGridValidationService {
 		// --- Provide the list of individual checks for this bundle components
 		ArrayList<HyGridValidationAdapter> checkList = new ArrayList<>();
 		checkList.add(new ValidateTransformer());
+		checkList.add(new NeighborComponentTypesValidator());
 		return checkList;
 	}
 
