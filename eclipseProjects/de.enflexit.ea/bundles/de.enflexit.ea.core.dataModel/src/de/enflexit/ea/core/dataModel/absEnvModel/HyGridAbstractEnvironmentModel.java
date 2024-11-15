@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
-import agentgui.core.application.Application;
+import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
@@ -562,8 +562,8 @@ public class HyGridAbstractEnvironmentModel extends AbstractEnvironmentModel {
 		long maxDurationMillis = UnitConverter.convertDurationToMilliseconds(newScheduleLengthRestriction.getDuration());
 		tsLengthRestriction.setMaxDuration(maxDurationMillis);
 		tsLengthRestriction.setMaxNumberOfStates(newScheduleLengthRestriction.getMaxNumberOfSystemStates());
-		
-		Application.getGlobalInfo().setTimeSeriesLengthRestriction(tsLengthRestriction);
+
+		StaticTimeSeriesChartConfiguration.setTimeSeriesLengthRestriction(tsLengthRestriction);
 	}
 	/**
 	 * Returns the schedule length restriction.

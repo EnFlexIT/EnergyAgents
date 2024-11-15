@@ -41,4 +41,6 @@ Service-Component:
  OSGI-INF/UniPhaseElectricalSubNetworkConfigurationService.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
-Import-Package: de.enflexit.ea.core.validation
+Import-Package: agentgui.core.charts.timeseriesChart,
+ agentgui.ontology,
+ de.enflexit.ea.core.validation

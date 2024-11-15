@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.GlobalRuntimeValues;
 
 /**
  * The Class AbstractStateResult serves as .
@@ -29,7 +30,7 @@ public abstract class AbstractStateResult implements Serializable {
 	public static DateTimeFormatter getDateTimeFormatter() {
 		if (dtf==null) {
 			// --- Requires the format '2020-05-19 05:17:15.982' ---- 
-			dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(GlobalInfo.getCurrentZoneId());
+			dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(GlobalRuntimeValues.getZoneId());
 		}
 		return dtf;
 	}

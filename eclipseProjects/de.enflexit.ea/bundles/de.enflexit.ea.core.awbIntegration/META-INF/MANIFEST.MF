@@ -25,5 +25,7 @@ Require-Bundle: de.enflexit.common,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
-Import-Package: de.enflexit.language,
+Import-Package: agentgui.core.charts.timeseriesChart,
+ agentgui.ontology,
+ de.enflexit.language,
  edu.uci.ics.jung.graph

@@ -12,6 +12,7 @@ Export-Package: de.enflexit.ea.core.simulation.classFilter,
  de.enflexit.ea.core.simulation.decisionControl,
  de.enflexit.ea.core.simulation.manager,
  de.enflexit.ea.core.simulation.validation
+Import-Package: agentgui.ontology
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.eom.awbAdapter,

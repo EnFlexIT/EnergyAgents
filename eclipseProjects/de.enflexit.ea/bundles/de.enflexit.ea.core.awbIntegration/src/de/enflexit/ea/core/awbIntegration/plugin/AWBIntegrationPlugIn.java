@@ -16,6 +16,7 @@ import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDesc
 import org.hibernate.cfg.Configuration;
 
 import agentgui.core.application.Application;
+import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.plugin.PlugIn;
@@ -273,7 +274,7 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		TimeSeriesLengthRestriction timeSeriesLengthRestriction = new TimeSeriesLengthRestriction();
 		timeSeriesLengthRestriction.setMaxNumberOfStates(scheduleLengthRestriction.getMaxNumberOfSystemStates());
 		timeSeriesLengthRestriction.setMaxDuration(UnitConverter.convertDurationToMilliseconds(scheduleLengthRestriction.getDuration()));
-		Application.getGlobalInfo().setTimeSeriesLengthRestriction(timeSeriesLengthRestriction);
+		StaticTimeSeriesChartConfiguration.setTimeSeriesLengthRestriction(timeSeriesLengthRestriction);
 		
 		// --- Set the setup extension ------------------------------
 		hygridAbstractEnvironmentModel.setSetupExtension(this.getSetupExtension());

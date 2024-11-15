@@ -17,8 +17,8 @@ import org.awb.env.networkModel.visualisation.notifications.GraphLayoutNotificat
 import org.awb.env.networkModel.visualisation.notifications.UIMessage;
 import org.awb.env.networkModel.visualisation.notifications.UpdateTimeSeries;
 
-import agentgui.core.application.Application;
 import agentgui.core.charts.gui.ChartTab;
+import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartRealTimeWrapper;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
@@ -516,7 +516,7 @@ public abstract class AbstractNetworkModelDisplayUpdater {
 		 */
 		public TimeSeriesChartRealTimeWrapper getTimeSeriesChartRealTimeWrapper() {
 			if (timeSeriesChartRealTimeWrapper==null) {
-				timeSeriesChartRealTimeWrapper = new TimeSeriesChartRealTimeWrapper(getTimeSeriesChart(), Application.getGlobalInfo().getTimeSeriesLengthRestriction());
+				timeSeriesChartRealTimeWrapper = new TimeSeriesChartRealTimeWrapper(getTimeSeriesChart(), StaticTimeSeriesChartConfiguration.getTimeSeriesLengthRestriction());
 			}
 			return timeSeriesChartRealTimeWrapper;
 		}

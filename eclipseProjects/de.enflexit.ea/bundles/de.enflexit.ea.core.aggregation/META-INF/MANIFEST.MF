@@ -14,6 +14,9 @@ Export-Package: de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.aggregation.classLoadService,
  de.enflexit.ea.core.aggregation.fallback,
  de.enflexit.ea.core.aggregation.trafficLight
+Import-Package: agentgui.core.charts.gui,
+ agentgui.core.charts.timeseriesChart,
+ agentgui.ontology
 Require-Bundle: de.enflexit.common,
  org.eclipse.osgi,
  org.agentgui.core,

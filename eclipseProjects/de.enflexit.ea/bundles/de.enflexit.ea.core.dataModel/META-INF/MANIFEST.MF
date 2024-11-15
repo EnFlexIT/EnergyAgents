@@ -31,7 +31,8 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.awb.env.networkModel,
  org.eclipse.osgi
-Import-Package: edu.uci.ics.jung.graph,
+Import-Package: agentgui.core.charts.timeseriesChart,
+ edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.util,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation
