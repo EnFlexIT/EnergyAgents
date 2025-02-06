@@ -1,5 +1,6 @@
 package de.enflexit.ea.deployment.plugin;
 
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
@@ -7,6 +8,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 
 import agentgui.core.application.Application;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import de.enflexit.ea.deployment.gui.DeploymentSettingsProjectWindowTab;
@@ -53,8 +55,8 @@ public class DeploymentPlugIn extends PlugIn{
 	 * Adds a tab for deployment settings configuration to the project window.
 	 */
 	private void addDeploymentSettingsConfigurationTab() {
-		ProjectWindowTab parentPWT = this.project.getProjectEditorWindow().getTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup);
-		ProjectWindowTab pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER, "Deployment-Settings", null, null, new DeploymentSettingsProjectWindowTab(this.project), parentPWT.getTitle());
+		AwbProjectWindowTab parentPWT = this.project.getProjectEditorWindow().getTabForSubPanels(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup);
+		ProjectWindowTab pwt = new ProjectWindowTab(this.project, AwbProjectWindowTab.DISPLAY_4_END_USER, "Deployment-Settings", null, null, new DeploymentSettingsProjectWindowTab(this.project), parentPWT.getTitle());
 		this.addProjectWindowTab(pwt, 1);
 	}
 	
@@ -97,7 +99,7 @@ public class DeploymentPlugIn extends PlugIn{
 	private static DeploymentPlugIn getInstanceForProject(Project project) {
 		DeploymentPlugIn plugIn = null;
 		for (int i = 0; i < project.getPlugInsLoaded().size(); i++) {
-			PlugIn pi = project.getPlugInsLoaded().get(i);
+			AwbPlugIn pi = project.getPlugInsLoaded().get(i);
 			if (pi instanceof DeploymentPlugIn) {
 				plugIn = (DeploymentPlugIn) pi;
 			}

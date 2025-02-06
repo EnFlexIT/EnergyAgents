@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -268,8 +267,6 @@ public class CeaConfigModelPanel extends JPanel implements DocumentListener {
 		if (jComboBoxMtpProtocol == null) {
 			jComboBoxMtpProtocol = new JComboBoxMtpProtocol();
 			jComboBoxMtpProtocol.setFont(new Font("Dialog", Font.PLAIN, 12));
-			DefaultComboBoxModel<MtpProtocol> comboModel = (DefaultComboBoxModel<MtpProtocol>) jComboBoxMtpProtocol.getModel();
-			comboModel.removeElement(MtpProtocol.PROXIEDHTTPS);
 			jComboBoxMtpProtocol.setPreferredSize(new Dimension(80, 26));
 			jComboBoxMtpProtocol.addActionListener(new ActionListener() {
 				@Override

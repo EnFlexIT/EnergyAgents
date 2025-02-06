@@ -137,7 +137,7 @@ public class TransformerCharacteristicsHandler {
 		boolean debugPrintXySeries = false; 
 		
 		// --- Try to get the control characteristics from model ----
-		XYSeries xySeries = this.transformerDataModel.getControlCharacteristicsXySeries();
+		XYSeries<String> xySeries = this.transformerDataModel.getControlCharacteristicsXySeries();
 		if (xySeries!=null && xySeries.getItemCount()>0) {
 			
 			// --- Check each x-range -------------------------------

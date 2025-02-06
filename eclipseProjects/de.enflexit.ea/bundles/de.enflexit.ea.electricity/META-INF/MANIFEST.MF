@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Electricity Base Bundle
 Bundle-SymbolicName: de.enflexit.ea.electricity
 Bundle-Version: 2.0.1.qualifier
 Automatic-Module-Name: net.agenthygrid.elictricity
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.electricity,
  de.enflexit.ea.electricity.aggregation,
  de.enflexit.ea.electricity.aggregation.taskThreading,
@@ -27,8 +27,7 @@ Require-Bundle: de.enflexit.common,
  org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
- de.enflexit.eom.awbAdapter,
- wrapped.org.jfree.jfreechart
+ de.enflexit.eom.awbAdapter
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/electricityValidationService.xml,
@@ -43,4 +42,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.ontology,
- de.enflexit.ea.core.validation
+ de.enflexit.ea.core.validation,
+ org.jfree.data.xy

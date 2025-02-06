@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
@@ -19,6 +20,7 @@ import agentgui.core.application.Application;
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;
@@ -196,8 +198,8 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private void addHyGridTabs() {
 
 		// --- 1. Add configuration panel to the simulation setup ---
-		ProjectWindowTab parentPWT = this.project.getProjectEditorWindow().getTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup);
-		ProjectWindowTab pwt = new ProjectWindowTab(this.project, ProjectWindowTab.DISPLAY_4_END_USER, "HyGrid-Settings", null, null, new HyGridSettingsTab(this.project), parentPWT.getTitle());
+		AwbProjectWindowTab parentPWT = this.project.getProjectEditorWindow().getTabForSubPanels(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup);
+		ProjectWindowTab pwt = new ProjectWindowTab(this.project, AwbProjectWindowTab.DISPLAY_4_END_USER, "HyGrid-Settings", null, null, new HyGridSettingsTab(this.project), parentPWT.getTitle());
 		this.addProjectWindowTab(pwt, 0);
 	}
 	
@@ -531,7 +533,7 @@ public class AWBIntegrationPlugIn extends PlugIn {
 	private static AWBIntegrationPlugIn getInstanceForProject(Project project) {
 		AWBIntegrationPlugIn plugIn = null;
 		for (int i = 0; i < project.getPlugInsLoaded().size(); i++) {
-			PlugIn pi = project.getPlugInsLoaded().get(i);
+			AwbPlugIn pi = project.getPlugInsLoaded().get(i);
 			if (pi instanceof AWBIntegrationPlugIn) {
 				plugIn = (AWBIntegrationPlugIn) pi;
 			}

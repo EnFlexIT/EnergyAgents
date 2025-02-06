@@ -39,9 +39,10 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.NetworkComponentSelectionDialog;
 import org.awb.env.networkModel.controller.ui.NetworkComponentTableService;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
+import org.jfree.chart.swing.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
@@ -93,7 +94,8 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 
 	private ChartPanel JFreeChartChartPanel;
 	private JFreeChart characteristicsChart;
-	private XYSeriesCollection xySeriesCollection; 
+	private XYPlot<String> xyPlot;
+	private XYSeriesCollection<String> xySeriesCollection; 
 	private JTextField jTextFieldControlResidualAllowedDeviation;
 	private JButton jButtonDeleteCharacteristics;
 	private JLabel jLabelControlResidualAllowedDeviation;
@@ -254,7 +256,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 		this.getJCheckBoxControlResiudualLoadBased().setSelected(this.getTransformerDataModel().isControlBasedOnCharacteristics());
 		this.getJTextFieldControlResidualAllowedDeviation().setText(this.getTransformerDataModel().getControlCharacteristicsAllowedDeviation() + "");
 		
-		XYSeries charSeries = this.getTransformerDataModel().getControlCharacteristicsXySeries();
+		XYSeries<String> charSeries = this.getTransformerDataModel().getControlCharacteristicsXySeries();
 		if (charSeries!=null) {
 			this.setXySeries(charSeries);
 			if (this.debugCharacteristicsCalculation==true) {
@@ -302,7 +304,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 		
 		this.getTransformerDataModel().setControlBasedOnCharacteristics(this.getJCheckBoxControlResiudualLoadBased().isSelected());
 		this.getTransformerDataModel().setControlCharacteristicsAllowedDeviation(this.transformerDialog.getDoubleValue(this.getJTextFieldControlResidualAllowedDeviation()));
-		XYSeries charSeries = null;
+		XYSeries<String> charSeries = null;
 		if (this.getXySeriesCollection().getSeriesCount()>0) {
 			charSeries = this.getXySeriesCollection().getSeries(0);
 		}
@@ -477,41 +479,54 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 			
             characteristicsChart = ChartFactory.createXYLineChart(title, xAxisLabel, yAxisLabel, this.getXySeriesCollection());
 			characteristicsChart.setBackgroundPaint(Color.WHITE);
-			characteristicsChart.getPlot().setBackgroundPaint(Color.WHITE);
+			this.getXYPlot().setBackgroundPaint(Color.WHITE);
 
-			characteristicsChart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-			characteristicsChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+			this.getXYPlot().setDomainGridlinePaint(Color.BLACK);
+			this.getXYPlot().setRangeGridlinePaint(Color.BLACK);
 			
 			Font titleAndHeaderFont = new Font("Dialog",Font.BOLD, 12);
 			characteristicsChart.getTitle().setFont(titleAndHeaderFont);
-			characteristicsChart.getXYPlot().getDomainAxis().setLabelFont(titleAndHeaderFont);
-			characteristicsChart.getXYPlot().getRangeAxis().setLabelFont(titleAndHeaderFont);
+			this.getXYPlot().getDomainAxis().setLabelFont(titleAndHeaderFont);
+			this.getXYPlot().getRangeAxis().setLabelFont(titleAndHeaderFont);
 			
 			Font axisFont = new Font("Dialog",Font.PLAIN, 12);
-			characteristicsChart.getXYPlot().getDomainAxis().setTickLabelFont(axisFont);
-			characteristicsChart.getXYPlot().getRangeAxis().setTickLabelFont(axisFont);
+			this.getXYPlot().getDomainAxis().setTickLabelFont(axisFont);
+			this.getXYPlot().getRangeAxis().setTickLabelFont(axisFont);
 			
-			NumberAxis yAxis = (NumberAxis) characteristicsChart.getXYPlot().getRangeAxis();
+			NumberAxis yAxis = (NumberAxis) this.getXYPlot().getRangeAxis();
 			yAxis.setAutoRangeIncludesZero(false);
 			
 		}
 		return characteristicsChart;
 	}
-	private XYSeriesCollection getXySeriesCollection(){
+	/**
+	 * Returns the current XY plot.
+	 * @return the XYPlot
+	 */
+	@SuppressWarnings("unchecked")
+	protected XYPlot<String> getXYPlot() {
+		if (this.xyPlot==null || (this.getCharacteristicsChart().getPlot()!=null && this.getCharacteristicsChart().getPlot()!=this.xyPlot) ) {
+			this.xyPlot = (XYPlot<String>) this.getCharacteristicsChart().getPlot();
+		}
+		return xyPlot;
+	}
+	
+	
+	private XYSeriesCollection<String> getXySeriesCollection(){
 		if (xySeriesCollection == null){
-			xySeriesCollection = new XYSeriesCollection();
+			xySeriesCollection = new XYSeriesCollection<>();
 		}
 		return this.xySeriesCollection;
 	}
-	private void setXySeries(XYSeries xySeries) {
+	private void setXySeries(XYSeries<String> xySeries) {
 
-		XYSeries xyLower = null;
-		XYSeries xyUpper = null;
+		XYSeries<String> xyLower = null;
+		XYSeries<String> xyUpper = null;
 		
 		if (xySeries.getItemCount()>0) {
 			// --- Produce two further series that consider the allowed deviation -------
-			xyLower = new XYSeries("Lower Boundary");
-			xyUpper = new XYSeries("Upper Boundary");
+			xyLower = new XYSeries<>("Lower Boundary");
+			xyUpper = new XYSeries<>("Upper Boundary");
 			TransformerCharacteristicsHandler charHandler = this.getTransformerDataModel().getTransformerCharacteristicsHandler();
 			for (int i = 0; i < xySeries.getItemCount(); i++) {
 				// --- Get item of series -----------------------------------------------
@@ -531,7 +546,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 		if (xyUpper!=null) this.getXySeriesCollection().addSeries(xyUpper);
 		
 		// --- Set the line type and color ----------------------------------------------
-		XYItemRenderer renderer = getCharacteristicsChart().getXYPlot().getRenderer();
+		XYItemRenderer renderer = this.getXYPlot().getRenderer();
 		for (int i = 0; i < getXySeriesCollection().getSeriesCount(); i++) {
 			renderer.setSeriesPaint(i, GlobalInfo.getChartColor(0));
 			BasicStroke stroke = null;
@@ -549,7 +564,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 	private void updateCharacteristicsChart() {
 		double newDeviation = this.transformerDialog.getDoubleValue(this.getJTextFieldControlResidualAllowedDeviation());
 		this.getTransformerDataModel().setControlCharacteristicsAllowedDeviation(newDeviation);
-		XYSeries charSeries = this.getTransformerDataModel().getControlCharacteristicsXySeries();
+		XYSeries<String> charSeries = this.getTransformerDataModel().getControlCharacteristicsXySeries();
 		if (charSeries!=null) {
 			this.setXySeries(charSeries);
 		}
@@ -675,7 +690,7 @@ public class JPanelTransformerControlSettings extends JPanel implements ActionLi
 		}
 		
 		// --- Define JFreeChart series - read file ---------------------------
-		XYSeries xySeries = new XYSeries(XY_SERIES_NAME);
+		XYSeries<String> xySeries = new XYSeries<>(XY_SERIES_NAME);
 		BufferedReader csvFileReader = null;
 		try {
 			csvFileReader = new BufferedReader(new FileReader(csvFile));

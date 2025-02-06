@@ -36,6 +36,7 @@ import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.project.BundleFeatureMapper;
 import agentgui.core.project.PlatformJadeConfig;
@@ -841,7 +842,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 	private void reduceProjectPlugins(Project projectForDeployment) {
 		Vector<PlugIn> projectPlugIns = this.getProject().getPlugInsLoaded();
 		for(int i=0; i<projectPlugIns.size(); i++) {
-			PlugIn plugIn = projectPlugIns.get(i);
+			AwbPlugIn plugIn = projectPlugIns.get(i);
 			
 			// --- The AWBIntegration PlugIn won't be recognized as required by the old approach, since it is no longer located in a project bundle 
 			//TODO find a better solution

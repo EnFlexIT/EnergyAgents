@@ -3,7 +3,7 @@ package de.enflexit.ea.core.ops.liveMonitoring;
 import java.util.ArrayList;
 
 import org.awb.env.networkModel.visualisation.DisplayAgent;
-
+import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.ExecutionDataBase;
@@ -79,9 +79,16 @@ public class LiveMonitoringAgentSetupBehaviour extends OneShotBehaviour {
 	private void startDisplayAgent() {
 		
 		try {
+		
+			Object runtimeVisualizationContainer = null;
+			AwbProjectWindow projectEditorWindow = this.getLiveMonitoringAgent().getProject().getProjectEditorWindow();
+			if (projectEditorWindow!=null) {
+				runtimeVisualizationContainer = projectEditorWindow.getRuntimeVisualizationContainer(); 
+			}
+			
 			DisplayAgent da = new DisplayAgent();
 			Object[] startArgs = new Object[2];
-			startArgs[0] = this.getLiveMonitoringAgent().getProject().getVisualizationTab4SetupExecution();
+			startArgs[0] = runtimeVisualizationContainer;
 			startArgs[1] = this.getLiveMonitoringAgent().getEnvironmentModel();
 			da.setArguments(startArgs);
 			AgentController agentController = myAgent.getContainerController().acceptNewAgent("DisplayAgent", da);

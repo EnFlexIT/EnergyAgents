@@ -189,7 +189,7 @@ public class TransformerDataModel implements Serializable {
 	
 	private boolean controlBasedOnCharacteristics;
 	private double controlCharacteristicsAllowedDeviation;
-	private XYSeries controlCharacteristicsXySeries;
+	private XYSeries<String> controlCharacteristicsXySeries;
 	private transient TransformerCharacteristicsHandler characteristicsHandler;
 	
 	
@@ -405,10 +405,10 @@ public class TransformerDataModel implements Serializable {
 		this.controlCharacteristicsAllowedDeviation = AllowedDeviation;
 	}
 	
-	public XYSeries getControlCharacteristicsXySeries() {
+	public XYSeries<String> getControlCharacteristicsXySeries() {
 		return controlCharacteristicsXySeries;
 	}
-	public void setControlCharacteristicsXySeries(XYSeries controlCharacteristicsXySeries) {
+	public void setControlCharacteristicsXySeries(XYSeries<String> controlCharacteristicsXySeries) {
 		this.controlCharacteristicsXySeries = controlCharacteristicsXySeries;
 	}
 	public TransformerCharacteristicsHandler getTransformerCharacteristicsHandler() {

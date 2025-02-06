@@ -34,4 +34,5 @@ Export-Package: de.enflexit.ea.core.ops,
  de.enflexit.ea.core.ops.liveMonitoring,
  de.enflexit.ea.core.ops.plugin,
  de.enflexit.ea.core.ops.validation
-Import-Package: de.enflexit.language
+Import-Package: de.enflexit.awb.core.ui,
+ de.enflexit.language
