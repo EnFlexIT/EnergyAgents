@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.core.config.DeviceAgentDescription;
+import de.enflexit.awb.core.config.DeviceAgentDescription;
 import de.enflexit.common.StringHelper;
 
 /**

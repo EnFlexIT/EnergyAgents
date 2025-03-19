@@ -14,14 +14,13 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
  de.enflexit.geography,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
- com.google.gson
+ com.google.gson,
+ de.enflexit.jade
 Automatic-Module-Name: net.peak.grid.simbenchImport
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,
  OSGI-INF/PandaPowerNetworkModelImportService.xml,
@@ -29,6 +28,14 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/SimBenchNetworkModelImportService.xml,
  OSGI-INF/SimBenchScheduleListPersistenceService.xml
 Import-Package: agentgui.ontology,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
  de.enflexit.ea.core.awbIntegration.adapter.triPhase,
  de.enflexit.ea.core.awbIntegration.adapter.uniPhase,
  de.enflexit.ea.electricity.transformer

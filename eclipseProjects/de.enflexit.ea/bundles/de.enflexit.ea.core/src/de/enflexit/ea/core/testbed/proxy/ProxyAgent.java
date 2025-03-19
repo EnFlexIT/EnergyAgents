@@ -1,6 +1,6 @@
 package de.enflexit.ea.core.testbed.proxy;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.deployment.AgentSpecifier;
 import de.enflexit.ea.core.dataModel.ontology.HyGridOntology;

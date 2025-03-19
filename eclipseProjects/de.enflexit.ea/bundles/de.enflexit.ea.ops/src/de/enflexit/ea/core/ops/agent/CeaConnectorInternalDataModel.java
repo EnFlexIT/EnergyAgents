@@ -6,8 +6,8 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.core.application.Application;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;

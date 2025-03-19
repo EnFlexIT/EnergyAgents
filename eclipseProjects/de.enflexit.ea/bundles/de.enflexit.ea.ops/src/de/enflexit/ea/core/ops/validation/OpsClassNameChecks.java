@@ -2,7 +2,7 @@ package de.enflexit.ea.core.ops.validation;
 
 import java.util.Vector;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.ops.plugin.OpsPlugin;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;

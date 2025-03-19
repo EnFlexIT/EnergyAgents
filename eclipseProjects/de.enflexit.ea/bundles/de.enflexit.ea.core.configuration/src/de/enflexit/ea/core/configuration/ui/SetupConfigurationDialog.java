@@ -16,8 +16,8 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.ea.core.configuration.BundleHelper;

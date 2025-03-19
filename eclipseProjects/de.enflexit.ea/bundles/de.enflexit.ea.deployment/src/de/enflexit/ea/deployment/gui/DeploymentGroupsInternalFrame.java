@@ -33,10 +33,10 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiRootJSplitPane;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.core.project.setup.SimulationSetupNotification;
-import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;

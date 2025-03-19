@@ -1,16 +1,16 @@
 package de.enflexit.ea.deployment.plugin;
 
-import org.agentgui.gui.AwbProjectWindowTab;
-import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 
-import agentgui.core.application.Application;
-import agentgui.core.plugin.AwbPlugIn;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.AwbPlugIn;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.core.ui.AwbProjectWindowTab;
+import de.enflexit.awb.desktop.project.ProjectWindowTab;
 import de.enflexit.ea.deployment.gui.DeploymentSettingsProjectWindowTab;
 import de.enflexit.ea.deployment.plugin.gui.JButtonAgentDeployment;
 import de.enflexit.ea.deployment.plugin.gui.JButtonDeploymentGroups;
@@ -19,7 +19,7 @@ import de.enflexit.ea.deployment.plugin.gui.JButtonDeploymentGroups;
  * This PlugIn class adds agent deployment functionality to Agent.Workbench.
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
  */
-public class DeploymentPlugIn extends PlugIn{
+public class DeploymentPlugIn extends PlugIn {
 	
 	private static final String PLUGIN_NAME = "Energy Agent - Deployment PlugIn";
 	

@@ -2,10 +2,10 @@ package de.enflexit.ea.core.simulation.validation;
 
 import java.util.Vector;
 
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
 import agentgui.ontology.Simple_Boolean;
 import agentgui.ontology.Simple_String;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.ea.core.simulation.manager.SimulationManager;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;

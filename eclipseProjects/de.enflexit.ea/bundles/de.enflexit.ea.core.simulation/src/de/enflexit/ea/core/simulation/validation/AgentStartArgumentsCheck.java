@@ -2,8 +2,8 @@ package de.enflexit.ea.core.simulation.validation;
 
 import java.util.Vector;
 
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;

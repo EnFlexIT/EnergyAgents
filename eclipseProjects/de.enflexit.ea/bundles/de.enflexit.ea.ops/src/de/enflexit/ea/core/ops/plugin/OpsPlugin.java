@@ -8,10 +8,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
 import de.enflexit.ea.core.ops.OpsController;
 import de.enflexit.ea.core.ops.gui.ImageHelper;
 import de.enflexit.ea.core.ops.gui.JFrameOpsControl;

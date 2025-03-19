@@ -15,9 +15,8 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import agentgui.core.config.GlobalInfo.MtpProtocol;
-import agentgui.core.gui.components.JComboBoxMtpProtocol;
+import de.enflexit.awb.baseUI.components.JComboBoxMtpProtocol;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
 

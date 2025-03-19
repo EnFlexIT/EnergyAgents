@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.configuration.eom.BundleHelper;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;

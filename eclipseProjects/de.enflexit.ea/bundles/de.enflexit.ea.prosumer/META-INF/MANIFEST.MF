@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Generic Prosumer Agent
 Bundle-SymbolicName: de.enflexit.ea.prosumer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.prosumer,
  de.enflexit.ea.prosumer.classLoadService,
  de.enflexit.ea.prosumer.validation
@@ -18,7 +18,13 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.validation,
  de.enflexit.jade.tools,
- org.agentgui.core,
- org.agentgui.lib.jade,
- org.awb.env.networkModel
+ org.awb.env.networkModel,
+ de.enflexit.jade
 Automatic-Module-Name: net.agenthygrid.prosumer
+Import-Package: de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction

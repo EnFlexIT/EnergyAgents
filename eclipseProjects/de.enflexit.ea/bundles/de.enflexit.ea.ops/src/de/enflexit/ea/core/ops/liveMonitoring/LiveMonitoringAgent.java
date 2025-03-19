@@ -1,17 +1,16 @@
 package de.enflexit.ea.core.ops.liveMonitoring;
 
 import org.awb.env.networkModel.NetworkModel;
-
-import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModelDateBased;
-import agentgui.simulationService.time.TimeModelPresent;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.SimulationServiceHelper;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModelPresent;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AggregationListener;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
@@ -27,7 +26,6 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The base Class of the LiveMonitoringAgent.
  * 

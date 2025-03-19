@@ -25,8 +25,7 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.csv.CsvDataController;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.electricity.transformer.TransformerBundleHelper;

@@ -15,10 +15,11 @@ import org.awb.env.networkModel.GraphEdge;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-import agentgui.core.application.Application;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.time.TimeModelDateBased;
-import agentgui.simulationService.time.TimeModelDiscrete;
+
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import edu.uci.ics.jung.graph.SparseGraph;

@@ -13,15 +13,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-
-import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModelDateBased;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.performance.PerformanceMeasurement;

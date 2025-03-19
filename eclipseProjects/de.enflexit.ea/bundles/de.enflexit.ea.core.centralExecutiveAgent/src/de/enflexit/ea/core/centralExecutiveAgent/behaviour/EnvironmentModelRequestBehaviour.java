@@ -6,7 +6,7 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;

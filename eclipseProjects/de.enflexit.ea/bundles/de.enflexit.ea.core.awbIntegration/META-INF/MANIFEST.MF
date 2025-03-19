@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.awbIntegration;singleton:=true
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.awbIntegration.adapter,
  de.enflexit.ea.core.awbIntegration.adapter.triPhase,
@@ -14,18 +14,31 @@ Export-Package: de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.awbIntegration.plugin,
  de.enflexit.ea.core.awbIntegration.plugin.gui
 Require-Bundle: de.enflexit.common,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.db.hibernate,
  de.enflexit.eom.awbAdapter,
  de.enflexit.eom.core,
  de.enflexit.ea.core.dataModel,
- de.enflexit.ea.core.simulation.db
+ de.enflexit.ea.core.simulation.db,
+ de.enflexit.jade
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.ontology,
+ de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.core.project.transfer,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.desktop.project,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
  de.enflexit.language,
  edu.uci.ics.jung.graph

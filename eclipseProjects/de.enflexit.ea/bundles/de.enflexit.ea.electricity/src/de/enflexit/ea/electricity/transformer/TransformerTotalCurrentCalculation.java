@@ -14,8 +14,8 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants.ElectricityNetworkType;
 import de.enflexit.ea.core.dataModel.ontology.CableState;
 import de.enflexit.ea.core.dataModel.ontology.TriPhaseCableState;

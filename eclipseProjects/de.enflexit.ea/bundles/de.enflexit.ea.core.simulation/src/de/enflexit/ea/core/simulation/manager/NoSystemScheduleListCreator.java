@@ -10,7 +10,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 
-import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.common.SerialClone;
 import de.enflexit.eom.awb.adapter.ui.EomToolsHelper;
 import energy.OptionModelController;

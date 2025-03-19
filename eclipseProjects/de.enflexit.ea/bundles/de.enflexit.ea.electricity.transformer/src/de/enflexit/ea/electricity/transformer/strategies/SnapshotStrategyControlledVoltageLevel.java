@@ -3,7 +3,7 @@ package de.enflexit.ea.electricity.transformer.strategies;
 import java.util.List;
 import java.util.Vector;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import de.enflexit.ea.electricity.transformer.TransformerDataModel.TransformerSystemVariable;
 import energy.OptionModelController;
 import energy.helper.NumberHelper;

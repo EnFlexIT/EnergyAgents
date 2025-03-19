@@ -1,5 +1,6 @@
 package de.enflexit.ea.deployment;
 
+import java.awt.Window;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,12 +18,12 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.osgi.framework.Version;
 
-import agentgui.core.application.Application;
-import agentgui.core.config.BundleProperties;
-import agentgui.core.project.Project;
-import agentgui.core.project.transfer.ProjectExportSettings;
-import agentgui.core.project.transfer.ProjectExportSettingsController;
-import agentgui.core.update.ProjectRepositoryExport;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.BundleProperties;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettingsController;
+import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentGroup;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings.DeploymentMode;
@@ -105,7 +106,7 @@ public class AgentDeployment implements DeploymentListener {
 	public void deploySelectedAgents(List<NetworkComponent> networkComponents) {
 		
 		List<NetworkComponent> activeComponents = this.removePassiveComponents(networkComponents);
-		AgentDeploymentDialog deploymentDialog = new AgentDeploymentDialog(Application.getMainWindow(), activeComponents, this.getProject());
+		AgentDeploymentDialog deploymentDialog = new AgentDeploymentDialog((Window)Application.getMainWindow(), activeComponents, this.getProject());
 		deploymentDialog.setVisible(true);
 
 		if (deploymentDialog.isCanceled()==false) {
@@ -480,11 +481,11 @@ public class AgentDeployment implements DeploymentListener {
 	private void checkIfAllDone() {
 		if (this.allDeploymentsDone()==true) {
 			if (this.allDeploymentsSuccessFull()==true) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), Language.translate("Alle ausgewählten Gruppen wurden erfolgreich deployt!"), Language.translate("Deployment erfolgreich"), JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), Language.translate("Alle ausgewählten Gruppen wurden erfolgreich deployt!"), Language.translate("Deployment erfolgreich"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				List<String> failedDeployments = this.getFailedDeployments();
 				String errorMessage = Language.translate("Das Deployment folgender Gruppen ist fehlgeschlagen") + ": " + String.join(", ", failedDeployments);
-				JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, Language.translate("Deployment Fehlgeschlagen"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), errorMessage, Language.translate("Deployment Fehlgeschlagen"), JOptionPane.ERROR_MESSAGE);
 			}
 			this.getCurrentDeployments().clear();
 		}

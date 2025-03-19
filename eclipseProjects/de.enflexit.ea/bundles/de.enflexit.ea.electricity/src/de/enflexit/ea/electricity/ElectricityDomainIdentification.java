@@ -7,10 +7,9 @@ import java.util.TreeMap;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
-
-import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.aggregation.SubNetworkConfigurationService;
 import de.enflexit.ea.core.awbIntegration.adapter.triPhase.TriPhaseElectricalNodeAdapter;
 import de.enflexit.ea.core.awbIntegration.adapter.uniPhase.UniPhaseElectricalNodeAdapter;

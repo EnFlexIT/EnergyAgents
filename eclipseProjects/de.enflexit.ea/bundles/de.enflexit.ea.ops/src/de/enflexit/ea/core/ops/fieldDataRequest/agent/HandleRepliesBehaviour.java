@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.dataModel.opsOntology.FieldDataReply;
 import de.enflexit.ea.core.monitoring.MonitoringStrategyRT;

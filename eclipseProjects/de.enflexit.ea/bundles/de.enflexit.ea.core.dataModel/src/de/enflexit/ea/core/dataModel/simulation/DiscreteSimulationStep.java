@@ -1,6 +1,6 @@
 package de.enflexit.ea.core.dataModel.simulation;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep;
 import energy.helper.TechnicalSystemStateHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 

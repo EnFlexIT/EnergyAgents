@@ -23,7 +23,7 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesChartRealTimeWrapper;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesChartSettings;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 

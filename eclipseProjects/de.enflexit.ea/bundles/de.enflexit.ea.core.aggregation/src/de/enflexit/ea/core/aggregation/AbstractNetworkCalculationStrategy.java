@@ -8,8 +8,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.dataModel.ontology.EdgeComponentState;
 import de.enflexit.ea.core.dataModel.ontology.NodeComponentState;
 import energy.OptionModelController;

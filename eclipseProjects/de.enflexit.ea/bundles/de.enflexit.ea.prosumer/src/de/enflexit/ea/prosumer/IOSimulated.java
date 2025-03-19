@@ -1,8 +1,7 @@
 package de.enflexit.ea.prosumer;
 
 import org.awb.env.networkModel.NetworkModel;
-
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.AbstractIOSimulated;
 
 /**

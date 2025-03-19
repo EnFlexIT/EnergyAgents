@@ -1,43 +1,14 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.ea.samples.prototype.classLoadService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import agentgui.core.classLoadService.ClassLoadService;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
-import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
-import agentgui.simulationService.balancing.StaticLoadBalancingBase;
-import agentgui.simulationService.time.TimeModel;
+import de.enflexit.awb.core.classLoadService.ClassLoadService;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.simulation.balancing.DynamicLoadBalancingBase;
+import de.enflexit.awb.simulation.balancing.StaticLoadBalancingBase;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 
@@ -48,7 +19,7 @@ import jade.core.Agent;
  */
 public class AWBClassLoadServiceImpl implements ClassLoadService {
 
-	
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#getClass(java.lang.String)
 	 */
@@ -61,8 +32,9 @@ public class AWBClassLoadServiceImpl implements ClassLoadService {
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#newInstance(java.lang.String)
 	 */
 	@Override
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return this.forName(className).newInstance();
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException,InvocationTargetException, NoSuchMethodException, SecurityException, NoClassDefFoundError {
+	    //https://stackoverflow.com/questions/46393863/what-to-use-instead-of-class-newinstance
+	    return this.forName(className).getDeclaredConstructor().newInstance();
 	}
 	
 	/* (non-Javadoc)
@@ -78,10 +50,10 @@ public class AWBClassLoadServiceImpl implements ClassLoadService {
 	 * @see de.enflexit.common.classLoadService.BaseClassLoadService#getTimeModelInstance(java.lang.String)
 	 */
 	@Override
-	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException {
+	public TimeModel getTimeModelInstance(String className) throws ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, SecurityException, InvocationTargetException, NoSuchMethodException {
 		@SuppressWarnings("unchecked")
 		Class<? extends TimeModel> timeModelClass = (Class<? extends TimeModel>) Class.forName(className);
-		return (TimeModel) timeModelClass.newInstance();
+		return (TimeModel) timeModelClass.getDeclaredConstructor().newInstance();
 	}
 
 	/* (non-Javadoc)

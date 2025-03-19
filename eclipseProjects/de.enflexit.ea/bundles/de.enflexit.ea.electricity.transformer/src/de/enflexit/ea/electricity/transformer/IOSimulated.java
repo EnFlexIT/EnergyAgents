@@ -6,7 +6,7 @@ import java.util.Vector;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;
 import de.enflexit.ea.core.dataModel.blackboard.AbstractBlackboardAnswer;

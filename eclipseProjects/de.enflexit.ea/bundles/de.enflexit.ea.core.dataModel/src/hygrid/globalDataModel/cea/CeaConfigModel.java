@@ -3,8 +3,7 @@ package hygrid.globalDataModel.cea;
 import java.io.Serializable;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
-
-import agentgui.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.common.StringHelper;
 
 /**

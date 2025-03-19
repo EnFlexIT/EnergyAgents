@@ -2,8 +2,7 @@ package de.enflexit.ea.electricity.sensor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.Observable;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.AbstractInternalDataModel;

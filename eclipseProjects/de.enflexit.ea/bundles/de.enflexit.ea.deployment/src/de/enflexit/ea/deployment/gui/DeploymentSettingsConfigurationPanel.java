@@ -23,11 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentListener;
-
-import agentgui.core.config.GlobalInfo.MtpProtocol;
-import agentgui.core.config.InstallationPackageFinder;
-import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
-import agentgui.core.gui.components.JComboBoxMtpProtocol;
+import de.enflexit.awb.baseUI.components.JComboBoxMtpProtocol;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.config.InstallationPackageFinder;
+import de.enflexit.awb.core.config.InstallationPackageFinder.InstallationPackageDescription;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;

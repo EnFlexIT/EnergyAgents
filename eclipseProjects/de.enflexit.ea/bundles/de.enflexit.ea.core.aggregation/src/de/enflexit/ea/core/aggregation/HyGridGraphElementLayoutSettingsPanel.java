@@ -7,7 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JLabel;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.awbIntegration.plugin.gui.ColorSettingPanel;
 import de.enflexit.ea.core.dataModel.absEnvModel.ColorSettingsCollection;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;

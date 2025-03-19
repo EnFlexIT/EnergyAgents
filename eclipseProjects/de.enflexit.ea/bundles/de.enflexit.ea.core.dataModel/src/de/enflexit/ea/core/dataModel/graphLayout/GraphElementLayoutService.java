@@ -6,7 +6,7 @@ import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphElementLayout;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersistenceTreeMap;
 
 /**

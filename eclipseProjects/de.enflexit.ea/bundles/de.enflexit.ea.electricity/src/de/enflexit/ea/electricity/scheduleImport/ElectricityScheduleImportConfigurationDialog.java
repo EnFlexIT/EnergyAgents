@@ -8,12 +8,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -65,7 +65,7 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 	 * Constructor
 	 * @param csvImporter The {@link LoadProfileCsvImporter} instance for this dialog
 	 */
-	public ElectricityScheduleImportConfigurationDialog(Frame owner, AbstractElectricalNetworkScheduleImporter csvImporter){
+	public ElectricityScheduleImportConfigurationDialog(Window owner, AbstractElectricalNetworkScheduleImporter csvImporter){
 		super(owner);
 		this.csvImporter = csvImporter;
 		this.initialize();

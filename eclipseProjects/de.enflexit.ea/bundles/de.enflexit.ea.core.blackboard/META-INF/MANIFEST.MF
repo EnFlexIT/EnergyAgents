@@ -4,12 +4,13 @@ Bundle-Name: Blackboard
 Bundle-SymbolicName: de.enflexit.ea.core.blackboard
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.blackboard
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.core.blackboard
 Require-Bundle: de.enflexit.common,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.ea.core.aggregation,
- de.enflexit.ea.core.dataModel
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.jade
 Bundle-ActivationPolicy: lazy
+Import-Package: de.enflexit.awb.simulation.behaviour,
+ de.enflexit.awb.simulation.transaction

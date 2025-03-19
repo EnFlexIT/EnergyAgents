@@ -1,5 +1,7 @@
 package de.enflexit.ea.core.configuration.eom;
 
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -11,8 +13,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
 
 
 /**

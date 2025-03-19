@@ -1,12 +1,12 @@
 package de.enflexit.ea.ui;
 
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 import javax.swing.SwingUtilities;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.ea.core.AbstractEnergyAgent;
 import de.enflexit.ea.core.ui.EnergyAgentUiService;
 import de.enflexit.ea.ui.SwingUiModel.PropertyEvent;
@@ -62,7 +62,7 @@ public class EnergyAgentSwingUiService implements EnergyAgentUiService {
 				EnergyAgentWindowInterface eaWindow = EnergyAgentSwingUiService.this.getAgentDialogHashMap().get(energyAgent);
 				if (eaWindow==null) {
 					// --- Open the default UI for an EnergyAgent -----------
-					JDialogEnergyAgent eaDialogDefault = new JDialogEnergyAgent(Application.getMainWindow(), energyAgent);
+					JDialogEnergyAgent eaDialogDefault = new JDialogEnergyAgent((Window)Application.getMainWindow(), energyAgent);
 					eaDialogDefault.addWindowListener(EnergyAgentSwingUiService.this.getWindowAdapter());
 					EnergyAgentSwingUiService.this.getAgentDialogHashMap().put(energyAgent, eaDialogDefault);
 					eaWindow = eaDialogDefault;

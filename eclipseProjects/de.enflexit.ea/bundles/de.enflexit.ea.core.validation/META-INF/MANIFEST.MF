@@ -4,19 +4,26 @@ Bundle-Name: Energy Agent - Project and Setup Validation
 Bundle-SymbolicName: de.enflexit.ea.core.validation;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.core.validation
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/eaCoreValidationService.xml
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.awbIntegration,
- org.agentgui.core,
  org.awb.env.networkModel,
  org.eclipse.osgi,
- org.eclipse.equinox.preferences,
- org.eclipse.osgi.services
+ org.eclipse.equinox.preferences
 Export-Package: de.enflexit.ea.core.validation,
  de.enflexit.ea.core.validation.ui,
  de.enflexit.ea.validation
 Bundle-Vendor: EnFlex.IT
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.desktop.mainWindow,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ org.osgi.service.component;version="[1.5.0,2.0.0)"

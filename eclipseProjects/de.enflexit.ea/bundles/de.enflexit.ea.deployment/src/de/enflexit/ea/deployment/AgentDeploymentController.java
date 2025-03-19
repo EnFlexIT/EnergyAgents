@@ -1,5 +1,6 @@
 package de.enflexit.ea.deployment;
 
+import java.awt.Window;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,27 +29,26 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-
-import agentgui.core.application.Application;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.config.BundleProperties;
-import agentgui.core.config.DeviceAgentDescription;
-import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
-import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.plugin.AwbPlugIn;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.BundleFeatureMapper;
-import agentgui.core.project.PlatformJadeConfig;
-import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.core.project.transfer.DefaultProjectExportController;
-import agentgui.core.project.transfer.ProjectExportSettings;
-import agentgui.core.update.repositoryModel.ProjectRepository;
-import agentgui.core.update.repositoryModel.RepositoryEntry;
-import agentgui.simulationService.environment.DisplaytEnvironmentModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.config.BundleProperties;
+import de.enflexit.awb.core.config.DeviceAgentDescription;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.project.BundleFeatureMapper;
+import de.enflexit.awb.core.project.PlatformJadeConfig;
+import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
+import de.enflexit.awb.core.project.plugins.AwbPlugIn;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
+import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
+import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.ea.core.awbIntegration.plugin.AWBIntegrationPlugIn;
@@ -167,7 +167,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 			String messageTitle = Language.translate("Export erfolgreich");
 			if (this.isShowUserDialogs()==true) {
 				String messageContent = Language.translate("Gruppe") + " " + this.deploymentGroup.getGroupID() + " " + Language.translate("erfolgreich exportiert!");
-				JOptionPane.showMessageDialog(Application.getMainWindow(), messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
 			}
 			
 			// --- Notify listeners ---------------------------------
@@ -176,7 +176,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 			System.err.println(this.getClass().getSimpleName() + ": Group " + this.deploymentGroup.getGroupID() + " export failed!");
 			if (this.isShowUserDialogs()==true) {
 				String message = Language.translate("Gruppe") + " " + this.deploymentGroup.getGroupID() + " " + Language.translate("Export fehlgeschlagen");
-				JOptionPane.showMessageDialog(Application.getMainWindow(), message, message, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), message, message, JOptionPane.ERROR_MESSAGE);
 			}
 			this.notifyFailed();
 		}
@@ -344,7 +344,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 			for (int i=0; i<this.getMissingBundlesList().size(); i++) {
 				missingMessage.append("\n    - " + this.getMissingBundlesList().get(i));
 			}
-			JOptionPane.showMessageDialog(Application.getMainWindow(), missingMessage.toString(), "Error: Required bundles not found!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog((Window)Application.getMainWindow(), missingMessage.toString(), "Error: Required bundles not found!", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -503,7 +503,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 	private void configureWorkbenchPreferences() {
 
 		try {
-			String preferencesFileName = BundleProperties.PLUGIN_ID + PREFERENCES_FILE_SUFFIX;
+			String preferencesFileName = GlobalInfo.getSymbolicBundleName() + PREFERENCES_FILE_SUFFIX;
 			File preferencesFile = this.getPreferencesTempFolderPath().resolve(preferencesFileName).toFile();
 			if (this.getPreferencesTempFolderPath().toFile().exists()==false) {
 				Files.createDirectories(this.getPreferencesTempFolderPath());
@@ -513,7 +513,7 @@ public class AgentDeploymentController extends EnergyAgentProjectExportControlle
 			this.savePropertiesToFile(preferencesTreeMap, preferencesFile);
 
 		} catch (IOException ioEx) {
-			System.err.println("Error storing AgentWorkbench preferences in the export folder");
+			System.err.println("Error storing Agent.Workbench preferences in the export folder");
 			ioEx.printStackTrace();
 		}
 

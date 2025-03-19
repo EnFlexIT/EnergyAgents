@@ -3,9 +3,8 @@ package de.enflexit.ea.core.dataModel;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import jade.core.AID;
 
 /**

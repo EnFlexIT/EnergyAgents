@@ -1,6 +1,6 @@
 package de.enflexit.ea.core.dataModel.simulation;
 
-import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
+import de.enflexit.awb.simulation.behaviour.SimulationServiceBehaviour;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;

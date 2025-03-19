@@ -1,10 +1,9 @@
 package de.enflexit.ea.core.centralExecutiveAgent;
 
 import java.util.Date;
-
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.LiveMonitoringProxyRequestResponder;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.MessageReceiveBehaviour;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.PlatformUpdateBehaviour;

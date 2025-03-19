@@ -11,9 +11,9 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.eom.awb.adapter.EomDataModelAdapter;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;

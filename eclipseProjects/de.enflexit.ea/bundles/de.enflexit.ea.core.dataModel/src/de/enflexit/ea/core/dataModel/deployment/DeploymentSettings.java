@@ -3,7 +3,7 @@ package de.enflexit.ea.core.dataModel.deployment;
 import java.io.Serializable;
 import java.util.Properties;
 
-import agentgui.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.common.StringHelper;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;

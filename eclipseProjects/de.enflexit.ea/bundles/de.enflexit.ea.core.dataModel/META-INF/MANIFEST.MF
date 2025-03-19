@@ -6,7 +6,7 @@ Bundle-Version: 1.2.1.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.dataCommunication
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml
 Export-Package: de.enflexit.ea.core.dataModel,
@@ -27,11 +27,21 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
  de.enflexit.eom.core,
  de.enflexit.jade.tools,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
- org.eclipse.osgi
+ org.eclipse.osgi,
+ de.enflexit.jade
 Import-Package: agentgui.core.charts.timeseriesChart,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.update,
+ de.enflexit.awb.simulation,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.behaviour,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
  edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.util,
  jakarta.xml.bind,

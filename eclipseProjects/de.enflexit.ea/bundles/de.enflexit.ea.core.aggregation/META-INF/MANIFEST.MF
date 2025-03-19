@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.aggregation
 Bundle-Version: 1.5.2.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.aggregation
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
@@ -16,13 +16,21 @@ Export-Package: de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.aggregation.trafficLight
 Import-Package: agentgui.core.charts.gui,
  agentgui.core.charts.timeseriesChart,
- agentgui.ontology
+ agentgui.ontology,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction
 Require-Bundle: de.enflexit.common,
  org.eclipse.osgi,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.eom.core,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.awbIntegration,
- org.agentgui.lib.jung
+ org.agentgui.lib.jung,
+ de.enflexit.jade

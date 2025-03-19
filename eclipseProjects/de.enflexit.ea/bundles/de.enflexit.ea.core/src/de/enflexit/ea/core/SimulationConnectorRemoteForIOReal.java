@@ -3,8 +3,8 @@ package de.enflexit.ea.core;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;

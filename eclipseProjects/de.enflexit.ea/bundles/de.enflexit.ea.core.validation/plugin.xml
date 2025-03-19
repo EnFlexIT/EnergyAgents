@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         id="net.agenthygrid.core.validation.ui.ValidatorMainWindowExtension"
-         point="org.awb.swing.mainWindowExtension">
+   <extension id="net.agenthygrid.core.validation.ui.ValidatorMainWindowExtension" point="de.enflexit.awb.desktop.mainWindowExtension">
       <mainWindowExtensionClient
             class="de.enflexit.ea.core.validation.ui.HyGridValidator">
       </mainWindowExtensionClient>

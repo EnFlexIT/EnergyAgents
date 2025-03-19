@@ -2,7 +2,7 @@ package de.enflexit.ea.core.dataModel.graphLayout;
 
 import javax.swing.JPanel;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.ea.core.dataModel.absEnvModel.GraphElementLayoutSettingsPersistenceTreeMap;

@@ -10,10 +10,10 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 
-import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.properties.Properties;

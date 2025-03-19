@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
-import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.GlobalRuntimeValues;
 
 /**

@@ -2,10 +2,10 @@ package de.enflexit.ea.core.awbIntegration.plugin;
 
 import java.util.Calendar;
 
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.Properties.PropertyType;
 import de.enflexit.common.properties.PropertyValue;

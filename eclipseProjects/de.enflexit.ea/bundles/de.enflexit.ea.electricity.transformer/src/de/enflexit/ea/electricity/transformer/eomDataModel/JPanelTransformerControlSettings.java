@@ -48,8 +48,8 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.ea.electricity.ElectricityDomainIdentification;
 import de.enflexit.ea.electricity.transformer.TransformerBundleHelper;

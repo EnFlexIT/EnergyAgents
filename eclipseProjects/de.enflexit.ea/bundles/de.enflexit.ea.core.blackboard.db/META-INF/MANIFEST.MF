@@ -4,11 +4,10 @@ Bundle-Name: Blackboard DB Connector
 Bundle-SymbolicName: de.enflexit.ea.core.blackboard.db
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.blackboard.db
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
- org.agentgui.core,
  org.awb.env.networkModel,
  de.enflexit.ea.core.dataModel,
  org.eclipse.equinox.preferences,
@@ -25,4 +24,8 @@ Export-Package: de.enflexit.ea.core.blackboard.db,
  de.enflexit.ea.core.blackboard.db.mappings
 Service-Component: OSGI-INF/BlackboardListenerService.xml,
  OSGI-INF/HibernateDatabaseConnectionService.xml
-Import-Package: de.enflexit.ea.core.aggregation
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.ea.core.aggregation

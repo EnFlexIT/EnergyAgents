@@ -6,8 +6,15 @@ Bundle-SymbolicName: de.enflexit.ea.core.configuration
 Automatic-Module-Name: de.enflexit.ea.core.configuration
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: de.enflexit.eom.awb.adapter,
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.eom.awb.adapter,
  org.eclipse.core.runtime.preferences,
  org.osgi.framework,
  org.osgi.service.prefs
@@ -15,9 +22,7 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.dataModel,
  de.enflexit.eom.core,
- org.agentgui.lib.jade,
- org.awb.env.networkModel,
- org.agentgui.core
+ org.awb.env.networkModel
 Export-Package: de.enflexit.ea.core.configuration,
  de.enflexit.ea.core.configuration.model,
  de.enflexit.ea.core.configuration.model.components,

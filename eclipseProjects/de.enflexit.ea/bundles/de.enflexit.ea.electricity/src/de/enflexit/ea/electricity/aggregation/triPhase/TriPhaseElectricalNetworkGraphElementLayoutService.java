@@ -11,7 +11,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettings;
 import de.enflexit.ea.core.aggregation.HyGridGraphElementLayoutSettingsPanel;
 import de.enflexit.ea.core.dataModel.GlobalHyGridConstants;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
 import energy.GlobalInfo;
 import energy.optionModel.Schedule;
 import energy.optionModel.TechnicalSystemStateEvaluation;

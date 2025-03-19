@@ -4,7 +4,7 @@ Bundle-Name: ElectricalSensor
 Bundle-SymbolicName: de.enflexit.ea.electricity.sensor
 Automatic-Module-Name: de.enflexit.ea.electricity.sensor
 Bundle-Version: 1.0.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.electricity.sensor,
  de.enflexit.ea.electricity.sensor.classLoadService,
  de.enflexit.ea.electricity.sensor.lvSensor,
@@ -22,6 +22,12 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.validation,
  de.enflexit.ea.electricity,
  de.enflexit.jade.tools,
- org.agentgui.core,
- org.agentgui.lib.jade,
- org.awb.env.networkModel
+ org.awb.env.networkModel,
+ de.enflexit.jade
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import agentgui.simulationService.time.StopWatch;
+import de.enflexit.awb.simulation.environment.time.StopWatch;
 import energy.helper.AppendDataInterface.AppendStrategy;
 import energy.planning.EomPlannerResult;
 

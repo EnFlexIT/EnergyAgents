@@ -1,6 +1,7 @@
 package de.enflexit.ea.core.ops.gui;
 
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -12,7 +13,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;
@@ -317,7 +318,7 @@ public class JFrameOpsControlTools implements ActionListener, OpsControllerListe
 	 */
 	private FieldDataRequest prepareDataRequest() {
 		FieldDataRequest dataRequest = null;
-		FieldDataRequestDialog requestDialog = new FieldDataRequestDialog(Application.getMainWindow());
+		FieldDataRequestDialog requestDialog = new FieldDataRequestDialog((Window)Application.getMainWindow());
 		requestDialog.setVisible(true);
 		if (requestDialog.isCanceled()==false) {
 			dataRequest = new FieldDataRequest();

@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.jfree.data.xy.XYSeries;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import energy.OptionModelController;
 import energy.helper.NumberHelper;
 import energy.optionModel.TechnicalSystemStateEvaluation;

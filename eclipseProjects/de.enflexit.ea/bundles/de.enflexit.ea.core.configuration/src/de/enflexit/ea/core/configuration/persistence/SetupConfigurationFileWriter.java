@@ -3,7 +3,7 @@ package de.enflexit.ea.core.configuration.persistence;
 import java.io.File;
 import java.util.Vector;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.csv.CsvFileWriter;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;
 import de.enflexit.ea.core.configuration.model.SetupConfigurationModel;

@@ -4,11 +4,10 @@ Bundle-Name: Energy Agent Simulation-DB
 Bundle-SymbolicName: de.enflexit.ea.core.simulation.db
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.simulation.db
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,
- org.agentgui.core,
  org.eclipse.osgi
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT

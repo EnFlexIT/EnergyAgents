@@ -3,6 +3,7 @@ package de.enflexit.ea.core.ops.liveMonitoring;
 import java.util.ArrayList;
 
 import org.awb.env.networkModel.visualisation.DisplayAgent;
+
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;

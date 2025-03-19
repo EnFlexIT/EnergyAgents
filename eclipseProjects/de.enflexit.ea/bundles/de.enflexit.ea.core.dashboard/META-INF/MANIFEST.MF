@@ -4,14 +4,19 @@ Bundle-Name: Dashboard
 Bundle-SymbolicName: de.enflexit.ea.core.dashboard
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.dashboard
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.core.dashboard,
  de.enflexit.ea.core.dashboard.widget
 Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.dataModel,
  de.enflexit.eom.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
- org.agentgui.core
+ de.enflexit.jade
 Bundle-ActivationPolicy: lazy
+Import-Package: de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction

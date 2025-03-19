@@ -6,9 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
-import agentgui.core.update.AWBUpdater;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;

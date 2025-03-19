@@ -5,9 +5,8 @@ Bundle-SymbolicName: de.enflexit.ea.ui
 Bundle-Version: 0.0.1.qualifier
 Export-Package: de.enflexit.ea.ui,
  de.enflexit.ea.ui.planning
-Import-Package: agentgui.core.application,
- agentgui.core.config,
- agentgui.core.gui,
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
  de.enflexit.common,
  de.enflexit.common.properties,
  de.enflexit.common.swing,
@@ -20,5 +19,5 @@ Require-Bundle: de.enflexit.ea.core,
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ea.ui
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/EnergyAgentUiSwingService.xml

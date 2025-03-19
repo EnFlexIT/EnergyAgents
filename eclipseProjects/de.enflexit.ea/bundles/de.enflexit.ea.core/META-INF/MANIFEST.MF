@@ -9,13 +9,12 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.eom.awbAdapter,
  de.enflexit.eom.database,
  de.enflexit.jade.tools,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
- de.enflexit.ea.core.dataModel
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.jade
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService.xml 
 Bundle-ClassPath: .
 Export-Package: de.enflexit.ea.core,
@@ -29,4 +28,19 @@ Export-Package: de.enflexit.ea.core,
  de.enflexit.ea.core.testbed.proxy,
  de.enflexit.ea.core.ui
 Automatic-Module-Name: net.agenthygrid.core
-Import-Package: de.enflexit.ea.core.centralExecutiveAgent
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.simulation,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.behaviour,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.sensoring,
+ de.enflexit.awb.simulation.transaction,
+ de.enflexit.ea.core.centralExecutiveAgent,
+ org.apache.commons.codec.binary

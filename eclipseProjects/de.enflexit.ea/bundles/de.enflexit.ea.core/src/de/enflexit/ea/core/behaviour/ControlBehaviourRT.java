@@ -7,8 +7,8 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
-import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;

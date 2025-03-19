@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel.TimeModelType;

@@ -6,25 +6,37 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.simulation
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.core.simulation.classFilter,
  de.enflexit.ea.core.simulation.classLoadService,
  de.enflexit.ea.core.simulation.decisionControl,
  de.enflexit.ea.core.simulation.manager,
  de.enflexit.ea.core.simulation.validation
-Import-Package: agentgui.ontology
+Import-Package: agentgui.ontology,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.bundleEvaluation,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.simulation,
+ de.enflexit.awb.simulation.agents,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.eom.awbAdapter,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.ea.core,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.core.blackboard,
  de.enflexit.ea.core.aggregation,
  de.enflexit.ea.core.validation,
- de.enflexit.ea.core.dashboard
+ de.enflexit.ea.core.dashboard,
+ de.enflexit.jade
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/bundleClassFilterService.xml,
  OSGI-INF/eomClassLoadService.xml,

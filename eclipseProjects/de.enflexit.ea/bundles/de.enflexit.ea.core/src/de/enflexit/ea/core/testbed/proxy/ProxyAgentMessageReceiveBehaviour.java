@@ -1,9 +1,10 @@
 package de.enflexit.ea.core.testbed.proxy;
 
 import java.io.IOException;
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.SimulationServiceHelper;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.dataModel.blackboard.BlackboardRequest;
 import de.enflexit.ea.core.testbed.AgentNotificationContainer;
 import jade.core.AID;

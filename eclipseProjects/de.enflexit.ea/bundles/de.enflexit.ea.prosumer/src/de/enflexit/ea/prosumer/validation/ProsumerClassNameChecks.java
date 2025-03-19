@@ -6,8 +6,8 @@ import java.util.List;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;

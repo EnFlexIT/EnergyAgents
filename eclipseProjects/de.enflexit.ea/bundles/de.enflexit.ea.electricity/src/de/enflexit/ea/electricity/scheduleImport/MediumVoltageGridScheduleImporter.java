@@ -1,5 +1,6 @@
 package de.enflexit.ea.electricity.scheduleImport;
 
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +19,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelOperationalDataImportService;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomModelType;
 import de.enflexit.eom.awb.adapter.EomDataModelStorageHandler.EomStorageLocation;
@@ -86,7 +87,7 @@ public class MediumVoltageGridScheduleImporter extends AbstractElectricalNetwork
 	 */
 	@Override
 	public void importDataFromFile(File importFile) {
-		ElectricityScheduleImportConfigurationDialog configurationDialog = new ElectricityScheduleImportConfigurationDialog(Application.getMainWindow(), this);
+		ElectricityScheduleImportConfigurationDialog configurationDialog = new ElectricityScheduleImportConfigurationDialog((Window)Application.getMainWindow(), this);
 		if(configurationDialog.isCanceled() == false){
 				
 			// --- Import schedules from the CSV file ---------
@@ -110,10 +111,10 @@ public class MediumVoltageGridScheduleImporter extends AbstractElectricalNetwork
 					
 				}
 				String successMessage = importedSchedules.size() + " load profiles imported!";
-				JOptionPane.showMessageDialog(Application.getMainWindow(), successMessage, "Import successful", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), successMessage, "Import successful", JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				String failureMessage = "Load profile import failed!";
-				JOptionPane.showMessageDialog(Application.getMainWindow(), failureMessage, "Import failed", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), failureMessage, "Import failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -241,7 +242,7 @@ public class MediumVoltageGridScheduleImporter extends AbstractElectricalNetwork
 				}catch(NumberFormatException nfe ){
 					// --- A value could not be parsed ----------------
 					String errorMessage = "Error importing load profile for " + systemID + ", could not parse " + nextVal + ".\nPlease check your CSV data!";
-					JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, "Error importing load profile", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog((Window)Application.getMainWindow(), errorMessage, "Error importing load profile", JOptionPane.ERROR_MESSAGE);
 					return null;
 				}
 				

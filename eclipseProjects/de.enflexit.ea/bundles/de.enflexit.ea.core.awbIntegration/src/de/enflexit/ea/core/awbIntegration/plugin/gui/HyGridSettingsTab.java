@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -28,15 +29,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.time.TimeModelDateBased;
-import agentgui.simulationService.time.TimeModelDiscrete;
-import agentgui.simulationService.time.TimeUnit;
-import agentgui.simulationService.time.TimeUnitVector;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeUnit;
+import de.enflexit.awb.simulation.environment.time.TimeUnitVector;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.ServiceFinder;
@@ -1585,7 +1586,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 			String title = "Critical internal error!";
 			String msg = "[" + this.getClass().getSimpleName() + "] The class reference for the AbstractCentralDecisionProcess is incorrect!\nPlease, inform the developers about this error!";
 			System.err.println(msg);
-			JOptionPane.showMessageDialog(Application.getMainWindow(), msg, title, JOptionPane.ERROR_MESSAGE, null);
+			JOptionPane.showMessageDialog((Window)Application.getMainWindow(), msg, title, JOptionPane.ERROR_MESSAGE, null);
 			return;
 		}
 		
@@ -1594,7 +1595,7 @@ public class HyGridSettingsTab extends JScrollPane implements Observer, ActionLi
 		String   search4DefaultValue = null;
 		String   search4Description = "Select the central decision process class to apply.";
 		
-		ClassSelectionDialog cs = new ClassSelectionDialog(Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, true);
+		ClassSelectionDialog cs = new ClassSelectionDialog((Window)Application.getMainWindow(), search4Class, search4CurrentValue, search4DefaultValue, search4Description, true);
 		cs.setVisible(true);
 		// --- act in the dialog ... ------------------------------
 		if (cs.isCanceled()==true) return;

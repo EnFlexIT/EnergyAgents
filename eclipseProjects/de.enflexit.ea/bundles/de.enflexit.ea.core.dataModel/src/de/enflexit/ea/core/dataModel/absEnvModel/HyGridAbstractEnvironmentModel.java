@@ -16,13 +16,11 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
 import de.enflexit.common.SerialClone;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.ea.core.dataModel.deployment.DeploymentSettings;

@@ -13,11 +13,10 @@ import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandle
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
-
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.ontology.AgentStartArgument;
 import de.enflexit.common.ontology.AgentStartArguments;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;

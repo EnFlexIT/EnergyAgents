@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Electricity - Power Flow Calculation
 Bundle-SymbolicName: de.enflexit.ea.electricity.powerFlowCalculation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Marcel Ludwig, Jan Mehlich (BUW)
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.lib.powerFlowCalculation,
  de.enflexit.ea.lib.powerFlowCalculation.classLoadService,
  de.enflexit.ea.lib.powerFlowCalculation.parameter
@@ -12,6 +12,6 @@ Bundle-ClassPath: .
 Automatic-Module-Name: net.agenthygrid.lib.powerFlowCalculation
 Service-Component: OSGI-INF/baseClassLoadService.xml
 Require-Bundle: de.enflexit.common,
- org.agentgui.lib.jade,
- de.enflexit.ea.lib.matrixCalculations
+ de.enflexit.ea.lib.matrixCalculations,
+ de.enflexit.jade
 Bundle-ActivationPolicy: lazy

@@ -15,10 +15,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.core.application.Application;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.ea.core.centralExecutiveAgent.behaviour.ProxyCounterPartNotificationBehaviour;
 import de.enflexit.ea.core.dataModel.DirectoryHelper;

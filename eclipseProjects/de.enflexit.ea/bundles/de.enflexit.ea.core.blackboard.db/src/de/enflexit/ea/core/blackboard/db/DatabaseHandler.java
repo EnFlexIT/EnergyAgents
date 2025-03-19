@@ -8,11 +8,10 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDateBased;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.ea.core.blackboard.db.dataModel.AbstractStateResult;
 import de.enflexit.ea.core.blackboard.db.dataModel.DataOverview;
 import de.enflexit.ea.core.blackboard.db.dataModel.EdgeResult;

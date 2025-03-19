@@ -2,9 +2,9 @@ package de.enflexit.ea.core.simulation.validation;
 
 import java.util.Vector;
 
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.ontology.AgentStartArguments;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.ea.core.simulation.manager.SimulationManager;

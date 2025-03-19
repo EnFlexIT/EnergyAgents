@@ -5,11 +5,11 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -83,7 +83,7 @@ public class HyGridValidatorDialog extends JDialog implements HyGridValidationPr
 	 * @param owner the owner Frame
 	 * @param hyGridValidationProcess the HyGridValidationProcess
 	 */
-	public HyGridValidatorDialog(Frame owner, HyGridValidationProcess hyGridValidationProcess) {
+	public HyGridValidatorDialog(Window owner, HyGridValidationProcess hyGridValidationProcess) {
 		super(owner);
 		if (hyGridValidationProcess==null) {
 			throw new IllegalArgumentException("[" + this.getClass().getSimpleName() + "] The instance of the " + HyGridValidationProcess.class.getSimpleName() + " is not allowed to be null!");

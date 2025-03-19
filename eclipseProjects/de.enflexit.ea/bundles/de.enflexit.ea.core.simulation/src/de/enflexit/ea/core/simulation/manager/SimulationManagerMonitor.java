@@ -8,8 +8,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.common.DateTimeHelper;
 import jade.core.AID;
 

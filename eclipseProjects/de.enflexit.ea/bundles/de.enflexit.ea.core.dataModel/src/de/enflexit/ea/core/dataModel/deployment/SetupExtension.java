@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.SerialClone;
 import energy.schedule.loading.ScheduleTimeRange;

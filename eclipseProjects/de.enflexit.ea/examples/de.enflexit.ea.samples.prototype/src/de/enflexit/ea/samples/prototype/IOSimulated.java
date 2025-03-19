@@ -2,7 +2,7 @@ package de.enflexit.ea.samples.prototype;
 
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.AbstractIOSimulated;
 
 /**

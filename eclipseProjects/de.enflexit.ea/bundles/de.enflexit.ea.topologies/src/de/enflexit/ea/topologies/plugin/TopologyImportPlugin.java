@@ -5,9 +5,9 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 
-import agentgui.core.application.Application;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
 
 /**
  * The Class MEOPlugin provides specific control elements to Agent.Workbench.

@@ -3,7 +3,7 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 import java.util.ArrayList;
 import java.util.List;
 
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;

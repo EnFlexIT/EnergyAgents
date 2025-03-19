@@ -1,6 +1,6 @@
 package de.enflexit.ea.electricity.transformer.validation;
 
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;

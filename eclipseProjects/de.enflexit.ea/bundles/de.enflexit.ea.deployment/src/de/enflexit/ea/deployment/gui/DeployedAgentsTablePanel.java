@@ -27,7 +27,7 @@ import javax.swing.table.TableRowSorter;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.ea.core.dataModel.deployment.AgentDeploymentInformation;
 import de.enflexit.ea.core.dataModel.deployment.AgentOperatingMode;
 

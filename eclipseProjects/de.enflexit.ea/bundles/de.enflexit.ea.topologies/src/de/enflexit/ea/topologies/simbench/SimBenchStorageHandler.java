@@ -1,5 +1,6 @@
 package de.enflexit.ea.topologies.simbench;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.TreeMap;
 
@@ -8,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.PathHandling;
 import de.enflexit.eom.awb.adapter.AbstractEomStorageHandler;
 import de.enflexit.eom.awb.adapter.EomDataModelAdapter;
@@ -147,7 +148,7 @@ public class SimBenchStorageHandler extends AbstractEomStorageHandler {
 			// --- Show error message -------------------------------
 			if (message!=null) {
 				message = "Errors found: \n" + message;
-				JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE, null);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE, null);
 				return true;
 			}
 

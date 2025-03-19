@@ -5,10 +5,8 @@ import java.util.Vector;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.behaviour.SimulationServiceBehaviour;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubBlackboardModel;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;

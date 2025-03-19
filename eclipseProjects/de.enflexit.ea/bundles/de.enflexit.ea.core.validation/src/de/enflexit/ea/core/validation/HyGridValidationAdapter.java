@@ -6,10 +6,9 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
-
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.simulationService.time.TimeModel;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
 import energy.optionModel.ScheduleList;

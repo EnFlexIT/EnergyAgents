@@ -1,5 +1,6 @@
 package de.enflexit.ea.core.awbIntegration.plugin;
 
+import java.awt.Window;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,24 +9,24 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.agentgui.gui.AwbProjectWindowTab;
-import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 import org.hibernate.cfg.Configuration;
 
-import agentgui.core.application.Application;
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.plugin.AwbPlugIn;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.core.project.transfer.ProjectExportControllerProvider;
-import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.AwbPlugIn;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
+import de.enflexit.awb.core.ui.AwbProjectWindowTab;
+import de.enflexit.awb.desktop.project.ProjectWindowTab;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
@@ -603,7 +604,7 @@ public class AWBIntegrationPlugIn extends PlugIn {
 			String message = "Incompatible time model: When using the operating mode TestBedReal, please choose a continuous and non-accelerated time model.";
 			System.err.println("[" + this.getClass().getSimpleName() + "]" + message);
 			if (Application.isOperatingHeadless()==false) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), message, "Incompatible Time Model!", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog((Window)Application.getMainWindow(), message, "Incompatible Time Model!", JOptionPane.WARNING_MESSAGE);
 			}
 		}
 		

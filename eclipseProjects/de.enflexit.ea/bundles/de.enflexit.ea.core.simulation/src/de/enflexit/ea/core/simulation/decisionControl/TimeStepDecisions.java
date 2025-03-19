@@ -3,7 +3,7 @@ package de.enflexit.ea.core.simulation.decisionControl;
 import java.io.Serializable;
 import java.util.TreeMap;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 
 /**

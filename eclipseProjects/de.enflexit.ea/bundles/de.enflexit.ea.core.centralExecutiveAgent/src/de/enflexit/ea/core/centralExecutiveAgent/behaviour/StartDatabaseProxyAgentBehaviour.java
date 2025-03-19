@@ -3,8 +3,8 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 import java.util.ArrayList;
 import java.util.List;
 
-import agentgui.core.application.Application;
-import agentgui.core.jade.Platform;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.jade.Platform;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.centralExecutiveAgent.InternalDataModel;
 import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;

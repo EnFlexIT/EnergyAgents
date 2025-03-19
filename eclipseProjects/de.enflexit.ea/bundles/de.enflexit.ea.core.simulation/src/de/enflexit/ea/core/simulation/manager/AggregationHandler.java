@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-import agentgui.simulationService.environment.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.AbstractDiscreteSimulationStep.DiscreteSystemStateType;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.ea.core.aggregation.AbstractAggregationHandler;
 import de.enflexit.ea.core.aggregation.AbstractSubNetworkConfiguration;

@@ -3,10 +3,10 @@ package de.enflexit.ea.deployment.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -42,9 +42,9 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.NetworkComponentTablePanel;
 
-import agentgui.core.config.InstallationPackageFinder;
-import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.config.InstallationPackageFinder;
+import de.enflexit.awb.core.config.InstallationPackageFinder.InstallationPackageDescription;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -115,21 +115,24 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 		this.initialize();
 	}
 	/**
-	 * Instantiates a new AgentDeploymentDialog
-	 * @param AgentID The ID of the agent to be deployed
+	 * Instantiates a new AgentDeploymentDialog.
+	 *
+	 * @param owner the owner
+	 * @param components the components
 	 * @param project The current project
 	 */
-	public AgentDeploymentDialog(Frame owner, List<NetworkComponent> components, Project project) {
+	public AgentDeploymentDialog(Window owner, List<NetworkComponent> components, Project project) {
 		this(owner, components, project, null);
 	}
-	
 	/**
 	 * Instantiates a new agent deployment dialog.
+	 *
+	 * @param owner the owner
 	 * @param components the components
 	 * @param project the project
 	 * @param deploymentSettings the deployment settings. If null, the default settings from the project will be used
 	 */
-	public AgentDeploymentDialog(Frame owner, List<NetworkComponent> components, Project project, DeploymentSettings deploymentSettings) {
+	public AgentDeploymentDialog(Window owner, List<NetworkComponent> components, Project project, DeploymentSettings deploymentSettings) {
 		super(owner);
 		this.componentsToDeploy = components;
 		this.project = project;

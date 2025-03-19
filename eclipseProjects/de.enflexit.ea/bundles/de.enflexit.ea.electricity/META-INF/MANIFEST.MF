@@ -23,11 +23,10 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.dataModel,
  de.enflexit.ea.electricity.powerFlowCalculation,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.awb.env.networkModel,
- de.enflexit.eom.awbAdapter
+ de.enflexit.eom.awbAdapter,
+ de.enflexit.jade
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/electricityValidationService.xml,
@@ -42,5 +41,13 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: EnFlex.IT
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.ontology,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
  de.enflexit.ea.core.validation,
  org.jfree.data.xy

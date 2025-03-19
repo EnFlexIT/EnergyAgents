@@ -1,7 +1,7 @@
 package de.enflexit.ea.core;
 
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
 import energy.optionModel.TechnicalSystemStateEvaluation;
 import jade.core.AID;
 

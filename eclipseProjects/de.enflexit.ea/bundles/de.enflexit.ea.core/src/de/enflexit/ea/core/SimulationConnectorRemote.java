@@ -9,12 +9,12 @@ import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.MtpProtocol;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.sensoring.ServiceSensorInterface;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.sensoring.ServiceSensorInterface;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.testbed.AgentNotificationContainer;
 import de.enflexit.ea.core.testbed.CEARegistrationBehaviour;

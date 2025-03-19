@@ -9,11 +9,10 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
-import agentgui.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.ea.core.configuration.SetupConfigurationAttributeService;

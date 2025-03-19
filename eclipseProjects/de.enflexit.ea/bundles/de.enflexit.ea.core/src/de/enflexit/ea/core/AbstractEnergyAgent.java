@@ -6,12 +6,11 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
-
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.project.setup.AgentClassElement4SimStart;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.ontology.AgentStartArgument;

@@ -2,13 +2,13 @@ package de.enflexit.ea.core;
 
 import java.util.Vector;
 
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.sensoring.ServiceSensor;
-import agentgui.simulationService.sensoring.ServiceSensorInterface;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.SimulationServiceHelper;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.sensoring.ServiceSensor;
+import de.enflexit.awb.simulation.sensoring.ServiceSensorInterface;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.dataModel.absEnvModel.HyGridAbstractEnvironmentModel;
 import de.enflexit.ea.core.dataModel.absEnvModel.SimulationStatus.STATE_CONFIRMATION;
 import de.enflexit.ea.core.dataModel.deployment.SetupExtension;

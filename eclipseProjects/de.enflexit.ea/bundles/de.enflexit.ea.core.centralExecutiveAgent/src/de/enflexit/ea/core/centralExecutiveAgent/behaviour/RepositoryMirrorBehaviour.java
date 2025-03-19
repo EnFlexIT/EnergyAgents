@@ -2,19 +2,20 @@ package de.enflexit.ea.core.centralExecutiveAgent.behaviour;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
-import agentgui.core.project.Project;
-import agentgui.core.update.MirrorTool;
-import agentgui.core.update.MirrorTool.MirrorToolsJob;
-import agentgui.core.update.MirrorTool.P2DownloadType;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.update.MirrorTool;
+import de.enflexit.awb.core.update.MirrorTool.MirrorToolsJob;
+import de.enflexit.awb.core.update.MirrorTool.P2DownloadType;
+import de.enflexit.awb.core.update.MirrorToolListener;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.CeaConfigModel;
-import agentgui.core.update.MirrorToolListener;
 import jade.core.behaviours.WakerBehaviour;
 
 /**
@@ -119,7 +120,7 @@ public class RepositoryMirrorBehaviour extends WakerBehaviour implements MirrorT
 		
 		try {
 			// --- Check the URL String -------------------
-			URL url = new URL(urlString);
+			URL url = URI.create(urlString).toURL();					
 			url.toURI();
 			accessible = true;
 

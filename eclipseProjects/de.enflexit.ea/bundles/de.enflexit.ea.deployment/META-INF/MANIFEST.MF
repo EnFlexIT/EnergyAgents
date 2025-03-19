@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Deployment
 Bundle-SymbolicName: de.enflexit.ea.deployment
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.deployment
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.deployment,
  de.enflexit.ea.deployment.classLoadService,
  de.enflexit.ea.deployment.gui,
@@ -14,15 +14,30 @@ Export-Package: de.enflexit.ea.deployment,
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.db.hibernate,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.ea.core.dataModel,
  org.eclipse.osgi,
  org.eclipse.equinox.preferences,
  de.enflexit.ea.core.validation,
- de.enflexit.ea.core.awbIntegration
-Import-Package: de.enflexit.language,
+ de.enflexit.ea.core.awbIntegration,
+ de.enflexit.jade
+Import-Package: de.enflexit.awb.baseUI.components,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.core.project.transfer,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.core.update,
+ de.enflexit.awb.core.update.repositoryModel,
+ de.enflexit.awb.desktop.project,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.language,
  org.eclipse.core.runtime
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/eomClassLoadService.xml,

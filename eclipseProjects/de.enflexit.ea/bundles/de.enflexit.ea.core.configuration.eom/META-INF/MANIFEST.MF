@@ -6,7 +6,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.configuration.eom
 Automatic-Module-Name: de.enflexit.ea.core.configuration.eom
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.core.configuration.eom,
  de.enflexit.ea.core.configuration.eom.scheduleList,
  de.enflexit.ea.core.configuration.eom.systems,
@@ -22,10 +22,13 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.ea.core,
  de.enflexit.ea.core.configuration,
  de.enflexit.ea.core.dataModel,
- org.agentgui.core,
  org.awb.env.networkModel,
  org.eclipse.osgi
-Import-Package: de.enflexit.ea.core.awbIntegration.adapter,
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.ea.core.awbIntegration.adapter,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  org.eclipse.core.runtime.preferences,

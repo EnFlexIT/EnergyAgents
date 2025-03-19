@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Prototype
 Bundle-SymbolicName: de.enflexit.ea.samples.prototype
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.example.prototype
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: de.enflexit.ea.samples.prototype,
  de.enflexit.ea.samples.prototype.classLoadService
 Bundle-ActivationPolicy: lazy
@@ -12,8 +12,14 @@ Service-Component: OSGI-INF/awbClassLoadService.xml,OSGI-INF/eomClassLoadService
 Require-Bundle: de.enflexit.common,
  de.enflexit.eom.core,
  de.enflexit.jade.tools,
- org.agentgui.core,
- org.agentgui.lib.jade,
  org.awb.env.networkModel,
  de.enflexit.ea.core,
- de.enflexit.ea.core.dataModel
+ de.enflexit.ea.core.dataModel,
+ de.enflexit.jade
+Import-Package: de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction

@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.configuration.eom.validation;
 
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.ea.core.configuration.eom.scheduleList.ScheduleListFile;
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;

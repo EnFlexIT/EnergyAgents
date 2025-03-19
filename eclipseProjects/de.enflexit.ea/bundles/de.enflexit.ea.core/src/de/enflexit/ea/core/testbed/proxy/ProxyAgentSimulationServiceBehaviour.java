@@ -2,10 +2,9 @@ package de.enflexit.ea.core.testbed.proxy;
 
 import java.io.IOException;
 import java.io.Serializable;
-
-import agentgui.simulationService.behaviour.SimulationServiceBehaviour;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.behaviour.SimulationServiceBehaviour;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;

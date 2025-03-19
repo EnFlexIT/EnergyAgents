@@ -5,8 +5,7 @@ import java.util.Vector;
 
 import org.awb.env.networkModel.NetworkComponent;
 
-import agentgui.simulationService.agents.SimulationManagerAgent;
-import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
 import de.enflexit.common.SerialClone;
 import de.enflexit.ea.core.AbstractIOSimulated;
 import de.enflexit.ea.core.AbstractStateInputStream;

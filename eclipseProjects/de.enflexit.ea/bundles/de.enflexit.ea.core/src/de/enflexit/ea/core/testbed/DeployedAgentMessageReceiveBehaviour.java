@@ -1,7 +1,7 @@
 package de.enflexit.ea.core.testbed;
 
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import de.enflexit.ea.core.SimulationConnector;
 import de.enflexit.ea.core.SimulationConnectorRemote;
 import de.enflexit.ea.core.testbed.proxy.ProxyAgent;

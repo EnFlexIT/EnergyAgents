@@ -4,9 +4,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import agentgui.core.project.Project;
-import agentgui.core.project.transfer.DefaultProjectExportController;
-import agentgui.core.project.transfer.ProjectExportController;
+
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.transfer.DefaultProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
 
 /**
  * {@link ProjectExportController} implementation for the Agent.HyGrid project.

@@ -1,16 +1,16 @@
 package de.enflexit.ea.core.validation.ui;
 
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-
-import org.agentgui.gui.swing.MainWindowExtension;
-
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
+import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
+import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.ea.core.validation.BundleHelper;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
@@ -86,7 +86,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 	 */
 	private HyGridValidatorDialog getHyGridValidatorDialog() {
 		if (hyGridValidatorDialog==null ) {
-			hyGridValidatorDialog = new HyGridValidatorDialog(Application.getMainWindow(), this.getHyGridValidationProcess());
+			hyGridValidatorDialog = new HyGridValidatorDialog((Window)Application.getMainWindow(), this.getHyGridValidationProcess());
 		}
 		return hyGridValidatorDialog;
 	}

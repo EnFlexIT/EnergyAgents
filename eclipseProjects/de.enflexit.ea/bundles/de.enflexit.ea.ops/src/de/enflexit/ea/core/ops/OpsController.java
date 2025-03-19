@@ -8,8 +8,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
-import agentgui.core.application.Application;
-import agentgui.core.jade.Platform;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.jade.Platform;
 import de.enflexit.ea.core.centralExecutiveAgent.CentralExecutiveAgent;
 import de.enflexit.ea.core.dataModel.cea.ConversationID;
 import de.enflexit.ea.core.dataModel.opsOntology.FieldDataRequest;

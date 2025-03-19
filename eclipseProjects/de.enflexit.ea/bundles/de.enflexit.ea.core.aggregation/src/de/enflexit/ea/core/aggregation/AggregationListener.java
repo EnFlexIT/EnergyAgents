@@ -1,6 +1,6 @@
 package de.enflexit.ea.core.aggregation;
 
-import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
 
 /**
  * This interface must be implemented by classes that want to react 
