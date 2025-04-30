@@ -43,4 +43,5 @@ Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.simulation.sensoring,
  de.enflexit.awb.simulation.transaction,
  de.enflexit.ea.core.centralExecutiveAgent,
+ jakarta.persistence,
  org.apache.commons.codec.binary

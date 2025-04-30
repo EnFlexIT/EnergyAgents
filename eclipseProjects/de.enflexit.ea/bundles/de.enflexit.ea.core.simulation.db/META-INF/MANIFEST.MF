@@ -15,4 +15,5 @@ Export-Package: de.enflexit.ea.core.simulation.db,
  de.enflexit.ea.core.simulation.db.cfg,
  de.enflexit.ea.core.simulation.db.dataModel,
  de.enflexit.ea.core.simulation.db.mappings
+Import-Package: jakarta.persistence
 Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml

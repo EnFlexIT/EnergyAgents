@@ -157,7 +157,7 @@ public class DatabaseHandler {
 			if (this.getSession()==null) return false;
 			
 			transaction = this.getSession().beginTransaction();
-			this.getSession().save(dataOverview);
+			this.getSession().persist(dataOverview);
 			this.getSession().flush();
 			
 			transaction.commit();
@@ -386,7 +386,7 @@ public class DatabaseHandler {
 			}
 			
 			// --- Execute SQL statement --------
-			Query<?> query = sessionToUse.createNativeQuery(sql);
+			Query<?> query = sessionToUse.createNativeQuery(sql, List.class);
 			query.executeUpdate();
 			
 			// --- Saving in own transaction? ---

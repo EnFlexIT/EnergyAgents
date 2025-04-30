@@ -28,4 +28,5 @@ Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.environment,
  de.enflexit.awb.core.project,
  de.enflexit.awb.simulation.environment.time,
- de.enflexit.ea.core.aggregation
+ de.enflexit.ea.core.aggregation,
+ jakarta.persistence

@@ -288,8 +288,7 @@ public class DatabaseRequestThread extends Thread {
 
 		// --- Create the query object, set required parameters ---------------
 		Session session = EomDatabaseConnection.getInstance().getNewDatabaseSession();
-		@SuppressWarnings("unchecked")
-		Query<Long> query = session.createQuery(hqlStatement);
+		Query<Long> query = session.createQuery(hqlStatement, Long.class);
 		query.setParameter("idSchedule", scheduleID);
 		if (scheduleListSelection.getSystemStateRangeType()!=SystemStateRangeType.AllStates) {
 			query.setParameter("globalTimeFrom", scheduleListSelection.getTimeRangeFrom());
