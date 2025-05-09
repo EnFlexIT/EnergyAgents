@@ -19,6 +19,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.eom.database.ScheduleListSelection.SystemStateRangeType;
@@ -154,7 +155,7 @@ public class FieldDataRequestDialog extends JDialog implements ActionListener{
 	private JButton getJButtonRequest() {
 		if (jButtonRequest == null) {
 			jButtonRequest = new JButton(Language.translate("Send Request",Language.EN));
-			jButtonRequest.setForeground(new Color(0, 153, 0));
+			jButtonRequest.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonRequest.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonRequest.setMinimumSize(new Dimension(150, 28));
 			jButtonRequest.setMaximumSize(new Dimension(150, 28));
@@ -171,7 +172,7 @@ public class FieldDataRequestDialog extends JDialog implements ActionListener{
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton(Language.translate("Cancel",Language.EN));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setMinimumSize(new Dimension(150, 28));
 			jButtonCancel.setMaximumSize(new Dimension(150, 28));
 			jButtonCancel.setPreferredSize(new Dimension(150, 28));

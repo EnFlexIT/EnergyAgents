@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import energy.optionModel.gui.components.DateTimeWidget;
@@ -133,7 +134,7 @@ public class SimulationDataExportConfigurationDialog extends JDialog implements 
 		if (jButtonOK == null) {
 			jButtonOK = new JButton("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setPreferredSize(new Dimension(100, 26));
 			jButtonOK.setMaximumSize(jButtonOK.getPreferredSize());
 			jButtonOK.setMinimumSize(jButtonOK.getPreferredSize());
@@ -149,7 +150,7 @@ public class SimulationDataExportConfigurationDialog extends JDialog implements 
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.setMinimumSize(jButtonCancel.getPreferredSize());
 			jButtonCancel.setMaximumSize(jButtonCancel.getPreferredSize());

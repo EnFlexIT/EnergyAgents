@@ -47,6 +47,7 @@ import de.enflexit.awb.core.config.InstallationPackageFinder.InstallationPackage
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.crypto.KeyStoreController;
 import de.enflexit.common.crypto.TrustStoreController;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
@@ -364,7 +365,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton(Language.translate("  OK  ",Language.EN));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOK.setMinimumSize(new Dimension(100, 28));
 			jButtonOK.setMaximumSize(new Dimension(100, 28));
@@ -381,7 +382,7 @@ public class AgentDeploymentDialog extends JDialog implements ActionListener, Li
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton(Language.translate("Cancel",Language.EN));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setMinimumSize(new Dimension(100, 28));
 			jButtonCancel.setMaximumSize(new Dimension(100, 28));
 			jButtonCancel.setPreferredSize(new Dimension(100, 28));

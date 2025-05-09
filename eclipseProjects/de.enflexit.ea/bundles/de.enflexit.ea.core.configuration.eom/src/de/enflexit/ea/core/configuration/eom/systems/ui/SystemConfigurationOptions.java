@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.ea.core.configuration.eom.systems.SystemConfigurationManager;
 import javax.swing.JSeparator;
 
@@ -183,12 +184,12 @@ public class SystemConfigurationOptions extends JWindow implements ActionListene
 	}
 	private void setTextConfigurationCheck() {
 		
-		Color headerColor = new Color(0, 153, 0);
+		Color headerColor = AwbThemeColor.ButtonTextGreen.getColor();
 		String bluePrintStateUpdate = "<b>No errors were found in the current blueprint configuration!</b>";
 		// --- Get list of configuration issues -----------------
 		List<String> currConfigInforamtion = this.systemConfigurationManager.getSystemConfiguration().getFaultySystemBlueprintConfigurationInformations();
 		if (currConfigInforamtion.size()>0) {
-			headerColor = new Color(153, 0, 0);
+			headerColor = AwbThemeColor.ButtonTextRed.getColor();
 			bluePrintStateUpdate = "<b>Errors in the current blueprint configuration:</b><br>";
 			for (String partState : currConfigInforamtion) {
 				bluePrintStateUpdate += "- " + partState + "<br>"; 

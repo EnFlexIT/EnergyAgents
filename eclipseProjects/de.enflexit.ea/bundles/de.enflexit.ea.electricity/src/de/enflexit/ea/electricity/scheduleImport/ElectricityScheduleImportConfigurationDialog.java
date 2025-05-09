@@ -22,6 +22,7 @@ import java.util.Date;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import energy.helper.UnitConverter;
@@ -204,7 +205,7 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 		if (jButtonOK == null) {
 			jButtonOK = new JButton("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setPreferredSize(new Dimension(100, 26));
 			jButtonOK.setMaximumSize(jButtonOK.getPreferredSize());
 			jButtonOK.setMinimumSize(jButtonOK.getPreferredSize());
@@ -220,7 +221,7 @@ public class ElectricityScheduleImportConfigurationDialog extends JDialog implem
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.setMinimumSize(jButtonCancel.getPreferredSize());
 			jButtonCancel.setMaximumSize(jButtonCancel.getPreferredSize());
