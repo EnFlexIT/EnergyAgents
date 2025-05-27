@@ -6,7 +6,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.configuration
 Automatic-Module-Name: de.enflexit.ea.core.configuration
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.classLoadService,
  de.enflexit.awb.core.config,

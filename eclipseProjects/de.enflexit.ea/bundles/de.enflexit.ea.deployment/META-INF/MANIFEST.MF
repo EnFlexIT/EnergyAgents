@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Deployment
 Bundle-SymbolicName: de.enflexit.ea.deployment
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.agenthygrid.deployment
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.deployment,
  de.enflexit.ea.deployment.classLoadService,
  de.enflexit.ea.deployment.gui,

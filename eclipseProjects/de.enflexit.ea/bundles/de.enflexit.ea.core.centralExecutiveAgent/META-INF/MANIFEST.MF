@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.centralExecutiveAgent
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: net.agenthygrid.core.centralExecutiveAgent
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.core.centralExecutiveAgent,
  de.enflexit.ea.core.centralExecutiveAgent.behaviour,
  de.enflexit.ea.core.centralExecutiveAgent.classLoadService,

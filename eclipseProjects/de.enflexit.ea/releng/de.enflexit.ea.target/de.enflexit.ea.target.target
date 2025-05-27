@@ -2,19 +2,17 @@
 <?pde version="3.8"?>
 <target includeMode="feature" name="de.enflexit.energyAgent.target" sequenceNumber="104">
 <locations>
-	
+	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<unit id="de.enflexit.awb.desktop.feature.feature.group" version="0.0.0"/>
+		<unit id="de.enflexit.awb.desktop.feature.source.feature.group" version="0.0.0"/>
+		<unit id="de.enflexit.awb.ws.feature.feature.group" version="0.0.0"/>
+		<unit id="de.enflexit.awb.ws.feature.source.feature.group" version="0.0.0"/>
+		<repository location="https://p2.enflex.it/awb/snapshots/"/>
+	</location>
 	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="de.enflexit.eom.feature.feature.group" version="0.0.0"/>
 		<unit id="de.enflexit.eom.feature.source.feature.group" version="0.0.0"/>
 		<repository location="https://p2.enflex.it/eom/snapshots/"/>
 	</location>
-	<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="de.enflexit.common.feature.feature.group" version="0.0.0"/>
-		<unit id="de.enflexit.common.feature.source.feature.group" version="0.0.0"/>
-		<unit id="org.agentgui.feature.feature.group" version="0.0.0"/>
-		<unit id="org.agentgui.feature.source.feature.group" version="0.0.0"/>
-		<repository location="https://p2.enflex.it/awb/snapshots/"/>
-	</location>
-	
 </locations>
 </target>

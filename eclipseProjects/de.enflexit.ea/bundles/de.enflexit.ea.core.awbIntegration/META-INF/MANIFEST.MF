@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.awbIntegration;singleton:=true
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.awbIntegration
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.core.awbIntegration,
  de.enflexit.ea.core.awbIntegration.adapter,
  de.enflexit.ea.core.awbIntegration.adapter.triPhase,

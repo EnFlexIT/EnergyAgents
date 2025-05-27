@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.ea.core.aggregation
 Bundle-Version: 1.5.2.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: net.agenthygrid.core.aggregation
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: 
  OSGI-INF/awbClassLoadService.xml,

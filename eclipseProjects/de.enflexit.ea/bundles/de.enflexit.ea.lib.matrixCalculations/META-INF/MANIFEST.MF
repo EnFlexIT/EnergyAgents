@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Library for Matrix Calculations
 Bundle-SymbolicName: de.enflexit.ea.lib.matrixCalculations
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: net.insekt.lib.matrixCalculations
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ClassPath: .,
  Jama-1.0.3.jar,
  jampack.jar

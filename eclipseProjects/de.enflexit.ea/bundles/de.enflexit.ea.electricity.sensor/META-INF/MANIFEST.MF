@@ -4,7 +4,7 @@ Bundle-Name: ElectricalSensor
 Bundle-SymbolicName: de.enflexit.ea.electricity.sensor
 Automatic-Module-Name: de.enflexit.ea.electricity.sensor
 Bundle-Version: 1.0.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.electricity.sensor,
  de.enflexit.ea.electricity.sensor.classLoadService,
  de.enflexit.ea.electricity.sensor.lvSensor,

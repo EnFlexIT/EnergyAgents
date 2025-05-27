@@ -19,5 +19,5 @@ Require-Bundle: de.enflexit.ea.core,
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ea.ui
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/EnergyAgentUiSwingService.xml

@@ -4,7 +4,7 @@ Bundle-Name: Energy Agent - Generic Prosumer Agent
 Bundle-SymbolicName: de.enflexit.ea.prosumer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.prosumer,
  de.enflexit.ea.prosumer.classLoadService,
  de.enflexit.ea.prosumer.validation

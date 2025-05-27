@@ -4,7 +4,7 @@ Bundle-Name: Blackboard DB Connector
 Bundle-SymbolicName: de.enflexit.ea.core.blackboard.db
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.blackboard.db
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.common,
  de.enflexit.db.hibernate,

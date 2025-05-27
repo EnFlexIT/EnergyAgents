@@ -3,22 +3,11 @@
 <target includeMode="feature" name="de.enflexit.energyAgent.target" sequenceNumber="104">
 <locations>
  
+	<location type="Target" uri="${file_uri:${project_loc:de.enflexit.awb.target}}/de.enflexit.awb.target.target"/>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="de.enflexit.eom.feature.feature.group" version="0.0.0"/>
 		<repository location="https://p2.enflex.it/eom/snapshots/"/>
 	</location>
 
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<!-- From here, dependencies for the AWB-Core                -->
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-		<!-- Supported JDBC Driver -->
-
-
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<!-- From here, dependencies for the AWB-WS part             -->
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<!-- Integration of latest Jersey version comptible to Jetty -->
-	<location type="Target" uri="${file_uri:${project_loc:de.enflexit.awb.target}}/de.enflexit.awb.target.target"/>
 </locations>
 </target>

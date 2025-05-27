@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.ea.feature"
       label="Energy Agent - Life Cycle Feature"
-      version="1.9.0.qualifier"
+      version="3.0.0.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.ea.core"
       os="linux,macosx,win32"
@@ -26,9 +26,9 @@
          name="Energy Option Model"/>
 
    <requires>
-      <import feature="org.agentgui.feature" version="2.2.3.qualifier"/>
       <import feature="de.enflexit.common.feature" version="2.1.9.qualifier"/>
-      <import feature="de.enflexit.eom.feature" version="2.5.2.qualifier"/>
+      <import feature="de.enflexit.awb.core.feature" version="3.0.0.qualifier"/>
+      <import feature="de.enflexit.eom.feature" version="3.0.0.qualifier"/>
    </requires>
 
    <plugin

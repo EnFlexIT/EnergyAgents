@@ -4,7 +4,7 @@ Bundle-Name: Blackboard
 Bundle-SymbolicName: de.enflexit.ea.core.blackboard
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.ea.core.blackboard
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.ea.core.blackboard
 Require-Bundle: de.enflexit.common,
  org.awb.env.networkModel,
