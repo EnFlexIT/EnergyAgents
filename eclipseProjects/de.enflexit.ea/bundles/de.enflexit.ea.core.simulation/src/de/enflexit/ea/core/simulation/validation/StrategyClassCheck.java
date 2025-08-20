@@ -15,6 +15,7 @@ import energy.classLoadService.EomClassLoadServiceUtility;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.AbstractSnapshotStrategy;
 import energy.optionModel.EvaluationClass;
+import energy.optionModel.EvaluationSettings;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
@@ -77,16 +78,7 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	 */
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystem(NetworkComponent netComp, TechnicalSystem ts) {
-		
-		String evaluationClass = ts.getEvaluationSettings().getEvaluationClass();
-		if (evaluationClass!=null && EomClassLoadServiceUtility.isClassAvailable(evaluationClass)==false) {
-			// --- The configured string is not the name of an available class -> try by ID
-			for (EvaluationClass evalClass : ts.getEvaluationSettings().getEvaluationClasses()) {
-				if (evalClass.getStrategyID().equals(evaluationClass)==true) {
-					evaluationClass = evalClass.getClassName(); 
-				}
-			}
-		}
+		String evaluationClass = this.getDefaultStrategyClass(ts.getEvaluationSettings());
 		return this.getValidationMessage(netComp, evaluationClass, false);
 	}
 	
@@ -95,8 +87,30 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	 */
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystemGroup(NetworkComponent netComp, TechnicalSystemGroup tsg) {
-		String evalStrategyClass = tsg.getTechnicalSystem().getEvaluationSettings().getEvaluationClass();
+		String evalStrategyClass = this.getDefaultStrategyClass(tsg.getTechnicalSystem().getEvaluationSettings());
 		return this.getValidationMessage(netComp, evalStrategyClass, true);
+	}
+	
+	private String getDefaultStrategyClass(EvaluationSettings evaluationSettings) {
+		String evaluationClass = evaluationSettings.getEvaluationClass();
+		
+		if (evaluationClass==null) {
+			// --- Nothing configured ---------------------
+			return null;
+		} else if (EomClassLoadServiceUtility.isClassAvailable(evaluationClass)==true) {
+			// Configured by class name -------------------
+			return evaluationClass;
+		} else {
+			// --- Configured by ID -----------------------
+			for (EvaluationClass evalClass : evaluationSettings.getEvaluationClasses()) {
+				if (evalClass.getStrategyID().equals(evaluationClass)==true) {
+					return evalClass.getClassName(); 
+				}
+			}
+		}
+		
+		// --- Fallback ----------------------------------- 
+		return null;
 	}
 	
 	/**
