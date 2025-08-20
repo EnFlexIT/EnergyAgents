@@ -11,8 +11,10 @@ import de.enflexit.ea.core.simulation.decisionControl.AbstractCentralDecisionPro
 import de.enflexit.ea.core.validation.HyGridValidationAdapter;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
+import energy.classLoadService.EomClassLoadServiceUtility;
 import energy.evaluation.AbstractEvaluationStrategyRT;
 import energy.evaluation.AbstractSnapshotStrategy;
+import energy.optionModel.EvaluationClass;
 import energy.optionModel.TechnicalSystem;
 import energy.optionModel.TechnicalSystemGroup;
 import energygroup.evaluation.AbstractGroupEvaluationStrategyRT;
@@ -75,8 +77,17 @@ public class StrategyClassCheck extends HyGridValidationAdapter {
 	 */
 	@Override
 	public HyGridValidationMessage validateEomTechnicalSystem(NetworkComponent netComp, TechnicalSystem ts) {
-		String evalStrategyClass = ts.getEvaluationSettings().getEvaluationClass();
-		return this.getValidationMessage(netComp, evalStrategyClass, false);
+		
+		String evaluationClass = ts.getEvaluationSettings().getEvaluationClass();
+		if (evaluationClass!=null && EomClassLoadServiceUtility.isClassAvailable(evaluationClass)==false) {
+			// --- The configured string is not the name of an available class -> try by ID
+			for (EvaluationClass evalClass : ts.getEvaluationSettings().getEvaluationClasses()) {
+				if (evalClass.getStrategyID().equals(evaluationClass)==true) {
+					evaluationClass = evalClass.getClassName(); 
+				}
+			}
+		}
+		return this.getValidationMessage(netComp, evaluationClass, false);
 	}
 	
 	/* (non-Javadoc)
