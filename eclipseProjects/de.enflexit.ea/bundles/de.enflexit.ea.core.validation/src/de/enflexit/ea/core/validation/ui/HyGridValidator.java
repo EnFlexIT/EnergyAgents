@@ -7,7 +7,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import de.enflexit.awb.baseUI.SeparatorPosition;
+
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener;
@@ -47,7 +48,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 		// --- Add HyGridValidator as application listener --------------------
 		Application.addApplicationListener(this);
 		// --- Define the elements of this MainWindowExtension ----------------
-		this.addToolbarComponent(this.getJButtonHyGridValidator(), null, SeparatorPosition.SeparatorAfter);
+		this.addToolbarComponent(this.getJButtonHyGridValidator(), null, true, ToolBarGroup.ExtraTools);
 	}
 
 	/**
