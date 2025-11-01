@@ -48,7 +48,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 		// --- Add HyGridValidator as application listener --------------------
 		Application.addApplicationListener(this);
 		// --- Define the elements of this MainWindowExtension ----------------
-		this.addToolbarComponent(this.getJButtonHyGridValidator(), null, false, ToolBarGroup.ExtraTools);
+		this.addToolbarComponent(this.getJButtonHyGridValidator(), 0, true, ToolBarGroup.MAS_Control);
 	}
 
 	/**
