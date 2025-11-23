@@ -18,12 +18,12 @@ Export-Package: de.enflexit.ea.core.validation,
  de.enflexit.ea.core.validation.ui,
  de.enflexit.ea.validation
 Bundle-Vendor: EnFlex.IT
-Import-Package: de.enflexit.awb.baseUI,
- de.enflexit.awb.baseUI.mainWindow,
+Import-Package: de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
  de.enflexit.awb.core.environment,
  de.enflexit.awb.core.project,
  de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.core.ui,
  de.enflexit.awb.simulation.environment,
  de.enflexit.awb.simulation.environment.time,
  org.osgi.service.component

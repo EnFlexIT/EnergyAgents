@@ -8,10 +8,10 @@ import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
-import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 import de.enflexit.ea.core.validation.BundleHelper;
 import de.enflexit.ea.core.validation.HyGridValidationMessage;
 import de.enflexit.ea.core.validation.HyGridValidationMessage.MessageType;
@@ -48,7 +48,7 @@ public class HyGridValidator extends MainWindowExtension implements ApplicationL
 		// --- Add HyGridValidator as application listener --------------------
 		Application.addApplicationListener(this);
 		// --- Define the elements of this MainWindowExtension ----------------
-		this.addToolbarComponent(this.getJButtonHyGridValidator(), 0, true, ToolBarGroup.MAS_Control);
+		this.addToolbarComponent(this.getJButtonHyGridValidator(), 0, true, AwbMainWindowToolBarGroup.MAS_Control);
 	}
 
 	/**
