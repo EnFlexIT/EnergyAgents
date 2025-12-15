@@ -49,5 +49,6 @@ Import-Package: agentgui.core.charts.timeseriesChart,
  de.enflexit.awb.simulation.balancing,
  de.enflexit.awb.simulation.environment,
  de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction,
  de.enflexit.ea.core.validation,
  org.jfree.data.xy
