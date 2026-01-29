@@ -403,7 +403,7 @@ public class AWBIntegrationPlugIn extends PlugIn {
 			dbConnManager.loadDatabaseConfigurationProperties(factoryID, configuration);
 			String oldDatabase = (String) configuration.getProperties().get(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
 			String oldURL      = (String) configuration.getProperties().get(HibernateDatabaseService.HIBERNATE_PROPERTY_URL);
-			String newURL      = oldURL.replace(oldDatabase, newDatabase);
+			String newURL      = this.replaceDatabaseNameInUrl(oldURL, oldDatabase, newDatabase);
 			
 			// --- Simply change the Catalog / DB-name for saving data --------
 			java.util.Properties tmpProps = new java.util.Properties();
@@ -413,6 +413,26 @@ public class AWBIntegrationPlugIn extends PlugIn {
 		}
 		this.getDatabaseRelocator().setVerbose(verbose);
 		this.getDatabaseRelocator().applyTemporaryHibernateProperties(tmpPropertiesHashMap, true, true);
+	}
+	
+	/**
+	 * Replaces the database name in a JDBC URL, while making sure the driver part remains unchanged.
+	 * @param oldURL the old URL
+	 * @param oldDatabase the old database name
+	 * @param newDatabase the new database name
+	 * @return the new URL
+	 */
+	private String replaceDatabaseNameInUrl(String oldURL, String oldDatabase, String newDatabase) {
+		
+		// --- Split at the separator to make sure the JDBC driver remains unchanged
+		String[] urlParts = oldURL.split("://");
+		// --- Modify the second part only --------------------------
+		String newSecondPart = urlParts[1].replace(oldDatabase, newDatabase);
+		// --- Reassemble using the original separator --------------
+		String newURL = urlParts[0] + "://" + newSecondPart;
+		
+		return newURL;
+		
 	}
 	/**
 	 * Return a short text for the specified text.
